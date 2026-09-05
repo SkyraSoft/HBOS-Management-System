@@ -1,0 +1,41 @@
+                <td>
+                    <div class="product-name">
+                        ${escapeHtml(product.name)}
+                    </div>
+                    <div class="product-sku">
+                        Product ID #${product.id}
+                    </div>
+                </td>
+                <td>
+                    ${escapeHtml(product.category || "—")}
+                </td>
+                <td>
+                    ${escapeHtml(product.sku || "—")}
+                </td>
+                <td style="font-weight: 500;">
+                    PKR ${formatNumber(product.purchase)}
+                </td>
+                <td style="font-weight: 500;">
+                    PKR ${formatNumber(product.selling)}
+                </td>
+                <td>
+                    <span class="stock-val">${formatNumber(product.stock)}</span><span class="stock-unit">${product.unit}</span>
+                </td>
+                <td>
+                    <span class="badge-status ${statusClass}">
+                        ${status}
+                    </span>
+                </td>
+                <td>
+                    <div class="row-actions">
+                        <button class="icon-button" type="button" title="View Details" onclick="showPage('details', ${product.id})">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                        <button class="icon-button" type="button" title="Edit Product" onclick="showPage('edit', ${product.id})">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="icon-button" type="button" title="Delete Product" onclick="deleteProduct(${product.id})">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </td>

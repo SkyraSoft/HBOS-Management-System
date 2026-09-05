@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>HBOS - Sign In</title>
+
+    <!-- Bootstrap 5.3 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        crossorigin="anonymous">
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+        }
+
+        body {
+            font-family: "Inter", Arial, sans-serif;
+            background: #ffffff;
+            color: #111111;
+            overflow: hidden;
+        }
+
+        /* ================================
+           MAIN WRAPPER
+        ================================= */
+
+        .login-wrapper {
+            width: 100%;
+            height: 100vh;
+            padding: 1px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #ffffff;
+        }
+
+        .login-card {
+            width: calc(100vw - 4px);
+            height: calc(100vh - 4px);
+            max-width: 1400px;
+            display: flex;
+            overflow: hidden;
+            border: 1px solid #b9b9b9;
+            border-radius: 15px;
+            background: #ffffff;
+        }
+
+        /* ================================
+           LEFT SIDE
+        ================================= */
+
+        .visual-side {
+            position: relative;
+            width: 45%;
+            height: 100%;
+            overflow: hidden;
+
+            background-image:
+                linear-gradient(to bottom,
+                    rgba(0, 0, 0, 0.05) 0%,
+                    rgba(0, 0, 0, 0.08) 35%,
+                    rgba(0, 0, 0, 0.60) 76%,
+                    rgba(12, 15, 25, 0.93) 100%),
+                url("https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1200&q=85");
+
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* subtle blur matching reference */
+        .visual-side::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            backdrop-filter: blur(1.5px);
+            -webkit-backdrop-filter: blur(1.5px);
+            pointer-events: none;
+        }
+
+        /* ================================
+           HBOS BRAND
+        ================================= */
+
+        .brand {
+            position: absolute;
+            top: 5px;
+            left: 32px;
+            z-index: 5;
+
+            display: flex;
+            align-items: center;
+            gap: 6px;
+
+            color: #ffffff;
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.8px;
+        }
+
+        .store-icon {
+            width: 27px;
+            height: 27px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .store-icon .roof {
+            position: absolute;
+            left: 3px;
+            top: 5px;
+            width: 21px;
+            height: 7px;
+            border: 2px solid #ffffff;
+            border-bottom: 0;
+            border-radius: 2px 2px 0 0;
+        }
+
+        .store-icon .awning {
+            position: absolute;
+            left: 2px;
+            top: 10px;
+            width: 23px;
+            height: 6px;
+            border-bottom: 2px solid #ffffff;
+        }
+
+        .store-icon .awning::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+
+            background:
+                linear-gradient(90deg,
+                    transparent 0 20%,
+                    #fff 20% 27%,
+                    transparent 27% 48%,
+                    #fff 48% 55%,
+                    transparent 55% 76%,
+                    #fff 76% 83%,
+                    transparent 83%);
+        }
+
+        .store-icon .body {
+            position: absolute;
+            left: 5px;
+            top: 15px;
+            width: 17px;
+            height: 10px;
+            border: 2px solid #ffffff;
+            border-top: 0;
+            border-radius: 0 0 2px 2px;
+        }
+
+        /* ================================
+           LEFT TEXT
+        ================================= */
+
+        .visual-content {
+            position: absolute;
+            left: 34px;
+            right: 30px;
+            bottom: 31px;
+            z-index: 4;
+        }
+
+        .visual-content h1 {
+            margin: 0 0 10px;
+
+            max-width: 500px;
+
+            color: #ffffff;
+            font-size: clamp(27px, 2.35vw, 36px);
+            line-height: 1.13;
+            font-weight: 800;
+            letter-spacing: -1.15px;
+        }
+
+        .visual-content p {
+            max-width: 500px;
+            margin: 0;
+
+            color: #c8cddd;
+            font-size: clamp(16px, 1.35vw, 20px);
+            line-height: 1.55;
+            font-weight: 400;
+        }
+
+        /* ================================
+           RIGHT SIDE
+        ================================= */
+
+        .form-side {
+            width: 55%;
+            height: 100%;
+            background: #ffffff;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .form-container {
+            width: 100%;
+            max-width: 400px;
+            margin-top: -1px;
+        }
+
+        /* ================================
+           FORM HEADER
+        ================================= */
+
+        .form-container h2 {
+            margin: 0 0 9px;
+
+            color: #050505;
+            font-size: 32px;
+            line-height: 1.2;
+            font-weight: 800;
+            letter-spacing: -1.1px;
+        }
+
+        .form-description {
+            margin: 0 0 31px;
+
+            color: #555761;
+            font-size: 16px;
+            line-height: 1.5;
+            font-weight: 400;
+        }
+
+        /* ================================
+           LABELS
+        ================================= */
+
+        .form-label {
+            display: block;
+            margin-bottom: 6px;
+
+            color: #171717;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* ================================
+           INPUTS
+        ================================= */
+
+        .input-group-custom {
+            position: relative;
+            width: 100%;
+            margin-bottom: 24px;
+        }
+
+        .form-control-custom {
+            width: 100%;
+            height: 49px;
+
+            padding: 0 16px;
+
+            border: 1px solid #c8cbd1;
+            border-radius: 8px;
+
+            background: #ffffff;
+
+            color: #171717;
+            font-family: inherit;
+            font-size: 16px;
+
+            outline: none;
+
+            transition:
+                border-color 0.18s ease,
+                box-shadow 0.18s ease;
+        }
+
+        .form-control-custom::placeholder {
+            color: #7c7f87;
+            opacity: 1;
+        }
+
+        .form-control-custom:focus {
+            border-color: #0759d9;
+            box-shadow: 0 0 0 2px rgba(7, 89, 217, 0.08);
+        }
+
+        .password-input {
+            padding-right: 55px;
+        }
+
+        /* ================================
+           PASSWORD EYE
+        ================================= */
+
+        .password-toggle {
+            position: absolute;
+            top: 1px;
+            right: 1px;
+
+            width: 49px;
+            height: 47px;
+
+            border: 0;
+            border-radius: 0 7px 7px 0;
+
+            background: #075bdc;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            cursor: pointer;
+
+            transition: background 0.2s ease;
+        }
+
+        .password-toggle:hover {
+            background: #064fbe;
+        }
+
+        .eye-icon {
+            width: 20px;
+            height: 14px;
+            position: relative;
+        }
+
+        .eye-icon::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+
+            border: 2px solid #ffffff;
+            border-radius: 70% 15%;
+            transform: rotate(45deg) scale(0.78);
+        }
+
+        .eye-icon::after {
+            content: "";
+            position: absolute;
+
+            width: 5px;
+            height: 5px;
+
+            top: 4.5px;
+            left: 7.5px;
+
+            background: #ffffff;
+            border-radius: 50%;
+        }
+
+        /* ================================
+           OPTIONS
+        ================================= */
+
+        .form-options {
+            width: 100%;
+            margin-top: -1px;
+            margin-bottom: 34px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .remember-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .remember-checkbox {
+            appearance: none;
+            -webkit-appearance: none;
+
+            width: 16px;
+            height: 16px;
+
+            margin: 0;
+
+            border: 1px solid #c9cbd0;
+            border-radius: 4px;
+
+            background: #ffffff;
+
+            cursor: pointer;
+
+            position: relative;
+        }
+
+        .remember-checkbox:checked {
+            background: #075bdc;
+            border-color: #075bdc;
+        }
+
+        .remember-checkbox:checked::after {
+            content: "";
+
+            position: absolute;
+            width: 5px;
+            height: 9px;
+
+            left: 5px;
+            top: 1.5px;
+
+            border: solid white;
+            border-width: 0 2px 2px 0;
+
+            transform: rotate(45deg);
+        }
+
+        .remember-label {
+            color: #35363a;
+            font-size: 14px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .forgot-link {
+            color: #005bea;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+        }
+
+        .forgot-link:hover {
+            text-decoration: underline;
+        }
+
+        /* ================================
+           SIGN IN BUTTON
+        ================================= */
+
+        .signin-button {
+            width: 100%;
+            height: 49px;
+
+            border: 0;
+            border-radius: 7px;
+
+            background: #075bdc;
+            color: #ffffff;
+
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 500;
+
+            cursor: pointer;
+
+            transition:
+                background 0.2s ease,
+                transform 0.1s ease,
+                box-shadow 0.2s ease;
+        }
+
+        .signin-button:hover {
+            background: #064fbe;
+            box-shadow: 0 4px 12px rgba(7, 91, 220, 0.16);
+        }
+
+        .signin-button:active {
+            transform: translateY(1px);
+        }
+
+        .signin-button.loading {
+            pointer-events: none;
+            opacity: 0.8;
+        }
+
+        /* ================================
+           REGISTER
+        ================================= */
+
+        .register-text {
+            margin: 31px 0 0;
+
+            text-align: center;
+
+            color: #595b62;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .register-link {
+            color: #005bea;
+            font-weight: 500;
+            text-decoration: none;
+            margin-left: 4px;
+        }
+
+        .register-link:hover {
+            text-decoration: underline;
+        }
+
+        /* ================================
+           VALIDATION
+        ================================= */
+
+        .error-message {
+            display: none;
+
+            margin-top: -17px;
+            margin-bottom: 17px;
+
+            color: #dc3545;
+            font-size: 12px;
+        }
+
+        .form-control-custom.invalid {
+            border-color: #dc3545;
+        }
+
+        .form-control-custom.invalid:focus {
+            box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.08);
+        }
+
+        .success-message {
+            display: none;
+
+            margin-top: 15px;
+            padding: 10px 12px;
+
+            border-radius: 7px;
+
+            background: #ecfdf3;
+            color: #15803d;
+
+            text-align: center;
+            font-size: 13px;
+        }
+
+        /* ================================
+           RESPONSIVE
+        ================================= */
+
+        @media (max-width: 900px) {
+
+            body {
+                overflow: auto;
+            }
+
+            .login-wrapper {
+                min-height: 100vh;
+                height: auto;
+                padding: 10px;
+            }
+
+            .login-card {
+                height: auto;
+                min-height: calc(100vh - 20px);
+                flex-direction: column;
+            }
+
+            .visual-side {
+                width: 100%;
+                min-height: 360px;
+                height: 44vh;
+            }
+
+            .form-side {
+                width: 100%;
+                min-height: 560px;
+                padding: 55px 25px;
+            }
+
+            .form-container {
+                max-width: 500px;
+            }
+
+            .brand {
+                left: 25px;
+            }
+
+            .visual-content {
+                left: 25px;
+                bottom: 28px;
+            }
+        }
+
+        @media (max-width: 576px) {
+
+            .login-wrapper {
+                padding: 0;
+            }
+
+            .login-card {
+                width: 100%;
+                min-height: 100vh;
+                border: 0;
+                border-radius: 0;
+            }
+
+            .visual-side {
+                min-height: 300px;
+                height: 40vh;
+                border-radius: 0;
+            }
+
+            .brand {
+                top: 10px;
+                left: 20px;
+                font-size: 22px;
+            }
+
+            .visual-content {
+                left: 20px;
+                right: 20px;
+                bottom: 22px;
+            }
+
+            .visual-content h1 {
+                font-size: 27px;
+                letter-spacing: -0.8px;
+            }
+
+            .visual-content p {
+                font-size: 14px;
+                line-height: 1.45;
+            }
+
+            .form-side {
+                padding: 45px 22px;
+            }
+
+            .form-container h2 {
+                font-size: 29px;
+            }
+
+            .form-description {
+                font-size: 15px;
+                margin-bottom: 28px;
+            }
+
+            .form-options {
+                margin-bottom: 30px;
+            }
+        }
+
+        @media (max-height: 700px) and (min-width: 901px) {
+
+            .form-container {
+                transform: scale(0.92);
+            }
+
+            .visual-content {
+                bottom: 20px;
+            }
+
+            .visual-content h1 {
+                font-size: 30px;
+            }
+
+            .visual-content p {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="login-wrapper">
+
+        <div class="login-card">
+
+            <!-- =====================================
+             LEFT VISUAL PANEL
+        ====================================== -->
+
+            <section class="visual-side">
+
+                <div class="brand">
+
+                    <span class="store-icon" aria-hidden="true">
+                        <span class="roof"></span>
+                        <span class="awning"></span>
+                        <span class="body"></span>
+                    </span>
+
+                    <span>HBOS</span>
+
+                </div>
+
+                <div class="visual-content">
+
+                    <h1>
+                        Manage Your Store. Grow Your Business.
+                    </h1>
+
+                    <p>
+                        The all-in-one retail management system designed
+                        for modern efficiency and clear financial visibility.
+                    </p>
+
+                </div>
+
+            </section>
+
+
+            <!-- =====================================
+             RIGHT LOGIN PANEL
+        ====================================== -->
+
+            <section class="form-side">
+
+                <div class="form-container">
+
+                    <h2>Welcome back</h2>
+
+                    <p class="form-description">
+                        Sign in to your HBOS account to continue managing
+                        your business.
+                    </p>
+
+
+                    <!-- LOGIN FORM -->
+
+                    <form id="loginForm" novalidate>
+
+                        <!-- EMAIL / PHONE -->
+
+                        <div class="input-group-custom">
+
+                            <label class="form-label" for="emailPhone">
+                                Email or Phone Number
+                            </label>
+
+                            <input type="text" id="emailPhone" class="form-control-custom"
+                                placeholder="Enter your email or phone number" autocomplete="username">
+
+                            <div id="emailError" class="error-message">
+                                Please enter your email or phone number.
+                            </div>
+
+                        </div>
+
+
+                        <!-- PASSWORD -->
+
+                        <div class="input-group-custom">
+
+                            <label class="form-label" for="password">
+                                Password
+                            </label>
+
+                            <div style="position: relative;">
+
+                                <input type="password" id="password" class="form-control-custom password-input"
+                                    placeholder="Enter your password" autocomplete="current-password">
+
+                                <button type="button" class="password-toggle" id="passwordToggle"
+                                    aria-label="Show password" title="Show password">
+                                    <span class="eye-icon" id="eyeIcon"></span>
+                                </button>
+
+                            </div>
+
+                            <div id="passwordError" class="error-message">
+                                Please enter your password.
+                            </div>
+
+                        </div>
+
+
+                        <!-- OPTIONS -->
+
+                        <div class="form-options">
+
+                            <div class="remember-wrapper">
+
+                                <input type="checkbox" id="rememberMe" class="remember-checkbox">
+
+                                <label for="rememberMe" class="remember-label">
+                                    Remember me
+                                </label>
+
+                            </div>
+
+                            <a href="#" class="forgot-link" id="forgotPassword">
+                                Forgot password?
+                            </a>
+
+                        </div>
+
+
+                        <!-- SIGN IN -->
+
+                        <button type="submit" class="signin-button" id="signinButton">
+                            <span id="buttonText">
+                                Sign In
+                            </span>
+                        </button>
+
+                        <div id="successMessage" class="success-message">
+                            Sign in successful.
+                        </div>
+
+                    </form>
+
+
+                    <!-- REGISTER -->
+
+                    <p class="register-text">
+
+                        Don't have an account?
+
+                        <a href="#" class="register-link" id="registerLink">
+                            Register
+                        </a>
+
+                    </p>
+
+                </div>
+
+            </section>
+
+        </div>
+
+    </div>
+
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous">
+    </script>
+
+
+    <script>
+
+
+        /* =========================================
+           RANDOM INTERNET STORE IMAGE
+           A different image is selected on each load.
+        ========================================= */
+
+        const randomStoreImages = [
+            "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1200&q=85",
+            "https://images.unsplash.com/photo-1604719312566-8912e9c8a213?auto=format&fit=crop&w=1200&q=85",
+            "https://images.unsplash.com/photo-1601598851547-4302969d7d1b?auto=format&fit=crop&w=1200&q=85",
+            "https://images.unsplash.com/photo-1607082349566-187342175e2f?auto=format&fit=crop&w=1200&q=85",
+            "https://images.unsplash.com/photo-1583258292688-d0213dc5a3a8?auto=format&fit=crop&w=1200&q=85",
+            "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1200&q=85"
+        ];
+
+        const randomStoreImage =
+            randomStoreImages[
+            Math.floor(Math.random() * randomStoreImages.length)
+            ];
+
+        const visualSide = document.querySelector(".visual-side");
+
+        if (visualSide) {
+            visualSide.style.backgroundImage = `
+            linear-gradient(
+                to bottom,
+                rgba(0, 0, 0, 0.05) 0%,
+                rgba(0, 0, 0, 0.08) 35%,
+                rgba(0, 0, 0, 0.60) 76%,
+                rgba(12, 15, 25, 0.93) 100%
+            ),
+            url("${randomStoreImage}")
+        `;
+        }
+
+        /* =========================================
+           ELEMENTS
+        ========================================= */
+
+        const loginForm = document.getElementById("loginForm");
+
+        const emailPhone = document.getElementById("emailPhone");
+
+        const password = document.getElementById("password");
+
+        const passwordToggle =
+            document.getElementById("passwordToggle");
+
+        const eyeIcon =
+            document.getElementById("eyeIcon");
+
+        const rememberMe =
+            document.getElementById("rememberMe");
+
+        const signinButton =
+            document.getElementById("signinButton");
+
+        const buttonText =
+            document.getElementById("buttonText");
+
+        const emailError =
+            document.getElementById("emailError");
+
+        const passwordError =
+            document.getElementById("passwordError");
+
+        const successMessage =
+            document.getElementById("successMessage");
+
+
+        /* =========================================
+           PASSWORD SHOW / HIDE
+        ========================================= */
+
+        passwordToggle.addEventListener("click", function () {
+
+            if (password.type === "password") {
+
+                password.type = "text";
+
+                passwordToggle.setAttribute(
+                    "aria-label",
+                    "Hide password"
+                );
+
+                passwordToggle.setAttribute(
+                    "title",
+                    "Hide password"
+                );
+
+            } else {
+
+                password.type = "password";
+
+                passwordToggle.setAttribute(
+                    "aria-label",
+                    "Show password"
+                );
+
+                passwordToggle.setAttribute(
+                    "title",
+                    "Show password"
+                );
+            }
+
+        });
+
+
+        /* =========================================
+           REMEMBER ME
+        ========================================= */
+
+        const savedEmail =
+            localStorage.getItem("hbosRememberedEmail");
+
+        if (savedEmail) {
+
+            emailPhone.value = savedEmail;
+
+            rememberMe.checked = true;
+        }
+
+
+        /* =========================================
+           CLEAR VALIDATION
+        ========================================= */
+
+        emailPhone.addEventListener("input", function () {
+
+            emailPhone.classList.remove("invalid");
+
+            emailError.style.display = "none";
+
+        });
+
+
+        password.addEventListener("input", function () {
+
+            password.classList.remove("invalid");
+
+            passwordError.style.display = "none";
+
+        });
+
+
+        /* =========================================
+           LOGIN SUBMIT
+        ========================================= */
+
+        loginForm.addEventListener("submit", function (event) {
+
+            event.preventDefault();
+
+            let valid = true;
+
+
+            /* Email / Phone validation */
+
+            if (emailPhone.value.trim() === "") {
+
+                emailPhone.classList.add("invalid");
+
+                emailError.style.display = "block";
+
+                valid = false;
+
+            }
+
+
+            /* Password validation */
+
+            if (password.value.trim() === "") {
+
+                password.classList.add("invalid");
+
+                passwordError.style.display = "block";
+
+                valid = false;
+
+            }
+
+
+            if (!valid) {
+
+                return;
+            }
+
+
+            /* Remember user */
+
+            if (rememberMe.checked) {
+
+                localStorage.setItem(
+                    "hbosRememberedEmail",
+                    emailPhone.value.trim()
+                );
+
+            } else {
+
+                localStorage.removeItem(
+                    "hbosRememberedEmail"
+                );
+            }
+
+
+            /* Loading state */
+
+            signinButton.classList.add("loading");
+
+            buttonText.textContent = "Signing In...";
+
+
+            /* Demo request delay */
+
+            setTimeout(function () {
+
+                signinButton.classList.remove("loading");
+
+                buttonText.textContent = "Sign In";
+
+                successMessage.style.display = "block";
+
+            }, 900);
+
+        });
+
+
+        /* =========================================
+           FORGOT PASSWORD
+        ========================================= */
+
+        document
+            .getElementById("forgotPassword")
+            .addEventListener("click", function (event) {
+
+                event.preventDefault();
+
+                alert(
+                    "Password recovery page will open here."
+                );
+
+            });
+
+
+        /* =========================================
+           REGISTER
+        ========================================= */
+
+        document
+            .getElementById("registerLink")
+            .addEventListener("click", function (event) {
+
+                event.preventDefault();
+
+                alert(
+                    "Registration page will open here."
+                );
+
+            });
+
+    </script>
+
+</body>
+
+</html>

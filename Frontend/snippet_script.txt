@@ -1,0 +1,168 @@
+<script setup>
+import { ref, computed } from 'vue'
+
+const activeTab = ref('products')
+const isPanelOpen = ref(false)
+
+const searchQuery = ref('')
+const categoryFilter = ref('')
+const stockFilter = ref('')
+const globalSearchQuery = ref('')
+
+const marginDisplay = ref('0.00')
+
+const newProduct = ref({
+    name: '',
+    sku: '',
+    category: 'Grocery',
+    purchasePrice: 0,
+    sellingPrice: 0,
+    stock: 0,
+    unit: 'Piece',
+    minStock: 10,
+    notes: ''
+})
+
+const invoiceData = ref({
+    number: '',
+    date: '',
+    product: '',
+    sku: '',
+    category: '',
+    quantity: 0,
+    total: 0,
+    purchasePrice: 0,
+    sellingPrice: 0
+})
+
+const products = ref([
+    { name: "Whole Wheat Bread", sku: "BAK-1002", category: "Bakery", purchasePrice: 120.00, sellingPrice: 150.00, stock: 45 },
+    { name: "Fresh Milk 1L", sku: "DAI-2045", category: "Dairy", purchasePrice: 200.00, sellingPrice: 230.00, stock: 12 },
+    { name: "Orange Juice 500ml", sku: "BEV-3091", category: "Beverages", purchasePrice: 80.00, sellingPrice: 110.00, stock: 0 },
+    { name: "Premium Rice 5kg", sku: "GRO-4011", category: "Grocery", purchasePrice: 1400.00, sellingPrice: 1650.00, stock: 120 }
+])
+
+const showProducts = () => { activeTab.value = 'products' }
+const showInvoice = () => { activeTab.value = 'invoice' }
+const openProductPanel = () => { isPanelOpen.value = true }
+const closeProductPanel = () => { isPanelOpen.value = false }
+const openProductPanelFromInvoice = () => { activeTab.value = 'products'; isPanelOpen.value = true }
+
+const calculateMargin = () => {
+    const p = newProduct.value.purchasePrice || 0
+    const s = newProduct.value.sellingPrice || 0
+    if (p > 0 && s > 0) {
+        const margin = ((s - p) / s) * 100
+        marginDisplay.value = margin.toFixed(2)
+    } else {
+        marginDisplay.value = '0.00'
+    }
+}
+
+const saveProduct = () => {
+    if (!newProduct.value.name || !newProduct.value.sku || !newProduct.value.sellingPrice) {
+        toastMsg.value = 'Please fill all required fields.'
+        showToast()
+        return
+    }
+
+    products.value.unshift({
+        name: newProduct.value.name,
+        sku: newProduct.value.sku,
+        category: newProduct.value.category,
+        purchasePrice: newProduct.value.purchasePrice,
+        sellingPrice: newProduct.value.sellingPrice,
+        stock: newProduct.value.stock
+    })
+
+    const invNum = "INV-" + Math.floor(100000 + Math.random() * 900000)
+    const now = new Date()
+    const dStr = now.toLocaleDateString("en-US", { year: 'numeric', month: 'short', day: 'numeric' })
+    const tStr = now.toLocaleTimeString("en-US", { hour: '2-digit', minute: '2-digit' })
+
+    invoiceData.value = {
+        number: invNum,
+        date: `${dStr} ${tStr}`,
+        product: newProduct.value.name,
+        sku: newProduct.value.sku,
+        category: newProduct.value.category,
+        quantity: newProduct.value.stock,
+        total: newProduct.value.stock * newProduct.value.sellingPrice,
+        purchasePrice: newProduct.value.purchasePrice,
+        sellingPrice: newProduct.value.sellingPrice
+    }
+
+    closeProductPanel()
+    showInvoice()
+    toastMsg.value = 'Product added successfully!'
+    showToast()
+    
+    newProduct.value = { name: '', sku: '', category: 'Grocery', purchasePrice: 0, sellingPrice: 0, stock: 0, unit: 'Piece', minStock: 10, notes: '' }
+    marginDisplay.value = '0.00'
+}
+
+const filteredProducts = computed(() => {
+    return products.value.filter(p => {
+        const matchesSearch = p.name.toLowerCase().includes(searchQuery.value.toLowerCase()) || p.sku.toLowerCase().includes(searchQuery.value.toLowerCase())
+        const matchesCat = categoryFilter.value ? p.category === categoryFilter.value : true
+        let stockStatus = 'In Stock'
+        if (p.stock === 0) stockStatus = 'Out of Stock'
+        else if (p.stock <= 15) stockStatus = 'Low Stock'
+        const matchesStock = stockFilter.value ? stockStatus === stockFilter.value : true
+        return matchesSearch && matchesCat && matchesStock
+    })
+})
+
+const handleGlobalSearch = () => {
+    searchQuery.value = globalSearchQuery.value
+    showProducts()
+}
+
+const toastMsg = ref('')
+const isToastOpen = ref(false)
+const showToast = () => {
+    isToastOpen.value = true
+    setTimeout(() => { isToastOpen.value = false }, 2500)
+}
+
+const formatMoney = (val) => Number(val).toLocaleString("en-PK", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+
+const getStockBadge = (stock) => {
+    if (stock === 0) return 'red'
+    if (stock <= 15) return 'yellow'
+    return 'green'
+}
+const getStockText = (stock) => {
+    if (stock === 0) return 'Out of Stock'
+    if (stock <= 15) return 'Low Stock'
+    return 'In Stock'
+}
+
+const printInvoice = () => window.print()
+const shareInvoice = async () => {
+    const text = `HBOS Inventory Invoice\nProduct: ${invoiceData.value.product}\nTotal: Rs ${formatMoney(invoiceData.value.total)}`
+    if (navigator.share) {
+        try { await navigator.share({ title: "HBOS Invoice", text }) } catch (e) {}
+    } else {
+        try {
+            await navigator.clipboard.writeText(text)
+            toastMsg.value = "Invoice details copied."
+            showToast()
+        } catch(e) {}
+    }
+}
+const downloadInvoice = () => {
+    const content = `HBOS - MANAGEMENT SYSTEM\n==============================\n\nPRODUCT INVOICE\n\nInvoice: ${invoiceData.value.number}\nProduct: ${invoiceData.value.product}\nTotal: Rs ${formatMoney(invoiceData.value.total)}\n\nProduct successfully added to inventory.\n`
+    const blob = new Blob([content], { type: "text/plain" })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement("a")
+    link.href = url
+    link.download = "HBOS-Product-Invoice.txt"
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    URL.revokeObjectURL(url)
+    toastMsg.value = "Invoice downloaded."
+    showToast()
+}
+</script>

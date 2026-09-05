@@ -1,0 +1,40 @@
+# Laravel/API ignores
+api/vendor/
+api/node_modules/
+api/public/storage
+api/public/hot
+api/public/mix-manifest.json
+api/storage/*.key
+api/.env
+api/.env.backup
+api/.env.production
+api/.phpunit.result.cache
+api/Homestead.json
+api/Homestead.yaml
+api/npm-debug.log
+api/yarn-error.log
+api/.idea
+api/.vscode
+api/storage/framework/cache/data/*
+api/storage/framework/sessions/*
+api/storage/framework/views/*
+api/storage/logs/*
+
+# Frontend/Vue ignores
+Frontend/node_modules/
+Frontend/dist/
+Frontend/dist-ssr/
+Frontend/.env
+Frontend/.env.*
+Frontend/.env.local
+Frontend/.vscode/
+Frontend/.idea/
+Frontend/npm-debug.log
+Frontend/yarn-error.log
+Frontend/pnpm-debug.log
+
+# Project Root specific
+/HBOS_database_snapshot.sql
+/composer.phar
+/*.cjs
+/scratch/

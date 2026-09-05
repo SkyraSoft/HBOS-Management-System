@@ -1,0 +1,847 @@
+<body>
+
+    <div class="app">
+
+        <!-- ==================================================
+       SIDEBAR
+       ONLY INVENTORY + SETTINGS + HELP
+  =================================================== -->
+
+        <aside class="sidebar" id="sidebar">
+
+            <div class="brand">
+                <div class="brand-logo">H</div>
+                <div class="brand-text">
+                    <h1>HBOS</h1>
+                    <p>Management System</p>
+                </div>
+            </div>
+
+            <div class="sidebar-content">
+
+                <div class="nav-label">Management</div>
+
+                <!-- INVENTORY -->
+                <button class="nav-item active" id="inventoryBtn">
+                    <span class="nav-icon">▣</span>
+                    <span>Inventory</span>
+                    <span class="nav-arrow open" id="inventoryArrow">⌄</span>
+                </button>
+
+                <div class="submenu show" id="inventorySubmenu">
+                    <button class="active" id="productsNav">
+                        Products
+                    </button>
+
+                    <button id="invoiceNav">
+                        Product Invoice
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- ONLY SETTINGS + HELP -->
+            <div class="sidebar-bottom">
+
+                <button class="bottom-link" id="settingsBtn">
+                    <span class="nav-icon">⚙</span>
+                    <span>Settings</span>
+                </button>
+
+                <button class="bottom-link" id="helpBtn">
+                    <span class="nav-icon">?</span>
+                    <span>Help</span>
+                </button>
+
+            </div>
+
+        </aside>
+
+
+        <!-- ==================================================
+       MAIN
+  =================================================== -->
+
+        <main class="main">
+
+            <header class="topbar">
+
+                <div class="top-left">
+
+                    <button class="mobile-menu" id="mobileMenu">
+                        ☰
+                    </button>
+
+                    <div class="breadcrumb">
+                        Inventory &nbsp;›&nbsp;
+                        <strong id="breadcrumbText">Products</strong>
+                    </div>
+
+                </div>
+
+                <div class="top-actions">
+
+                    <div class="search">
+                        <span>⌕</span>
+                        <input type="text" id="globalSearch" placeholder="Search products..." />
+                    </div>
+
+                    <button class="top-icon">♧</button>
+
+                    <div class="avatar">H</div>
+
+                </div>
+
+            </header>
+
+
+            <!-- ==================================================
+         PRODUCTS PAGE
+    =================================================== -->
+
+            <section class="page products-page" id="productsPage">
+
+                <div class="page-header">
+
+                    <div>
+                        <h2>Products</h2>
+                        <p>
+                            Manage your products, pricing, categories, and inventory.
+                        </p>
+                    </div>
+
+                    <button class="primary-btn" id="addProductBtn">
+                        <span>＋</span>
+                        Add Product
+                    </button>
+
+                </div>
+
+
+                <!-- STATS -->
+
+                <div class="stats">
+
+                    <div class="stat">
+                        <div class="stat-label">Total Products</div>
+                        <div class="stat-value" id="totalProducts">
+                            1,245
+                        </div>
+                    </div>
+
+                    <div class="stat">
+                        <div class="stat-label">Active Products</div>
+                        <div class="stat-value">
+                            1,180
+                        </div>
+                    </div>
+
+                    <div class="stat">
+                        <div class="stat-label">Low Stock</div>
+                        <div class="stat-value red">
+                            42
+                        </div>
+                    </div>
+
+                    <div class="stat">
+                        <div class="stat-label">Out of Stock</div>
+                        <div class="stat-value red">
+                            23
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <!-- PRODUCT TABLE -->
+
+                <div class="card">
+
+                    <div class="card-toolbar">
+
+                        <h3>Product List</h3>
+
+                        <div class="filters">
+
+                            <input class="filter-input" id="productSearch" type="text"
+                                placeholder="Search by name, SKU..." />
+
+                            <select class="filter-select" id="categoryFilter">
+                                <option value="">All Categories</option>
+                                <option value="Dairy">Dairy</option>
+                                <option value="Bakery">Bakery</option>
+                                <option value="Grocery">Grocery</option>
+                                <option value="Beverages">Beverages</option>
+                            </select>
+
+                            <select class="filter-select" id="stockFilter">
+                                <option value="">All Stock</option>
+                                <option value="In Stock">In Stock</option>
+                                <option value="Low Stock">Low Stock</option>
+                                <option value="Out of Stock">Out of Stock</option>
+                            </select>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="table-wrapper">
+
+                        <table>
+
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>SKU</th>
+                                    <th>Category</th>
+                                    <th>Purchase Price</th>
+                                    <th>Selling Price</th>
+                                    <th>Stock</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="productTableBody">
+
+                                <tr data-category="Dairy" data-stock="In Stock">
+                                    <td>
+                                        <div class="product-cell">
+                                            <div class="product-image">🥛</div>
+                                            <div>
+                                                <div class="product-name">Fresh Milk 1L</div>
+                                                <div class="product-sku">MILK-001</div>
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <td>MILK-001</td>
+                                    <td>Dairy</td>
+                                    <td>PKR 180</td>
+                                    <td>PKR 220</td>
+                                    <td>85</td>
+
+                                    <td>
+                                        <span class="badge green">In Stock</span>
+                                    </td>
+
+                                    <td>
+                                        <button class="action-btn">View</button>
+                                    </td>
+                                </tr>
+
+
+                                <tr data-category="Bakery" data-stock="In Stock">
+                                    <td>
+                                        <div class="product-cell">
+                                            <div class="product-image">🍞</div>
+                                            <div>
+                                                <div class="product-name">White Bread Large</div>
+                                                <div class="product-sku">BAK-042</div>
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <td>BAK-042</td>
+                                    <td>Bakery</td>
+                                    <td>PKR 90</td>
+                                    <td>PKR 120</td>
+                                    <td>54</td>
+
+                                    <td>
+                                        <span class="badge green">In Stock</span>
+                                    </td>
+
+                                    <td>
+                                        <button class="action-btn">View</button>
+                                    </td>
+                                </tr>
+
+
+                                <tr data-category="Dairy" data-stock="Low Stock">
+                                    <td>
+                                        <div class="product-cell">
+                                            <div class="product-image">🥚</div>
+                                            <div>
+                                                <div class="product-name">Farm Fresh Eggs</div>
+                                                <div class="product-sku">DRY-012</div>
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <td>DRY-012</td>
+                                    <td>Dairy</td>
+                                    <td>PKR 250</td>
+                                    <td>PKR 300</td>
+                                    <td>8</td>
+
+                                    <td>
+                                        <span class="badge red">Low Stock</span>
+                                    </td>
+
+                                    <td>
+                                        <button class="action-btn">View</button>
+                                    </td>
+                                </tr>
+
+
+                                <tr data-category="Beverages" data-stock="In Stock">
+                                    <td>
+                                        <div class="product-cell">
+                                            <div class="product-image">🥤</div>
+                                            <div>
+                                                <div class="product-name">Soft Drink 1.5L</div>
+                                                <div class="product-sku">BEV-019</div>
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <td>BEV-019</td>
+                                    <td>Beverages</td>
+                                    <td>PKR 110</td>
+                                    <td>PKR 140</td>
+                                    <td>72</td>
+
+                                    <td>
+                                        <span class="badge green">In Stock</span>
+                                    </td>
+
+                                    <td>
+                                        <button class="action-btn">View</button>
+                                    </td>
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+
+                    <div class="pagination">
+
+                        <span>
+                            Showing 1 to 4 of 1,245 products
+                        </span>
+
+                        <div class="pagination-buttons">
+                            <button class="page-btn">‹</button>
+                            <button class="page-btn active">1</button>
+                            <button class="page-btn">2</button>
+                            <button class="page-btn">3</button>
+                            <button class="page-btn">›</button>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ==================================================
+         INVOICE PAGE
+    =================================================== -->
+
+            <section class="page invoice-page" id="invoicePage">
+
+                <div class="page-header">
+
+                    <div>
+                        <h2>Product Invoice</h2>
+                        <p>
+                            Invoice generated from the newly added inventory product.
+                        </p>
+                    </div>
+
+                    <button class="secondary-btn" id="backProducts">
+                        ← Products
+                    </button>
+
+                </div>
+
+
+                <div class="invoice-layout">
+
+                    <!-- SUCCESS -->
+
+                    <div class="success-card">
+
+                        <div class="success-icon">✓</div>
+
+                        <h2>Product Added</h2>
+
+                        <p>
+                            The product has been successfully added to inventory.
+                        </p>
+
+                        <div class="details-box">
+
+                            <div class="detail-row">
+                                <span>Invoice</span>
+                                <strong id="invoiceNumber">#INV-1024</strong>
+                            </div>
+
+                            <div class="detail-row">
+                                <span>Product</span>
+                                <strong id="invoiceProduct">Fresh Milk 1L</strong>
+                            </div>
+
+                            <div class="detail-row">
+                                <span>SKU</span>
+                                <strong id="invoiceSku">MILK-001</strong>
+                            </div>
+
+                            <div class="detail-row">
+                                <span>Category</span>
+                                <strong id="invoiceCategory">Dairy</strong>
+                            </div>
+
+                            <div class="detail-row">
+                                <span>Quantity</span>
+                                <strong id="invoiceQty">1</strong>
+                            </div>
+
+                            <div class="detail-row total">
+                                <span>Total</span>
+                                <strong id="invoiceTotal">
+                                    PKR 0
+                                </strong>
+                            </div>
+
+                        </div>
+
+
+                        <div class="invoice-actions">
+
+                            <button class="black" id="newProductBtn">
+                                ＋ Add New Product
+                            </button>
+
+                            <button id="printInvoiceBtn">
+                                🖨 Print Invoice
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- RECEIPT -->
+
+                    <div class="receipt-card">
+
+                        <div class="receipt" id="receipt">
+
+                            <div class="receipt-head">
+
+                                <h3>HBOS</h3>
+
+                                <p>
+                                    Management System<br>
+                                    Main Store<br><br>
+                                    Invoice:
+                                    <span id="receiptInvoice">
+                                        #INV-1024
+                                    </span><br>
+
+                                    <span id="receiptDate"></span>
+                                </p>
+
+                            </div>
+
+
+                            <table class="receipt-table">
+
+                                <thead>
+                                    <tr>
+                                        <th>Item</th>
+                                        <th>Qty</th>
+                                        <th>Amt</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+
+                                    <tr>
+                                        <td id="receiptProduct">
+                                            Product
+                                        </td>
+
+                                        <td id="receiptQty">
+                                            1
+                                        </td>
+
+                                        <td id="receiptAmount">
+                                            0
+                                        </td>
+                                    </tr>
+
+                                </tbody>
+
+                            </table>
+
+
+                            <div class="receipt-total">
+
+                                <div>
+                                    <span>Purchase Price</span>
+                                    <span id="receiptPurchase">
+                                        PKR 0
+                                    </span>
+                                </div>
+
+                                <div>
+                                    <span>Quantity</span>
+                                    <span id="receiptQuantity">
+                                        1
+                                    </span>
+                                </div>
+
+                                <div class="grand">
+                                    <span>TOTAL</span>
+                                    <span id="receiptTotal">
+                                        PKR 0
+                                    </span>
+                                </div>
+
+                            </div>
+
+
+                            <div class="receipt-footer">
+                                Inventory product successfully recorded.
+                                <br><br>
+                                Thank you!
+                            </div>
+
+                        </div>
+
+
+                        <div class="receipt-buttons">
+
+                            <button id="receiptPrint">
+                                🖨 Print
+                            </button>
+
+                            <button id="shareInvoice">
+                                ↗ Share
+                            </button>
+
+                            <button id="downloadInvoice">
+                                ↓ Download Invoice
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ==================================================
+         SETTINGS
+    =================================================== -->
+
+            <section class="page simple-page" id="settingsPage">
+
+                <div class="page-header">
+                    <div>
+                        <h2>Settings</h2>
+                        <p>Manage your HBOS inventory settings.</p>
+                    </div>
+                </div>
+
+                <div class="simple-card">
+                    <h2>Inventory Settings</h2>
+                    <p>
+                        Product and inventory configuration can be managed from here.
+                    </p>
+                </div>
+
+            </section>
+
+
+            <!-- ==================================================
+         HELP
+    =================================================== -->
+
+            <section class="page simple-page" id="helpPage">
+
+                <div class="page-header">
+                    <div>
+                        <h2>Help</h2>
+                        <p>Get help with your HBOS inventory management system.</p>
+                    </div>
+                </div>
+
+                <div class="simple-card">
+                    <h2>How can we help?</h2>
+                    <p>
+                        Use Inventory → Products to add and manage your products.
+                    </p>
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <!-- ==================================================
+     ADD PRODUCT OVERLAY
+=================================================== -->
+
+    <div class="overlay" id="overlay"></div>
+
+    <div class="side-panel" id="productPanel">
+
+        <div class="panel-header">
+
+            <h3>Add New Product</h3>
+
+            <button class="close-btn" id="closePanel">
+                ×
+            </button>
+
+        </div>
+
+
+        <form class="form" id="productForm">
+
+            <!-- BASIC INFO -->
+
+            <div class="form-section">
+
+                <div class="section-title">
+                    Basic Info
+                </div>
+
+                <div class="form-group">
+
+                    <label>
+                        Product Name *
+                    </label>
+
+                    <input type="text" id="productName" placeholder="e.g. Fresh Milk 1L" required />
+
+                </div>
+
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+
+                        <label>
+                            SKU *
+                        </label>
+
+                        <input type="text" id="sku" placeholder="e.g. MILK-001" required />
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Category *
+                        </label>
+
+                        <select id="category" required>
+
+                            <option value="">
+                                Select...
+                            </option>
+
+                            <option>
+                                Dairy
+                            </option>
+
+                            <option>
+                                Bakery
+                            </option>
+
+                            <option>
+                                Grocery
+                            </option>
+
+                            <option>
+                                Beverages
+                            </option>
+
+                            <option>
+                                Household
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- PRICING -->
+
+            <div class="form-section">
+
+                <div class="section-title">
+                    Pricing
+                </div>
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+
+                        <label>
+                            Purchase Price (PKR) *
+                        </label>
+
+                        <input type="number" id="purchasePrice" min="0" step="0.01" placeholder="0.00" required />
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Selling Price (PKR) *
+                        </label>
+
+                        <input type="number" id="sellingPrice" min="0" step="0.01" placeholder="0.00" required />
+
+                    </div>
+
+                </div>
+
+
+                <div class="margin-box">
+
+                    <span>Est. Margin:</span>
+
+                    <span id="marginValue">
+                        --%
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- INVENTORY SETTINGS -->
+
+            <div class="form-section">
+
+                <div class="section-title">
+                    Inventory Settings
+                </div>
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+
+                        <label>
+                            Initial Stock *
+                        </label>
+
+                        <input type="number" id="stock" min="1" value="1" required />
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Unit
+                        </label>
+
+                        <select id="unit">
+
+                            <option>
+                                Piece
+                            </option>
+
+                            <option>
+                                Kg
+                            </option>
+
+                            <option>
+                                Litre
+                            </option>
+
+                            <option>
+                                Dozen
+                            </option>
+
+                            <option>
+                                Box
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Min Stock Alert
+                        </label>
+
+                        <input type="number" id="minStock" min="0" value="5" />
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- DESCRIPTION -->
+
+            <div class="form-section">
+
+                <div class="section-title">
+                    Additional Information
+                </div>
+
+                <div class="form-group">
+
+                    <label>
+                        Notes
+                    </label>
+
+                    <textarea id="notes" placeholder="Additional product details..."></textarea>
+
+                </div>
+
+            </div>
+
+        </form>
+
+
+        <div class="panel-footer">
+
+            <button class="secondary-btn" id="cancelPanel">
+                Cancel
+            </button>
+
+            <button class="save-btn" id="saveProduct" type="button">
+                ✓ Save Product
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <div class="toast" id="toast">
+        Product added successfully.
+    </div>
+
+
+    

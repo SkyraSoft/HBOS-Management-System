@@ -1,0 +1,2267 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>HBOS - Sales</title>
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <style>
+        /* =========================================================
+           GLOBAL
+        ========================================================= */
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f6f8fb;
+            color: #20232a;
+            overflow-x: hidden;
+        }
+
+        button,
+        input,
+        select {
+            font-family: inherit;
+        }
+
+        /* =========================================================
+           APP LAYOUT
+        ========================================================= */
+
+        .app {
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* =========================================================
+           SIDEBAR
+        ========================================================= */
+
+        .sidebar {
+            width: 255px;
+            min-width: 255px;
+            min-height: 100vh;
+            background: #f7f9fc;
+            border-right: 1px solid #d8dee8;
+            display: flex;
+            flex-direction: column;
+            padding: 28px 16px 20px;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            z-index: 1000;
+        }
+
+        .brand {
+            padding: 0 16px 30px;
+        }
+
+        .brand h2 {
+            margin: 0;
+            font-size: 25px;
+            font-weight: 800;
+            color: #111827;
+        }
+
+        .brand span {
+            display: block;
+            margin-top: 3px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: .3px;
+            color: #555d6d;
+        }
+
+        .new-sale-btn {
+            width: 100%;
+            height: 46px;
+            border: none;
+            border-radius: 9px;
+            background: #000;
+            color: white;
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            transition: .2s;
+        }
+
+        .new-sale-btn:hover {
+            background: #1d1d1d;
+        }
+
+        .sidebar-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .sidebar-link {
+            width: 100%;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            padding: 0 15px;
+            border-radius: 9px;
+            color: #4c5565;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: .2s;
+        }
+
+        .sidebar-link:hover {
+            background: #e9edf5;
+            color: #1d3fbf;
+        }
+
+        .sidebar-link.active {
+            background: #dbe4ff;
+            color: #17358f;
+        }
+
+        .sidebar-link i {
+            font-size: 19px;
+        }
+
+        .sidebar-bottom {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid #d3d8e1;
+        }
+
+        /* =========================================================
+           MAIN
+        ========================================================= */
+
+        .main {
+            margin-left: 255px;
+            width: calc(100% - 255px);
+            min-height: 100vh;
+        }
+
+        /* =========================================================
+           TOPBAR
+        ========================================================= */
+
+        .topbar {
+            height: 65px;
+            background: white;
+            border-bottom: 1px solid #d8dee8;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            position: sticky;
+            top: 0;
+            z-index: 900;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .page-title {
+            font-size: 21px;
+            font-weight: 800;
+            margin: 0;
+            color: #111827;
+        }
+
+        .branch-tabs {
+            display: flex;
+            gap: 18px;
+            height: 65px;
+            align-items: center;
+        }
+
+        .branch-tab {
+            height: 65px;
+            display: flex;
+            align-items: center;
+            border-bottom: 3px solid transparent;
+            color: #444b58;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .branch-tab.active {
+            color: #075be6;
+            font-weight: 700;
+            border-bottom-color: #075be6;
+        }
+
+        .topbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .top-icon {
+            width: 35px;
+            height: 35px;
+            border: none;
+            background: transparent;
+            color: #4b5563;
+            font-size: 20px;
+            border-radius: 50%;
+        }
+
+        .top-icon:hover {
+            background: #f0f2f6;
+        }
+
+        .profile {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: #eef2f7;
+            border: 1px solid #cbd2dc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #26364e;
+        }
+
+        /* =========================================================
+           CONTENT
+        ========================================================= */
+
+        .content {
+            padding: 16px;
+        }
+
+        .sales-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.7fr) minmax(340px, .85fr);
+            gap: 16px;
+            align-items: stretch;
+        }
+
+        /* =========================================================
+           PRODUCT PANEL
+        ========================================================= */
+
+        .product-panel,
+        .checkout-panel,
+        .held-sales {
+            background: white;
+            border: 1px solid #d4dae4;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .product-search-area {
+            padding: 16px;
+            border-bottom: 1px solid #d8dee8;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 21px;
+            color: #4b5563;
+        }
+
+        .search-box input {
+            width: 100%;
+            height: 62px;
+            border: 1px solid #cbd2dc;
+            border-radius: 9px;
+            padding: 0 18px 0 49px;
+            font-size: 18px;
+            outline: none;
+        }
+
+        .search-box input:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, .1);
+        }
+
+        .category-area {
+            padding: 16px;
+            border-bottom: 1px solid #d8dee8;
+            display: flex;
+            gap: 9px;
+            flex-wrap: wrap;
+        }
+
+        .category-btn {
+            border: 1px solid #c8ced8;
+            background: #f1f3f6;
+            color: #303641;
+            padding: 9px 17px;
+            border-radius: 22px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: .2s;
+        }
+
+        .category-btn:hover {
+            background: #e5e9ef;
+        }
+
+        .category-btn.active {
+            background: #dce5ff;
+            border-color: #aebff7;
+            color: #163b9c;
+        }
+
+        /* =========================================================
+           PRODUCT TABLE
+        ========================================================= */
+
+        .product-table-wrap {
+            min-height: 650px;
+        }
+
+        .product-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .product-table thead {
+            background: #eef0f3;
+        }
+
+        .product-table th {
+            height: 41px;
+            padding: 0 16px;
+            font-size: 12px;
+            color: #4c5360;
+            font-weight: 700;
+            text-align: left;
+        }
+
+        .product-table td {
+            padding: 20px 16px;
+            border-top: 1px solid #dfe3e9;
+            vertical-align: middle;
+            font-size: 14px;
+        }
+
+        .product-name {
+            font-weight: 700;
+            font-size: 15px;
+            color: #252a33;
+        }
+
+        .product-sku {
+            font-size: 12px;
+            color: #5f6775;
+            margin-top: 3px;
+        }
+
+        .stock-warning {
+            color: #dc2626;
+            font-size: 12px;
+            font-weight: 700;
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .price {
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .qty-control {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+        }
+
+        .qty-btn {
+            width: 34px;
+            height: 34px;
+            border: 1px solid #cbd2dc;
+            border-radius: 5px;
+            background: white;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .qty-btn:hover {
+            background: #f0f3f7;
+        }
+
+        .qty-value {
+            min-width: 22px;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .qty-danger {
+            color: #dc2626;
+        }
+
+        .subtotal {
+            font-size: 17px;
+            font-weight: 800;
+        }
+
+        .empty-products {
+            display: none;
+            min-height: 500px;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #667085;
+        }
+
+        /* =========================================================
+           CHECKOUT
+        ========================================================= */
+
+        .checkout-column {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .customer-card {
+            padding: 16px;
+            border-bottom: 1px solid #dfe3e9;
+        }
+
+        .section-label {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .customer-select {
+            width: 100%;
+            height: 39px;
+            border: 1px solid #c8ced8;
+            border-radius: 7px;
+            padding: 0 12px;
+            font-size: 14px;
+            background: white;
+        }
+
+        .summary {
+            padding: 22px 16px;
+        }
+
+        .summary-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            color: #4e5561;
+            font-size: 14px;
+        }
+
+        .summary-row strong {
+            color: #222831;
+        }
+
+        .discount-btn {
+            border: none;
+            background: none;
+            padding: 0;
+            color: #009b68;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .discount-input {
+            display: none;
+            margin-top: 8px;
+        }
+
+        .discount-input input {
+            width: 100%;
+            height: 38px;
+            border: 1px solid #cbd2dc;
+            border-radius: 6px;
+            padding: 0 10px;
+        }
+
+        .total-divider {
+            border-top: 1px solid #cfd4dc;
+            margin: 20px 0 15px;
+        }
+
+        .total-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .total-label {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .total-amount {
+            font-size: 32px;
+            font-weight: 900;
+            color: #050505;
+        }
+
+        /* =========================================================
+           PAYMENT METHODS
+        ========================================================= */
+
+        .payment-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        .payment-btn {
+            height: 80px;
+            border: 1px solid #ccd2dc;
+            background: #f8f9fb;
+            border-radius: 9px;
+            color: #4d5562;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .payment-btn i {
+            font-size: 22px;
+        }
+
+        .payment-btn.active {
+            background: #dce5ff;
+            border: 2px solid #111;
+            color: #1e2c49;
+        }
+
+        /* =========================================================
+           RECEIVED
+        ========================================================= */
+
+        .received-box {
+            margin-top: 28px;
+            padding: 12px;
+            background: #f7f8fa;
+            border: 1px solid #cbd2dc;
+            border-radius: 8px;
+        }
+
+        .received-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 5px 0 12px;
+            font-size: 14px;
+        }
+
+        .received-row input {
+            width: 125px;
+            height: 32px;
+            text-align: right;
+            border: 1px solid #c5cbd4;
+            border-radius: 5px;
+            padding: 0 9px;
+        }
+
+        .change-value {
+            color: #009b68;
+            font-weight: 800;
+            font-size: 16px;
+        }
+
+        .complete-sale {
+            width: 100%;
+            height: 60px;
+            border: none;
+            border-radius: 11px;
+            background: #000;
+            color: white;
+            font-size: 20px;
+            font-weight: 800;
+            margin-top: 24px;
+            cursor: pointer;
+            transition: .2s;
+        }
+
+        .complete-sale:hover {
+            background: #222;
+        }
+
+        .complete-sale:disabled {
+            background: #a4a9b1;
+            cursor: not-allowed;
+        }
+
+        /* =========================================================
+           HELD SALES
+        ========================================================= */
+
+        .held-sales {
+            padding: 17px 16px;
+        }
+
+        .held-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 13px;
+            font-weight: 800;
+            color: #4b5260;
+            margin-bottom: 16px;
+        }
+
+        .held-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 9px 0;
+            border-top: 1px solid #e1e4e9;
+        }
+
+        .held-name {
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .held-info {
+            font-size: 12px;
+            color: #5e6674;
+            margin-top: 2px;
+        }
+
+        .resume-btn {
+            border: none;
+            background: none;
+            color: #075be6;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        /* =========================================================
+           TOAST
+        ========================================================= */
+
+        .sale-toast {
+            position: fixed;
+            right: 25px;
+            bottom: 25px;
+            min-width: 300px;
+            background: #111827;
+            color: white;
+            border-radius: 10px;
+            padding: 16px 18px;
+            display: none;
+            z-index: 5000;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, .2);
+        }
+
+        .sale-toast.show {
+            display: block;
+            animation: toastIn .3s ease;
+        }
+
+        @keyframes toastIn {
+            from {
+                transform: translateY(15px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* =========================================================
+           MOBILE MENU
+        ========================================================= */
+
+        .mobile-menu-btn {
+            display: none;
+            border: none;
+            background: transparent;
+            font-size: 24px;
+        }
+
+        .sidebar-overlay {
+            display: none;
+        }
+
+        /* =========================================================
+           RESPONSIVE
+        ========================================================= */
+
+        @media (max-width: 1200px) {
+
+            .sales-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .checkout-column {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .checkout-panel {
+                height: fit-content;
+            }
+
+            .held-sales {
+                height: fit-content;
+            }
+        }
+
+        @media (max-width: 900px) {
+
+            .sidebar {
+                transform: translateX(-100%);
+                transition: .25s ease;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .sidebar-overlay {
+                position: fixed;
+                inset: 0;
+                background: rgba(0, 0, 0, .35);
+                z-index: 999;
+            }
+
+            .sidebar-overlay.show {
+                display: block;
+            }
+
+            .topbar-left {
+                gap: 12px;
+            }
+
+            .page-title {
+                font-size: 18px;
+            }
+
+            .branch-tabs {
+                display: none;
+            }
+        }
+
+        @media (max-width: 700px) {
+
+            .topbar {
+                padding: 0 13px;
+            }
+
+            .topbar-actions {
+                gap: 7px;
+            }
+
+            .topbar-actions .top-icon:nth-child(2) {
+                display: none;
+            }
+
+            .content {
+                padding: 10px;
+            }
+
+            .product-table-wrap {
+                overflow-x: auto;
+                min-height: 450px;
+            }
+
+            .product-table {
+                min-width: 700px;
+            }
+
+            .checkout-column {
+                grid-template-columns: 1fr;
+            }
+
+            .total-amount {
+                font-size: 27px;
+            }
+        }
+
+        @media (max-width: 480px) {
+
+            .brand {
+                padding-left: 10px;
+            }
+
+            .topbar {
+                height: 58px;
+            }
+
+            .page-title {
+                font-size: 16px;
+            }
+
+            .profile {
+                width: 30px;
+                height: 30px;
+            }
+
+            .product-search-area {
+                padding: 10px;
+            }
+
+            .search-box input {
+                height: 52px;
+                font-size: 15px;
+            }
+
+            .category-area {
+                padding: 10px;
+            }
+
+            .category-btn {
+                padding: 7px 12px;
+                font-size: 12px;
+            }
+
+            .payment-btn {
+                height: 70px;
+            }
+
+            .sale-toast {
+                left: 15px;
+                right: 15px;
+                min-width: auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="app">
+
+        <!-- =========================================================
+         SIDEBAR
+    ========================================================== -->
+
+        <aside class="sidebar" id="sidebar">
+
+            <div class="brand">
+                <h2>HBOS</h2>
+                <span>Management System</span>
+            </div>
+
+            <button class="new-sale-btn" id="newSaleBtn">
+                <i class="bi bi-plus-lg me-2"></i>
+                New Sale
+            </button>
+
+            <!-- ONLY SALES MODULE -->
+            <nav class="sidebar-menu">
+
+                <a href="#" class="sidebar-link active">
+                    <i class="bi bi-shop-window"></i>
+                    <span>Sales</span>
+                </a>
+
+            </nav>
+
+            <!-- SETTINGS / LOGOUT ONLY -->
+            <div class="sidebar-bottom">
+
+                <a href="#" class="sidebar-link">
+                    <i class="bi bi-gear"></i>
+                    <span>Settings</span>
+                </a>
+
+                <a href="#" class="sidebar-link" id="logoutBtn">
+                    <i class="bi bi-box-arrow-right"></i>
+                    <span>Logout</span>
+                </a>
+
+            </div>
+
+        </aside>
+
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- =========================================================
+         MAIN
+    ========================================================== -->
+
+        <main class="main">
+
+            <!-- TOPBAR -->
+
+            <header class="topbar">
+
+                <div class="topbar-left">
+
+                    <button class="mobile-menu-btn" id="mobileMenuBtn">
+                        <i class="bi bi-list"></i>
+                    </button>
+
+                    <h1 class="page-title">
+                        HBOS Dashboard
+                    </h1>
+
+                    <div class="branch-tabs">
+
+                        <div class="branch-tab active">
+                            Main Store
+                        </div>
+
+                        <div class="branch-tab">
+                            Branch A
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="topbar-actions">
+
+                    <button class="top-icon" title="Notifications">
+                        <i class="bi bi-bell"></i>
+                    </button>
+
+                    <button class="top-icon" title="Help">
+                        <i class="bi bi-question-circle"></i>
+                    </button>
+
+                    <div class="profile">
+                        H
+                    </div>
+
+                </div>
+
+            </header>
+
+
+            <!-- =====================================================
+             CONTENT
+        ====================================================== -->
+
+            <section class="content">
+
+                <div class="sales-layout">
+
+                    <!-- =================================================
+                     LEFT PRODUCT PANEL
+                ================================================== -->
+
+                    <section class="product-panel">
+
+                        <!-- SEARCH -->
+
+                        <div class="product-search-area">
+
+                            <div class="search-box">
+
+                                <i class="bi bi-search"></i>
+
+                                <input type="text" id="productSearch" placeholder="Search product by name or SKU..."
+                                    autocomplete="off">
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- CATEGORIES -->
+
+                        <div class="category-area">
+
+                            <button class="category-btn active" data-category="all">
+                                All Items
+                            </button>
+
+                            <button class="category-btn" data-category="dairy">
+                                Dairy
+                            </button>
+
+                            <button class="category-btn" data-category="beverages">
+                                Beverages
+                            </button>
+
+                            <button class="category-btn" data-category="snacks">
+                                Snacks
+                            </button>
+
+                            <button class="category-btn" data-category="produce">
+                                Produce
+                            </button>
+
+                        </div>
+
+
+                        <!-- PRODUCT TABLE -->
+
+                        <div class="product-table-wrap">
+
+                            <table class="product-table">
+
+                                <thead>
+
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Product</th>
+                                        <th>Price</th>
+                                        <th>Qty</th>
+                                        <th>Subtotal</th>
+                                    </tr>
+
+                                </thead>
+
+                                <tbody id="productTableBody">
+
+                                    <!-- PRODUCT 1 -->
+
+                                    <tr class="product-row" data-name="Milk 1L Full Cream" data-sku="89012345"
+                                        data-category="dairy" data-price="280" data-stock="10" data-qty="2">
+
+                                        <td>1</td>
+
+                                        <td>
+
+                                            <div class="product-name">
+                                                Milk 1L Full Cream
+                                            </div>
+
+                                            <div class="product-sku">
+                                                SKU: 89012345
+                                            </div>
+
+                                        </td>
+
+                                        <td class="price">
+                                            Rs. 280
+                                        </td>
+
+                                        <td>
+
+                                            <div class="qty-control">
+
+                                                <button class="qty-btn minus-btn" type="button">
+                                                    −
+                                                </button>
+
+                                                <span class="qty-value">
+                                                    2
+                                                </span>
+
+                                                <button class="qty-btn plus-btn" type="button">
+                                                    +
+                                                </button>
+
+                                            </div>
+
+                                        </td>
+
+                                        <td class="subtotal">
+                                            Rs. 560
+                                        </td>
+
+                                    </tr>
+
+
+                                    <!-- PRODUCT 2 -->
+
+                                    <tr class="product-row" data-name="Premium Bread Large" data-sku="89012346"
+                                        data-category="snacks" data-price="220" data-stock="1" data-qty="3">
+
+                                        <td>2</td>
+
+                                        <td>
+
+                                            <div class="product-name">
+                                                Premium Bread Large
+                                            </div>
+
+                                            <div class="product-sku">
+                                                SKU: 89012346
+                                            </div>
+
+                                            <div class="stock-warning">
+
+                                                <i class="bi bi-exclamation-triangle"></i>
+
+                                                Insufficient Stock -
+                                                Only 1 available
+
+                                            </div>
+
+                                        </td>
+
+                                        <td class="price">
+                                            Rs. 220
+                                        </td>
+
+                                        <td>
+
+                                            <div class="qty-control">
+
+                                                <button class="qty-btn minus-btn" type="button">
+                                                    −
+                                                </button>
+
+                                                <span class="qty-value qty-danger">
+                                                    3
+                                                </span>
+
+                                                <button class="qty-btn plus-btn" type="button">
+                                                    +
+                                                </button>
+
+                                            </div>
+
+                                        </td>
+
+                                        <td class="subtotal">
+                                            Rs. 660
+                                        </td>
+
+                                    </tr>
+
+
+                                    <!-- PRODUCT 3 -->
+
+                                    <tr class="product-row" data-name="Coca Cola 1.5L" data-sku="89012347"
+                                        data-category="beverages" data-price="180" data-stock="15" data-qty="0">
+
+                                        <td>3</td>
+
+                                        <td>
+
+                                            <div class="product-name">
+                                                Coca Cola 1.5L
+                                            </div>
+
+                                            <div class="product-sku">
+                                                SKU: 89012347
+                                            </div>
+
+                                        </td>
+
+                                        <td class="price">
+                                            Rs. 180
+                                        </td>
+
+                                        <td>
+
+                                            <div class="qty-control">
+
+                                                <button class="qty-btn minus-btn" type="button">
+                                                    −
+                                                </button>
+
+                                                <span class="qty-value">
+                                                    0
+                                                </span>
+
+                                                <button class="qty-btn plus-btn" type="button">
+                                                    +
+                                                </button>
+
+                                            </div>
+
+                                        </td>
+
+                                        <td class="subtotal">
+                                            Rs. 0
+                                        </td>
+
+                                    </tr>
+
+
+                                    <!-- PRODUCT 4 -->
+
+                                    <tr class="product-row" data-name="Fresh Apples" data-sku="89012348"
+                                        data-category="produce" data-price="350" data-stock="20" data-qty="0">
+
+                                        <td>4</td>
+
+                                        <td>
+
+                                            <div class="product-name">
+                                                Fresh Apples
+                                            </div>
+
+                                            <div class="product-sku">
+                                                SKU: 89012348
+                                            </div>
+
+                                        </td>
+
+                                        <td class="price">
+                                            Rs. 350
+                                        </td>
+
+                                        <td>
+
+                                            <div class="qty-control">
+
+                                                <button class="qty-btn minus-btn" type="button">
+                                                    −
+                                                </button>
+
+                                                <span class="qty-value">
+                                                    0
+                                                </span>
+
+                                                <button class="qty-btn plus-btn" type="button">
+                                                    +
+                                                </button>
+
+                                            </div>
+
+                                        </td>
+
+                                        <td class="subtotal">
+                                            Rs. 0
+                                        </td>
+
+                                    </tr>
+
+                                </tbody>
+
+                            </table>
+
+
+                            <div class="empty-products" id="emptyProducts">
+                                <div>
+                                    <i class="bi bi-search" style="font-size:40px;"></i>
+
+                                    <h5 class="mt-3">
+                                        No products found
+                                    </h5>
+
+                                    <p>
+                                        Try another product name or SKU.
+                                    </p>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- =================================================
+                     RIGHT CHECKOUT COLUMN
+                ================================================== -->
+
+                    <div class="checkout-column">
+
+
+                        <!-- CHECKOUT -->
+
+                        <section class="checkout-panel">
+
+                            <!-- CUSTOMER -->
+
+                            <div class="customer-card">
+
+                                <div class="section-label">
+                                    Customer
+                                </div>
+
+                                <select class="customer-select" id="customerSelect">
+
+                                    <option>
+                                        Walk-in Customer
+                                    </option>
+
+                                    <option>
+                                        Ali Khan
+                                    </option>
+
+                                    <option>
+                                        Ahmed Traders
+                                    </option>
+
+                                    <option>
+                                        ABC Store
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+
+                            <!-- SUMMARY -->
+
+                            <div class="summary">
+
+                                <div class="summary-row">
+
+                                    <span>
+                                        Subtotal
+                                    </span>
+
+                                    <strong id="subtotalAmount">
+                                        Rs. 1,220.00
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="summary-row">
+
+                                    <button class="discount-btn" id="discountBtn" type="button">
+                                        Discount
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+
+                                    <strong id="discountAmount" style="color:#009b68;">
+                                        - Rs. 0.00
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="discount-input" id="discountInputBox">
+
+                                    <input type="number" id="discountInput" min="0" value="0"
+                                        placeholder="Enter discount">
+
+                                </div>
+
+
+                                <div class="summary-row">
+
+                                    <span>
+                                        Tax (0%)
+                                    </span>
+
+                                    <strong>
+                                        Rs. 0.00
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="total-divider"></div>
+
+
+                                <div class="total-row">
+
+                                    <span class="total-label">
+                                        Total
+                                    </span>
+
+                                    <span class="total-amount" id="totalAmount">
+                                        Rs. 1,220
+                                    </span>
+
+                                </div>
+
+
+                                <!-- PAYMENT METHODS -->
+
+                                <div class="payment-grid">
+
+                                    <button class="payment-btn active" data-payment="Cash" type="button">
+
+                                        <i class="bi bi-cash-stack"></i>
+
+                                        Cash
+
+                                    </button>
+
+
+                                    <button class="payment-btn" data-payment="Card" type="button">
+
+                                        <i class="bi bi-credit-card"></i>
+
+                                        Card
+
+                                    </button>
+
+
+                                    <button class="payment-btn" data-payment="Bank" type="button">
+
+                                        <i class="bi bi-bank"></i>
+
+                                        Bank
+
+                                    </button>
+
+
+                                    <button class="payment-btn" data-payment="Khata" type="button">
+
+                                        <i class="bi bi-book"></i>
+
+                                        Khata
+
+                                    </button>
+
+                                </div>
+
+
+                                <!-- RECEIVED -->
+
+                                <div class="received-box">
+
+                                    <div class="received-row">
+
+                                        <span>
+                                            Received
+                                        </span>
+
+                                        <input type="number" id="receivedAmount" value="2000" min="0">
+
+                                    </div>
+
+
+                                    <div class="received-row">
+
+                                        <span>
+                                            Change
+                                        </span>
+
+                                        <span class="change-value" id="changeAmount">
+                                            Rs. 780.00
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+
+                                <!-- COMPLETE SALE -->
+
+                                <button class="complete-sale" id="completeSaleBtn" type="button">
+
+                                    Complete Sale
+
+                                </button>
+
+                            </div>
+
+                        </section>
+
+
+                        <!-- =================================================
+                         HELD SALES
+                    ================================================== -->
+
+                        <section class="held-sales">
+
+                            <div class="held-title">
+
+                                <span>
+                                    HELD SALES (2)
+                                </span>
+
+                                <i class="bi bi-three-dots"></i>
+
+                            </div>
+
+
+                            <div class="held-item">
+
+                                <div>
+
+                                    <div class="held-name">
+                                        Ali #104
+                                    </div>
+
+                                    <div class="held-info">
+                                        10:45 AM • 4 items
+                                    </div>
+
+                                </div>
+
+                                <button class="resume-btn" type="button">
+                                    Resume
+                                </button>
+
+                            </div>
+
+
+                            <div class="held-item">
+
+                                <div>
+
+                                    <div class="held-name">
+                                        Ahmed #105
+                                    </div>
+
+                                    <div class="held-info">
+                                        11:20 AM • 2 items
+                                    </div>
+
+                                </div>
+
+                                <button class="resume-btn" type="button">
+                                    Resume
+                                </button>
+
+                            </div>
+
+                        </section>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <!-- SUCCESS TOAST -->
+
+    <div class="sale-toast" id="saleToast">
+        <div class="fw-bold mb-1">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            Sale Completed
+        </div>
+
+        <div id="toastMessage">
+            Sale has been completed successfully.
+        </div>
+    </div>
+
+
+    <!-- =============================================================
+     JAVASCRIPT
+============================================================= -->
+
+    <script>
+
+        document.addEventListener("DOMContentLoaded", function () {
+
+            /* =========================================================
+               ELEMENTS
+            ========================================================= */
+
+            const productRows =
+                document.querySelectorAll(".product-row");
+
+            const searchInput =
+                document.getElementById("productSearch");
+
+            const emptyProducts =
+                document.getElementById("emptyProducts");
+
+            const subtotalElement =
+                document.getElementById("subtotalAmount");
+
+            const discountAmountElement =
+                document.getElementById("discountAmount");
+
+            const totalElement =
+                document.getElementById("totalAmount");
+
+            const receivedInput =
+                document.getElementById("receivedAmount");
+
+            const changeElement =
+                document.getElementById("changeAmount");
+
+            const discountBtn =
+                document.getElementById("discountBtn");
+
+            const discountInputBox =
+                document.getElementById("discountInputBox");
+
+            const discountInput =
+                document.getElementById("discountInput");
+
+            const completeSaleBtn =
+                document.getElementById("completeSaleBtn");
+
+            const saleToast =
+                document.getElementById("saleToast");
+
+            const toastMessage =
+                document.getElementById("toastMessage");
+
+
+            /* =========================================================
+               FORMAT MONEY
+            ========================================================= */
+
+            function formatMoney(amount) {
+
+                return "Rs. " +
+                    Number(amount).toLocaleString("en-PK", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
+
+            }
+
+
+            /* =========================================================
+               CALCULATE SALE
+            ========================================================= */
+
+            function calculateSale() {
+
+                let subtotal = 0;
+
+                productRows.forEach(function (row) {
+
+                    const price =
+                        Number(row.dataset.price);
+
+                    const qty =
+                        Number(row.dataset.qty);
+
+                    const rowSubtotal =
+                        price * qty;
+
+                    subtotal += rowSubtotal;
+
+                    const subtotalCell =
+                        row.querySelector(".subtotal");
+
+                    subtotalCell.textContent =
+                        formatMoney(rowSubtotal);
+
+                    const qtyElement =
+                        row.querySelector(".qty-value");
+
+                    qtyElement.textContent = qty;
+
+                    const stock =
+                        Number(row.dataset.stock);
+
+                    if (qty > stock) {
+
+                        qtyElement.classList.add("qty-danger");
+
+                    } else {
+
+                        qtyElement.classList.remove("qty-danger");
+
+                    }
+
+                });
+
+
+                let discount =
+                    Number(discountInput.value) || 0;
+
+
+                if (discount > subtotal) {
+                    discount = subtotal;
+                    discountInput.value = discount;
+                }
+
+
+                const tax = 0;
+
+                const total =
+                    subtotal - discount + tax;
+
+
+                const received =
+                    Number(receivedInput.value) || 0;
+
+
+                const change =
+                    Math.max(received - total, 0);
+
+
+                subtotalElement.textContent =
+                    formatMoney(subtotal);
+
+
+                discountAmountElement.textContent =
+                    "- " + formatMoney(discount);
+
+
+                totalElement.textContent =
+                    "Rs. " +
+                    Number(total).toLocaleString("en-PK", {
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0
+                    });
+
+
+                changeElement.textContent =
+                    formatMoney(change);
+
+
+                if (received < total) {
+
+                    changeElement.style.color =
+                        "#dc2626";
+
+                } else {
+
+                    changeElement.style.color =
+                        "#009b68";
+
+                }
+
+            }
+
+
+            /* =========================================================
+               QUANTITY BUTTONS
+            ========================================================= */
+
+            document.querySelectorAll(".plus-btn")
+                .forEach(function (button) {
+
+                    button.addEventListener("click", function () {
+
+                        const row =
+                            button.closest(".product-row");
+
+                        let qty =
+                            Number(row.dataset.qty);
+
+                        const stock =
+                            Number(row.dataset.stock);
+
+
+                        qty++;
+
+                        row.dataset.qty = qty;
+
+
+                        if (qty > stock) {
+
+                            showToast(
+                                "Warning: Requested quantity is greater than available stock."
+                            );
+
+                        }
+
+
+                        calculateSale();
+
+                    });
+
+                });
+
+
+            document.querySelectorAll(".minus-btn")
+                .forEach(function (button) {
+
+                    button.addEventListener("click", function () {
+
+                        const row =
+                            button.closest(".product-row");
+
+                        let qty =
+                            Number(row.dataset.qty);
+
+
+                        if (qty > 0) {
+
+                            qty--;
+
+                        }
+
+
+                        row.dataset.qty = qty;
+
+                        calculateSale();
+
+                    });
+
+                });
+
+
+            /* =========================================================
+               SEARCH
+            ========================================================= */
+
+            searchInput.addEventListener(
+                "input",
+                function () {
+
+                    const search =
+                        searchInput.value
+                            .toLowerCase()
+                            .trim();
+
+                    let visibleCount = 0;
+
+
+                    productRows.forEach(function (row) {
+
+                        const name =
+                            row.dataset.name.toLowerCase();
+
+                        const sku =
+                            row.dataset.sku.toLowerCase();
+
+
+                        if (
+                            name.includes(search) ||
+                            sku.includes(search)
+                        ) {
+
+                            row.style.display = "";
+
+                            visibleCount++;
+
+                        } else {
+
+                            row.style.display = "none";
+
+                        }
+
+                    });
+
+
+                    emptyProducts.style.display =
+                        visibleCount === 0
+                            ? "flex"
+                            : "none";
+
+                }
+            );
+
+
+            /* =========================================================
+               CATEGORY FILTER
+            ========================================================= */
+
+            document.querySelectorAll(".category-btn")
+                .forEach(function (button) {
+
+                    button.addEventListener(
+                        "click",
+                        function () {
+
+                            document
+                                .querySelectorAll(".category-btn")
+                                .forEach(function (btn) {
+
+                                    btn.classList.remove("active");
+
+                                });
+
+
+                            button.classList.add("active");
+
+
+                            const category =
+                                button.dataset.category;
+
+
+                            let visibleCount = 0;
+
+
+                            productRows.forEach(function (row) {
+
+                                const rowCategory =
+                                    row.dataset.category;
+
+
+                                if (
+                                    category === "all" ||
+                                    rowCategory === category
+                                ) {
+
+                                    row.style.display = "";
+
+                                    visibleCount++;
+
+                                } else {
+
+                                    row.style.display = "none";
+
+                                }
+
+                            });
+
+
+                            emptyProducts.style.display =
+                                visibleCount === 0
+                                    ? "flex"
+                                    : "none";
+
+                        }
+                    );
+
+                });
+
+
+            /* =========================================================
+               DISCOUNT
+            ========================================================= */
+
+            discountBtn.addEventListener(
+                "click",
+                function () {
+
+                    if (
+                        discountInputBox.style.display ===
+                        "block"
+                    ) {
+
+                        discountInputBox.style.display =
+                            "none";
+
+                    } else {
+
+                        discountInputBox.style.display =
+                            "block";
+
+                        discountInput.focus();
+
+                    }
+
+                }
+            );
+
+
+            discountInput.addEventListener(
+                "input",
+                calculateSale
+            );
+
+
+            /* =========================================================
+               RECEIVED AMOUNT
+            ========================================================= */
+
+            receivedInput.addEventListener(
+                "input",
+                calculateSale
+            );
+
+
+            /* =========================================================
+               PAYMENT METHOD
+            ========================================================= */
+
+            document.querySelectorAll(".payment-btn")
+                .forEach(function (button) {
+
+                    button.addEventListener(
+                        "click",
+                        function () {
+
+                            document
+                                .querySelectorAll(".payment-btn")
+                                .forEach(function (btn) {
+
+                                    btn.classList.remove("active");
+
+                                });
+
+
+                            button.classList.add("active");
+
+                        }
+                    );
+
+                });
+
+
+            /* =========================================================
+               COMPLETE SALE
+            ========================================================= */
+
+            completeSaleBtn.addEventListener(
+                "click",
+                function () {
+
+                    let total = 0;
+
+
+                    productRows.forEach(function (row) {
+
+                        const price =
+                            Number(row.dataset.price);
+
+                        const qty =
+                            Number(row.dataset.qty);
+
+                        total += price * qty;
+
+                    });
+
+
+                    const discount =
+                        Number(discountInput.value) || 0;
+
+
+                    total -= discount;
+
+
+                    if (total <= 0) {
+
+                        showToast(
+                            "Please add at least one product before completing the sale."
+                        );
+
+                        return;
+
+                    }
+
+
+                    const received =
+                        Number(receivedInput.value) || 0;
+
+
+                    if (received < total) {
+
+                        showToast(
+                            "Received amount is less than the total sale amount."
+                        );
+
+                        return;
+
+                    }
+
+
+                    const customer =
+                        document.getElementById(
+                            "customerSelect"
+                        ).value;
+
+
+                    const payment =
+                        document.querySelector(
+                            ".payment-btn.active"
+                        ).dataset.payment;
+
+
+                    showToast(
+                        "Sale completed for " +
+                        customer +
+                        " • " +
+                        payment +
+                        " • " +
+                        formatMoney(total)
+                    );
+
+
+                    /* Reset products */
+
+                    productRows.forEach(function (row) {
+
+                        row.dataset.qty = 0;
+
+                    });
+
+
+                    discountInput.value = 0;
+
+                    receivedInput.value = 0;
+
+                    calculateSale();
+
+                }
+            );
+
+
+            /* =========================================================
+               NEW SALE
+            ========================================================= */
+
+            document.getElementById("newSaleBtn")
+                .addEventListener(
+                    "click",
+                    function () {
+
+                        productRows.forEach(function (row) {
+
+                            row.dataset.qty = 0;
+
+                        });
+
+
+                        discountInput.value = 0;
+
+                        receivedInput.value = 0;
+
+                        document.getElementById(
+                            "customerSelect"
+                        ).selectedIndex = 0;
+
+
+                        calculateSale();
+
+
+                        showToast(
+                            "New sale started."
+                        );
+
+                    }
+                );
+
+
+            /* =========================================================
+               RESUME HELD SALE
+            ========================================================= */
+
+            document.querySelectorAll(".resume-btn")
+                .forEach(function (button) {
+
+                    button.addEventListener(
+                        "click",
+                        function () {
+
+                            showToast(
+                                "Held sale resumed successfully."
+                            );
+
+                        }
+                    );
+
+                });
+
+
+            /* =========================================================
+               LOGOUT
+            ========================================================= */
+
+            document.getElementById("logoutBtn")
+                .addEventListener(
+                    "click",
+                    function (event) {
+
+                        event.preventDefault();
+
+                        const confirmLogout =
+                            confirm(
+                                "Are you sure you want to logout?"
+                            );
+
+
+                        if (confirmLogout) {
+
+                            showToast(
+                                "Logout action triggered."
+                            );
+
+                        }
+
+                    }
+                );
+
+
+            /* =========================================================
+               TOAST
+            ========================================================= */
+
+            let toastTimer;
+
+
+            function showToast(message) {
+
+                toastMessage.textContent = message;
+
+                saleToast.classList.add("show");
+
+
+                clearTimeout(toastTimer);
+
+
+                toastTimer =
+                    setTimeout(function () {
+
+                        saleToast.classList.remove(
+                            "show"
+                        );
+
+                    }, 3500);
+
+            }
+
+
+            /* =========================================================
+               MOBILE SIDEBAR
+            ========================================================= */
+
+            const mobileMenuBtn =
+                document.getElementById(
+                    "mobileMenuBtn"
+                );
+
+            const sidebar =
+                document.getElementById(
+                    "sidebar"
+                );
+
+            const sidebarOverlay =
+                document.getElementById(
+                    "sidebarOverlay"
+                );
+
+
+            mobileMenuBtn.addEventListener(
+                "click",
+                function () {
+
+                    sidebar.classList.add("open");
+
+                    sidebarOverlay.classList.add("show");
+
+                }
+            );
+
+
+            sidebarOverlay.addEventListener(
+                "click",
+                function () {
+
+                    sidebar.classList.remove("open");
+
+                    sidebarOverlay.classList.remove("show");
+
+                }
+            );
+
+
+            /* =========================================================
+               INITIAL CALCULATION
+            ========================================================= */
+
+            calculateSale();
+
+        });
+
+    </script>
+
+</body>
+
+</html>
