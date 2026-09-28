@@ -341,7 +341,6 @@
 import { onMounted } from 'vue';
 
 onMounted(() => {
-  console.log('BusinessSetup1View mounted');
 });
 </script>
 

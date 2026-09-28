@@ -83,7 +83,6 @@
 import { onMounted } from 'vue';
 
 onMounted(() => {
-  console.log('CompleteSetupView mounted');
 });
 </script>
 

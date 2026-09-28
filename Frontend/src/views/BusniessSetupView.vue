@@ -328,7 +328,6 @@
 import { onMounted } from 'vue';
 
 onMounted(() => {
-  console.log('BusniessSetupView mounted');
 });
 </script>
 

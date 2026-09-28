@@ -20,8 +20,19 @@ class Business extends Model
         'currency'
     ];
 
-    public function employees()
+    /**
+     * Get all branches belonging to this business.
+     */
+    public function branches()
     {
-        return $this->hasMany(Employee::class);
+        return $this->hasMany(Branch::class);
+    }
+
+    /**
+     * Get all users that belong to this business.
+     */
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'business_user')->withTimestamps();
     }
 }

@@ -270,7 +270,6 @@
 import { onMounted } from 'vue';
 
 onMounted(() => {
-  console.log('SupplierPaymentView mounted');
 });
 </script>
 

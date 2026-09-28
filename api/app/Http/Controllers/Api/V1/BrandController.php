@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Middleware\ResolveActiveBusiness;
 use App\Models\Brand;
 use Illuminate\Http\Request;
 
@@ -9,18 +10,24 @@ class BrandController extends Controller
 {
     public function index(Request $request)
     {
-        $businessId = $request->user()->business_id;
+        if (!$request->user()->hasPermissionTo('view brands')) {
+            return response()->json(['message' => 'Unauthorized action.'], 403);
+        }
+
+        $businessId = ResolveActiveBusiness::requireActiveBusinessId();
         $brands = Brand::with(['products.category'])
             ->where('business_id', $businessId)
             ->get();
-        if ($brands->isEmpty()) {
-            $brands = Brand::with(['products.category'])->get();
-        }
+
         return response()->json($brands);
     }
 
     public function store(Request $request)
     {
+        if (!$request->user()->hasPermissionTo('manage brands')) {
+            return response()->json(['message' => 'Unauthorized action.'], 403);
+        }
+
         $request->validate([
             'name' => 'required|string|max:255',
             'image' => 'nullable'
@@ -49,10 +56,11 @@ class BrandController extends Controller
             \Log::warning('Brand image upload warning: ' . $e->getMessage());
         }
 
+        $businessId = ResolveActiveBusiness::requireActiveBusinessId();
         $name = trim($request->name);
         $brand = Brand::firstOrCreate(
             [
-                'business_id' => $request->user()->business_id,
+                'business_id' => $businessId,
                 'name' => $name
             ],
             [
@@ -70,13 +78,23 @@ class BrandController extends Controller
 
     public function show(Request $request, string $id)
     {
-        $brand = Brand::where('business_id', $request->user()->business_id)->findOrFail($id);
+        if (!$request->user()->hasPermissionTo('view brands')) {
+            return response()->json(['message' => 'Unauthorized action.'], 403);
+        }
+
+        $businessId = ResolveActiveBusiness::requireActiveBusinessId();
+        $brand = Brand::where('business_id', $businessId)->findOrFail($id);
         return response()->json($brand);
     }
 
     public function update(Request $request, string $id)
     {
-        $brand = Brand::where('business_id', $request->user()->business_id)->findOrFail($id);
+        if (!$request->user()->hasPermissionTo('manage brands')) {
+            return response()->json(['message' => 'Unauthorized action.'], 403);
+        }
+
+        $businessId = ResolveActiveBusiness::requireActiveBusinessId();
+        $brand = Brand::where('business_id', $businessId)->findOrFail($id);
         
         $request->validate([
             'name' => 'required|string|max:255',
@@ -116,7 +134,12 @@ class BrandController extends Controller
 
     public function destroy(Request $request, string $id)
     {
-        $brand = Brand::where('business_id', $request->user()->business_id)->findOrFail($id);
+        if (!$request->user()->hasPermissionTo('manage brands')) {
+            return response()->json(['message' => 'Unauthorized action.'], 403);
+        }
+
+        $businessId = ResolveActiveBusiness::requireActiveBusinessId();
+        $brand = Brand::where('business_id', $businessId)->findOrFail($id);
         $brand->delete();
 
         return response()->json(['message' => 'Brand deleted']);

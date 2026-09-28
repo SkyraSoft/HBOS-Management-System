@@ -3,24 +3,24 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Middleware\ResolveActiveBusiness;
+use App\Models\Business;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class NotificationController extends Controller
 {
+    protected function getActiveBusiness(): Business
+    {
+        $businessId = ResolveActiveBusiness::requireActiveBusinessId();
+        return Business::findOrFail($businessId);
+    }
+
     /**
-     * Get all notifications for the authenticated user's business.
+     * Get all notifications for the active business context.
      */
     public function index(Request $request)
     {
-        $user = Auth::user();
-        if (!$user || !$user->business) {
-            return response()->json(['data' => []]);
-        }
-
-        // We assume notifications are sent to the Business model
-        // So we retrieve them from the user's business
-        $business = $user->business;
+        $business = $this->getActiveBusiness();
         $notifications = $business->notifications()->latest()->get();
 
         return response()->json([
@@ -33,12 +33,8 @@ class NotificationController extends Controller
      */
     public function markAsRead(Request $request, $id)
     {
-        $user = Auth::user();
-        if (!$user || !$user->business) {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
-
-        $notification = $user->business->notifications()->where('id', $id)->first();
+        $business = $this->getActiveBusiness();
+        $notification = $business->notifications()->where('id', $id)->first();
         if ($notification) {
             $notification->markAsRead();
         }
@@ -51,12 +47,8 @@ class NotificationController extends Controller
      */
     public function markAllAsRead(Request $request)
     {
-        $user = Auth::user();
-        if (!$user || !$user->business) {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
-
-        $user->business->unreadNotifications->markAsRead();
+        $business = $this->getActiveBusiness();
+        $business->unreadNotifications->markAsRead();
 
         return response()->json(['message' => 'All notifications marked as read.']);
     }
@@ -66,12 +58,8 @@ class NotificationController extends Controller
      */
     public function destroy(Request $request, $id)
     {
-        $user = Auth::user();
-        if (!$user || !$user->business) {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
-
-        $notification = $user->business->notifications()->where('id', $id)->first();
+        $business = $this->getActiveBusiness();
+        $notification = $business->notifications()->where('id', $id)->first();
         if ($notification) {
             $notification->delete();
         }

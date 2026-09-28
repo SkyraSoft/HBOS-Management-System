@@ -10,6 +10,8 @@ use Illuminate\Queue\InteractsWithQueue;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 
+use Illuminate\Support\Facades\Schema;
+
 class CheckSalaryReminders
 {
     /**
@@ -26,6 +28,11 @@ class CheckSalaryReminders
     public function handle(SystemDailyCheck $event): void
     {
         Log::info("Starting CheckSalaryReminders...");
+
+        if (!Schema::hasTable('employees')) {
+            Log::info("CheckSalaryReminders: employees table dropped in Phase 1 restructuring; skipping legacy salary checks.");
+            return;
+        }
 
         $businesses = Business::all();
 

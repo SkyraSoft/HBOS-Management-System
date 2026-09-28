@@ -257,7 +257,6 @@
 import { onMounted } from 'vue';
 
 onMounted(() => {
-  console.log('InformationView mounted');
 });
 </script>
 

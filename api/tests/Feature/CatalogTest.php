@@ -22,11 +22,17 @@ class CatalogTest extends TestCase
     {
         parent::setUp();
         
+        $this->seed(\Database\Seeders\RolesAndPermissionsSeeder::class);
+
         $this->business = Business::create(['name' => 'Test Business']);
         $this->user = User::factory()->create([
             'business_id' => $this->business->id,
             'password' => bcrypt('password123')
         ]);
+        $this->user->businesses()->attach($this->business->id);
+
+        setPermissionsTeamId($this->business->id);
+        $this->user->assignRole('Business Owner');
         
         $this->token = $this->user->createToken('test_token')->plainTextToken;
     }

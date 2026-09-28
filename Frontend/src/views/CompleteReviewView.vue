@@ -239,7 +239,6 @@
 import { onMounted } from 'vue';
 
 onMounted(() => {
-  console.log('CompleteReviewView mounted');
 });
 </script>
 

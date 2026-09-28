@@ -3,19 +3,25 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Middleware\ResolveActiveBusiness;
 use App\Models\Product;
+use App\Models\Category;
 use App\Models\Brand;
+use App\Models\Subcategory;
+use App\Services\AuditService;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        $businessId = $request->user()->business_id;
-        $products = Product::with(['category', 'brand', 'subcategory'])->where('business_id', $businessId)->get();
-        if ($products->isEmpty()) {
-            $products = Product::with(['category', 'brand', 'subcategory'])->get();
+        if (!$request->user()->hasPermissionTo('view products')) {
+            return response()->json(['message' => 'Unauthorized action.'], 403);
         }
+
+        $businessId = ResolveActiveBusiness::requireActiveBusinessId();
+        $products = Product::with(['category', 'brand', 'subcategory'])->get();
         return response()->json($products);
     }
 
@@ -80,13 +86,33 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
+        if (!$request->user()->hasPermissionTo('manage products')) {
+            return response()->json(['message' => 'Unauthorized action.'], 403);
+        }
+
+        $activeBusinessId = ResolveActiveBusiness::requireActiveBusinessId();
+
         $request->validate([
             'category_id' => 'nullable',
             'brand_id' => 'nullable',
             'subcategory_id' => 'nullable',
             'name' => 'required|string|max:255',
-            'sku' => 'nullable|string|max:255',
-            'barcode' => 'nullable|string|max:255',
+            'sku' => [
+                'nullable',
+                'string',
+                'max:255',
+                Rule::unique('products', 'sku')->where(function ($query) use ($activeBusinessId) {
+                    return $query->where('business_id', $activeBusinessId);
+                })
+            ],
+            'barcode' => [
+                'nullable',
+                'string',
+                'max:255',
+                Rule::unique('products', 'barcode')->where(function ($query) use ($activeBusinessId) {
+                    return $query->where('business_id', $activeBusinessId);
+                })
+            ],
             'cost_price' => 'required|numeric|min:0',
             'selling_price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
@@ -97,11 +123,28 @@ class ProductController extends Controller
             'image' => 'nullable',
             'has_variations' => 'nullable|boolean',
             'attributes' => 'nullable|array',
-            'variations' => 'nullable|array',
-            'has_variations' => 'nullable|boolean',
-            'attributes' => 'nullable|array',
             'variations' => 'nullable|array'
         ]);
+
+        // Cross-tenant relationship validation
+        if ($request->filled('category_id') && is_numeric($request->category_id)) {
+            $catExists = Category::where('business_id', $activeBusinessId)->where('id', $request->category_id)->exists();
+            if (!$catExists) {
+                return response()->json(['message' => 'Invalid category specified for active business.'], 422);
+            }
+        }
+        if ($request->filled('brand_id') && is_numeric($request->brand_id)) {
+            $brandExists = Brand::where('business_id', $activeBusinessId)->where('id', $request->brand_id)->exists();
+            if (!$brandExists) {
+                return response()->json(['message' => 'Invalid brand specified for active business.'], 422);
+            }
+        }
+        if ($request->filled('subcategory_id') && is_numeric($request->subcategory_id)) {
+            $subExists = Subcategory::where('business_id', $activeBusinessId)->where('id', $request->subcategory_id)->exists();
+            if (!$subExists) {
+                return response()->json(['message' => 'Invalid subcategory specified for active business.'], 422);
+            }
+        }
 
         $imagePath = null;
         try {
@@ -129,11 +172,11 @@ class ProductController extends Controller
             $imagePath = $this->getUnsplashFallback($request->name);
         }
 
-        $brandId = $request->filled('brand_id') ? $request->brand_id : null;
-        if ($request->filled('brand')) {
+        $brandId = $request->filled('brand_id') && is_numeric($request->brand_id) ? intval($request->brand_id) : null;
+        if (empty($brandId) && $request->filled('brand')) {
             $brandName = trim($request->brand);
             $brand = Brand::firstOrCreate([
-                'business_id' => $request->user()->business_id,
+                'business_id' => $activeBusinessId,
                 'name' => $brandName
             ]);
             $brandId = $brand->id;
@@ -145,15 +188,10 @@ class ProductController extends Controller
         } else if ($request->filled('category') || $request->filled('category_id')) {
             $catName = trim($request->category ?: $request->category_id);
             if ($catName !== '') {
-                $cat = Category::where('business_id', $request->user()->business_id)
-                    ->whereRaw('LOWER(name) = ?', [strtolower($catName)])
-                    ->first();
-                if (!$cat) {
-                    $cat = Category::whereRaw('LOWER(name) = ?', [strtolower($catName)])->first();
-                }
+                $cat = Category::where('business_id', $activeBusinessId)->whereRaw('LOWER(name) = ?', [strtolower($catName)])->first();
                 if (!$cat) {
                     $cat = Category::create([
-                        'business_id' => $request->user()->business_id,
+                        'business_id' => $activeBusinessId,
                         'name' => $catName
                     ]);
                 }
@@ -161,10 +199,10 @@ class ProductController extends Controller
             }
         }
 
-        $subcategoryId = $request->filled('subcategory_id') ? $request->subcategory_id : null;
+        $subcategoryId = $request->filled('subcategory_id') && is_numeric($request->subcategory_id) ? intval($request->subcategory_id) : null;
         if (empty($subcategoryId) && $request->filled('subcategory')) {
             $sub = Subcategory::firstOrCreate([
-                'business_id' => $request->user()->business_id,
+                'business_id' => $activeBusinessId,
                 'category_id' => $categoryId,
                 'name' => trim($request->subcategory)
             ]);
@@ -172,7 +210,7 @@ class ProductController extends Controller
         }
 
         $product = Product::create([
-            'business_id' => $request->user()->business_id,
+            'business_id' => $activeBusinessId,
             'category_id' => $categoryId,
             'brand_id' => $brandId,
             'subcategory_id' => $subcategoryId,
@@ -198,24 +236,47 @@ class ProductController extends Controller
 
     public function show(Request $request, string $id)
     {
-        $product = Product::with(['category', 'brand', 'subcategory'])->where('business_id', $request->user()->business_id)->findOrFail($id);
+        if (!$request->user()->hasPermissionTo('view products')) {
+            return response()->json(['message' => 'Unauthorized action.'], 403);
+        }
+
+        $product = Product::with(['category', 'brand', 'subcategory'])->findOrFail($id);
         return response()->json($product);
     }
 
     public function update(Request $request, string $id)
     {
-        $product = Product::where('business_id', $request->user()->business_id)->findOrFail($id);
+        if (!$request->user()->hasPermissionTo('manage products')) {
+            return response()->json(['message' => 'Unauthorized action.'], 403);
+        }
+
+        $activeBusinessId = ResolveActiveBusiness::requireActiveBusinessId();
+        $product = Product::where('business_id', $activeBusinessId)->findOrFail($id);
 
         $request->validate([
             'category_id' => 'nullable',
             'brand_id' => 'nullable',
             'subcategory_id' => 'nullable',
             'name' => 'required|string|max:255',
-            'sku' => 'nullable|string|max:255',
-            'barcode' => 'nullable|string|max:255',
+            'sku' => [
+                'nullable',
+                'string',
+                'max:255',
+                Rule::unique('products', 'sku')->ignore($product->id)->where(function ($query) use ($activeBusinessId) {
+                    return $query->where('business_id', $activeBusinessId);
+                })
+            ],
+            'barcode' => [
+                'nullable',
+                'string',
+                'max:255',
+                Rule::unique('products', 'barcode')->ignore($product->id)->where(function ($query) use ($activeBusinessId) {
+                    return $query->where('business_id', $activeBusinessId);
+                })
+            ],
             'cost_price' => 'required|numeric|min:0',
             'selling_price' => 'required|numeric|min:0',
-            'stock' => 'required|integer|min:0',
+            'stock' => 'nullable|integer|min:0',
             'min_stock' => 'nullable|integer|min:0',
             'unit' => 'nullable|string|max:255',
             'description' => 'nullable|string',
@@ -223,10 +284,32 @@ class ProductController extends Controller
             'image' => 'nullable'
         ]);
 
+        // Cross-tenant relationship validation
+        if ($request->filled('category_id') && is_numeric($request->category_id)) {
+            $catExists = Category::where('business_id', $activeBusinessId)->where('id', $request->category_id)->exists();
+            if (!$catExists) {
+                return response()->json(['message' => 'Invalid category specified for active business.'], 422);
+            }
+        }
+        if ($request->filled('brand_id') && is_numeric($request->brand_id)) {
+            $brandExists = Brand::where('business_id', $activeBusinessId)->where('id', $request->brand_id)->exists();
+            if (!$brandExists) {
+                return response()->json(['message' => 'Invalid brand specified for active business.'], 422);
+            }
+        }
+        if ($request->filled('subcategory_id') && is_numeric($request->subcategory_id)) {
+            $subExists = Subcategory::where('business_id', $activeBusinessId)->where('id', $request->subcategory_id)->exists();
+            if (!$subExists) {
+                return response()->json(['message' => 'Invalid subcategory specified for active business.'], 422);
+            }
+        }
+
         $data = $request->only([
             'category_id', 'brand_id', 'subcategory_id', 'name', 'sku', 'barcode', 'cost_price', 'selling_price',
-            'stock', 'min_stock', 'expected_sell_date', 'unit', 'description', 'has_variations'
+            'expected_sell_date', 'unit', 'description', 'has_variations'
         ]);
+        unset($data['stock'], $data['min_stock']);
+
 
         if ($request->has('category') || $request->has('category_id')) {
             if ($request->filled('category_id') && is_numeric($request->category_id)) {
@@ -234,15 +317,10 @@ class ProductController extends Controller
             } else if ($request->filled('category') || $request->filled('category_id')) {
                 $catName = trim($request->category ?: $request->category_id);
                 if ($catName !== '') {
-                    $cat = Category::where('business_id', $request->user()->business_id)
-                        ->whereRaw('LOWER(name) = ?', [strtolower($catName)])
-                        ->first();
-                    if (!$cat) {
-                        $cat = Category::whereRaw('LOWER(name) = ?', [strtolower($catName)])->first();
-                    }
+                    $cat = Category::where('business_id', $activeBusinessId)->whereRaw('LOWER(name) = ?', [strtolower($catName)])->first();
                     if (!$cat) {
                         $cat = Category::create([
-                            'business_id' => $request->user()->business_id,
+                            'business_id' => $activeBusinessId,
                             'name' => $catName
                         ]);
                     }
@@ -257,7 +335,7 @@ class ProductController extends Controller
             if ($request->filled('brand')) {
                 $brandName = trim($request->brand);
                 $brand = Brand::firstOrCreate([
-                    'business_id' => $request->user()->business_id,
+                    'business_id' => $activeBusinessId,
                     'name' => $brandName
                 ]);
                 $data['brand_id'] = $brand->id;
@@ -294,14 +372,56 @@ class ProductController extends Controller
             $data['variations'] = $request->variations ? json_encode($request->variations) : null;
         }
 
+        $oldCostPrice = (float) $product->cost_price;
+        $oldSellingPrice = (float) $product->selling_price;
+        $oldIsActive = (bool) $product->is_active;
+
         $product->update($data);
+
+        $costChanged = array_key_exists('cost_price', $data) && (float)$data['cost_price'] !== $oldCostPrice;
+        $priceChanged = array_key_exists('selling_price', $data) && (float)$data['selling_price'] !== $oldSellingPrice;
+        $activeChanged = array_key_exists('is_active', $data) && (bool)$data['is_active'] !== $oldIsActive;
+
+        if ($costChanged || $priceChanged || $activeChanged) {
+            $oldValues = [];
+            $newValues = [];
+            if ($costChanged) {
+                $oldValues['cost_price'] = $oldCostPrice;
+                $newValues['cost_price'] = (float)$product->cost_price;
+            }
+            if ($priceChanged) {
+                $oldValues['selling_price'] = $oldSellingPrice;
+                $newValues['selling_price'] = (float)$product->selling_price;
+            }
+            if ($activeChanged) {
+                $oldValues['is_active'] = $oldIsActive;
+                $newValues['is_active'] = (bool)$product->is_active;
+            }
+
+            AuditService::logMutation(
+                'governance',
+                'updated',
+                "Product {$product->name} pricing or status updated",
+                $product,
+                $oldValues,
+                $newValues,
+                ['product_id' => $product->id, 'sku' => $product->sku],
+                null,
+                $request->user()
+            );
+        }
 
         return response()->json($product->load(['category', 'brand', 'subcategory']));
     }
 
     public function destroy(Request $request, string $id)
     {
-        $product = Product::where('business_id', $request->user()->business_id)->findOrFail($id);
+        if (!$request->user()->hasPermissionTo('manage products')) {
+            return response()->json(['message' => 'Unauthorized action.'], 403);
+        }
+
+        $activeBusinessId = ResolveActiveBusiness::requireActiveBusinessId();
+        $product = Product::where('business_id', $activeBusinessId)->findOrFail($id);
         $product->delete();
 
         return response()->json(['message' => 'Product deleted']);

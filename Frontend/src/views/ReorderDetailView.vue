@@ -80,7 +80,6 @@
 import { onMounted } from 'vue';
 
 onMounted(() => {
-  console.log('ReorderDetailView mounted');
 });
 </script>
 

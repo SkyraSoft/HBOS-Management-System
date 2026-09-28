@@ -854,18 +854,35 @@ const handleRegister = async () => {
 
 .create-btn {
   width: 100%;
-  background-color: #1460d9;
+  height: 49px;
+  padding: 12px 20px;
+  margin-top: 14px;
+  margin-bottom: 10px;
+  background-color: #075bdc;
   color: #ffffff;
   border: none;
   border-radius: 8px;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s, transform 0.1s ease, box-shadow 0.2s ease;
 }
 
 .create-btn:hover {
-  background-color: #1052ba;
+  background-color: #064fbe;
+  box-shadow: 0 4px 12px rgba(7, 91, 220, 0.2);
+}
+
+.create-btn:active {
+  transform: translateY(1px);
+}
+
+.create-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
 </style>

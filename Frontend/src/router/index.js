@@ -165,9 +165,7 @@ const router = createRouter({
     {
       path: '/reports1',
       alias: ['/analytics'],
-      name: 'reports1',
-      component: () => import('../views/reports1View.vue'),
-      meta: { layout: 'MainLayout' }
+      redirect: '/reports'
     },
     {
       path: '/sales',
@@ -203,21 +201,17 @@ const router = createRouter({
 })
 
 // Navigation Guard
-router.beforeEach((to, from, next) => {
-  // Wait until Pinia is initialized to check auth store, usually not an issue but we can get it from localStorage directly or import store inside
+router.beforeEach((to, from) => {
   const token = localStorage.getItem('hbos_token');
   const isAuthenticated = !!token;
   
-  // By default, assuming all routes require auth except login and register
   const publicRoutes = ['Login', 'Register', 'About'];
   const requiresAuth = !publicRoutes.includes(to.name) && (to.meta.requiresAuth !== false);
 
   if (requiresAuth && !isAuthenticated) {
-    next({ name: 'Login' });
+    return { name: 'Login' };
   } else if ((to.name === 'Login' || to.name === 'Register') && isAuthenticated) {
-    next({ name: 'Dashboard' }); // Redirect to dashboard if already logged in
-  } else {
-    next();
+    return { name: 'Dashboard' }; // Redirect to dashboard if already logged in
   }
 })
 

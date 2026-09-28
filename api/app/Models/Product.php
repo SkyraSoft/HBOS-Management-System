@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Traits\Tenantable;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
-    use HasFactory;
+    use HasFactory, Tenantable;
 
     protected $fillable = [
         'business_id',
@@ -40,5 +42,10 @@ class Product extends Model
     public function subcategory()
     {
         return $this->belongsTo(Subcategory::class);
+    }
+
+    public function branchInventories()
+    {
+        return $this->hasMany(BranchInventory::class);
     }
 }

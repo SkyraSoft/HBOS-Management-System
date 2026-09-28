@@ -165,7 +165,21 @@ export const useExpensesStore = defineStore('expenses', () => {
       return { success: true }
     } catch (error) {
       console.error('Error deleting expense:', error)
-      return { success: false, message: 'Failed to delete expense' }
+      return { success: false, message: error.response?.data?.message || 'Failed to delete expense' }
+    }
+  }
+
+  const voidExpense = async (id, reason) => {
+    try {
+      const response = await api.post(`/expenses/${id}/void`, { reason: reason || 'Voided by user' })
+      const index = expenses.value.findIndex(e => e.id === id)
+      if (index !== -1) {
+        expenses.value[index] = response.data
+      }
+      return { success: true }
+    } catch (error) {
+      console.error('Error voiding expense:', error)
+      return { success: false, message: error.response?.data?.message || 'Failed to void expense' }
     }
   }
 

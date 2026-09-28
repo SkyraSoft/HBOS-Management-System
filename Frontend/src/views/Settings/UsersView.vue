@@ -96,17 +96,14 @@
           <div class="d-flex align-items-center gap-2 flex-wrap">
             <select class="form-select form-select-sm compact-filter-select" v-model="filterRole">
               <option value="">All Roles</option>
-              <option value="Admin">Admin</option>
-              <option value="Store Manager">Store Manager</option>
-              <option value="Cashier">Cashier</option>
-              <option value="Inventory Manager">Inventory Manager</option>
-              <option value="Accountant">Accountant</option>
+              <option value="Business Owner">Business Owner</option>
+              <option value="Branch Manager">Branch Manager</option>
+              <option value="Salesperson">Salesperson</option>
             </select>
 
             <select class="form-select form-select-sm compact-filter-select" v-model="filterStatus">
               <option value="">All Statuses</option>
               <option value="Active">Active</option>
-              <option value="Pending">Pending</option>
               <option value="Inactive">Inactive</option>
             </select>
           </div>
@@ -121,7 +118,7 @@
                 <th>Assigned Role</th>
                 <th>Branch</th>
                 <th>Status</th>
-                <th>Last Active</th>
+                <th>Created</th>
                 <th style="text-align: right;">Actions</th>
               </tr>
             </thead>
@@ -146,7 +143,7 @@
                   </span>
                 </td>
                 <td>
-                  <span class="text-dark small fw-medium">{{ user.branch || 'Main Store' }}</span>
+                  <span class="text-dark small fw-medium">{{ user.branch_name || 'All Branches' }}</span>
                 </td>
                 <td>
                   <span class="status-pill" :class="getStatusClass(user.status)">
@@ -155,7 +152,7 @@
                   </span>
                 </td>
                 <td>
-                  <span class="text-muted small">{{ user.lastActive || 'Recently' }}</span>
+                  <span class="text-muted small">{{ user.created_at ? new Date(user.created_at).toLocaleDateString() : 'N/A' }}</span>
                 </td>
                 <td style="text-align: right;">
                   <div class="d-inline-flex align-items-center gap-1.5">
@@ -167,12 +164,13 @@
                       <i class="bi bi-pencil me-1"></i> Edit
                     </button>
                     <button 
-                      class="btn btn-outline-danger btn-sm px-2.5 rounded-2 action-delete-btn" 
-                      @click="deleteUser(user)"
-                      title="Delete User"
+                      :class="['btn btn-sm px-2.5 rounded-2', user.is_active ? 'btn-outline-danger' : 'btn-outline-success']"
+                      @click="toggleUserStatus(user)"
+                      :title="user.is_active ? 'Deactivate User' : 'Activate User'"
                       type="button"
                     >
-                      <i class="bi bi-trash"></i>
+                      <i :class="['bi', user.is_active ? 'bi-person-x-fill' : 'bi-person-check-fill']"></i>
+                      {{ user.is_active ? 'Deactivate' : 'Activate' }}
                     </button>
                   </div>
                 </td>
@@ -202,8 +200,8 @@
               <i class="bi" :class="isEditMode ? 'bi-pencil-square' : 'bi-person-plus-fill'"></i>
             </div>
             <div>
-              <h5 class="modal-title fw-bold text-dark m-0">{{ isEditMode ? 'Edit User Account' : 'Create New User' }}</h5>
-              <p class="text-muted small m-0">{{ isEditMode ? 'Update account details and access privileges' : 'Set up credentials and assign role permissions' }}</p>
+              <h5 class="modal-title fw-bold text-dark m-0">{{ isEditMode ? 'Edit Staff Account' : 'Create Staff User' }}</h5>
+              <p class="text-muted small m-0">{{ isEditMode ? 'Update account details, branch, and role assignment' : 'Set up credentials and assign role permissions' }}</p>
             </div>
           </div>
           <button class="modal-close-btn" @click="closeUserModal" type="button">
@@ -243,30 +241,14 @@
               </div>
             </div>
 
-            <!-- Phone Number -->
-            <div class="col-md-6">
-              <label class="form-label small fw-bold text-dark">Phone Number</label>
-              <div class="input-group">
-                <span class="input-group-text bg-light border-end-0"><i class="bi bi-telephone text-muted"></i></span>
-                <input 
-                  type="text" 
-                  class="form-control border-start-0" 
-                  placeholder="+92 300 1234567" 
-                  v-model="userForm.phone" 
-                />
-              </div>
-            </div>
-
             <!-- Branch Assignment -->
             <div class="col-md-6">
               <label class="form-label small fw-bold text-dark">Assigned Branch</label>
               <div class="input-group">
                 <span class="input-group-text bg-light border-end-0"><i class="bi bi-shop text-muted"></i></span>
-                <select class="form-select border-start-0" v-model="userForm.branch">
-                  <option value="Main Store">Main Store</option>
-                  <option value="North Branch">North Branch</option>
-                  <option value="South Branch">South Branch</option>
-                  <option value="Warehouse Central">Warehouse Central</option>
+                <select class="form-select border-start-0" v-model="userForm.branch_id">
+                  <option :value="null">All Branches (Business Wide)</option>
+                  <option v-for="b in branches" :key="b.id" :value="b.id">{{ b.name }}</option>
                 </select>
               </div>
             </div>
@@ -277,45 +259,30 @@
               <div class="input-group">
                 <span class="input-group-text bg-light border-end-0"><i class="bi bi-shield-check text-muted"></i></span>
                 <select class="form-select border-start-0" v-model="userForm.role" required>
-                  <option value="Admin">Admin (Full System Access)</option>
-                  <option value="Store Manager">Store Manager (Operations &amp; Reports)</option>
-                  <option value="Cashier">Cashier (POS &amp; Sales Checkout)</option>
-                  <option value="Inventory Manager">Inventory Manager (Stock &amp; Procurement)</option>
-                  <option value="Accountant">Accountant (Expenses, Khata &amp; Ledgers)</option>
+                  <option value="Business Owner">Business Owner (Full Business Governance)</option>
+                  <option value="Branch Manager">Branch Manager (Branch Operations)</option>
+                  <option value="Salesperson">Salesperson (POS &amp; Counter Sales)</option>
                 </select>
               </div>
             </div>
 
-            <!-- Status -->
+            <!-- Password -->
             <div class="col-md-6">
-              <label class="form-label small fw-bold text-dark">Account Status</label>
-              <div class="input-group">
-                <span class="input-group-text bg-light border-end-0"><i class="bi bi-toggle-on text-muted"></i></span>
-                <select class="form-select border-start-0" v-model="userForm.status">
-                  <option value="Active">Active (Immediate Login)</option>
-                  <option value="Pending">Pending (Requires Approval)</option>
-                  <option value="Inactive">Inactive (Access Suspended)</option>
-                </select>
-              </div>
-            </div>
-
-            <!-- Password (only for add or reset) -->
-            <div v-if="!isEditMode" class="col-md-6">
-              <label class="form-label small fw-bold text-dark">Account Password <span class="text-danger">*</span></label>
+              <label class="form-label small fw-bold text-dark">{{ isEditMode ? 'New Password (Optional)' : 'Account Password *' }}</label>
               <div class="input-group">
                 <span class="input-group-text bg-light border-end-0"><i class="bi bi-lock text-muted"></i></span>
                 <input 
                   type="password" 
                   class="form-control border-start-0" 
-                  placeholder="Min. 8 characters" 
+                  :placeholder="isEditMode ? 'Leave blank to keep current' : 'Min. 8 characters'" 
                   v-model="userForm.password" 
-                  required
+                  :required="!isEditMode"
                 />
               </div>
             </div>
 
-            <div v-if="!isEditMode" class="col-md-6">
-              <label class="form-label small fw-bold text-dark">Confirm Password <span class="text-danger">*</span></label>
+            <div class="col-md-6">
+              <label class="form-label small fw-bold text-dark">{{ isEditMode ? 'Confirm New Password' : 'Confirm Password *' }}</label>
               <div class="input-group">
                 <span class="input-group-text bg-light border-end-0"><i class="bi bi-shield-lock text-muted"></i></span>
                 <input 
@@ -323,7 +290,7 @@
                   class="form-control border-start-0" 
                   placeholder="Re-enter password" 
                   v-model="userForm.confirmPassword" 
-                  required
+                  :required="!isEditMode && !!userForm.password"
                 />
               </div>
             </div>
@@ -348,53 +315,13 @@
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue';
 import { useToast } from 'vue-toastification';
+import api from '../../api';
 
 const toast = useToast();
 
-const defaultUsers = [
-  {
-    id: 1,
-    name: 'Ali Zaman',
-    email: 'ali.zaman@hbos.com',
-    phone: '+92 300 1112233',
-    role: 'Admin',
-    branch: 'Main Store',
-    status: 'Active',
-    lastActive: 'Just now'
-  },
-  {
-    id: 2,
-    name: 'Sara Ahmed',
-    email: 'sara.ahmed@hbos.com',
-    phone: '+92 301 4445566',
-    role: 'Cashier',
-    branch: 'Main Store',
-    status: 'Active',
-    lastActive: '2 hours ago'
-  },
-  {
-    id: 3,
-    name: 'Moiz Khan',
-    email: 'moiz.khan@hbos.com',
-    phone: '+92 302 7778899',
-    role: 'Inventory Manager',
-    branch: 'North Branch',
-    status: 'Pending',
-    lastActive: 'Never'
-  },
-  {
-    id: 4,
-    name: 'Bilal Sheikh',
-    email: 'bilal.sheikh@hbos.com',
-    phone: '+92 303 9990011',
-    role: 'Store Manager',
-    branch: 'South Branch',
-    status: 'Active',
-    lastActive: 'Yesterday'
-  }
-];
-
 const users = ref([]);
+const branches = ref([]);
+const isLoading = ref(false);
 const searchQuery = ref('');
 const filterRole = ref('');
 const filterStatus = ref('');
@@ -406,35 +333,39 @@ const editingUserId = ref(null);
 const userForm = reactive({
   name: '',
   email: '',
-  phone: '',
-  role: 'Cashier',
-  branch: 'Main Store',
-  status: 'Active',
+  role: 'Salesperson',
+  branch_id: null,
   password: '',
   confirmPassword: ''
 });
 
-onMounted(() => {
-  const saved = localStorage.getItem('hbos_settings_users');
-  if (saved) {
-    try {
-      users.value = JSON.parse(saved);
-    } catch (e) {
-      users.value = [...defaultUsers];
-    }
-  } else {
-    users.value = [...defaultUsers];
-    persistUsers();
+const loadData = async () => {
+  isLoading.value = true;
+  try {
+    const [usersRes, branchesRes] = await Promise.all([
+      api.get('/users'),
+      api.get('/branches')
+    ]);
+    users.value = (usersRes.data?.data || []).map(u => ({
+      ...u,
+      status: u.is_active ? 'Active' : 'Inactive'
+    }));
+    branches.value = branchesRes.data || [];
+  } catch (e) {
+    console.error('Failed to load user accounts:', e);
+    toast.error('Failed to load user accounts.');
+  } finally {
+    isLoading.value = false;
   }
-});
-
-const persistUsers = () => {
-  localStorage.setItem('hbos_settings_users', JSON.stringify(users.value));
 };
 
+onMounted(() => {
+  loadData();
+});
+
 // Computed metrics
-const activeCount = computed(() => users.value.filter(u => u.status === 'Active').length);
-const pendingCount = computed(() => users.value.filter(u => u.status === 'Pending').length);
+const activeCount = computed(() => users.value.filter(u => u.is_active).length);
+const pendingCount = computed(() => users.value.filter(u => !u.is_active).length);
 const distinctRolesCount = computed(() => new Set(users.value.map(u => u.role)).size);
 
 // Filtered list
@@ -443,8 +374,8 @@ const filteredUsers = computed(() => {
     const matchesSearch = !searchQuery.value || 
       u.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
       u.email.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-      (u.phone && u.phone.includes(searchQuery.value)) ||
-      u.role.toLowerCase().includes(searchQuery.value.toLowerCase());
+      u.role.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+      (u.branch_name && u.branch_name.toLowerCase().includes(searchQuery.value.toLowerCase()));
 
     const matchesRole = !filterRole.value || u.role === filterRole.value;
     const matchesStatus = !filterStatus.value || u.status === filterStatus.value;
@@ -459,10 +390,8 @@ const openAddUserModal = () => {
   editingUserId.value = null;
   userForm.name = '';
   userForm.email = '';
-  userForm.phone = '';
-  userForm.role = 'Cashier';
-  userForm.branch = 'Main Store';
-  userForm.status = 'Active';
+  userForm.role = 'Salesperson';
+  userForm.branch_id = branches.value.length > 0 ? branches.value[0].id : null;
   userForm.password = '';
   userForm.confirmPassword = '';
   showUserModal.value = true;
@@ -473,10 +402,8 @@ const openEditUserModal = (user) => {
   editingUserId.value = user.id;
   userForm.name = user.name;
   userForm.email = user.email;
-  userForm.phone = user.phone || '';
   userForm.role = user.role;
-  userForm.branch = user.branch || 'Main Store';
-  userForm.status = user.status;
+  userForm.branch_id = user.branch_id || null;
   userForm.password = '';
   userForm.confirmPassword = '';
   showUserModal.value = true;
@@ -486,56 +413,75 @@ const closeUserModal = () => {
   showUserModal.value = false;
 };
 
-const saveUser = () => {
+const saveUser = async () => {
   if (!userForm.name || !userForm.email) {
     toast.error('Please provide a full name and email address.');
     return;
   }
 
-  if (!isEditMode.value && userForm.password && userForm.password !== userForm.confirmPassword) {
-    toast.error('Passwords do not match.');
-    return;
+  if (!isEditMode.value) {
+    if (!userForm.password || userForm.password.length < 8) {
+      toast.error('Password must be at least 8 characters.');
+      return;
+    }
+    if (userForm.password !== userForm.confirmPassword) {
+      toast.error('Passwords do not match.');
+      return;
+    }
+  } else if (userForm.password) {
+    if (userForm.password.length < 8) {
+      toast.error('Password must be at least 8 characters.');
+      return;
+    }
+    if (userForm.password !== userForm.confirmPassword) {
+      toast.error('Passwords do not match.');
+      return;
+    }
   }
 
-  if (isEditMode.value) {
-    const idx = users.value.findIndex(u => u.id === editingUserId.value);
-    if (idx !== -1) {
-      users.value[idx] = {
-        ...users.value[idx],
+  try {
+    if (isEditMode.value) {
+      const payload = {
         name: userForm.name,
         email: userForm.email,
-        phone: userForm.phone,
         role: userForm.role,
-        branch: userForm.branch,
-        status: userForm.status
+        branch_id: userForm.branch_id || null
       };
-      persistUsers();
+      if (userForm.password) {
+        payload.password = userForm.password;
+        payload.password_confirmation = userForm.confirmPassword;
+      }
+      await api.put(`/users/${editingUserId.value}`, payload);
       toast.success(`User "${userForm.name}" updated successfully!`);
+    } else {
+      await api.post('/users', {
+        name: userForm.name,
+        email: userForm.email,
+        role: userForm.role,
+        branch_id: userForm.branch_id || null,
+        password: userForm.password,
+        password_confirmation: userForm.confirmPassword
+      });
+      toast.success(`Staff user "${userForm.name}" created successfully!`);
     }
-  } else {
-    const newUser = {
-      id: Date.now(),
-      name: userForm.name,
-      email: userForm.email,
-      phone: userForm.phone,
-      role: userForm.role,
-      branch: userForm.branch,
-      status: userForm.status,
-      lastActive: 'Just created'
-    };
-    users.value.unshift(newUser);
-    persistUsers();
-    toast.success(`User "${userForm.name}" added successfully!`);
+    closeUserModal();
+    await loadData();
+  } catch (e) {
+    toast.error(e.response?.data?.message || 'Failed to save user.');
   }
-
-  closeUserModal();
 };
 
-const deleteUser = (user) => {
-  if (confirm(`Are you sure you want to remove user account "${user.name}"?`)) {
-    users.value = users.value.filter(u => u.id !== user.id);
-    persistUsers();
-    toast.info(`User "${user.name}" has been removed.`);
+const toggleUserStatus = async (user) => {
+  const newStatus = !user.is_active;
+  const actionText = newStatus ? 'activate' : 'deactivate';
+  if (!confirm(`Are you sure you want to ${actionText} user account "${user.name}"?`)) return;
+
+  try {
+    await api.post(`/users/${user.id}/status`, { is_active: newStatus });
+    toast.success(`User "${user.name}" ${newStatus ? 'activated' : 'deactivated'}.`);
+    await loadData();
+  } catch (e) {
+    toast.error(e.response?.data?.message || `Failed to ${actionText} user.`);
   }
 };
 
@@ -561,30 +507,33 @@ const getAvatarColor = (name) => {
 
 const getRoleClass = (role) => {
   switch (role) {
-    case 'Admin': return 'role-admin';
-    case 'Store Manager': return 'role-manager';
-    case 'Cashier': return 'role-cashier';
-    case 'Inventory Manager': return 'role-inventory';
-    case 'Accountant': return 'role-accountant';
-    default: return 'role-default';
+    case 'Business Owner':
+      return 'role-admin';
+    case 'Branch Manager':
+      return 'role-manager';
+    case 'Salesperson':
+      return 'role-cashier';
+    default:
+      return 'role-default';
   }
 };
 
 const getRoleIcon = (role) => {
   switch (role) {
-    case 'Admin': return 'bi-shield-shaded';
-    case 'Store Manager': return 'bi-briefcase';
-    case 'Cashier': return 'bi-cart';
-    case 'Inventory Manager': return 'bi-boxes';
-    case 'Accountant': return 'bi-wallet2';
-    default: return 'bi-person';
+    case 'Business Owner':
+      return 'bi-shield-shaded';
+    case 'Branch Manager':
+      return 'bi-briefcase';
+    case 'Salesperson':
+      return 'bi-person';
+    default:
+      return 'bi-person';
   }
 };
 
 const getStatusClass = (status) => {
   switch (status) {
     case 'Active': return 'status-active';
-    case 'Pending': return 'status-pending';
     case 'Inactive': return 'status-inactive';
     default: return 'status-default';
   }

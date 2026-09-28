@@ -15,7 +15,7 @@
                 <div class="header-divider"></div>
                 <div class="cashier">
                     <div class="cashier-name">Ahmed Khan</div>
-                    <div class="cashier-role">Cashier 01</div>
+                    <div class="cashier-role">Salesperson</div>
                 </div>
                 <div class="avatar">AK</div>
             </div>

@@ -3,91 +3,103 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Services\DashboardService;
+use App\Models\Branch;
+use App\Models\User;
 use Illuminate\Http\Request;
-use App\Models\Sale;
-use App\Models\Purchase;
-use App\Models\Expense;
-use App\Models\Customer;
-use Carbon\Carbon;
+use Illuminate\Validation\ValidationException;
 
 class DashboardController extends Controller
 {
+    protected DashboardService $dashboardService;
+
+    public function __construct(DashboardService $dashboardService)
+    {
+        $this->dashboardService = $dashboardService;
+    }
+
+    /**
+     * Resolve active business ID from request container or authenticated user.
+     */
+    protected function getActiveBusinessId(Request $request): int
+    {
+        if (app()->has('active_business_id') && app('active_business_id')) {
+            return (int) app('active_business_id');
+        }
+        abort(400, 'Active business context is missing.');
+    }
+
+    /**
+     * Role-aware Dashboard Overview endpoint.
+     * GET /api/v1/dashboard
+     */
+    public function index(Request $request)
+    {
+        /** @var User $user */
+        $user = $request->user();
+        $businessId = $this->getActiveBusinessId($request);
+        $dateRange = $this->dashboardService->resolveDateRange($request->all());
+
+        $requestedBranchInput = $request->query('branch_id');
+        $isOwner = $user->hasRole('Business Owner');
+        $isManager = $user->hasRole('Branch Manager');
+        $isSalesperson = $user->hasRole('Salesperson');
+
+        // If user has no specific role assigned default to Owner logic if owner or safe fallback
+        if (!$isOwner && !$isManager && !$isSalesperson) {
+            $isOwner = true;
+        }
+
+        if ($isOwner) {
+            $branchId = null;
+            if ($requestedBranchInput && strtolower(trim($requestedBranchInput)) !== 'all') {
+                $bId = (int) $requestedBranchInput;
+                $branch = Branch::where('business_id', $businessId)->find($bId);
+                if (!$branch) {
+                    throw ValidationException::withMessages([
+                        'branch_id' => ['Selected branch does not belong to active business.'],
+                    ]);
+                }
+                $branchId = $bId;
+            }
+            $payload = $this->dashboardService->getOwnerDashboard($businessId, $branchId, $dateRange);
+            return response()->json($payload);
+        }
+
+        if ($isManager) {
+            if (empty($user->branch_id)) {
+                abort(403, 'Branch Manager is not assigned to any branch.');
+            }
+            if ($requestedBranchInput && strtolower(trim($requestedBranchInput)) === 'all') {
+                abort(403, 'Branch Managers are not authorized to view all branches.');
+            }
+            if ($requestedBranchInput && (int) $requestedBranchInput !== (int) $user->branch_id) {
+                abort(403, 'Branch Managers are not authorized to view another branch.');
+            }
+            $payload = $this->dashboardService->getManagerDashboard($businessId, (int) $user->branch_id, $dateRange, $user);
+            return response()->json($payload);
+        }
+
+        if ($isSalesperson) {
+            if (empty($user->branch_id)) {
+                abort(403, 'Salesperson is not assigned to any branch.');
+            }
+            if ($requestedBranchInput && (int) $requestedBranchInput !== (int) $user->branch_id) {
+                abort(403, 'Salesperson cannot access metrics for another branch.');
+            }
+            $payload = $this->dashboardService->getSalespersonDashboard($businessId, (int) $user->branch_id, $dateRange, $user);
+            return response()->json($payload);
+        }
+
+        abort(403, 'Unauthorized dashboard access.');
+    }
+
+    /**
+     * Refactored legacy stats endpoint (backward compatibility delegating to secure service).
+     * GET /api/v1/dashboard/stats
+     */
     public function stats(Request $request)
     {
-        $businessId = $request->user()->business_id;
-
-        $startDateInput = $request->query('start_date');
-        $endDateInput = $request->query('end_date');
-
-        if ($startDateInput && $endDateInput) {
-            $startDate = Carbon::parse($startDateInput)->startOfDay();
-            $endDate = Carbon::parse($endDateInput)->endOfDay();
-        } else {
-            $startDate = Carbon::now()->startOfMonth();
-            $endDate = Carbon::now()->endOfMonth();
-        }
-
-        // Sums filtered by date range
-        $salesTotal = Sale::where('business_id', $businessId)->whereBetween('date', [$startDate, $endDate])->sum('total');
-        $purchasesTotal = Purchase::where('business_id', $businessId)->whereBetween('date', [$startDate, $endDate])->sum('total');
-        $expensesTotal = Expense::where('business_id', $businessId)->whereBetween('date', [$startDate, $endDate])->sum('amount');
-        $customerCount = Customer::where('business_id', $businessId)->whereBetween('created_at', [$startDate, $endDate])->count();
-
-        $revenue = $salesTotal - $expensesTotal - $purchasesTotal;
-
-        // Grouping for chart
-        $diffInDays = $startDate->diffInDays($endDate);
-        
-        if ($diffInDays <= 31) {
-            // Group by day
-            $salesGrouped = Sale::where('business_id', $businessId)
-                ->whereBetween('date', [$startDate, $endDate])
-                ->selectRaw('DATE(date) as label, SUM(total) as total')
-                ->groupBy('label')
-                ->orderBy('label')
-                ->get();
-
-            $data = [];
-            $labels = [];
-            $salesMap = $salesGrouped->pluck('total', 'label')->toArray();
-            $current = clone $startDate;
-            while ($current <= $endDate) {
-                $label = $current->format('Y-m-d');
-                $labels[] = $current->format('M d');
-                $data[] = floatval($salesMap[$label] ?? 0);
-                $current->addDay();
-            }
-        } else {
-            // Group by month
-            $salesGrouped = Sale::where('business_id', $businessId)
-                ->whereBetween('date', [$startDate, $endDate])
-                ->selectRaw("DATE_FORMAT(date, '%Y-%m') as label, SUM(total) as total")
-                ->groupBy('label')
-                ->orderBy('label')
-                ->get();
-
-            $data = [];
-            $labels = [];
-            $salesMap = $salesGrouped->pluck('total', 'label')->toArray();
-            $current = clone $startDate;
-            while ($current <= $endDate) {
-                $label = $current->format('Y-m');
-                $labels[] = $current->format('M Y');
-                $data[] = floatval($salesMap[$label] ?? 0);
-                $current->addMonth();
-            }
-        }
-
-        return response()->json([
-            'sales_total' => floatval($salesTotal),
-            'purchases_total' => floatval($purchasesTotal),
-            'expenses_total' => floatval($expensesTotal),
-            'customer_count' => intval($customerCount),
-            'net_revenue' => floatval($revenue),
-            'chart_data' => [
-                'labels' => $labels,
-                'data' => $data
-            ]
-        ]);
+        return $this->index($request);
     }
 }

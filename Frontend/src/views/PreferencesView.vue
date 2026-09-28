@@ -370,7 +370,6 @@
 import { onMounted } from 'vue';
 
 onMounted(() => {
-  console.log('PreferencesView mounted');
 });
 </script>
 

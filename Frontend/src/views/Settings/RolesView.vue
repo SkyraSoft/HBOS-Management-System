@@ -4,11 +4,11 @@
     <div class="header-section text-center mb-4">
       <h1 class="main-title">HBOS Retail Management – Role Based Permissions Setup</h1>
       <p class="main-subtitle">
-        <span class="role-pill-admin">Admin (Full Control)</span>
+        <span class="role-pill-admin">Business Owner (Full Control)</span>
         <span class="divider">|</span>
-        <span class="role-pill-manager">Manager (Operational Access)</span>
+        <span class="role-pill-manager">Branch Manager (Operational Access)</span>
         <span class="divider">|</span>
-        <span class="role-pill-cashier">Cashier (Limited Access)</span>
+        <span class="role-pill-cashier">Salesperson (POS &amp; Counter)</span>
       </p>
     </div>
 
@@ -25,36 +25,36 @@
                 </div>
               </th>
 
-              <!-- SUPER ADMIN Header -->
+              <!-- BUSINESS OWNER Header -->
               <th class="col-admin">
                 <div class="header-content admin-header">
                   <div class="d-flex align-items-center justify-content-center gap-2 mb-1">
                     <i class="bi bi-shield-shaded header-icon"></i>
-                    <span class="header-title">SUPER ADMIN</span>
+                    <span class="header-title">BUSINESS OWNER</span>
                   </div>
-                  <div class="header-sub">Full Control</div>
+                  <div class="header-sub">Full Business Control</div>
                 </div>
               </th>
 
-              <!-- MANAGER Header -->
+              <!-- BRANCH MANAGER Header -->
               <th class="col-manager">
                 <div class="header-content manager-header">
                   <div class="d-flex align-items-center justify-content-center gap-2 mb-1">
                     <i class="bi bi-person-badge-fill header-icon"></i>
-                    <span class="header-title">MANAGER</span>
+                    <span class="header-title">BRANCH MANAGER</span>
                   </div>
-                  <div class="header-sub">Operational Access</div>
+                  <div class="header-sub">Branch Operational Access</div>
                 </div>
               </th>
 
-              <!-- CASHIER Header -->
+              <!-- SALESPERSON Header -->
               <th class="col-cashier">
                 <div class="header-content cashier-header">
                   <div class="d-flex align-items-center justify-content-center gap-2 mb-1">
                     <i class="bi bi-person-fill header-icon"></i>
-                    <span class="header-title">CASHIER</span>
+                    <span class="header-title">SALESPERSON</span>
                   </div>
-                  <div class="header-sub">Limited Access</div>
+                  <div class="header-sub">POS &amp; Counter Sales</div>
                 </div>
               </th>
             </tr>
@@ -69,14 +69,14 @@
                 </div>
               </td>
 
-              <!-- Super Admin Cell -->
+              <!-- Business Owner Cell -->
               <td class="perm-cell">
                 <div class="d-flex align-items-start gap-2">
                   <span class="status-icon icon-success">
                     <i class="bi bi-check-circle-fill"></i>
                   </span>
                   <div>
-                    <div class="perm-main text-dark fw-bold">{{ row.admin.text }}</div>
+                    <div class="perm-main text-dark fw-bold">{{ row.owner.text }}</div>
                   </div>
                 </div>
               </td>
@@ -99,19 +99,19 @@
                 </div>
               </td>
 
-              <!-- Cashier Cell -->
+              <!-- Salesperson Cell -->
               <td class="perm-cell">
                 <div class="d-flex align-items-start gap-2">
-                  <span :class="['status-icon', getStatusIconClass(row.cashier.status)]">
-                    <i :class="getStatusIconName(row.cashier.status)"></i>
+                  <span :class="['status-icon', getStatusIconClass(row.salesperson.status)]">
+                    <i :class="getStatusIconName(row.salesperson.status)"></i>
                   </span>
                   <div>
-                    <div class="perm-main text-dark fw-bold">{{ row.cashier.text }}</div>
+                    <div class="perm-main text-dark fw-bold">{{ row.salesperson.text }}</div>
                     <div 
-                      v-if="row.cashier.subtext" 
-                      :class="['perm-sub', row.cashier.subtextType === 'danger' ? 'text-danger' : 'text-muted']"
+                      v-if="row.salesperson.subtext" 
+                      :class="['perm-sub', row.salesperson.subtextType === 'danger' ? 'text-danger' : 'text-muted']"
                     >
-                      {{ row.cashier.subtext }}
+                      {{ row.salesperson.subtext }}
                     </div>
                   </div>
                 </div>
@@ -129,58 +129,56 @@
       </div>
 
       <div class="row g-4">
-        <!-- Super Admin Card -->
+        <!-- Business Owner Card -->
         <div class="col-lg-4 col-md-12">
           <div class="guide-card card-admin h-100">
             <div class="guide-card-header d-flex align-items-center gap-2 mb-3">
               <span class="guide-role-badge admin-badge">
                 <i class="bi bi-shield-shaded"></i>
               </span>
-              <h3 class="guide-card-title text-admin mb-0">SUPER ADMIN – Full Control</h3>
+              <h3 class="guide-card-title text-admin mb-0">BUSINESS OWNER – Full Governance</h3>
             </div>
             <ul class="guide-list">
-              <li>Complete access to all modules and features</li>
-              <li>Manage users, roles and permissions</li>
-              <li>View and manage all reports</li>
-              <li>Cannot be restricted</li>
+              <li>Complete authority over business settings, users, and branches</li>
+              <li>Manage staff accounts, assign roles, and configure system rules</li>
+              <li>View all financial accounts, full audit logs, and business reports</li>
+              <li>Protected by Last Owner safety guarantees</li>
             </ul>
           </div>
         </div>
 
-        <!-- Manager Card -->
+        <!-- Branch Manager Card -->
         <div class="col-lg-4 col-md-12">
           <div class="guide-card card-manager h-100">
             <div class="guide-card-header d-flex align-items-center gap-2 mb-3">
               <span class="guide-role-badge manager-badge">
                 <i class="bi bi-person-badge-fill"></i>
               </span>
-              <h3 class="guide-card-title text-manager mb-0">MANAGER – Operational Access</h3>
+              <h3 class="guide-card-title text-manager mb-0">BRANCH MANAGER – Branch Operations</h3>
             </div>
             <ul class="guide-list">
-              <li>Handle daily operations and management</li>
-              <li>Sales, Returns, Customers and Inventory access</li>
-              <li>Cannot delete sales or critical data</li>
-              <li>Limited access to purchases and expenses</li>
-              <li>No access to user management</li>
+              <li>Handle daily operations for the assigned branch</li>
+              <li>Sales, returns, customer khata, and branch inventory access</li>
+              <li>Branch-scoped expenses and assigned drawer settlements</li>
+              <li>Cannot modify business settings, user roles, or view central security logs</li>
             </ul>
           </div>
         </div>
 
-        <!-- Cashier Card -->
+        <!-- Salesperson Card -->
         <div class="col-lg-4 col-md-12">
           <div class="guide-card card-cashier h-100">
             <div class="guide-card-header d-flex align-items-center gap-2 mb-3">
               <span class="guide-role-badge cashier-badge">
                 <i class="bi bi-person-fill"></i>
               </span>
-              <h3 class="guide-card-title text-cashier mb-0">CASHIER – Limited Access</h3>
+              <h3 class="guide-card-title text-cashier mb-0">SALESPERSON – POS &amp; Counter</h3>
             </div>
             <ul class="guide-list">
-              <li>Perform POS sales and returns</li>
-              <li>View customers and stock levels</li>
-              <li>No access to pricing, products or reports</li>
-              <li>Cannot perform administrative actions</li>
-              <li>Focused on daily transactions only</li>
+              <li>Perform counter sales and POS barcode scanning</li>
+              <li>View customer khata and check branch stock availability</li>
+              <li>No access to business settings, audit center, or user management</li>
+              <li>Focused strictly on counter transactions and customer receipts</li>
             </ul>
           </div>
         </div>
@@ -193,8 +191,8 @@
         <i class="bi bi-lock-fill"></i>
       </div>
       <div class="security-text">
-        This role based permission setup ensures data security, accountability and smooth business operations.
-        Super Admin has complete control, Manager handles operations and Cashier focuses on transactions.
+        HBOS role-based governance enforces business boundaries, branch-isolated operations, and immutable audit logs.
+        Business Owner governs policy, Branch Manager directs local operations, and Salesperson handles counter transactions.
       </div>
     </div>
   </div>
@@ -207,72 +205,72 @@ const permissionMatrix = ref([
   {
     module: 'Dashboard',
     icon: 'bi-grid-fill',
-    admin: { status: 'success', text: 'Full Access' },
+    owner: { status: 'success', text: 'Full Access' },
     manager: { status: 'success', text: 'Full Access' },
-    cashier: { status: 'success', text: 'View Only' }
+    salesperson: { status: 'success', text: 'View Only' }
   },
   {
     module: 'Sales & POS',
     icon: 'bi-cart-fill',
-    admin: { status: 'success', text: 'Full Access' },
+    owner: { status: 'success', text: 'Full Access' },
     manager: { status: 'success', text: 'View, Create, Edit, Returns', subtext: 'Delete Disabled', subtextType: 'danger' },
-    cashier: { status: 'success', text: 'Create Transactions (POS)', subtext: 'Edit/Delete Disabled', subtextType: 'danger' }
+    salesperson: { status: 'success', text: 'Create Transactions (POS)', subtext: 'Edit/Delete Disabled', subtextType: 'danger' }
   },
   {
     module: 'Returns',
     icon: 'bi-arrow-counterclockwise',
-    admin: { status: 'success', text: 'Full Access' },
+    owner: { status: 'success', text: 'Full Access' },
     manager: { status: 'success', text: 'Process Returns' },
-    cashier: { status: 'success', text: 'Process Returns (POS Only)' }
+    salesperson: { status: 'success', text: 'Process Returns (POS Only)' }
   },
   {
     module: 'Customers',
     icon: 'bi-people-fill',
-    admin: { status: 'success', text: 'Full Access' },
+    owner: { status: 'success', text: 'Full Access' },
     manager: { status: 'success', text: 'Full Access', subtext: '(View, Add, Edit, Delete)', subtextType: 'muted' },
-    cashier: { status: 'success', text: 'View Only' }
+    salesperson: { status: 'success', text: 'View Only' }
   },
   {
     module: 'Inventory',
     icon: 'bi-box-seam-fill',
-    admin: { status: 'success', text: 'Full Access' },
+    owner: { status: 'success', text: 'Full Access' },
     manager: { status: 'success', text: 'View & Edit Products', subtext: 'Receive Shipments Disabled', subtextType: 'danger' },
-    cashier: { status: 'success', text: 'View Stock Levels Only' }
+    salesperson: { status: 'success', text: 'View Stock Levels Only' }
   },
   {
     module: 'Purchases',
     icon: 'bi-bag-fill',
-    admin: { status: 'success', text: 'Full Access' },
+    owner: { status: 'success', text: 'Full Access' },
     manager: { status: 'warning', text: 'View Purchases', subtext: 'Create Disabled', subtextType: 'danger' },
-    cashier: { status: 'danger', text: 'No Access' }
+    salesperson: { status: 'danger', text: 'No Access' }
   },
   {
     module: 'Suppliers',
     icon: 'bi-truck',
-    admin: { status: 'success', text: 'Full Access' },
+    owner: { status: 'success', text: 'Full Access' },
     manager: { status: 'success', text: 'View Suppliers' },
-    cashier: { status: 'danger', text: 'No Access' }
+    salesperson: { status: 'danger', text: 'No Access' }
   },
   {
     module: 'Expenses',
     icon: 'bi-wallet2',
-    admin: { status: 'success', text: 'Full Access' },
+    owner: { status: 'success', text: 'Full Access' },
     manager: { status: 'warning', text: 'View Expenses', subtext: 'Create/Edit Disabled', subtextType: 'danger' },
-    cashier: { status: 'danger', text: 'No Access' }
+    salesperson: { status: 'danger', text: 'No Access' }
   },
   {
     module: 'Reports',
     icon: 'bi-bar-chart-fill',
-    admin: { status: 'success', text: 'Full Access' },
+    owner: { status: 'success', text: 'Full Access' },
     manager: { status: 'success', text: 'View Reports' },
-    cashier: { status: 'success', text: 'View Sales Reports Only' }
+    salesperson: { status: 'success', text: 'View Sales Reports Only' }
   },
   {
     module: 'Users & Roles',
     icon: 'bi-person-badge-fill',
-    admin: { status: 'success', text: 'Full Access' },
+    owner: { status: 'success', text: 'Full Access' },
     manager: { status: 'danger', text: 'No Access' },
-    cashier: { status: 'danger', text: 'No Access' }
+    salesperson: { status: 'danger', text: 'No Access' }
   }
 ]);
 

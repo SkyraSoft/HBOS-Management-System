@@ -38,3 +38,4 @@ Frontend/pnpm-debug.log
 /composer.phar
 /*.cjs
 /scratch/
+database_backups/

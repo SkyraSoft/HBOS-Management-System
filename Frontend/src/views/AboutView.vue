@@ -211,7 +211,6 @@
 import { onMounted } from 'vue';
 
 onMounted(() => {
-  console.log('AboutView mounted');
 });
 </script>
 

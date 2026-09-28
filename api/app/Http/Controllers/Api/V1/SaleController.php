@@ -4,129 +4,243 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Models\Sale;
-use App\Models\SaleItem;
-use App\Services\StockService;
+use App\Models\SaleReturn;
+use App\Services\SaleService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use Exception;
 
 class SaleController extends Controller
 {
-    protected $stockService;
+    protected $saleService;
 
-    public function __construct(StockService $stockService)
+    public function __construct(SaleService $saleService)
     {
-        $this->stockService = $stockService;
+        $this->saleService = $saleService;
     }
 
     public function index(Request $request)
     {
-        $businessId = $request->user() ? $request->user()->business_id : null;
-        $query = Sale::with('items.product')->orderBy('created_at', 'desc');
+        $user = $request->user();
+        if ($user && !$user->can('view sales') && !$user->hasAnyRole(['Business Owner', 'Branch Manager', 'Salesperson'])) {
+            return response()->json(['message' => 'Unauthorized action.'], 403);
+        }
+
+        $businessId = $user ? $this->saleService->getActiveBusinessId($user) : null;
+        $query = Sale::with(['items.product', 'customer', 'branch', 'user', 'returns'])
+            ->orderBy('created_at', 'desc');
+
         if ($businessId) {
             $query->where('business_id', $businessId);
         }
+
+        // Branch & Role scoping
+        if ($user && !$user->hasRole('Business Owner')) {
+            if ($user->branch_id && intval($user->branch_id) > 0) {
+                $query->where('branch_id', $user->branch_id);
+            }
+            // Salespersons (roles without 'manage sales' permission) see their own sales only
+            if (!$user->can('manage sales')) {
+                $query->where('user_id', $user->id);
+            }
+        }
+
         $sales = $query->get();
         return response()->json($sales);
     }
 
     public function store(Request $request)
     {
+        $user = $request->user();
+        if ($user && !$user->can('create sales') && !$user->hasAnyRole(['Business Owner', 'Branch Manager', 'Salesperson'])) {
+            return response()->json(['message' => 'Unauthorized action.'], 403);
+        }
+
         $request->validate([
-            'customer_id' => 'nullable',
+            'branch_id' => 'nullable|integer',
+            'customer_id' => 'nullable|integer',
             'invoice_number' => 'nullable|string',
-            'date' => 'nullable',
-            'subtotal' => 'required|numeric',
+            'date' => 'nullable|date',
+            'subtotal' => 'nullable|numeric',
             'discount' => 'nullable|numeric',
             'tax' => 'nullable|numeric',
-            'total' => 'required|numeric',
+            'total' => 'nullable|numeric',
+            'paid_amount' => 'nullable|numeric',
             'payment_method' => 'nullable|string',
             'notes' => 'nullable|string',
+            'idempotency_key' => 'nullable|string|max:100',
             'items' => 'required|array|min:1',
             'items.*.product_id' => 'required',
-            'items.*.quantity' => 'required|numeric|min:1',
-            'items.*.unit_price' => 'required|numeric',
+            'items.*.quantity' => 'required|integer|min:1',
+            'items.*.unit_price' => 'nullable|numeric',
             'items.*.discount' => 'nullable|numeric',
-            'items.*.total' => 'required|numeric'
         ]);
 
         try {
-            DB::beginTransaction();
-
-            $businessId = $request->user() ? $request->user()->business_id : 1;
-            $userId = $request->user() ? $request->user()->id : 1;
-            
-            // Unique invoice number generation fallback
-            $invoiceNumber = $request->invoice_number;
-            if (!$invoiceNumber || Sale::where('invoice_number', $invoiceNumber)->exists()) {
-                $invoiceNumber = 'INV-' . date('Ymd') . '-' . rand(10000, 99999);
-            }
-
-            $subtotal = floatval($request->subtotal);
-            $discount = floatval($request->discount ?? 0);
-            $tax = floatval($request->tax ?? 0);
-            $total = floatval($request->total);
-
-            $sale = Sale::create([
-                'business_id' => $businessId,
-                'user_id' => $userId,
-                'customer_id' => $request->customer_id ? intval($request->customer_id) : null,
-                'invoice_number' => $invoiceNumber,
-                'date' => $request->date ? date('Y-m-d', strtotime($request->date)) : date('Y-m-d'),
-                'subtotal' => $subtotal,
-                'discount' => $discount,
-                'tax' => $tax,
-                'total' => $total,
-                'payment_method' => $request->payment_method ?: 'Cash',
-                'notes' => $request->notes
-            ]);
-
-            foreach ($request->items as $itemData) {
-                $rawPId = strval($itemData['product_id']);
-                $cleanPId = strpos($rawPId, '_') !== false ? explode('_', $rawPId)[0] : $rawPId;
-                $pId = intval($cleanPId);
-
-                $qty = intval($itemData['quantity']);
-                $unitPrice = floatval($itemData['unit_price']);
-                $itemTotal = floatval($itemData['total']);
-                
-                SaleItem::create([
-                    'sale_id' => $sale->id,
-                    'product_id' => $pId,
-                    'quantity' => $qty,
-                    'unit_price' => $unitPrice,
-                    'discount' => floatval($itemData['discount'] ?? 0),
-                    'total' => $itemTotal
-                ]);
-
-                // Safely decrement stock
-                $this->stockService->decrementStock(
-                    $pId, 
-                    $qty, 
-                    $businessId
-                );
-            }
-
-            DB::commit();
-
-            return response()->json($sale->load('items.product'), 201);
+            $sale = $this->saleService->createSale($request->all(), $user);
+            return response()->json($sale, 201);
+        } catch (ValidationException $e) {
+            return response()->json(['errors' => $e->errors(), 'message' => $e->getMessage()], 422);
         } catch (Exception $e) {
-            DB::rollBack();
             return response()->json(['error' => $e->getMessage()], 400);
         }
     }
 
     public function show(Request $request, string $id)
     {
-        $sale = Sale::with('items.product')->findOrFail($id);
+        $user = $request->user();
+        if ($user && !$user->can('view sales') && !$user->hasAnyRole(['Business Owner', 'Branch Manager', 'Salesperson'])) {
+            return response()->json(['message' => 'Unauthorized action.'], 403);
+        }
+
+        $businessId = $user ? $this->saleService->getActiveBusinessId($user) : null;
+        $query = Sale::with(['items.product', 'customer', 'branch', 'user', 'returns.items.product', 'cancelledBy']);
+        
+        if ($businessId) {
+            $query->where('business_id', $businessId);
+        }
+
+        $sale = $query->findOrFail($id);
+
+        // Branch & Role authorization check
+        if ($user && !$user->hasRole('Business Owner')) {
+            if ($user->branch_id && intval($sale->branch_id) !== intval($user->branch_id)) {
+                return response()->json(['message' => 'Unauthorized access to sale record.'], 403);
+            }
+            if (!$user->can('manage sales') && intval($sale->user_id) !== intval($user->id)) {
+                return response()->json(['message' => 'Unauthorized access to sale record.'], 403);
+            }
+        }
+
+        return response()->json($sale);
+    }
+
+    public function update(Request $request, string $id)
+    {
+        $user = $request->user();
+        if ($user && !$user->can('manage sales') && !$user->hasRole('Business Owner')) {
+            return response()->json(['message' => 'Unauthorized action.'], 403);
+        }
+
+        $businessId = $this->saleService->getActiveBusinessId($user);
+        $sale = Sale::where('business_id', $businessId)->findOrFail($id);
+
+        // Immutability Protection: Cannot modify financial or line item details of a posted sale
+        $request->validate([
+            'notes' => 'nullable|string',
+        ]);
+
+        $sale->update([
+            'notes' => $request->notes ?? $sale->notes,
+        ]);
+
         return response()->json($sale);
     }
 
     public function destroy(Request $request, string $id)
     {
-        $sale = Sale::with('items')->findOrFail($id);
-        $sale->items()->delete();
-        $sale->delete();
-        return response()->json(['message' => 'Sale deleted successfully']);
+        // HARD DELETE PROHIBITION
+        return response()->json([
+            'error' => 'Posted sales cannot be deleted. Use cancellation or return endpoint.'
+        ], 422);
+    }
+
+    public function cancel(Request $request, string $id)
+    {
+        $user = $request->user();
+        if ($user && !$user->can('manage sales') && !$user->hasAnyRole(['Business Owner', 'Branch Manager'])) {
+            return response()->json(['message' => 'Unauthorized action.'], 403);
+        }
+
+        $request->validate([
+            'reason' => 'required|string|max:500',
+        ]);
+
+        $businessId = $this->saleService->getActiveBusinessId($user);
+        $sale = Sale::where('business_id', $businessId)->findOrFail($id);
+
+        try {
+            $cancelledSale = $this->saleService->cancelSale($sale, $request->reason, $user);
+
+            app(\App\Services\AuditService::class)->log(
+                logName: 'sale',
+                event: 'cancelled',
+                description: "Sale {$sale->invoice_number} cancelled. Reason: {$request->reason}",
+                subject: $cancelledSale,
+                properties: [
+                    'sale_id' => $sale->id,
+                    'invoice_number' => $sale->invoice_number,
+                    'total' => (float) $sale->total,
+                    'reason' => $request->reason,
+                ],
+                branchId: $sale->branch_id,
+                businessId: (int) $sale->business_id
+            );
+
+            return response()->json($cancelledSale);
+        } catch (ValidationException $e) {
+            return response()->json(['errors' => $e->errors(), 'message' => $e->getMessage()], 422);
+        } catch (Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
+    }
+
+    public function returns(Request $request, string $id)
+    {
+        $user = $request->user();
+        if ($user && !$user->can('return sales') && !$user->hasAnyRole(['Business Owner', 'Branch Manager'])) {
+            return response()->json(['message' => 'Unauthorized action.'], 403);
+        }
+
+        $request->validate([
+            'reason' => 'nullable|string|max:500',
+            'idempotency_key' => 'nullable|string|max:100',
+            'items' => 'required|array|min:1',
+            'items.*.sale_item_id' => 'required|integer',
+            'items.*.quantity' => 'required|integer|min:1',
+        ]);
+
+        $businessId = $this->saleService->getActiveBusinessId($user);
+        $sale = Sale::where('business_id', $businessId)->findOrFail($id);
+
+        try {
+            $saleReturn = $this->saleService->processReturn($sale, $request->items, $request->reason, $user, $request->idempotency_key);
+
+            app(\App\Services\AuditService::class)->log(
+                logName: 'sale',
+                event: 'returned',
+                description: "Sale return processed for invoice {$sale->invoice_number}. Refund obligation: {$saleReturn->refund_amount}",
+                subject: $saleReturn,
+                properties: [
+                    'sale_id' => $sale->id,
+                    'sale_return_id' => $saleReturn->id,
+                    'invoice_number' => $sale->invoice_number,
+                    'refund_amount' => (float) $saleReturn->refund_amount,
+                    'reason' => $request->reason,
+                ],
+                branchId: $sale->branch_id,
+                businessId: (int) $sale->business_id
+            );
+
+            return response()->json($saleReturn, 201);
+        } catch (ValidationException $e) {
+            return response()->json(['errors' => $e->errors(), 'message' => $e->getMessage()], 422);
+        } catch (Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
+    }
+
+    public function listReturns(Request $request, string $id)
+    {
+        $user = $request->user();
+        if ($user && !$user->can('view sales') && !$user->hasAnyRole(['Business Owner', 'Branch Manager', 'Salesperson'])) {
+            return response()->json(['message' => 'Unauthorized action.'], 403);
+        }
+
+        $businessId = $this->saleService->getActiveBusinessId($user);
+        $sale = Sale::where('business_id', $businessId)->findOrFail($id);
+        $returns = $sale->returns()->with(['items.product', 'user', 'branch'])->get();
+
+        return response()->json($returns);
     }
 }

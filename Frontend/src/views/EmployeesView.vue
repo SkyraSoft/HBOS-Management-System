@@ -166,7 +166,12 @@ onMounted(fetchEmployees);
               <div class="row g-3 mb-3">
                 <div class="col-md-6">
                   <label class="form-label small fw-semibold text-secondary">Role</label>
-                  <input v-model="newEmployee.role" type="text" class="form-control rounded-3" placeholder="e.g. Cashier" />
+                  <select v-model="newEmployee.role" class="form-select rounded-3">
+                    <option value="">Select Role</option>
+                    <option value="Business Owner">Business Owner</option>
+                    <option value="Branch Manager">Branch Manager</option>
+                    <option value="Salesperson">Salesperson</option>
+                  </select>
                 </div>
                 <div class="col-md-6">
                   <label class="form-label small fw-semibold text-secondary">Phone</label>

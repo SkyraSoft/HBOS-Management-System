@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
+import api from '../../api'
 
 const settings = ref({
   storeName: 'HBOS RETAIL STORE',
@@ -26,28 +27,40 @@ const showToast = (msg) => {
   setTimeout(() => { isToastOpen.value = false }, 2500)
 }
 
-onMounted(() => {
-  const saved = localStorage.getItem('hbos_receipt_settings')
-  if (saved) {
-    try {
-      settings.value = { ...settings.value, ...JSON.parse(saved) }
-    } catch (e) {
-      console.error('Error loading receipt settings:', e)
+const loadSettings = async () => {
+  try {
+    const res = await api.get('/settings')
+    const data = res.data
+    if (data.receipt_settings && typeof data.receipt_settings === 'object') {
+      settings.value = { ...settings.value, ...data.receipt_settings }
     }
+    if (data.receipt_header) settings.value.storeTagline = data.receipt_header
+    if (data.receipt_footer) settings.value.footerNote = data.receipt_footer
+  } catch (e) {
+    console.error('Failed to load server settings:', e)
   }
+}
+
+onMounted(() => {
+  loadSettings()
 })
 
-const saveSettings = () => {
+const saveSettings = async () => {
   isSaving.value = true
   try {
-    localStorage.setItem('hbos_receipt_settings', JSON.stringify(settings.value))
-    setTimeout(() => {
-      isSaving.value = false
-      showToast('Receipt & Invoice template settings saved successfully!')
-    }, 400)
+    await api.post('/settings', {
+      settings: {
+        receipt_header: settings.value.storeTagline || settings.value.storeName,
+        receipt_footer: settings.value.footerNote,
+        show_tax_number: !!settings.value.taxNumber,
+        receipt_settings: settings.value
+      }
+    })
+    isSaving.value = false
+    showToast('Receipt & Invoice template settings saved successfully!')
   } catch (e) {
     isSaving.value = false
-    showToast('Failed to save settings.')
+    showToast(e.response?.data?.message || 'Failed to save settings.')
   }
 }
 
@@ -154,7 +167,7 @@ const resetDefaults = () => {
                 </div>
                 <div class="form-check form-switch">
                   <input v-model="settings.showCashier" class="form-check-input" type="checkbox" id="chkCashier" />
-                  <label class="form-check-label small fw-medium" for="chkCashier">Display cashier / terminal operator name</label>
+                  <label class="form-check-label small fw-medium" for="chkCashier">Display salesperson / terminal operator name</label>
                 </div>
               </div>
             </div>
@@ -165,40 +178,35 @@ const resetDefaults = () => {
           <h2 class="fs-6 fw-bold text-dark mb-3 d-flex align-items-center gap-2">
             <i class="bi bi-chat-left-text text-primary"></i> Custom Footer & Messaging
           </h2>
-
-          <div class="mb-3">
-            <label class="form-label small fw-semibold text-secondary">Receipt Footer Policy / Note</label>
-            <textarea v-model="settings.footerNote" rows="2" class="form-control form-control-sm rounded-3"></textarea>
-          </div>
-
-          <div>
-            <label class="form-label small fw-semibold text-secondary">WhatsApp Share Message Template</label>
-            <textarea v-model="settings.whatsappTemplate" rows="4" class="form-control form-control-sm rounded-3 font-monospace"></textarea>
-            <div class="form-text small text-muted">
-              Supported placeholders: <code>{store_name}</code>, <code>{invoice_number}</code>, <code>{date}</code>, <code>{item_count}</code>, <code>{total_amount}</code>, <code>{phone}</code>.
+          <div class="row g-3">
+            <div class="col-12">
+              <label class="form-label small fw-semibold text-secondary">Receipt Footer Note</label>
+              <textarea v-model="settings.receiptFooter" rows="2" class="form-control form-control-sm rounded-3"></textarea>
+            </div>
+            <div class="col-12">
+              <label class="form-label small fw-semibold text-secondary">Return / Exchange Policy Text</label>
+              <textarea v-model="settings.returnPolicy" rows="2" class="form-control form-control-sm rounded-3"></textarea>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- LIVE RECEIPT PREVIEW (RIGHT) -->
+      <!-- THERMAL PREVIEW (RIGHT) -->
       <div class="col-lg-5">
-        <div class="sticky-top" style="top: 20px;">
-          <div class="d-flex align-items-center justify-content-between mb-2">
-            <span class="small fw-bold text-uppercase text-muted">Live Receipt Preview</span>
-            <span class="badge bg-primary-subtle text-primary">{{ settings.paperSize }}</span>
-          </div>
+        <div class="card border-0 shadow-sm rounded-4 p-4 sticky-top" style="top: 2rem;">
+          <h2 class="fs-6 fw-bold text-dark mb-3 d-flex align-items-center justify-content-between">
+            <span class="d-flex align-items-center gap-2"><i class="bi bi-receipt text-primary"></i> Live Thermal Slip Preview</span>
+            <span class="badge bg-light text-secondary border fw-medium">{{ settings.paperSize }}</span>
+          </h2>
 
-          <div class="card border-0 shadow-sm rounded-4 p-4" style="background: #f8fafc;">
-            <div class="thermal-slip bg-white p-3 rounded-3 shadow-sm border mx-auto" :style="{ maxWidth: settings.paperSize === '58mm' ? '280px' : '340px' }">
-              <!-- Header -->
-              <div class="text-center">
-                <div class="fw-bold fs-6 text-dark text-uppercase">{{ settings.storeName || 'STORE NAME' }}</div>
-                <div class="text-muted small">{{ settings.storeTagline }}</div>
-                <div class="text-muted small" style="font-size: 11px;">{{ settings.address }}</div>
-                <div class="text-muted small" style="font-size: 11px;">Tel: {{ settings.phone }}</div>
-                <div v-if="settings.taxNumber" class="text-muted small" style="font-size: 11px;">{{ settings.taxNumber }}</div>
-              </div>
+          <!-- PREVIEW TICKET -->
+          <div class="thermal-ticket bg-white border rounded-3 p-3 shadow-sm mx-auto" :style="{ maxWidth: settings.paperSize === '58mm' ? '280px' : '380px' }">
+            <div class="text-center mb-3">
+              <div class="fw-bold fs-5 text-dark">{{ settings.storeName || 'My Business' }}</div>
+              <div v-if="settings.storeTagline" class="text-muted small" style="font-size: 11px;">{{ settings.storeTagline }}</div>
+              <div v-if="settings.storeAddress" class="text-muted small" style="font-size: 11px;">{{ settings.storeAddress }}</div>
+              <div v-if="settings.storePhone" class="text-muted small" style="font-size: 11px;">Tel: {{ settings.storePhone }}</div>
+              <div v-if="settings.taxNumber" class="text-muted small" style="font-size: 11px;">NTN / Tax ID: {{ settings.taxNumber }}</div>
 
               <div class="receipt-dashed-line"></div>
 
@@ -208,7 +216,7 @@ const resetDefaults = () => {
                 <span>01 Sep 2026 16:40</span>
               </div>
               <div v-if="settings.showCashier" class="d-flex justify-content-between small text-muted" style="font-size: 11px;">
-                <span>Cashier: Admin</span>
+                <span>Salesperson: Ahmed Khan</span>
                 <span>POS-01</span>
               </div>
 

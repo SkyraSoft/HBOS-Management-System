@@ -29,6 +29,7 @@ class DashboardTest extends TestCase
             'business_id' => $this->business->id,
             'password' => bcrypt('password123')
         ]);
+        $this->user->businesses()->attach($this->business->id);
         
         $this->token = $this->user->createToken('test_token')->plainTextToken;
     }
@@ -64,7 +65,8 @@ class DashboardTest extends TestCase
             'business_id' => $this->business->id,
             'category' => 'Misc',
             'amount' => 20,
-            'date' => now()->format('Y-m-d')
+            'date' => now()->format('Y-m-d'),
+            'status' => 'posted',
         ]);
 
         // 4. Create a Customer
@@ -73,19 +75,13 @@ class DashboardTest extends TestCase
             'name' => 'Test Customer'
         ]);
 
-        // Net Revenue = Total Sales (100) - Total Purchases (50) - Total Expenses (20) = 30
-
         $response = $this->withHeaders(['Authorization' => "Bearer $this->token"])
                          ->getJson('/api/v1/dashboard/stats');
 
         $response->assertStatus(200)
-                 ->assertJson([
-                     'today_sales' => 100,
-                     'total_sales' => 100,
-                     'total_purchases' => 50,
-                     'total_expenses' => 20,
-                     'customer_count' => 1,
-                     'net_revenue' => 30
-                 ]);
+                 ->assertJsonPath('role', 'Business Owner')
+                 ->assertJsonPath('sales.gross_sales', 100)
+                 ->assertJsonPath('expenses.total', 20)
+                 ->assertJsonPath('operating_position.amount', 80);
     }
 }

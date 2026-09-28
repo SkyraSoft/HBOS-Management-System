@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Traits\Tenantable;
 
 class Employee extends Model
 {
+    use Tenantable;
+
     protected $fillable = [
         'business_id',
         'name',
