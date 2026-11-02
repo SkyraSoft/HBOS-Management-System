@@ -84,7 +84,8 @@ c:\xampp\htdocs\HBOS\
 │   │   │   ├── localDb.js           # Multi-tenant partitioned IndexedDB engine
 │   │   │   └── offlinePosEngine.js  # Offline checkout & outbox transaction builder
 │   │   ├── stores/                  # Pinia stores (auth, retail, customers, khata, sessionMode)
-│   │   └── views/                   # PosSaleView, InventryView, CustomerView, DashboardView, etc.
+│   │   └── views/                   # PosSaleView, InventryView, CustomerView, DashboardView, ReorderView, etc.
+│   │       └── Settings/            # BranchesView, UsersView, RolesView, ReceiptsView, SecurityView, SyncView
 ├── desktop/                         # Tauri v1.6.3 Desktop Application Wrapper
 │   ├── tauri.conf.json              # Window settings (1366x768 resizable, decorated), WiX bundle specs
 │   ├── build.rs                     # Cargo cache invalidation watcher for Frontend/dist
@@ -295,7 +296,7 @@ When active, an amber top banner (`DemoModeBanner.vue`) is pinned:
 
 ---
 
-## 6. COMPLETE SPECIFICATION OF ALL 18 SYSTEM MODULES
+## 6. COMPLETE SPECIFICATION OF ALL 27 SYSTEM MODULES & SUBSYSTEMS
 
 ### Module 1: POS Checkout Counter & Fast Retail Cashier
 * **Live Component:** `Frontend/src/views/PosSaleView.vue` | **Active Routes:** `/pos`, `/POS`
@@ -306,69 +307,107 @@ When active, an amber top banner (`DemoModeBanner.vue`) is pinned:
 * **Features:** 44 distinct sellable SKU records, unique primary EAN-13 barcodes, master carton barcode aliases with quantity multipliers (e.g. 12x, 24x), loose fractional products with 3-decimal precision (e.g. 10.500 kg), tiered pricing (Retail vs. Wholesale), below-cost selling warnings, 56 bundled WebP visuals (< 10 KB).
 
 ### Module 3: Inventory Ledger & Stock Movement
-* **Live Components:** `InventryView.vue`, `ReorderView.vue`, `ReorderDetailView.vue` | **Active Routes:** `/inventory`, `/reorder`
-* **Features:** Immutable `inventory_movements` ledger for every stock mutation, negative stock prevention via database concurrency locks, physical stock adjustments with mandatory reason codes (theft, damage, expiry, audit count), automated reorder alerts and slow-moving stock intelligence.
+* **Live Components:** `InventryView.vue` | **Active Routes:** `/inventory`
+* **Features:** Immutable `inventory_movements` ledger for every stock mutation, negative stock prevention via database concurrency locks, real-time stock balance tracking per branch (`branch_inventories`), starting stock support.
 
-### Module 4: Suppliers, Purchasing & Landed Cost
+### Module 4: Stock Adjustments & Physical Inventory Auditing
+* **Live Components:** `InventryView.vue` (Adjust Stock Modal) | **Active Routes:** `POST /api/v1/inventory/adjustments`
+* **Features:** Physical inventory count adjustments with mandatory reason codes (Damaged, Expired, Theft/Pilferage, Audit Variance, Internal Consumption), balance sheet valuation adjustments.
+
+### Module 5: Stock Intelligence & Smart Reorder Engine
+* **Live Components:** `Frontend/src/views/ReorderView.vue`, `ReorderDetailView.vue` | **Active Routes:** `/reorder`, `/reorderdetail`
+* **Features:** Sales velocity calculation (units/day), lead-time buffer analysis, automated reorder suggestions with 1-click Purchase Order creation, dead stock & slow-moving stock identification (unsold for > 30/60/90 days), overstock capital lockup alerts.
+
+### Module 6: Suppliers, Purchasing & Landed Cost Freight Allocation
 * **Live Component:** `Frontend/src/views/PurchaseView.vue` | **Active Routes:** `/purchases`, `/purchase`
 * **Features:** Supplier purchase orders supporting Paid, Unpaid, and Partial payment terms, proportional freight/landed cost allocation to unit cost, automatic stock increments upon receiving, purchase price variance tracking.
 
-### Module 5: Supplier Payables & Debt Settlement
-* **Live Components:** `SupplierView.vue`, `SupplierpayableView.vue`, `SupplierPaymentView.vue` | **Active Routes:** `/suppliers`, `/supplierpayable`
-* **Features:** Supplier payables ledger (`due_amount` tracking), debt settlement payouts from Cash Drawer or Bank Account, auditable payment reversals with compensating journal entries, supplier return debit notes.
+### Module 7: Suppliers & Accounts Payable Ledger
+* **Live Components:** `SupplierView.vue`, `SupplierpayableView.vue` | **Active Routes:** `/suppliers`, `/supplierpayable`
+* **Features:** Supplier directory, contact info, NTN, terms, outstanding accounts payable ledger (`due_amount` tracking), historical purchase invoice records.
 
-### Module 6: Customers & Pakistani Khata (Udhaar) Ledger
+### Module 8: Supplier Debt Settlement & Payment Reversals
+* **Live Components:** `SupplierPaymentView.vue` | **Active Routes:** `/supplierpayment`
+* **Features:** Debt settlement payouts from Cash Drawer or Bank Account, real-time cash drawer outflow tracking, auditable payment reversals with compensating journal entries.
+
+### Module 9: Supplier Returns & Legal Debit Notes
+* **Live Component:** Purchase & Supplier Hub | **Active Routes:** `GET/POST /api/v1/supplier-returns`
+* **Features:** Returning damaged or expired goods to vendors, generating legal Debit Notes with serial numbering, inventory decrement and accounts payable reduction.
+
+### Module 10: Customers & Pakistani Khata (Udhaar) Ledger
 * **Live Components:** `CustomerView.vue`, `KhataView.vue`, `ProfilecustomerView.vue` | **Active Routes:** `/customers`, `/khata`
 * **Features:** Customer directory with Pakistani phone validation (`03XXXXXXXXX`), credit limit enforcement, Khata repayment modal (Cash, Bank Transfer, Cheque), overpayment rejection (HTTP 422 if payment > balance), payment reversal with mandatory audit reasons, shareable WhatsApp and PDF statements.
 
-### Module 7: Returns, Exchanges & Restock Grading
+### Module 11: Sales History, Invoices & Voiding
 * **Live Component:** `Frontend/src/views/SalesView.vue` | **Active Routes:** `/sales`
+* **Features:** Complete sales invoice directory with date, cashier, branch, and payment filters, itemized lines, discounts, tax, invoice cancellation / voiding with inventory restoration and cash reversal.
+
+### Module 12: Customer Returns, Exchanges & Restock Grading
+* **Live Component:** `Frontend/src/views/SalesView.vue` | **Active Routes:** `POST /api/v1/sales/{id}/returns`
 * **Features:** Original invoice lookup, restock condition assessment:
   * **Restockable:** Increments sellable stock and reverses COGS.
   * **Damaged:** Routes item to damage quarantine without adding to sellable inventory.
 * Cash refund settlement from cash drawer, prevention of duplicate return replays.
 
-### Module 8: Operating Expenses & Petty Cash
+### Module 13: Operating Expenses & Store Petty Cash
 * **Live Component:** `Frontend/src/views/ExpensesView.vue` | **Active Routes:** `/expenses`
-* **Features:** Daily store expense recording (Utilities, Rent, Salaries, Refreshments, Maintenance), petty cash payouts from cash drawer with automatic drawer cash decrement, monthly expense budget tracking with threshold alerts.
+* **Features:** Daily store expense recording (Utilities, Rent, Salaries, Refreshments, Maintenance), petty cash payouts from cash drawer with automatic drawer cash decrement, expense voiding with mandatory justification, monthly expense budget tracking with threshold alerts.
 
-### Module 9: Multi-Account Treasury & Financial Accounts
-* **Live Component:** `Frontend/src/views/SettingsView.vue` | **Active Routes:** `/settings` (Treasury tab)
+### Module 14: Multi-Account Treasury & Financial Accounts
+* **Live Component:** `Frontend/src/views/SettingsView.vue` (Treasury tab) | **Active Routes:** `GET/POST /api/v1/financial-accounts`
 * **Features:** Multi-account management: Cash Drawer, Bank Accounts, Mobile Wallets (JazzCash, Easypaisa), inter-account transfers with double-entry balance conservation, capital injections and drawings.
 
-### Module 10: Cash Register & Shift Sessions
+### Module 15: Cash Register Shift Sessions & Daily Day-End Balancing
 * **Live Components:** `PosSaleView.vue`, `ExpensesView.vue` | **Active Routes:** `/pos`
 * **Features:** Shift opening float initialization, real-time drawer balance tracking, day-end physical cash counting modal, discrepancy explanation requirement, shift locking (closed sessions cannot be modified).
 
-### Module 11: Financial Reports & Small Retail Profitability
-* **Live Components:** `DashboardView.vue`, `ReportsView.vue` | **Active Routes:** `/dashboard`, `/reports`
+### Module 16: Executive Dashboard & Real-Time Operational KPIs
+* **Live Component:** `Frontend/src/views/DashboardView.vue` | **Active Routes:** `/dashboard`
+* **Features:** Real-time KPIs (Today's Sales, Cash in Drawer, Gross Profit, Receivables, Payables), low-stock alert cards, multi-branch filtering, cashier privacy gate.
+
+### Module 17: Financial Reports & Small Retail Profitability
+* **Live Components:** `DashboardView.vue`, `ReportsView.vue` | **Active Routes:** `/reports`
 * **Features:** Realized Profit & Loss statement ($Net\ Sales - Snapshot\ COGS = Gross\ Profit$, $Gross\ Profit - Operating\ Expenses = True\ Net\ Profit$), sales breakdown by category, brand, and cashier, cashier privacy gate (HTTP 403 Forbidden on reports).
 
-### Module 12: Multi-Branch Architecture & Expansion
+### Module 18: Multi-Branch Architecture & Expansion
 * **Live Component:** `Frontend/src/views/BranchManagementView.vue` | **Active Routes:** `/branches`
-* **Features:** Primary store immutability, branch expansion wizard, dynamic adaptive UI (Single-Store shielding vs. Multi-Store controls), 1-click "Decommission & Consolidate Branch" engine.
+* **Features:** Primary store immutability, branch expansion wizard, dynamic adaptive UI (Single-Store shielding vs. Multi-Store controls), branch readiness check.
 
-### Module 13: Inter-Branch Stock Transfers
-* **Live Component:** `Frontend/src/views/StockTransferView.vue` | **Active Routes:** `/stock-transfers`
-* **Features:** Transfer dispatch and receiving lifecycle (`dispatched` $\rightarrow$ `in_transit` $\rightarrow$ `received`), stock decremented at source upon dispatch, stock incremented at destination upon receive, strict company inventory conservation.
+### Module 19: 1-Click "Decommission & Consolidate Branch" Engine
+* **Live Component:** `Frontend/src/views/BranchManagementView.vue` | **Active Routes:** `POST /api/v1/branches/{id}/consolidate-and-decommission`
+* **Features:** Decommission preview, in-transit transfer recall/reroute, inventory sweep into primary branch, soft decommission preserving historical foreign key records, auto-shielding reactivation.
 
-### Module 14: Role Governance & Access Control (RBAC)
-* **Live Component:** `Frontend/src/views/UsersView.vue` | **Active Routes:** `/users`, `/settings/users`
-* **Features:** Role hierarchy (Business Owner = universal access; Branch Manager = branch-scoped; Salesperson/Cashier = POS counter only), 403 Forbidden enforcement on reports and settings.
+### Module 20: Inter-Branch Stock Transfers & Transport Delivery Challans
+* **Live Component:** `Frontend/src/views/StockTransferView.vue` | **Active Routes:** `/transfers`, `/stock-transfers`
+* **Features:** Transfer dispatch and receiving lifecycle (`dispatched` $\rightarrow$ `in_transit` $\rightarrow$ `received`), stock decremented at source upon dispatch, stock incremented at destination upon receive, official Gate Pass / Delivery Challan printing (`transfers/{id}/challan`), strict company inventory conservation.
 
-### Module 15: Offline Counter Resilience & Sync Coordinator
-* **Live Services:** `offlinePosEngine.js`, `localDb.js`
+### Module 21: Owner "View-As" Read-Only Counter Preview Mode
+* **Live Components:** Top Navigation Banner & POS View | **Active Routes:** `POST /api/v1/view-as/enter`
+* **Features:** Owner can preview any remote branch's live POS counter in real-time with an amber banner, middleware intercepting all mutations with HTTP 403.
+
+### Module 22: Branch Action Notes & Operational Directives
+* **Live Component:** `Frontend/src/views/NotificationsView.vue` | **Active Routes:** `/notifications`, `GET/POST /api/v1/action-notes`
+* **Features:** Owner-to-Manager task delegation and operational directives, priority levels, resolution statuses (`pending`, `in_progress`, `resolved`), notification center with unread badges.
+
+### Module 23: User Governance, Staff Roles & Permissions Matrix (RBAC)
+* **Live Component:** `Frontend/src/views/Settings/UsersView.vue`, `RolesView.vue` | **Active Routes:** `/settings?tab=users`
+* **Features:** Role hierarchy (Business Owner = universal access; Branch Manager = branch-scoped; Salesperson/Cashier = POS counter only; Accountant and Inventory Manager compatibility roles), staff invitations, account status toggles.
+
+### Module 24: Activity Logs & Material Business Action Audit Trail
+* **Live Components:** `NotificationsView.vue` (Activity Tab), `SettingsView.vue` | **Active Routes:** `GET /api/v1/audit-logs`
+* **Features:** Audit logging for price overrides, discounts, voids, transfers, debt reversals with actor attribution, timestamp, IP, and before/after payloads.
+
+### Module 25: Settings, Preferences & Hardware Integrations
+* **Live Components:** `SettingsView.vue`, `ReceiptsView.vue`, `SecurityView.vue`, `SyncView.vue` | **Active Routes:** `/settings`
+* **Features:** Thermal receipt formatting (58mm vs 80mm roll width, Urdu store name, tax NTN, return policy), security settings, offline sync preferences.
+
+### Module 26: Offline Counter Resilience & Sync Coordinator
+* **Live Services:** `offlinePosEngine.js`, `localDb.js` | **Active Routes:** `POST /api/v1/sync/bulk-transactions`
 * **Features:** Native IndexedDB outbox queue, client-side UUID generation for idempotent backend replay, offline sales creation, automatic background sync on network reconnection, unsynced outbox exit guard on desktop shutdown.
 
-### Module 16: Hardware Interfaces & Printing
-* **Features:** 58mm & 80mm ESC/POS thermal receipt formatting with Urdu/English store headers and return policy footers, USB keyboard-wedge barcode scanner listener, RJ11/RJ12 cash drawer kick triggers via printer driver.
-
-### Module 17: Multi-Tenant Database Isolation & Data Protection
-* **Features:** Strict `business_id` scoping across all database tables and Eloquent models, Zero-Data Guarantee on fresh business registrations, client-side session partitioning in local storage and IndexedDB.
-
-### Module 18: Desktop Shell Controls & Lifecycle Management
-* **Subsystems:** Tauri v1.6.3 + Win32 Native Chrome.
-* **Features:** Standard 1366x768 initial window with resize, minimize, maximize, and close controls, zero kiosk trapping, clean process termination on close.
+### Module 27: Staged Onboarding Wizard & Multi-Tenant Data Protection
+* **Live Components:** `WelcomeView.vue`, `BusniessSetupView.vue`, `MainStoreSetupView.vue`, `CompleteSetupView.vue`
+* **Features:** Multi-step store setup wizard, **Zero-Data Guarantee** on fresh registrations, strict `business_id` scoping, client-side storage partitioning.
 
 ---
 
