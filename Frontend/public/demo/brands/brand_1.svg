@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 200" width="260" height="200">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#E8F5E9"/>
+      <stop offset="100%" stop-color="#FFFFFF"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="3" stdDeviation="3" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+  <rect width="260" height="200" rx="16" fill="url(#bgGrad)" stroke="#1B5E20" stroke-width="2" stroke-opacity="0.2"/>
+  <g filter="url(#shadow)">
+    <circle cx="100" cy="80" r="36" fill="#F9A825" opacity="0.2"/>
+               <path d="M100 45 C95 65 80 80 75 105 C90 100 95 90 100 45 Z" fill="#2E7D32"/>
+               <path d="M100 45 C105 65 120 80 125 105 C110 100 105 90 100 45 Z" fill="#388E3C"/>
+               <path d="M100 70 L100 125" stroke="#F9A825" stroke-width="4" stroke-linecap="round"/>
+               <ellipse cx="88" cy="85" rx="5" ry="10" transform="rotate(-30 88 85)" fill="#F9A825"/>
+               <ellipse cx="112" cy="85" rx="5" ry="10" transform="rotate(30 112 85)" fill="#F9A825"/>
+               <ellipse cx="88" cy="105" rx="5" ry="10" transform="rotate(-30 88 105)" fill="#F9A825"/>
+               <ellipse cx="112" cy="105" rx="5" ry="10" transform="rotate(30 112 105)" fill="#F9A825"/>
+  </g>
+  <text x="130" y="152" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="15" font-weight="800" text-anchor="middle" fill="#1B5E20" letter-spacing="0.5">DailyHarvest Foods</text>
+  <text x="130" y="172" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="10.5" font-weight="600" text-anchor="middle" fill="#F9A825" letter-spacing="0.8">PURE GRAINS & STAPLES</text>
+</svg>

@@ -79,17 +79,21 @@ class PurchaseService
                 throw new Exception("Purchase must contain at least one item.");
             }
 
-            $subtotal = 0.0;
+            $subtotal = '0.00';
             $validatedItems = [];
 
             foreach ($data['items'] as $itemData) {
-                $quantity = (int) ($itemData['quantity'] ?? 0);
-                $unitCost = round((float) ($itemData['unit_cost'] ?? 0), 2);
-
-                if ($quantity <= 0) {
-                    throw new Exception("Purchase item quantity must be greater than zero.");
+                $rawQty = (string) ($itemData['quantity'] ?? '0');
+                if (!preg_match('/^\d+(\.\d{1,3})?$/', $rawQty)) {
+                    throw new Exception("Purchase item quantity must be a positive number with at most 3 decimal places.");
                 }
-                if ($unitCost < 0) {
+                $quantity = $rawQty;
+                $unitCost = $this->roundMoney((string) ($itemData['unit_cost'] ?? 0), 2);
+
+                if (bccomp((string) $quantity, '0.001', 3) < 0) {
+                    throw new Exception("Purchase item quantity must be at least 0.001.");
+                }
+                if (bccomp((string) $unitCost, '0.00', 2) < 0) {
                     throw new Exception("Purchase item unit cost cannot be negative.");
                 }
 
@@ -99,8 +103,8 @@ class PurchaseService
                     throw new Exception("Product ID {$itemData['product_id']} does not belong to active business tenant.");
                 }
 
-                $lineTotal = round($quantity * $unitCost, 2);
-                $subtotal = round($subtotal + $lineTotal, 2);
+                $lineTotal = $this->roundMoney(bcmul((string) $quantity, (string) $unitCost, 4), 2);
+                $subtotal = bcadd((string) $subtotal, (string) $lineTotal, 2);
 
                 $validatedItems[] = [
                     'product_id' => $product->id,
@@ -110,20 +114,21 @@ class PurchaseService
                 ];
             }
 
-            $subtotal = round($subtotal, 2);
-            $tax = round((float) ($data['tax'] ?? 0), 2);
-            $discount = round((float) ($data['discount'] ?? 0), 2);
-            $total = round($subtotal + $tax - $discount, 2);
+            $subtotal = $this->roundMoney((string) $subtotal, 2);
+            $tax = isset($data['tax']) ? $this->roundMoney((string) $data['tax'], 2) : '0.00';
+            $discount = isset($data['discount']) ? $this->roundMoney((string) $data['discount'], 2) : '0.00';
+            $freightAmount = isset($data['freight_amount']) ? $this->roundMoney((string) $data['freight_amount'], 2) : '0.00';
+            $total = bcadd(bcsub(bcadd((string) $subtotal, (string) $tax, 2), (string) $discount, 2), (string) $freightAmount, 2);
 
-            $paidAmount = round((float) ($data['paid_amount'] ?? 0), 2);
-            if ($paidAmount < 0) {
+            $paidAmount = isset($data['paid_amount']) ? $this->roundMoney((string) $data['paid_amount'], 2) : '0.00';
+            if (bccomp((string) $paidAmount, '0.00', 2) < 0) {
                 throw new Exception("Paid amount cannot be negative.");
             }
-            if ($paidAmount > $total + 0.0001) {
+            if (bccomp((string) $paidAmount, (string) $total, 2) > 0) {
                 throw new Exception("Paid amount ({$paidAmount}) cannot exceed total purchase amount ({$total}).");
             }
 
-            $dueAmount = round($total - $paidAmount, 2);
+            $dueAmount = $this->roundMoney(bcsub((string) $total, (string) $paidAmount, 4), 2);
 
             // 4. Create Purchase Record
             $purchase = Purchase::create([
@@ -135,14 +140,52 @@ class PurchaseService
                 'date' => $data['date'] ?? now()->toDateString(),
                 'subtotal' => $subtotal,
                 'total' => $total,
+                'freight_amount' => $freightAmount,
+                'landed_cost_allocated' => bccomp((string) $freightAmount, '0.00', 2) > 0,
                 'paid_amount' => $paidAmount,
                 'due_amount' => $dueAmount,
                 'status' => 'received',
                 'notes' => $data['notes'] ?? null,
             ]);
 
-            // 5. Create PurchaseItems & Receive Stock via InventoryService
-            foreach ($validatedItems as $itemData) {
+            // 5. Proportional Freight Landed Cost Allocation with Remainder Reconciliation
+            $lineFreights = [];
+            $totalAllocatedFreight = '0.00';
+            $highestSubtotalIndex = 0;
+            $highestSubtotal = '-1.00';
+
+            foreach ($validatedItems as $idx => $itemData) {
+                if (bccomp((string) $freightAmount, '0.00', 2) > 0 && bccomp((string) $subtotal, '0.00', 2) > 0) {
+                    $ratio = bcdiv((string) $itemData['total'], (string) $subtotal, 8);
+                    $allocated = $this->roundMoney(bcmul((string) $freightAmount, $ratio, 6), 2);
+                } else {
+                    $allocated = '0.00';
+                }
+                $lineFreights[$idx] = $allocated;
+                $totalAllocatedFreight = bcadd((string) $totalAllocatedFreight, (string) $allocated, 2);
+
+                if (bccomp((string) $itemData['total'], (string) $highestSubtotal, 2) > 0) {
+                    $highestSubtotal = (string) $itemData['total'];
+                    $highestSubtotalIndex = $idx;
+                }
+            }
+
+            // Assign rounding residual discrepancy to highest subtotal line item
+            if (bccomp((string) $freightAmount, '0.00', 2) > 0 && bccomp((string) $subtotal, '0.00', 2) > 0 && count($validatedItems) > 0) {
+                $delta = bcsub((string) $freightAmount, (string) $totalAllocatedFreight, 2);
+                if (bccomp((string) $delta, '0.00', 2) !== 0) {
+                    $lineFreights[$highestSubtotalIndex] = bcadd((string) $lineFreights[$highestSubtotalIndex], (string) $delta, 2);
+                }
+            }
+
+            // 6. Create PurchaseItems & Receive Stock via InventoryService (with effective landed cost)
+            foreach ($validatedItems as $idx => $itemData) {
+                $itemFreight = $lineFreights[$idx];
+                $unitFreight = bccomp((string) $itemData['quantity'], '0.000', 3) > 0
+                    ? bcdiv((string) $itemFreight, (string) $itemData['quantity'], 6)
+                    : '0.000000';
+                $effectiveUnitCost = $this->roundMoney(bcadd((string) $itemData['unit_cost'], $unitFreight, 6), 4);
+
                 PurchaseItem::create([
                     'purchase_id' => $purchase->id,
                     'product_id' => $itemData['product_id'],
@@ -157,7 +200,7 @@ class PurchaseService
                     'product_id' => $itemData['product_id'],
                     'quantity' => $itemData['quantity'],
                     'type' => 'purchase',
-                    'unit_cost' => $itemData['unit_cost'],
+                    'unit_cost' => $effectiveUnitCost,
                     'reference_type' => Purchase::class,
                     'reference_id' => $purchase->id,
                     'performed_by' => $user->id,
@@ -165,11 +208,52 @@ class PurchaseService
                 ]);
             }
 
-            // 6. Handle Supplier Balance & Payment
-            if ($supplier) {
-                // If initial payment was made at purchase creation, log SupplierPayment record with purchase_id provenance
-                if ($paidAmount > 0) {
-                    SupplierPayment::create([
+            // 7. Handle Supplier Balance & Payment with Atomic Account Outflow
+            if ($paidAmount > 0) {
+                // Resolve & validate target financial account
+                $targetAccount = null;
+                if (!empty($data['financial_account_id'])) {
+                    $targetAccount = \App\Models\FinancialAccount::where('business_id', $businessId)
+                        ->where('id', $data['financial_account_id'])
+                        ->where('status', 'active')
+                        ->first();
+                    if (!$targetAccount) {
+                        throw new Exception("Selected financial account is invalid or inactive.");
+                    }
+                    if ($targetAccount->branch_id && (int) $targetAccount->branch_id !== (int) $branchId) {
+                        throw new Exception("Selected financial account does not belong to the purchase branch.");
+                    }
+                } else {
+                    $isCash = strtolower(trim($data['payment_method'] ?? 'cash')) === 'cash';
+                    if ($isCash) {
+                        $targetAccount = app(\App\Services\FinancialAccountService::class)->getDefaultCashAccount($businessId, $branchId);
+                        if (!$targetAccount) {
+                            $targetAccount = \App\Models\FinancialAccount::where('business_id', $businessId)
+                                ->where('type', 'cash')
+                                ->where('status', 'active')
+                                ->where(function ($q) use ($branchId) {
+                                    $q->where('branch_id', $branchId)->orWhereNull('branch_id');
+                                })
+                                ->first();
+                        }
+                    } else {
+                        $targetAccount = \App\Models\FinancialAccount::where('business_id', $businessId)
+                            ->where('type', 'bank')
+                            ->where('status', 'active')
+                            ->where(function ($q) use ($branchId) {
+                                $q->where('branch_id', $branchId)->orWhereNull('branch_id');
+                            })
+                            ->first();
+                    }
+                }
+
+                if (!$targetAccount || $targetAccount->status !== 'active') {
+                    throw new Exception("No active financial account available for purchase payment outflow.");
+                }
+
+                $supplierPayment = null;
+                if ($supplier) {
+                    $supplierPayment = SupplierPayment::create([
                         'business_id' => $businessId,
                         'supplier_id' => $supplier->id,
                         'purchase_id' => $purchase->id,
@@ -181,10 +265,41 @@ class PurchaseService
                     ]);
                 }
 
-                // Record net unpaid due_amount liability on supplier balance
-                if ($dueAmount > 0) {
-                    $this->supplierBalanceService->recordPurchaseLiability($supplier, $dueAmount);
+                // Post physical outflow account_movement atomically
+                app(\App\Services\AccountMovementService::class)->postOutflow($targetAccount, [
+                    'branch_id' => $branchId,
+                    'movement_category' => 'supplier_payment',
+                    'reference_type' => $supplierPayment ? SupplierPayment::class : Purchase::class,
+                    'reference_id' => $supplierPayment ? $supplierPayment->id : $purchase->id,
+                    'amount' => $paidAmount,
+                    'date' => $purchase->date,
+                    'description' => "Supplier Payment for Purchase PO #{$purchase->po_number}" . ($supplier ? " ({$supplier->name})" : ""),
+                    'user_id' => $user->id,
+                ]);
+
+                if ($supplierPayment) {
+                    app(\App\Services\AuditService::class)->log(
+                        logName: 'supplier',
+                        event: 'created',
+                        description: "Supplier payment of {$paidAmount} recorded for purchase PO #{$purchase->po_number}",
+                        subject: $supplierPayment,
+                        properties: [
+                            'action' => 'supplier_payment',
+                            'payment_id' => $supplierPayment->id,
+                            'purchase_id' => $purchase->id,
+                            'supplier_id' => $supplier->id,
+                            'amount' => $paidAmount,
+                            'payment_method' => $supplierPayment->payment_method,
+                            'financial_account_id' => $targetAccount->id,
+                        ],
+                        branchId: $branchId,
+                        businessId: (int) $businessId
+                    );
                 }
+            }
+
+            if ($supplier && $dueAmount > 0) {
+                $this->supplierBalanceService->recordPurchaseLiability($supplier, $dueAmount);
             }
 
             return $purchase->load(['items.product', 'supplier', 'branch']);
@@ -212,6 +327,20 @@ class PurchaseService
             // Check Branch Manager authorization
             if ($user->hasRole('Branch Manager') && $user->branch_id && (int)$user->branch_id !== (int)$branchId) {
                 throw new Exception("Unauthorized: Branch Manager cannot cancel purchases for unassigned branch.");
+            }
+
+            // Verify received stock has not already been consumed/sold
+            foreach ($purchase->items as $item) {
+                $inventory = \App\Models\BranchInventory::where('business_id', $businessId)
+                    ->where('branch_id', $branchId)
+                    ->where('product_id', $item->product_id)
+                    ->lockForUpdate()
+                    ->first();
+                $onHand = $inventory ? round((float) $inventory->quantity_on_hand, 3) : 0.000;
+                if (bccomp((string) $onHand, (string) $item->quantity, 3) < 0) {
+                    $productName = $item->product ? $item->product->name : "ID #{$item->product_id}";
+                    throw new Exception("Cannot cancel purchase: insufficient stock on hand for product '{$productName}'. Received: {$item->quantity}, Available on hand: {$onHand}.");
+                }
             }
 
             // Issue compensating stock movements (type=purchase_return)
@@ -249,4 +378,39 @@ class PurchaseService
             return $purchase->fresh(['items.product', 'supplier', 'branch']);
         });
     }
+
+    /**
+     * Exact 2-decimal (or arbitrary scale) deterministic half-up monetary rounding.
+     * Uses PHP 8.4 native bcround with pure-string fallback.
+     */
+    protected function roundMoney(string|float|int $amount, int $scale = 2): string
+    {
+        $str = is_numeric($amount) ? (string) $amount : '0';
+        if (function_exists('bcround')) {
+            return bcround($str, $scale);
+        }
+        $negative = str_starts_with($str, '-');
+        $unsigned = ltrim($str, '-');
+        $parts = explode('.', $unsigned);
+        $intPart = $parts[0] === '' ? '0' : $parts[0];
+        $fracPart = $parts[1] ?? '';
+        if (strlen($fracPart) <= $scale) {
+            $res = $intPart . ($scale > 0 ? '.' . str_pad($fracPart, $scale, '0', STR_PAD_RIGHT) : '');
+            return $negative ? '-' . $res : $res;
+        }
+        $targetFrac = substr($fracPart, 0, $scale);
+        $nextDigit = (int) $fracPart[$scale];
+        if ($nextDigit >= 5) {
+            $factor = bcpow('10', (string) $scale);
+            $scaled = bcadd(bcmul($intPart, $factor, 0), $targetFrac === '' ? '0' : $targetFrac, 0);
+            $scaledPlus = bcadd($scaled, '1', 0);
+            $newInt = bcdiv($scaledPlus, $factor, 0);
+            $newFrac = str_pad(bcmod($scaledPlus, $factor), $scale, '0', STR_PAD_LEFT);
+            $res = $newInt . ($scale > 0 ? '.' . $newFrac : '');
+        } else {
+            $res = $intPart . ($scale > 0 ? '.' . $targetFrac : '');
+        }
+        return $negative ? '-' . $res : $res;
+    }
 }
+

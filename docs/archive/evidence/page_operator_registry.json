@@ -1,0 +1,1029 @@
+[
+    {
+        "route_id": "ROUTE-001",
+        "path": "/login",
+        "view": "LoginView.vue",
+        "classification": "ACTIVE_ROUTED_VIEW",
+        "title": "System Authentication & Login",
+        "purpose": "Authenticate staff users using email/username and password credentials",
+        "primary_roles": [
+            "Business Owner",
+            "Branch Manager",
+            "Salesperson / Cashier",
+            "Accountant",
+            "Inventory Manager"
+        ],
+        "branch_sensitive": false,
+        "tenant_sensitive": true,
+        "forms": [
+            "FORM-001"
+        ],
+        "tables": [],
+        "modals": [],
+        "actions": [
+            "ACTION-001"
+        ],
+        "offline_behavior": "Allows PIN/token cached authentication when previously logged in; online required for fresh credentials",
+        "high_risk_operations": [
+            "Account lockout after consecutive failed attempts"
+        ],
+        "operator_notes": "Ensure network connectivity to backend API; session tokens cached in localStorage."
+    },
+    {
+        "route_id": "ROUTE-002",
+        "path": "/dashboard",
+        "view": "DashboardView.vue",
+        "classification": "ACTIVE_ROUTED_VIEW",
+        "title": "Executive Dashboard & KPI Overview",
+        "purpose": "Displays top-level sales, today's revenue, low stock alerts, receivables, and recent activity summaries",
+        "primary_roles": [
+            "Business Owner",
+            "Branch Manager",
+            "Accountant"
+        ],
+        "branch_sensitive": true,
+        "tenant_sensitive": true,
+        "forms": [],
+        "tables": [
+            "TABLE-001"
+        ],
+        "modals": [],
+        "actions": [
+            "ACTION-002",
+            "ACTION-003"
+        ],
+        "offline_behavior": "Displays cached KPI summaries from IndexedDB when offline",
+        "high_risk_operations": [],
+        "operator_notes": "Verify active branch context header to ensure KPIs reflect the desired operating unit."
+    },
+    {
+        "route_id": "ROUTE-003",
+        "path": "/pos",
+        "view": "PosSaleView.vue",
+        "classification": "ACTIVE_ROUTED_VIEW",
+        "title": "Point of Sale (POS) Counter Checkout",
+        "purpose": "High-speed front-counter retail/wholesale checkout, barcode scanning, split tender, and instant receipt generation",
+        "primary_roles": [
+            "Salesperson / Cashier",
+            "Branch Manager",
+            "Business Owner"
+        ],
+        "branch_sensitive": true,
+        "tenant_sensitive": true,
+        "forms": [
+            "FORM-002",
+            "FORM-003"
+        ],
+        "tables": [
+            "TABLE-002",
+            "TABLE-003"
+        ],
+        "modals": [
+            "MODAL-001",
+            "MODAL-002",
+            "MODAL-003",
+            "MODAL-004"
+        ],
+        "actions": [
+            "ACTION-004",
+            "ACTION-005",
+            "ACTION-006",
+            "ACTION-007",
+            "ACTION-008",
+            "ACTION-009",
+            "ACTION-010"
+        ],
+        "offline_behavior": "Full offline checkout supported; sales queued in Dexie offline_sales store with temp IDs and client idempotency keys",
+        "high_risk_operations": [
+            "Applying custom discretionary discounts",
+            "Khata credit checkout without credit approval"
+        ],
+        "operator_notes": "Server calculates authoritative monetary totals and commits transaction before triggering thermal receipt print."
+    },
+    {
+        "route_id": "ROUTE-004",
+        "path": "/sales/history",
+        "view": "SalesHistoryView.vue",
+        "classification": "ACTIVE_ROUTED_VIEW",
+        "title": "Sales History & Transaction Register",
+        "purpose": "Browse, filter, reprint, cancel, or initiate returns for posted sale transactions",
+        "primary_roles": [
+            "Salesperson / Cashier",
+            "Branch Manager",
+            "Accountant",
+            "Business Owner"
+        ],
+        "branch_sensitive": true,
+        "tenant_sensitive": true,
+        "forms": [
+            "FORM-004"
+        ],
+        "tables": [
+            "TABLE-004"
+        ],
+        "modals": [
+            "MODAL-005",
+            "MODAL-006"
+        ],
+        "actions": [
+            "ACTION-011",
+            "ACTION-012",
+            "ACTION-013",
+            "ACTION-014"
+        ],
+        "offline_behavior": "Displays cached recent sales from local storage",
+        "high_risk_operations": [
+            "Sale Cancellation (requires reason and restores stock)",
+            "Initiating Sale Return"
+        ],
+        "operator_notes": "Reprint uses immutable transaction-time snapshots persisted in sale_items."
+    },
+    {
+        "route_id": "ROUTE-005",
+        "path": "/sales/returns",
+        "view": "SaleReturnsView.vue",
+        "classification": "ACTIVE_ROUTED_VIEW",
+        "title": "Sale Returns & Refund Processing",
+        "purpose": "Process customer merchandise returns, condition assessment (sellable/damaged/scrap), restock flags, and cash/khata refunds",
+        "primary_roles": [
+            "Branch Manager",
+            "Salesperson / Cashier",
+            "Accountant"
+        ],
+        "branch_sensitive": true,
+        "tenant_sensitive": true,
+        "forms": [
+            "FORM-005"
+        ],
+        "tables": [
+            "TABLE-005"
+        ],
+        "modals": [
+            "MODAL-007"
+        ],
+        "actions": [
+            "ACTION-015",
+            "ACTION-016"
+        ],
+        "offline_behavior": "Online required for real-time customer balance and invoice validation",
+        "high_risk_operations": [
+            "Authorizing cash refunds from drawer",
+            "Classifying damaged items as non-restocked scrap"
+        ],
+        "operator_notes": "Restocked items immediately increment branch sellable inventory; damaged/scrap items bypass inventory."
+    },
+    {
+        "route_id": "ROUTE-006",
+        "path": "/inventory/products",
+        "view": "ProductsView.vue",
+        "classification": "ACTIVE_ROUTED_VIEW",
+        "title": "Product Catalog & Master Management",
+        "purpose": "Manage master products, categories, brands, wholesale/retail pricing, barcodes, and minimum stock alerts",
+        "primary_roles": [
+            "Inventory Manager",
+            "Business Owner",
+            "Branch Manager"
+        ],
+        "branch_sensitive": false,
+        "tenant_sensitive": true,
+        "forms": [
+            "FORM-006",
+            "FORM-007"
+        ],
+        "tables": [
+            "TABLE-006"
+        ],
+        "modals": [
+            "MODAL-008",
+            "MODAL-009"
+        ],
+        "actions": [
+            "ACTION-017",
+            "ACTION-018",
+            "ACTION-019",
+            "ACTION-020"
+        ],
+        "offline_behavior": "Read-only catalog cached in Dexie for offline POS search",
+        "high_risk_operations": [
+            "Deactivating products with active stock",
+            "Modifying base retail or wholesale pricing"
+        ],
+        "operator_notes": "Wholesale prices persisted via MIG-002 and synchronized across offline POS caches."
+    },
+    {
+        "route_id": "ROUTE-007",
+        "path": "/inventory/categories",
+        "view": "CategoriesView.vue",
+        "classification": "ACTIVE_ROUTED_VIEW",
+        "title": "Product Category Hierarchy",
+        "purpose": "Organize inventory hierarchy for visual POS grids and departmental revenue reporting",
+        "primary_roles": [
+            "Inventory Manager",
+            "Business Owner"
+        ],
+        "branch_sensitive": false,
+        "tenant_sensitive": true,
+        "forms": [
+            "FORM-008"
+        ],
+        "tables": [
+            "TABLE-007"
+        ],
+        "modals": [
+            "MODAL-010"
+        ],
+        "actions": [
+            "ACTION-021",
+            "ACTION-022",
+            "ACTION-023"
+        ],
+        "offline_behavior": "Cached in Dexie categories store",
+        "high_risk_operations": [
+            "Deleting category with assigned products"
+        ],
+        "operator_notes": "Categories sync automatically during POS catalog refresh."
+    },
+    {
+        "route_id": "ROUTE-008",
+        "path": "/inventory/brands",
+        "view": "BrandsView.vue",
+        "classification": "ACTIVE_ROUTED_VIEW",
+        "title": "Product Brand Registry",
+        "purpose": "Define manufacturer and brand taxonomies for filtering and purchase grouping",
+        "primary_roles": [
+            "Inventory Manager",
+            "Business Owner"
+        ],
+        "branch_sensitive": false,
+        "tenant_sensitive": true,
+        "forms": [
+            "FORM-009"
+        ],
+        "tables": [
+            "TABLE-008"
+        ],
+        "modals": [
+            "MODAL-011"
+        ],
+        "actions": [
+            "ACTION-024",
+            "ACTION-025",
+            "ACTION-026"
+        ],
+        "offline_behavior": "Cached in Dexie brands store",
+        "high_risk_operations": [],
+        "operator_notes": "Brands provide secondary classification for reporting."
+    },
+    {
+        "route_id": "ROUTE-009",
+        "path": "/inventory/stock",
+        "view": "StockView.vue",
+        "classification": "ACTIVE_ROUTED_VIEW",
+        "title": "Stock on Hand & Multi-Branch Inventory",
+        "purpose": "View real-time physical stock by branch, cost valuation, low-stock indicators, and inventory history",
+        "primary_roles": [
+            "Inventory Manager",
+            "Branch Manager",
+            "Business Owner"
+        ],
+        "branch_sensitive": true,
+        "tenant_sensitive": true,
+        "forms": [],
+        "tables": [
+            "TABLE-009"
+        ],
+        "modals": [],
+        "actions": [
+            "ACTION-027",
+            "ACTION-028"
+        ],
+        "offline_behavior": "Shows local branch stock count from last sync",
+        "high_risk_operations": [],
+        "operator_notes": "Stock quantities are derived from validated inventory movements and branch inventory balances."
+    },
+    {
+        "route_id": "ROUTE-010",
+        "path": "/inventory/adjustments",
+        "view": "StockAdjustmentView.vue",
+        "classification": "ACTIVE_ROUTED_VIEW",
+        "title": "Physical Stock Adjustments & Reconciliation",
+        "purpose": "Record physical count variance, breakage, spoilage, or inventory reconciliation adjustments",
+        "primary_roles": [
+            "Inventory Manager",
+            "Business Owner"
+        ],
+        "branch_sensitive": true,
+        "tenant_sensitive": true,
+        "forms": [
+            "FORM-010"
+        ],
+        "tables": [
+            "TABLE-010"
+        ],
+        "modals": [
+            "MODAL-012"
+        ],
+        "actions": [
+            "ACTION-029",
+            "ACTION-030"
+        ],
+        "offline_behavior": "Online only to prevent concurrent multi-device count collision",
+        "high_risk_operations": [
+            "Substantial stock write-offs",
+            "Manual cost adjustments affecting valuation"
+        ],
+        "operator_notes": "Creates immutable inventory_movements record and re-evaluates weighted average unit cost."
+    },
+    {
+        "route_id": "ROUTE-011",
+        "path": "/inventory/transfers",
+        "view": "StockTransferView.vue",
+        "classification": "ACTIVE_ROUTED_VIEW",
+        "title": "Inter-Branch Stock Transfers",
+        "purpose": "Initiate, dispatch, track in-transit, and receive stock shipments between company branches",
+        "primary_roles": [
+            "Inventory Manager",
+            "Branch Manager",
+            "Business Owner"
+        ],
+        "branch_sensitive": true,
+        "tenant_sensitive": true,
+        "forms": [
+            "FORM-011"
+        ],
+        "tables": [
+            "TABLE-011"
+        ],
+        "modals": [
+            "MODAL-013"
+        ],
+        "actions": [
+            "ACTION-031",
+            "ACTION-032",
+            "ACTION-033"
+        ],
+        "offline_behavior": "Online required for multi-branch transit synchronization",
+        "high_risk_operations": [
+            "Transferring high-value stock out of source branch",
+            "Rejecting in-transit transfer"
+        ],
+        "operator_notes": "Uses explicit transfer_status (in_transit -> received) via MIG-006 to eliminate phantom inventory."
+    },
+    {
+        "route_id": "ROUTE-012",
+        "path": "/inventory/barcode-print",
+        "view": "BarcodePrintView.vue",
+        "classification": "ACTIVE_ROUTED_VIEW",
+        "title": "Barcode & Price Label Printing",
+        "purpose": "Generate and print adhesive barcode labels (Code128/EAN) with product title, SKU, and retail price",
+        "primary_roles": [
+            "Inventory Manager",
+            "Salesperson / Cashier"
+        ],
+        "branch_sensitive": false,
+        "tenant_sensitive": true,
+        "forms": [
+            "FORM-012"
+        ],
+        "tables": [
+            "TABLE-012"
+        ],
+        "modals": [],
+        "actions": [
+            "ACTION-034",
+            "ACTION-035"
+        ],
+        "offline_behavior": "Generates client-side SVG/Canvas barcodes for local printer output",
+        "high_risk_operations": [],
+        "operator_notes": "Supports continuous roll and multi-label sheet thermal formats."
+    },
+    {
+        "route_id": "ROUTE-013",
+        "path": "/customers",
+        "view": "CustomersView.vue",
+        "classification": "ACTIVE_ROUTED_VIEW",
+        "title": "Customer Directory & CRM",
+        "purpose": "Maintain customer master records, primary/secondary contact phones, credit limits, and addresses",
+        "primary_roles": [
+            "Salesperson / Cashier",
+            "Branch Manager",
+            "Accountant",
+            "Business Owner"
+        ],
+        "branch_sensitive": false,
+        "tenant_sensitive": true,
+        "forms": [
+            "FORM-013"
+        ],
+        "tables": [
+            "TABLE-013"
+        ],
+        "modals": [
+            "MODAL-014"
+        ],
+        "actions": [
+            "ACTION-036",
+            "ACTION-037",
+            "ACTION-038"
+        ],
+        "offline_behavior": "Cached in Dexie customers store; new customers can be created offline with temp IDs",
+        "high_risk_operations": [
+            "Modifying customer credit limit",
+            "Deactivating customer with outstanding balance"
+        ],
+        "operator_notes": "Secondary phone persisted via MIG-010 and synchronized across offline stores."
+    },
+    {
+        "route_id": "ROUTE-014",
+        "path": "/customers/:id/khata",
+        "view": "CustomerKhataView.vue",
+        "classification": "ACTIVE_ROUTED_VIEW",
+        "title": "Customer Khata Ledger & Credit Receivables",
+        "purpose": "Review customer transactional credit ledger, post receivables payments, issue payment receipts, and audit balances",
+        "primary_roles": [
+            "Accountant",
+            "Branch Manager",
+            "Salesperson / Cashier",
+            "Business Owner"
+        ],
+        "branch_sensitive": true,
+        "tenant_sensitive": true,
+        "forms": [
+            "FORM-014"
+        ],
+        "tables": [
+            "TABLE-014"
+        ],
+        "modals": [
+            "MODAL-015"
+        ],
+        "actions": [
+            "ACTION-039",
+            "ACTION-040",
+            "ACTION-041"
+        ],
+        "offline_behavior": "Queues customer payment receipts in Dexie offline_khata store",
+        "high_risk_operations": [
+            "Posting manual ledger adjustments",
+            "Reversing customer payment entry"
+        ],
+        "operator_notes": "Atomic double-entry updates ensure customers.balance matches historical account movements."
+    },
+    {
+        "route_id": "ROUTE-015",
+        "path": "/purchases",
+        "view": "PurchasesView.vue",
+        "classification": "ACTIVE_ROUTED_VIEW",
+        "title": "Procurement & Purchase Orders",
+        "purpose": "Create supplier purchase orders, record incoming shipments, freight charges, landed costs, and supplier payments",
+        "primary_roles": [
+            "Inventory Manager",
+            "Accountant",
+            "Business Owner"
+        ],
+        "branch_sensitive": true,
+        "tenant_sensitive": true,
+        "forms": [
+            "FORM-015",
+            "FORM-016"
+        ],
+        "tables": [
+            "TABLE-015"
+        ],
+        "modals": [
+            "MODAL-016"
+        ],
+        "actions": [
+            "ACTION-042",
+            "ACTION-043",
+            "ACTION-044",
+            "ACTION-045"
+        ],
+        "offline_behavior": "Online only for procurement authorization and supplier AP updates",
+        "high_risk_operations": [
+            "Purchase Cancellation (strictly blocked if received stock was sold/transferred)",
+            "GRN Goods Receipt"
+        ],
+        "operator_notes": "Freight and other charges persisted via MIG-005 and prorated across items to establish true landed cost."
+    },
+    {
+        "route_id": "ROUTE-016",
+        "path": "/suppliers",
+        "view": "SupplierView.vue",
+        "classification": "ACTIVE_ROUTED_VIEW",
+        "title": "Supplier Master & Payables Directory",
+        "purpose": "Manage vendor contact profiles, tax numbers, opening balances, payment terms, and aggregate AP balances",
+        "primary_roles": [
+            "Accountant",
+            "Inventory Manager",
+            "Business Owner"
+        ],
+        "branch_sensitive": false,
+        "tenant_sensitive": true,
+        "forms": [
+            "FORM-017"
+        ],
+        "tables": [
+            "TABLE-016"
+        ],
+        "modals": [
+            "MODAL-017"
+        ],
+        "actions": [
+            "ACTION-046",
+            "ACTION-047",
+            "ACTION-048"
+        ],
+        "offline_behavior": "Read-only vendor list available locally",
+        "high_risk_operations": [
+            "Modifying opening balance",
+            "Deactivating supplier with pending payables"
+        ],
+        "operator_notes": "Supplier balance is calculated server-authoritatively from purchases, returns, and payment records."
+    },
+    {
+        "route_id": "ROUTE-017",
+        "path": "/suppliers/:id/ledger",
+        "view": "SupplierLedgerView.vue",
+        "classification": "ACTIVE_ROUTED_VIEW",
+        "title": "Supplier AP Ledger & Payment Processing",
+        "purpose": "Detailed vendor statement of accounts, recording disbursements, vendor debit notes, and payment reversals",
+        "primary_roles": [
+            "Accountant",
+            "Business Owner"
+        ],
+        "branch_sensitive": true,
+        "tenant_sensitive": true,
+        "forms": [
+            "FORM-018",
+            "FORM-019"
+        ],
+        "tables": [
+            "TABLE-017"
+        ],
+        "modals": [
+            "MODAL-018"
+        ],
+        "actions": [
+            "ACTION-049",
+            "ACTION-050",
+            "ACTION-051"
+        ],
+        "offline_behavior": "Online required for real-time bank ledger and AP settlement",
+        "high_risk_operations": [
+            "Supplier Payment Reversal (restores AP and bank balance)",
+            "Issuing Supplier Return / Debit Note"
+        ],
+        "operator_notes": "Supplier payment reversal endpoint implemented via GAP-012 and debit notes via MIG-008."
+    },
+    {
+        "route_id": "ROUTE-018",
+        "path": "/expenses",
+        "view": "ExpensesView.vue",
+        "classification": "ACTIVE_ROUTED_VIEW",
+        "title": "Operating Expense Management",
+        "purpose": "Record and categorize operational overhead expenses, assign funding accounts, and track budget vs actuals",
+        "primary_roles": [
+            "Accountant",
+            "Branch Manager",
+            "Business Owner"
+        ],
+        "branch_sensitive": true,
+        "tenant_sensitive": true,
+        "forms": [
+            "FORM-020"
+        ],
+        "tables": [
+            "TABLE-018"
+        ],
+        "modals": [
+            "MODAL-019"
+        ],
+        "actions": [
+            "ACTION-052",
+            "ACTION-053",
+            "ACTION-054"
+        ],
+        "offline_behavior": "Queues expenses in Dexie offline_expenses store",
+        "high_risk_operations": [
+            "Voiding posted expense",
+            "Posting high-value unbudgeted expense"
+        ],
+        "operator_notes": "Server requires mandatory financial_account_id via MIG-004 to prevent untracked cash leakage."
+    },
+    {
+        "route_id": "ROUTE-019",
+        "path": "/expenses/categories",
+        "view": "ExpenseCategoriesView.vue",
+        "classification": "ACTIVE_ROUTED_VIEW",
+        "title": "Expense Categories & Departmental Budgets",
+        "purpose": "Configure operational expense categories and assign monthly expenditure budget ceilings",
+        "primary_roles": [
+            "Accountant",
+            "Business Owner"
+        ],
+        "branch_sensitive": false,
+        "tenant_sensitive": true,
+        "forms": [
+            "FORM-021"
+        ],
+        "tables": [
+            "TABLE-019"
+        ],
+        "modals": [
+            "MODAL-020"
+        ],
+        "actions": [
+            "ACTION-055",
+            "ACTION-056",
+            "ACTION-057"
+        ],
+        "offline_behavior": "Read-only categories cached",
+        "high_risk_operations": [
+            "Deleting active expense category"
+        ],
+        "operator_notes": "Monthly budget target persisted via MIG-011 and supports budget variance reporting."
+    },
+    {
+        "route_id": "ROUTE-020",
+        "path": "/inventory/products/:id/invoice",
+        "view": "ProductInvoiceView.vue",
+        "classification": "LEGACY_UNROUTED_VIEW",
+        "title": "Standalone Product Invoice Prototype (Legacy)",
+        "purpose": "Pre-remediation standalone print template; superseded by ThermalReceiptModal and A4InvoiceModal overlays",
+        "primary_roles": [
+            "N/A (Unrouted)"
+        ],
+        "branch_sensitive": false,
+        "tenant_sensitive": true,
+        "forms": [],
+        "tables": [],
+        "modals": [],
+        "actions": [],
+        "offline_behavior": "N/A",
+        "high_risk_operations": [],
+        "operator_notes": "Retained in repository as UNROUTED_BUT_RETAINED legacy code; operators print via modal overlays."
+    },
+    {
+        "route_id": "ROUTE-021",
+        "path": "/users",
+        "view": "UsersView.vue",
+        "classification": "ACTIVE_ROUTED_VIEW",
+        "title": "User Staff Governance & Payroll Setup",
+        "purpose": "Manage staff accounts, assign system roles, branch permissions, and record employee wage/salary agreements",
+        "primary_roles": [
+            "Business Owner"
+        ],
+        "branch_sensitive": false,
+        "tenant_sensitive": true,
+        "forms": [
+            "FORM-022"
+        ],
+        "tables": [
+            "TABLE-020"
+        ],
+        "modals": [
+            "MODAL-021"
+        ],
+        "actions": [
+            "ACTION-058",
+            "ACTION-059",
+            "ACTION-060"
+        ],
+        "offline_behavior": "Online only for security governance",
+        "high_risk_operations": [
+            "Assigning Business Owner role",
+            "Deactivating user with open POS cash drawer shift"
+        ],
+        "operator_notes": "Base salary, payment cycle, and next payment date persisted via MIG-009."
+    },
+    {
+        "route_id": "ROUTE-022",
+        "path": "/roles",
+        "view": "RolesView.vue",
+        "classification": "ACTIVE_ROUTED_VIEW",
+        "title": "Role-Based Access Control (RBAC) Permissions",
+        "purpose": "Inspect system roles and granular module permission assignments",
+        "primary_roles": [
+            "Business Owner"
+        ],
+        "branch_sensitive": false,
+        "tenant_sensitive": true,
+        "forms": [
+            "FORM-023"
+        ],
+        "tables": [
+            "TABLE-021"
+        ],
+        "modals": [],
+        "actions": [
+            "ACTION-061",
+            "ACTION-062"
+        ],
+        "offline_behavior": "Online only",
+        "high_risk_operations": [
+            "Modifying role permission matrix"
+        ],
+        "operator_notes": "Server kernel enforces policy guards regardless of client UI visibility."
+    },
+    {
+        "route_id": "ROUTE-023",
+        "path": "/accounts",
+        "view": "AccountsView.vue",
+        "classification": "ACTIVE_ROUTED_VIEW",
+        "title": "Financial Accounts & Cash Ledgers",
+        "purpose": "Manage physical cash drawers, bank accounts, digital wallets, account transfers, and capital transactions",
+        "primary_roles": [
+            "Accountant",
+            "Business Owner"
+        ],
+        "branch_sensitive": true,
+        "tenant_sensitive": true,
+        "forms": [
+            "FORM-024",
+            "FORM-025",
+            "FORM-026"
+        ],
+        "tables": [
+            "TABLE-022"
+        ],
+        "modals": [
+            "MODAL-022"
+        ],
+        "actions": [
+            "ACTION-063",
+            "ACTION-064",
+            "ACTION-065",
+            "ACTION-066"
+        ],
+        "offline_behavior": "Read-only balance display offline",
+        "high_risk_operations": [
+            "Inter-account fund transfers",
+            "Capital drawing disbursement",
+            "Manual balance adjustment"
+        ],
+        "operator_notes": "All movements create double-entry account_movements with unique compound references."
+    },
+    {
+        "route_id": "ROUTE-024",
+        "path": "/branches",
+        "view": "BranchesView.vue",
+        "classification": "ACTIVE_ROUTED_VIEW",
+        "title": "Store Branches & Outlets Management",
+        "purpose": "Configure physical store outlets, branch addresses, contact numbers, and default financial registers",
+        "primary_roles": [
+            "Business Owner"
+        ],
+        "branch_sensitive": false,
+        "tenant_sensitive": true,
+        "forms": [
+            "FORM-027"
+        ],
+        "tables": [
+            "TABLE-023"
+        ],
+        "modals": [
+            "MODAL-023"
+        ],
+        "actions": [
+            "ACTION-067",
+            "ACTION-068",
+            "ACTION-069"
+        ],
+        "offline_behavior": "Cached in app state",
+        "high_risk_operations": [
+            "Deactivating branch with active inventory or pending transfers"
+        ],
+        "operator_notes": "Branch selection sets the active operating scope across POS, stock, and reports."
+    },
+    {
+        "route_id": "ROUTE-025",
+        "path": "/settings",
+        "view": "SettingsView.vue",
+        "classification": "ACTIVE_ROUTED_VIEW",
+        "title": "Enterprise Settings & Configuration",
+        "purpose": "Configure business profile, currency symbol, default tax rates, invoice footers, and system preferences",
+        "primary_roles": [
+            "Business Owner"
+        ],
+        "branch_sensitive": false,
+        "tenant_sensitive": true,
+        "forms": [
+            "FORM-028"
+        ],
+        "tables": [],
+        "modals": [],
+        "actions": [
+            "ACTION-070",
+            "ACTION-071"
+        ],
+        "offline_behavior": "Settings cached in localStorage",
+        "high_risk_operations": [
+            "Altering business currency",
+            "Modifying global tax percentage"
+        ],
+        "operator_notes": "Tenant settings apply across all branches unless overridden at branch level."
+    },
+    {
+        "route_id": "ROUTE-026",
+        "path": "/settings/printer",
+        "view": "PrinterSettingsView.vue",
+        "classification": "ACTIVE_ROUTED_VIEW",
+        "title": "Hardware Printer & Peripherals Setup",
+        "purpose": "Configure thermal receipt printer type (USB/Network/Bluetooth), paper width (80mm/58mm), and auto-print triggers",
+        "primary_roles": [
+            "Salesperson / Cashier",
+            "Branch Manager",
+            "Business Owner"
+        ],
+        "branch_sensitive": false,
+        "tenant_sensitive": false,
+        "forms": [
+            "FORM-029"
+        ],
+        "tables": [],
+        "modals": [],
+        "actions": [
+            "ACTION-072",
+            "ACTION-073"
+        ],
+        "offline_behavior": "Saved locally in browser device storage",
+        "high_risk_operations": [],
+        "operator_notes": "Hardware print execution is strictly separated from transaction database commit."
+    },
+    {
+        "route_id": "ROUTE-027",
+        "path": "/reports",
+        "view": "ReportsView.vue",
+        "classification": "ACTIVE_ROUTED_VIEW",
+        "title": "Management Reports & Business Intelligence",
+        "purpose": "Comprehensive reporting suite: Sales, Inventory Valuation, Khata Aging, Profit & Loss, Expenses, and Tax",
+        "primary_roles": [
+            "Business Owner",
+            "Branch Manager",
+            "Accountant"
+        ],
+        "branch_sensitive": true,
+        "tenant_sensitive": true,
+        "forms": [
+            "FORM-030"
+        ],
+        "tables": [
+            "TABLE-024",
+            "TABLE-025",
+            "TABLE-026",
+            "TABLE-027",
+            "TABLE-028"
+        ],
+        "modals": [],
+        "actions": [
+            "ACTION-074",
+            "ACTION-075"
+        ],
+        "offline_behavior": "Online required for historical database aggregations",
+        "high_risk_operations": [],
+        "operator_notes": "Reports strictly enforce tenant and branch boundary isolation."
+    },
+    {
+        "route_id": "ROUTE-028",
+        "path": "/reports1",
+        "view": "reports1View.vue",
+        "classification": "REDIRECT_ROUTE",
+        "title": "Legacy Reports Redirect Surface",
+        "purpose": "Redirects legacy /reports1 path to canonical /reports dashboard",
+        "primary_roles": [
+            "All Users"
+        ],
+        "branch_sensitive": false,
+        "tenant_sensitive": true,
+        "forms": [],
+        "tables": [],
+        "modals": [],
+        "actions": [],
+        "offline_behavior": "Redirects client-side to /reports",
+        "high_risk_operations": [],
+        "operator_notes": "Maintained for backward route compatibility; canonical view is /reports."
+    },
+    {
+        "route_id": "ROUTE-029",
+        "path": "/device-pairing",
+        "view": "DevicePairingView.vue",
+        "classification": "ACTIVE_ROUTED_VIEW",
+        "title": "Local Peer-to-Peer Device Pairing",
+        "purpose": "Pair Desktop POS counter with Mobile Tablet POS via QR code and synchronize product catalog and local databases",
+        "primary_roles": [
+            "Branch Manager",
+            "Business Owner",
+            "Salesperson / Cashier"
+        ],
+        "branch_sensitive": true,
+        "tenant_sensitive": true,
+        "forms": [
+            "FORM-031"
+        ],
+        "tables": [],
+        "modals": [
+            "MODAL-024"
+        ],
+        "actions": [
+            "ACTION-076",
+            "ACTION-077"
+        ],
+        "offline_behavior": "Operates over local Wi-Fi / LAN without internet access",
+        "high_risk_operations": [],
+        "operator_notes": "Enforces strict RFC1918 same-LAN subnet validation and port safety checks (1024-65535)."
+    },
+    {
+        "route_id": "ROUTE-030",
+        "path": "/sync-manager",
+        "view": "SyncManagerView.vue",
+        "classification": "ACTIVE_ROUTED_VIEW",
+        "title": "Offline Queue & Sync Status Manager",
+        "purpose": "Inspect pending offline queue items, manual sync triggers, conflict logs, and replay diagnostics",
+        "primary_roles": [
+            "Branch Manager",
+            "Salesperson / Cashier",
+            "Business Owner"
+        ],
+        "branch_sensitive": true,
+        "tenant_sensitive": true,
+        "forms": [],
+        "tables": [
+            "TABLE-029"
+        ],
+        "modals": [
+            "MODAL-025"
+        ],
+        "actions": [
+            "ACTION-078"
+        ],
+        "offline_behavior": "Full local visibility of queued transactions and sync errors",
+        "high_risk_operations": [
+            "Discarding rejected conflict items after manual review"
+        ],
+        "operator_notes": "Atomic temp-ID remapping and server authoritative validation ensure zero double-booking."
+    },
+    {
+        "route_id": "ROUTE-031",
+        "path": "/analytics",
+        "view": "DashboardView.vue",
+        "classification": "REDIRECT_ROUTE",
+        "title": "Analytics Alias Route",
+        "purpose": "Legacy alias routing to executive dashboard /dashboard",
+        "primary_roles": [
+            "Business Owner",
+            "Branch Manager"
+        ],
+        "branch_sensitive": true,
+        "tenant_sensitive": true,
+        "forms": [],
+        "tables": [],
+        "modals": [],
+        "actions": [],
+        "offline_behavior": "Redirects to /dashboard",
+        "high_risk_operations": [],
+        "operator_notes": "Alias maintained for backward navigation compatibility."
+    },
+    {
+        "route_id": "ROUTE-032",
+        "path": "/sales",
+        "view": "PosSaleView.vue",
+        "classification": "REDIRECT_ROUTE",
+        "title": "Sales Counter Alias Route",
+        "purpose": "Convenience root route directing cashier to /pos",
+        "primary_roles": [
+            "Salesperson / Cashier",
+            "Branch Manager"
+        ],
+        "branch_sensitive": true,
+        "tenant_sensitive": true,
+        "forms": [],
+        "tables": [],
+        "modals": [],
+        "actions": [],
+        "offline_behavior": "Redirects to /pos",
+        "high_risk_operations": [],
+        "operator_notes": "Standard POS operational endpoint."
+    },
+    {
+        "route_id": "ROUTE-033",
+        "path": "/inventory",
+        "view": "ProductsView.vue",
+        "classification": "REDIRECT_ROUTE",
+        "title": "Inventory Management Alias Route",
+        "purpose": "Convenience root route directing inventory controller to /inventory/products",
+        "primary_roles": [
+            "Inventory Manager",
+            "Branch Manager"
+        ],
+        "branch_sensitive": false,
+        "tenant_sensitive": true,
+        "forms": [],
+        "tables": [],
+        "modals": [],
+        "actions": [],
+        "offline_behavior": "Redirects to /inventory/products",
+        "high_risk_operations": [],
+        "operator_notes": "Standard catalog management endpoint."
+    }
+]

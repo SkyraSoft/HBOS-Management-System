@@ -1,0 +1,1288 @@
+[
+    {
+        "sop_id": "SOP-001",
+        "domain": "SALES_POS",
+        "title": "Standard Retail Cash Sale Checkout",
+        "purpose": "Process a routine cash sales transaction at the POS counter, receive currency, calculate change, decrement stock, and issue thermal receipt",
+        "roles": [
+            "Salesperson / Cashier",
+            "Branch Manager"
+        ],
+        "prerequisites": "Active cash drawer shift opened, products available in catalog, active branch selected",
+        "starting_page": "POS Counter (/pos)",
+        "master_data": [
+            "Products Catalog",
+            "Cash Financial Account",
+            "Walk-in Customer"
+        ],
+        "branch_tenant_context": "Assigned branch_id and active business_id",
+        "steps": [
+            "1. Scan product barcode using hardware barcode scanner or search product by name in the POS search bar.",
+            "2. Adjust line item quantities and verify unit selling price and applicable tax rate.",
+            "3. Select 'Walk-in Customer' or choose existing customer profile.",
+            "4. Click 'Checkout' button to open payment allocation modal.",
+            "5. Select 'Cash' as payment tender and enter amount tendered by customer.",
+            "6. Verify server-calculated change due to customer.",
+            "7. Click 'Complete Sale' to commit transaction.",
+            "8. Collect cash, hand change to customer, and present auto-printed thermal receipt."
+        ],
+        "validation_rules": "Sufficient stock on hand, cash tendered >= sale total (unless partial allowed), valid cashier session",
+        "system_calculations": "Line Subtotal = Qty * Price; Order Subtotal = Sum(Lines); Tax = Subtotal * TaxRate; Grand Total = Subtotal + Tax - Discount; Change = Tendered - Total",
+        "database_effect": "Creates sales record, persists snapshot columns on sale_items, inserts sale_payments row, records account_movements on cash drawer, decrements branch_inventory",
+        "inventory_effect": "Immediate decrement of branch product stock on hand; records 'sale' inventory movement",
+        "financial_effect": "Increments cash drawer account balance; records revenue account movement",
+        "print_result": "Thermal receipt (80mm/58mm) generated and printed after confirmed server transaction commit",
+        "offline_behavior": "Queued in Dexie offline_sales with temp-ID; auto-synced upon reconnection",
+        "success_result": "Sale completed successfully; receipt printed; POS cart reset for next transaction",
+        "failure_handling": "If cash drawer deficit or insufficient stock, UI displays clear error alert and blocks submission",
+        "reversal_procedure": "Use Sales History (/sales/history) -> Cancel Sale (SOP-010) or Sale Return (SOP-011)",
+        "source_traceability": "FLOW-001, FORM-002, FORM-003, ACTION-004, ACTION-008, GAP-001, GAP-003, GAP-018, GAP-020, GAP-023"
+    },
+    {
+        "sop_id": "SOP-002",
+        "domain": "SALES_POS",
+        "title": "Digital / Card / Bank Payment Sale Checkout",
+        "purpose": "Process counter sale using credit card, debit card, or mobile digital wallet settlement",
+        "roles": [
+            "Salesperson / Cashier",
+            "Branch Manager"
+        ],
+        "prerequisites": "Active bank/POS terminal or merchant QR code available",
+        "starting_page": "POS Counter (/pos)",
+        "master_data": [
+            "Products Catalog",
+            "Bank / Digital Wallet Financial Account"
+        ],
+        "branch_tenant_context": "Assigned branch_id and active business_id",
+        "steps": [
+            "1. Add products to POS cart via barcode scanner or grid selection.",
+            "2. Click 'Checkout' to trigger payment modal.",
+            "3. Select 'Card' or 'Bank Transfer' tender type.",
+            "4. Choose corresponding bank financial account and enter transaction / approval reference number.",
+            "5. Confirm customer has completed card swipe / digital transfer.",
+            "6. Click 'Complete Sale' to commit.",
+            "7. Issue customer receipt."
+        ],
+        "validation_rules": "Mandatory payment account selection, reference number format validation",
+        "system_calculations": "Line totals, order total, zero cash change calculated",
+        "database_effect": "Inserts sales, sale_items (with snapshots), sale_payments, and account_movements linked to bank account",
+        "inventory_effect": "Branch stock decremented",
+        "financial_effect": "Bank financial account balance increased by exact sale amount",
+        "print_result": "Thermal receipt showing 'Paid via Card/Bank [Ref#]'",
+        "offline_behavior": "Queued in Dexie offline store",
+        "success_result": "Transaction confirmed and bank ledger updated",
+        "failure_handling": "If card declined on terminal, switch tender or cancel cart before commit",
+        "reversal_procedure": "Sales History -> Cancel Sale or Return",
+        "source_traceability": "FLOW-001, FORM-003, ACTION-008, GAP-003, GAP-018"
+    },
+    {
+        "sop_id": "SOP-003",
+        "domain": "SALES_POS",
+        "title": "Split-Tender Multi-Payment Sale Checkout",
+        "purpose": "Process a single sale paid across multiple tender types (e.g. partial cash + partial card + partial customer credit)",
+        "roles": [
+            "Salesperson / Cashier",
+            "Branch Manager"
+        ],
+        "prerequisites": "Registered customer selected if credit portion used; multiple funding accounts active",
+        "starting_page": "POS Counter (/pos)",
+        "master_data": [
+            "Products Catalog",
+            "Customer Master",
+            "Cash & Bank Accounts"
+        ],
+        "branch_tenant_context": "Assigned branch_id and active business_id",
+        "steps": [
+            "1. Scan/select items into POS cart.",
+            "2. Select registered customer if Khata credit is included.",
+            "3. Open Checkout modal and click 'Split Tender / Add Payment Line'.",
+            "4. Line 1: Select 'Cash' -> enter amount (e.g. 1000.00).",
+            "5. Line 2: Click '+ Add Tender' -> select 'Card' -> enter amount (e.g. 500.00) -> select Bank Account.",
+            "6. Line 3 (Optional): If balance remains, select 'Customer Khata / Credit'.",
+            "7. Verify 'Total Paid' equals 'Grand Total' (or remaining is within customer credit limit).",
+            "8. Click 'Complete Sale' to commit."
+        ],
+        "validation_rules": "Sum of tender lines must satisfy sale total; credit portion cannot exceed customer available credit",
+        "system_calculations": "Total Tendered = Sum(Line amounts); Remaining Due = Grand Total - Total Tendered",
+        "database_effect": "Inserts sales, sale_items (snapshots), multiple sale_payments records (MIG-003), discrete account_movements for cash/bank, and customer khata movement",
+        "inventory_effect": "Branch stock decremented",
+        "financial_effect": "Cash drawer +1000, Bank +500, Customer Khata balance updated",
+        "print_result": "Thermal receipt itemizing each tender breakdown line",
+        "offline_behavior": "Queued with multi-tender payload in offline_sales",
+        "success_result": "Transaction committed with normalized split payment records",
+        "failure_handling": "If tender sum mismatch, submit button remains disabled with warning alert",
+        "reversal_procedure": "Cancel Sale reverses all constituent payment movements atomically",
+        "source_traceability": "FLOW-001, FORM-003, ACTION-008, GAP-003, MIG-003, P9-EMERGENT-001"
+    },
+    {
+        "sop_id": "SOP-004",
+        "domain": "SALES_POS",
+        "title": "Wholesale / Tiered Pricing Sale Checkout",
+        "purpose": "Execute wholesale customer checkout applying persisted wholesale prices instead of retail prices",
+        "roles": [
+            "Salesperson / Cashier",
+            "Branch Manager"
+        ],
+        "prerequisites": "Products configured with wholesale_price (MIG-002)",
+        "starting_page": "POS Counter (/pos)",
+        "master_data": [
+            "Product Catalog with Wholesale Prices",
+            "Wholesale Customer Profile"
+        ],
+        "branch_tenant_context": "Assigned branch_id and active business_id",
+        "steps": [
+            "1. Select Wholesale Customer in POS header.",
+            "2. Toggle price mode to 'Wholesale Pricing'.",
+            "3. Scan/select items; verify line item reflects persisted wholesale_price.",
+            "4. Verify bulk order quantities.",
+            "5. Proceed to payment modal and complete transaction."
+        ],
+        "validation_rules": "Wholesale price must be non-null on product; requires wholesale permission",
+        "system_calculations": "Line Total = Qty * wholesale_price; Margin = (wholesale_price - unit_cost) * Qty",
+        "database_effect": "Inserts sale with wholesale price snapshots in sale_items",
+        "inventory_effect": "Branch stock decremented by bulk quantities",
+        "financial_effect": "Financial accounts updated with wholesale total",
+        "print_result": "A4 or thermal invoice indicating wholesale price tier",
+        "offline_behavior": "Wholesale prices available in Dexie products cache",
+        "success_result": "Wholesale sale completed and cost margins recorded",
+        "failure_handling": "If wholesale price missing, defaults to retail price with override warning",
+        "reversal_procedure": "Standard cancellation or return procedure",
+        "source_traceability": "FLOW-001, FORM-002, ACTION-004, GAP-002, MIG-002"
+    },
+    {
+        "sop_id": "SOP-005",
+        "domain": "SALES_POS",
+        "title": "Customer Khata Credit Sale Checkout",
+        "purpose": "Execute on-credit checkout for an approved customer, adding transaction balance to Accounts Receivable",
+        "roles": [
+            "Salesperson / Cashier",
+            "Branch Manager"
+        ],
+        "prerequisites": "Customer profile exists, credit limit >= current balance + sale total",
+        "starting_page": "POS Counter (/pos)",
+        "master_data": [
+            "Customer Profile with Credit Limit",
+            "Products Catalog"
+        ],
+        "branch_tenant_context": "Assigned branch_id and active business_id",
+        "steps": [
+            "1. Search and select customer by name or phone in POS header.",
+            "2. Review current outstanding balance and available credit limit.",
+            "3. Add products to cart.",
+            "4. Open Checkout modal and select 'On Account / Khata Credit'.",
+            "5. Enter optional credit agreement notes or due date.",
+            "6. Click 'Complete Sale' to commit."
+        ],
+        "validation_rules": "Customer must not be walk-in; total cannot exceed available credit limit",
+        "system_calculations": "Customer New Balance = Previous Balance + Grand Total",
+        "database_effect": "Inserts sale, sale_items, sale_payments (payment_type='credit'), customer_ledgers debit entry, and updates customers.balance",
+        "inventory_effect": "Branch stock decremented",
+        "financial_effect": "Increments Accounts Receivable; no immediate cash drawer movement",
+        "print_result": "Invoice showing 'Payment Status: On Account / Due' and customer's updated balance",
+        "offline_behavior": "Queued in offline_sales; customer balance updated locally in Dexie",
+        "success_result": "Credit sale posted to customer ledger",
+        "failure_handling": "If credit limit exceeded, checkout blocked unless Manager override supplied",
+        "reversal_procedure": "Cancel sale or process return to credit customer khata",
+        "source_traceability": "FLOW-001, FLOW-007, FORM-003, ACTION-008, GAP-008, GAP-009"
+    },
+    {
+        "sop_id": "SOP-006",
+        "domain": "SALES_POS",
+        "title": "Thermal & A4 Invoice Reprinting",
+        "purpose": "Reprint a customer receipt or commercial invoice for a previously completed sale",
+        "roles": [
+            "Salesperson / Cashier",
+            "Branch Manager",
+            "Accountant"
+        ],
+        "prerequisites": "Sale transaction ID known or searched in history",
+        "starting_page": "Sales History (/sales/history)",
+        "master_data": [
+            "Historical Sale Record",
+            "Sale Items Snapshots"
+        ],
+        "branch_tenant_context": "Assigned branch_id and active business_id",
+        "steps": [
+            "1. Navigate to Sales History (/sales/history).",
+            "2. Search by invoice number, date range, or customer name.",
+            "3. Click on target transaction to view details.",
+            "4. Click 'Print Thermal Receipt' (80mm/58mm) or 'Print A4 Invoice'.",
+            "5. Review modal preview displaying historical snapshot names, SKUs, and prices.",
+            "6. Confirm print command to send to local hardware printer."
+        ],
+        "validation_rules": "Sale must exist; uses persisted snapshots from sale_items (MIG-001)",
+        "system_calculations": "Displays frozen historical totals; does not recalculate against current catalog",
+        "database_effect": "Read-only; records optional reprint audit log",
+        "inventory_effect": "Zero inventory effect",
+        "financial_effect": "Zero financial effect",
+        "print_result": "Exact duplicate receipt marked 'Reprint'",
+        "offline_behavior": "Reprint available for locally cached sales",
+        "success_result": "Physical invoice reprinted successfully",
+        "failure_handling": "If printer disconnected, review printer settings (SOP-036) without altering sale",
+        "reversal_procedure": "N/A (Read-only action)",
+        "source_traceability": "FLOW-001, TABLE-004, ACTION-011, GAP-001, GAP-023, GAP-028"
+    },
+    {
+        "sop_id": "SOP-007",
+        "domain": "SALES_POS",
+        "title": "Sale Cancellation & Stock Restoration",
+        "purpose": "Cancel an erroneously posted sale, restoring inventory to branch stock and reversing cash/financial movements",
+        "roles": [
+            "Branch Manager",
+            "Business Owner"
+        ],
+        "prerequisites": "Sale status is 'completed' and cancellation policy permitted",
+        "starting_page": "Sales History (/sales/history)",
+        "master_data": [
+            "Sale Record",
+            "Branch Inventory",
+            "Financial Accounts"
+        ],
+        "branch_tenant_context": "Assigned branch_id and active business_id",
+        "steps": [
+            "1. Locate transaction in Sales History.",
+            "2. Click 'Cancel Sale' action button.",
+            "3. Review impact-aware confirmation modal detailing stock restorations and cash reversals.",
+            "4. Enter mandatory cancellation reason.",
+            "5. Click 'Confirm Cancellation' to execute."
+        ],
+        "validation_rules": "Requires Manager authorization; cannot cancel already cancelled or fully refunded sales",
+        "system_calculations": "Restores exact quantities; posts negative or compensating account movements",
+        "database_effect": "Updates sale status to 'cancelled', inserts compensating inventory_movements, creates reversing account_movements, and adjusts customer balance if on credit",
+        "inventory_effect": "Increments branch product stock on hand back to pre-sale level",
+        "financial_effect": "Reverses tender amounts from cash/bank/khata ledgers",
+        "print_result": "Cancellation voucher generated",
+        "offline_behavior": "Online only to ensure atomic multi-ledger reversal",
+        "success_result": "Sale cancelled; inventory and financial balances fully restored",
+        "failure_handling": "If unauthorized, error modal prompts for manager credentials",
+        "reversal_procedure": "Cannot re-activate cancelled sale; must re-enter new sale if necessary",
+        "source_traceability": "FLOW-002, TABLE-004, ACTION-012, GAP-015, GAP-025"
+    },
+    {
+        "sop_id": "SOP-008",
+        "domain": "SALES_POS",
+        "title": "Sale Return & Restock Condition Handling",
+        "purpose": "Process customer merchandise return, classifying items as sellable (restocked) or damaged/scrap (non-restocked), and issuing cash refund or khata credit",
+        "roles": [
+            "Branch Manager",
+            "Salesperson / Cashier",
+            "Accountant"
+        ],
+        "prerequisites": "Original sale invoice verified, returned items physically present",
+        "starting_page": "Sale Returns (/sales/returns)",
+        "master_data": [
+            "Original Sale Record",
+            "Sale Return Items Condition Flags"
+        ],
+        "branch_tenant_context": "Assigned branch_id and active business_id",
+        "steps": [
+            "1. Navigate to Sale Returns (/sales/returns) and enter original invoice number.",
+            "2. Select line items being returned and enter return quantities (<= sold quantity).",
+            "3. For each return line, select Condition: 'Sellable', 'Damaged', or 'Scrap'.",
+            "4. Set Restock toggle: 'Restock to Inventory' (enabled for sellable, disabled for damaged/scrap).",
+            "5. Select Refund Method: 'Cash Refund' or 'Customer Khata Credit'.",
+            "6. Click 'Process Return' to commit."
+        ],
+        "validation_rules": "Return qty <= purchased qty; damaged items cannot be restocked without supervisor override",
+        "system_calculations": "Refund Amount = Sum(Returned Qty * Unit Selling Price); Tax adjusted proportionately",
+        "database_effect": "Inserts sale_returns, inserts sale_return_items with condition and is_restocked (MIG-007), creates inventory_movements only for restocked items, posts refund account_movements",
+        "inventory_effect": "Sellable items increment branch stock; damaged/scrap items bypass inventory increment",
+        "financial_effect": "Decrements cash drawer (cash refund) or decrements customer receivable balance (khata credit)",
+        "print_result": "Sale Return Credit Note / Refund Receipt printed",
+        "offline_behavior": "Online required for invoice validation and condition recording",
+        "success_result": "Return processed; stock conditionally restored; refund ledger posted",
+        "failure_handling": "Attempting to return more than sold quantity is blocked by server validation",
+        "reversal_procedure": "Return transactions are permanent; compensating sale required to adjust",
+        "source_traceability": "FLOW-003, FORM-005, ACTION-015, GAP-010, MIG-007"
+    },
+    {
+        "sop_id": "SOP-009",
+        "domain": "CUSTOMER_KHATA",
+        "title": "Create & Maintain Customer Profile",
+        "purpose": "Register a new customer profile with primary and secondary contact phones, credit limit, and address",
+        "roles": [
+            "Salesperson / Cashier",
+            "Branch Manager",
+            "Accountant"
+        ],
+        "prerequisites": "Customer details obtained",
+        "starting_page": "Customer Directory (/customers)",
+        "master_data": [
+            "Customer Master"
+        ],
+        "branch_tenant_context": "Tenant wide (business_id)",
+        "steps": [
+            "1. Navigate to Customers (/customers) and click '+ New Customer'.",
+            "2. Enter Full Name, Primary Phone number, and Secondary Phone number (MIG-010).",
+            "3. Enter optional Email, Address, and Tax / CNIC number.",
+            "4. Set Credit Limit (0.00 for cash-only customers).",
+            "5. Enter Opening Balance if migrating existing ledger balance.",
+            "6. Click 'Save Customer'."
+        ],
+        "validation_rules": "Customer name and primary phone required; phone format validated; credit limit >= 0",
+        "system_calculations": "Initial balance initialized to opening balance",
+        "database_effect": "Inserts customers row including secondary_phone column; synchronizes with Dexie localDb",
+        "inventory_effect": "Zero inventory effect",
+        "financial_effect": "Opening balance posts initial receivables ledger if > 0",
+        "print_result": "Customer card / statement available",
+        "offline_behavior": "Can create quick customer in POS offline; synced upon reconnect",
+        "success_result": "Customer registered and selectable in POS and Khata ledgers",
+        "failure_handling": "Duplicate phone warning alert if already registered",
+        "reversal_procedure": "Edit customer or deactivate profile if created in error",
+        "source_traceability": "FLOW-006, FORM-013, ACTION-036, GAP-030, MIG-010"
+    },
+    {
+        "sop_id": "SOP-010",
+        "domain": "CUSTOMER_KHATA",
+        "title": "Customer Khata Payment Receipt & Settlement",
+        "purpose": "Receive debt settlement payment from customer against outstanding Khata balance, record cash/bank receipt, and issue payment voucher",
+        "roles": [
+            "Accountant",
+            "Branch Manager",
+            "Salesperson / Cashier"
+        ],
+        "prerequisites": "Customer has outstanding credit balance",
+        "starting_page": "Customer Khata Ledger (/customers/:id/khata)",
+        "master_data": [
+            "Customer Profile",
+            "Cash or Bank Financial Account"
+        ],
+        "branch_tenant_context": "Assigned branch_id and active business_id",
+        "steps": [
+            "1. Open Customer Khata Ledger for target customer.",
+            "2. Click 'Receive Payment'.",
+            "3. Enter Amount Paid.",
+            "4. Select Receiving Financial Account (Cash Drawer or Bank Account).",
+            "5. Enter Reference / Notes (e.g. cheque number, bank transfer ref).",
+            "6. Click 'Confirm Payment Receipt'.",
+            "7. Issue payment receipt voucher to customer."
+        ],
+        "validation_rules": "Amount > 0; mandatory financial account; cannot exceed balance without confirmation",
+        "system_calculations": "Customer Remaining Balance = Previous Balance - Amount Paid",
+        "database_effect": "Inserts customer_payments, records credit entry on customer_ledgers, creates account_movements on receiving account, atomically decrements customers.balance",
+        "inventory_effect": "Zero inventory effect",
+        "financial_effect": "Increments cash/bank account balance; decrements Accounts Receivable",
+        "print_result": "Khata Payment Voucher / Receipt printed",
+        "offline_behavior": "Queued in Dexie offline_khata store",
+        "success_result": "Customer balance reduced and cash account incremented",
+        "failure_handling": "If invalid account selected, validation error displays",
+        "reversal_procedure": "Accountant can reverse receipt via Customer Khata -> Reverse Payment (SOP-011)",
+        "source_traceability": "FLOW-007, FORM-014, ACTION-039, GAP-008, GAP-009"
+    },
+    {
+        "sop_id": "SOP-011",
+        "domain": "CUSTOMER_KHATA",
+        "title": "Customer Payment Reversal & Khata Correction",
+        "purpose": "Reverse an erroneously recorded customer payment (e.g. bounced cheque, wrong customer entered) and restore receivable balance",
+        "roles": [
+            "Accountant",
+            "Business Owner"
+        ],
+        "prerequisites": "Payment record exists and is not already reversed",
+        "starting_page": "Customer Khata Ledger (/customers/:id/khata)",
+        "master_data": [
+            "Customer Payment Record",
+            "Financial Account"
+        ],
+        "branch_tenant_context": "Assigned branch_id and active business_id",
+        "steps": [
+            "1. Locate payment transaction in customer ledger.",
+            "2. Click 'Reverse Payment'.",
+            "3. Enter mandatory reversal reason (e.g. 'Cheque returned unpaid by bank').",
+            "4. Confirm impact-aware reversal modal.",
+            "5. Click 'Confirm Reversal'."
+        ],
+        "validation_rules": "Requires Accountant/Owner authorization; reason mandatory",
+        "system_calculations": "Restores customer balance by adding reversed amount back",
+        "database_effect": "Marks payment as reversed, inserts debit adjustment on customer_ledgers, creates reversing account_movements on financial account, updates customers.balance",
+        "inventory_effect": "Zero inventory effect",
+        "financial_effect": "Decrements bank/cash account; restores customer debt",
+        "print_result": "Reversal voucher generated",
+        "offline_behavior": "Online only",
+        "success_result": "Customer balance restored to correct debt position",
+        "failure_handling": "Reversal blocked if financial account closed or insufficient bank balance",
+        "reversal_procedure": "Reversal is permanent; must record new payment if paid later",
+        "source_traceability": "FLOW-007, ACTION-041, GAP-008, GAP-015"
+    },
+    {
+        "sop_id": "SOP-012",
+        "domain": "INVENTORY",
+        "title": "Product Catalog Item Creation & Pricing Setup",
+        "purpose": "Create a new product item, configure SKU/barcode, assign category/brand, set unit cost, retail price, and wholesale price tier",
+        "roles": [
+            "Inventory Manager",
+            "Business Owner"
+        ],
+        "prerequisites": "Product specifications, category and brand configured",
+        "starting_page": "Product Catalog (/inventory/products)",
+        "master_data": [
+            "Categories",
+            "Brands",
+            "Product Master"
+        ],
+        "branch_tenant_context": "Tenant wide (business_id)",
+        "steps": [
+            "1. Navigate to Products (/inventory/products) and click '+ Add Product'.",
+            "2. Enter Product Title, SKU, Barcode (or click 'Generate Barcode').",
+            "3. Select Category, Brand, and Unit of Measure (pcs, kg, box).",
+            "4. Enter Initial Purchase Cost (unit_cost).",
+            "5. Enter Standard Retail Selling Price.",
+            "6. Enter Wholesale Selling Price (MIG-002) for tiered wholesale buyers.",
+            "7. Set Minimum Alert Quantity for low stock warnings.",
+            "8. Click 'Save Product'."
+        ],
+        "validation_rules": "Title and SKU unique; selling price >= 0; wholesale price >= 0",
+        "system_calculations": "Retail Margin = Retail Price - Unit Cost; Wholesale Margin = Wholesale Price - Unit Cost",
+        "database_effect": "Inserts products row (including wholesale_price); initializes branch_inventory records across active branches",
+        "inventory_effect": "Initializes stock balance records (stock=0 until purchase/adjustment)",
+        "financial_effect": "Zero financial effect until stock is received",
+        "print_result": "Barcode labels can be queued immediately for printing (SOP-017)",
+        "offline_behavior": "Synchronized to Dexie products store on next POS sync",
+        "success_result": "Product active and searchable across all branch POS registers",
+        "failure_handling": "Duplicate SKU/barcode triggers validation error",
+        "reversal_procedure": "Edit product or deactivate if added by mistake",
+        "source_traceability": "FLOW-008, FORM-006, ACTION-017, GAP-002, MIG-002"
+    },
+    {
+        "sop_id": "SOP-013",
+        "domain": "INVENTORY",
+        "title": "Physical Stock Count Adjustment & Reconciliation",
+        "purpose": "Reconcile physical stock discrepancy (damage, theft, spoilage, or unrecorded variance) and adjust moving-average cost valuation",
+        "roles": [
+            "Inventory Manager",
+            "Business Owner"
+        ],
+        "prerequisites": "Physical stock count completed for branch",
+        "starting_page": "Stock Adjustments (/inventory/adjustments)",
+        "master_data": [
+            "Product Master",
+            "Branch Inventory",
+            "Stock Adjustment Reasons"
+        ],
+        "branch_tenant_context": "Assigned branch_id and active business_id",
+        "steps": [
+            "1. Navigate to Stock Adjustments (/inventory/adjustments) and click '+ New Adjustment'.",
+            "2. Select Product and target Branch.",
+            "3. View current recorded system stock.",
+            "4. Enter Actual Physical Count (or +/- adjustment quantity).",
+            "5. Select Adjustment Reason: 'Damage / Breakage', 'Spoilage', 'Physical Count Variance', 'Theft / Missing', or 'Found Stock'.",
+            "6. Enter optional unit cost if adjustment affects valuation.",
+            "7. Click 'Submit Adjustment'."
+        ],
+        "validation_rules": "Negative adjustments cannot reduce stock below zero; reason mandatory",
+        "system_calculations": "Quantity Delta = Physical Count - Current Stock; Value Impact = Delta * Unit Cost; Updates moving-average valuation",
+        "database_effect": "Inserts stock_adjustments, inserts inventory_movements (movement_type='adjustment'), updates branch_inventory stock_quantity and moving_average_cost",
+        "inventory_effect": "Branch stock immediately updated to physical count",
+        "financial_effect": "Records inventory write-off / gain in financial reports",
+        "print_result": "Stock Adjustment Voucher generated",
+        "offline_behavior": "Online only to prevent race conditions across multiple stock counters",
+        "success_result": "Branch inventory reconciled to physical reality",
+        "failure_handling": "If adjustment would cause negative stock, operation rejected",
+        "reversal_procedure": "Submit compensating adjustment with audit reference",
+        "source_traceability": "FLOW-010, FORM-010, ACTION-029, GAP-004, GAP-006"
+    },
+    {
+        "sop_id": "SOP-014",
+        "domain": "INVENTORY",
+        "title": "Inter-Branch Stock Transfer (Dispatch & Receipt)",
+        "purpose": "Transfer inventory between two branches with explicit transit status tracking to eliminate phantom inventory",
+        "roles": [
+            "Inventory Manager",
+            "Branch Manager"
+        ],
+        "prerequisites": "Source branch has sufficient stock on hand; destination branch active",
+        "starting_page": "Stock Transfers (/inventory/transfers)",
+        "master_data": [
+            "Products Catalog",
+            "Source & Destination Branches"
+        ],
+        "branch_tenant_context": "Multi-branch within tenant (business_id)",
+        "steps": [
+            "1. Source Branch Operator: Click '+ New Transfer'.",
+            "2. Select Source Branch and Destination Branch.",
+            "3. Add items and transfer quantities.",
+            "4. Click 'Dispatch Shipment' -> Transfer status becomes 'in_transit' (MIG-006).",
+            "5. Physical items shipped to destination branch.",
+            "6. Destination Branch Operator: Open Stock Transfers, locate transfer, inspect goods.",
+            "7. Click 'Receive Transfer' -> Transfer status becomes 'received'."
+        ],
+        "validation_rules": "Source stock >= transfer qty; source branch != destination branch",
+        "system_calculations": "Source branch decremented on dispatch; in-transit inventory tracked; destination branch incremented on receipt",
+        "database_effect": "Inserts stock_transfers, updates transfer_status on inventory_movements (MIG-006), adjusts branch_inventory for source and destination",
+        "inventory_effect": "Eliminates phantom stock by strictly maintaining transit state until physical confirmation",
+        "financial_effect": "Transfers inventory asset valuation between branch ledgers",
+        "print_result": "Transfer Delivery Challan / Gate Pass printed",
+        "offline_behavior": "Online required for real-time inter-branch synchronization",
+        "success_result": "Goods safely moved and stock balances updated at both branches",
+        "failure_handling": "If damaged in transit, destination receives partial and records damage adjustment",
+        "reversal_procedure": "Cancel transfer while 'in_transit' returns stock back to source branch",
+        "source_traceability": "FLOW-009, FORM-011, ACTION-031, ACTION-032, GAP-007, MIG-006"
+    },
+    {
+        "sop_id": "SOP-015",
+        "domain": "PROCUREMENT_SUPPLIER",
+        "title": "Create Purchase Order & Goods Receipt (GRN) with Landed Cost",
+        "purpose": "Record vendor purchase shipment, ingest freight and handling charges, prorate landed cost across items, update moving-average cost, and record supplier AP",
+        "roles": [
+            "Inventory Manager",
+            "Accountant",
+            "Business Owner"
+        ],
+        "prerequisites": "Supplier master profile created; vendor invoice/packing slip received",
+        "starting_page": "Purchases (/purchases)",
+        "master_data": [
+            "Supplier Profile",
+            "Product Catalog",
+            "Receiving Branch"
+        ],
+        "branch_tenant_context": "Assigned branch_id and active business_id",
+        "steps": [
+            "1. Navigate to Purchases (/purchases) and click '+ New Purchase'.",
+            "2. Select Supplier, Receiving Branch, and enter Vendor Invoice Number.",
+            "3. Add line items, quantities received, and base unit purchase price.",
+            "4. Enter Freight Amount and Other Handling Charges (MIG-005).",
+            "5. Select Payment Terms: 'Full Payment', 'Partial Payment', or 'On Credit'.",
+            "6. If paid, select funding Financial Account (Bank or Cash).",
+            "7. Click 'Receive Goods & Save Purchase'."
+        ],
+        "validation_rules": "Quantities > 0; unit costs >= 0; valid financial account if payment made",
+        "system_calculations": "Landed Unit Cost = Base Cost + (Freight + Charges) * (Line Value / Total Value); Moving Average Cost = ((Old Stock * Old Cost) + (New Stock * Landed Cost)) / (Old Stock + New Stock); Total Payable = Item Total + Freight + Charges - Paid",
+        "database_effect": "Inserts purchases (with freight_amount, other_charges), purchase_items, inventory_movements, updates branch_inventory stock and cost, inserts supplier_ledgers debit/credit, and records account_movements for payment",
+        "inventory_effect": "Branch stock incremented; product moving-average unit cost updated to true landed cost",
+        "financial_effect": "Increments Accounts Payable to supplier; decrements funding account if paid",
+        "print_result": "Goods Receipt Note (GRN) / Purchase Invoice printed",
+        "offline_behavior": "Online only for procurement accounting",
+        "success_result": "Stock received at true landed cost and vendor liability recorded",
+        "failure_handling": "Missing freight or negative costs rejected by validator",
+        "reversal_procedure": "Purchase Cancellation (SOP-016) or Supplier Return (SOP-017)",
+        "source_traceability": "FLOW-004, FORM-015, FORM-016, ACTION-042, GAP-004, GAP-005, MIG-005"
+    },
+    {
+        "sop_id": "SOP-016",
+        "domain": "PROCUREMENT_SUPPLIER",
+        "title": "Purchase Cancellation Guarded Workflow",
+        "purpose": "Cancel an erroneous purchase order, protected by strict stock availability validation to prevent negative stock deficits",
+        "roles": [
+            "Business Owner",
+            "Inventory Manager"
+        ],
+        "prerequisites": "Purchase exists; received items are still physically in stock and have not been sold or transferred",
+        "starting_page": "Purchases (/purchases)",
+        "master_data": [
+            "Purchase Record",
+            "Branch Inventory Balance"
+        ],
+        "branch_tenant_context": "Assigned branch_id and active business_id",
+        "steps": [
+            "1. Locate purchase order in Purchases list.",
+            "2. Click 'Cancel Purchase'.",
+            "3. System checks current stock on hand for all constituent line items.",
+            "4. If stock is sufficient, review cancellation confirmation modal detailing stock removal and AP reversal.",
+            "5. Enter mandatory cancellation reason.",
+            "6. Click 'Confirm Cancellation'."
+        ],
+        "validation_rules": "Strictly blocked if current branch stock < purchase quantity (prevents negative stock overdraft)",
+        "system_calculations": "Decrements stock by purchase quantity; reverses supplier AP and cash/bank movements",
+        "database_effect": "Marks purchase 'cancelled', inserts reversing inventory_movements, reverses supplier_ledgers entries, reverses financial account_movements",
+        "inventory_effect": "Decrements branch stock on hand back to pre-purchase level",
+        "financial_effect": "Reverses vendor liability and restores funding account balance",
+        "print_result": "Purchase Cancellation Voucher printed",
+        "offline_behavior": "Online only",
+        "success_result": "Purchase cancelled safely without causing negative inventory",
+        "failure_handling": "If items were already sold, system rejects cancellation and directs operator to Supplier Return (SOP-017)",
+        "reversal_procedure": "Cancelled purchase cannot be un-cancelled; must create new purchase if needed",
+        "source_traceability": "FLOW-005, ACTION-044, GAP-006, GAP-015, GAP-025"
+    },
+    {
+        "sop_id": "SOP-017",
+        "domain": "PROCUREMENT_SUPPLIER",
+        "title": "Supplier Return / Debit Note Processing",
+        "purpose": "Return defective or excess merchandise to vendor, decrement branch inventory, and generate a debit note reducing Accounts Payable",
+        "roles": [
+            "Inventory Manager",
+            "Accountant",
+            "Business Owner"
+        ],
+        "prerequisites": "Items in stock, supplier agreement confirmed",
+        "starting_page": "Supplier AP Ledger (/suppliers/:id/ledger)",
+        "master_data": [
+            "Supplier Profile",
+            "Product Catalog",
+            "Branch Stock"
+        ],
+        "branch_tenant_context": "Assigned branch_id and active business_id",
+        "steps": [
+            "1. Open Supplier Ledger for target vendor.",
+            "2. Click 'Create Supplier Return / Debit Note'.",
+            "3. Select Product(s) to return and enter return quantities.",
+            "4. Verify unit return cost (defaults to purchase cost).",
+            "5. Enter Return Reason (e.g. 'Defective batch', 'Wrong specification').",
+            "6. Click 'Process Supplier Return'."
+        ],
+        "validation_rules": "Return quantity <= branch stock on hand; unit return cost > 0",
+        "system_calculations": "Debit Note Total = Sum(Qty * Unit Cost); Supplier Balance = Previous Balance - Debit Note Total",
+        "database_effect": "Inserts supplier_returns and supplier_return_items (MIG-008), creates decrementing inventory_movements, inserts debit entry on supplier_ledgers, updates suppliers.balance",
+        "inventory_effect": "Decrements branch physical inventory by returned quantities",
+        "financial_effect": "Decrements Accounts Payable liability owed to supplier",
+        "print_result": "Supplier Debit Note / Return Delivery Note printed",
+        "offline_behavior": "Online only",
+        "success_result": "Debit note created, stock decremented, and vendor payable reduced",
+        "failure_handling": "If stock insufficient at branch, return is rejected",
+        "reversal_procedure": "Compensating purchase entry required if return is rejected by vendor",
+        "source_traceability": "FLOW-005, FORM-019, ACTION-051, GAP-011, MIG-008"
+    },
+    {
+        "sop_id": "SOP-018",
+        "domain": "PROCUREMENT_SUPPLIER",
+        "title": "Supplier Payment Processing & Reversal",
+        "purpose": "Process disbursement payment to vendor reducing Accounts Payable, or reverse an erroneous payment restoring liability",
+        "roles": [
+            "Accountant",
+            "Business Owner"
+        ],
+        "prerequisites": "Supplier has outstanding payable balance; funding account has sufficient funds",
+        "starting_page": "Supplier AP Ledger (/suppliers/:id/ledger)",
+        "master_data": [
+            "Supplier Record",
+            "Bank or Cash Financial Account"
+        ],
+        "branch_tenant_context": "Assigned branch_id and active business_id",
+        "steps": [
+            "1. PAYMENT: Open Supplier Ledger -> Click 'Make Payment'.",
+            "2. Enter Amount, select Funding Account (Bank/Cash), enter Cheque/Ref Number.",
+            "3. Click 'Confirm Payment' -> Supplier AP decremented, bank account decremented.",
+            "4. REVERSAL: If payment bounced or recorded in error, locate payment in ledger.",
+            "5. Click 'Reverse Payment' (GAP-012) -> Enter mandatory reversal reason.",
+            "6. Click 'Confirm Reversal' -> Restores supplier payable and bank balance."
+        ],
+        "validation_rules": "Payment amount <= outstanding payable (or advance allowed); reversal requires valid reason",
+        "system_calculations": "Payment: New AP = Old AP - Amount; Reversal: New AP = Old AP + Amount",
+        "database_effect": "Payment: Inserts supplier_payments, debit supplier_ledgers, account_movements. Reversal: Updates payment status, credit supplier_ledgers, reversing account_movements",
+        "inventory_effect": "Zero inventory effect",
+        "financial_effect": "Payment decrements bank/cash; Reversal increments bank/cash and restores supplier liability",
+        "print_result": "Supplier Payment Voucher / Reversal Slip printed",
+        "offline_behavior": "Online only",
+        "success_result": "Vendor liability settled or accurately restored upon reversal",
+        "failure_handling": "Insufficient funding balance displays error modal",
+        "reversal_procedure": "Use Reverse Payment endpoint implemented in GAP-012",
+        "source_traceability": "FLOW-005, FORM-018, ACTION-049, ACTION-050, GAP-012"
+    },
+    {
+        "sop_id": "SOP-019",
+        "domain": "EXPENSES",
+        "title": "Operating Expense Posting & Mandatory Account Allocation",
+        "purpose": "Record an operational expense, assign departmental category, enforce mandatory funding account selection, and verify budget variance",
+        "roles": [
+            "Accountant",
+            "Branch Manager",
+            "Business Owner"
+        ],
+        "prerequisites": "Expense category active; funding financial account active",
+        "starting_page": "Expenses (/expenses)",
+        "master_data": [
+            "Expense Categories with Monthly Budget",
+            "Financial Accounts"
+        ],
+        "branch_tenant_context": "Assigned branch_id and active business_id",
+        "steps": [
+            "1. Navigate to Expenses (/expenses) and click '+ Add Expense'.",
+            "2. Select Expense Category (e.g. 'Rent & Utilities', 'Store Supplies', 'Salaries').",
+            "3. Enter Expense Title / Description and Amount.",
+            "4. MANDATORY: Select Funding Financial Account (Cash Drawer or Bank Account).",
+            "5. Enter optional Receipt / Tax Invoice Reference.",
+            "6. System checks monthly budget ceiling for category (MIG-011).",
+            "7. Click 'Save Expense'."
+        ],
+        "validation_rules": "Amount > 0; financial_account_id is strictly mandatory (MIG-004 / GAP-013)",
+        "system_calculations": "Account Balance = Old Balance - Expense Amount; Category Monthly Spend = Sum(Monthly Expenses)",
+        "database_effect": "Inserts expenses row with validated financial_account_id, creates account_movements (movement_category='expense')",
+        "inventory_effect": "Zero inventory effect",
+        "financial_effect": "Decrements funding cash/bank account; records expense in Profit & Loss",
+        "print_result": "Expense Payment Voucher printed",
+        "offline_behavior": "Queued in Dexie offline_expenses store with validated account ID",
+        "success_result": "Expense posted and cash ledger decremented without leakage",
+        "failure_handling": "Attempting to submit without financial account is blocked by client and server validators",
+        "reversal_procedure": "Void Expense (SOP-020) reverses movement",
+        "source_traceability": "FLOW-011, FORM-020, ACTION-052, GAP-013, GAP-031, MIG-004, MIG-011"
+    },
+    {
+        "sop_id": "SOP-020",
+        "domain": "EXPENSES",
+        "title": "Expense Voiding & Reconciliation",
+        "purpose": "Void an erroneously posted expense and restore funding financial account balance",
+        "roles": [
+            "Accountant",
+            "Business Owner"
+        ],
+        "prerequisites": "Expense record active and un-voided",
+        "starting_page": "Expenses (/expenses)",
+        "master_data": [
+            "Expense Record",
+            "Financial Account"
+        ],
+        "branch_tenant_context": "Assigned branch_id and active business_id",
+        "steps": [
+            "1. Locate expense in Expenses register.",
+            "2. Click 'Void Expense'.",
+            "3. Review confirmation modal displaying refund amount to funding account.",
+            "4. Enter void reason.",
+            "5. Click 'Confirm Void'."
+        ],
+        "validation_rules": "Requires Accountant/Owner authorization; cannot void already voided expense",
+        "system_calculations": "Funding Account Restored Balance = Current Balance + Voided Amount",
+        "database_effect": "Updates expense status to 'voided', creates compensating account_movements restoring financial account balance",
+        "inventory_effect": "Zero inventory effect",
+        "financial_effect": "Restores cash/bank balance; removes expense from active P&L",
+        "print_result": "Expense Void Slip printed",
+        "offline_behavior": "Online only",
+        "success_result": "Expense voided and funding account fully restored",
+        "failure_handling": "Unauthorized attempts rejected",
+        "reversal_procedure": "Void is permanent; must enter new expense if needed",
+        "source_traceability": "FLOW-011, ACTION-054, GAP-014, GAP-025"
+    },
+    {
+        "sop_id": "SOP-021",
+        "domain": "FINANCIAL_ACCOUNTS",
+        "title": "Financial Account Creation & Opening Balance Setup",
+        "purpose": "Create a physical cash register, bank account, or digital wallet and establish opening financial balance",
+        "roles": [
+            "Accountant",
+            "Business Owner"
+        ],
+        "prerequisites": "Account details and bank account numbers confirmed",
+        "starting_page": "Accounts (/accounts)",
+        "master_data": [
+            "Financial Accounts Master"
+        ],
+        "branch_tenant_context": "Assigned branch_id (or enterprise wide)",
+        "steps": [
+            "1. Navigate to Accounts (/accounts) and click '+ Add Account'.",
+            "2. Enter Account Name (e.g. 'Main Counter Cash Drawer', 'Meezan Bank Operating').",
+            "3. Select Account Type: 'cash', 'bank', or 'digital_wallet'.",
+            "4. Enter Account Number / IBAN if bank account.",
+            "5. Enter Opening Balance.",
+            "6. Assign to specific Branch (or leave global for enterprise bank).",
+            "7. Click 'Save Account'."
+        ],
+        "validation_rules": "Account name unique within business; opening balance >= 0",
+        "system_calculations": "Initial balance initialized to opening balance",
+        "database_effect": "Inserts financial_accounts row, creates initial account_movements record for opening balance",
+        "inventory_effect": "Zero inventory effect",
+        "financial_effect": "Establishes starting cash/bank liquidity balance",
+        "print_result": "Account registration slip",
+        "offline_behavior": "Read-only balance display offline",
+        "success_result": "Financial account ready to receive sales, expenses, and transfers",
+        "failure_handling": "Duplicate account name rejected",
+        "reversal_procedure": "Edit account details or archive account if zero balance",
+        "source_traceability": "FLOW-012, FORM-024, ACTION-063, GAP-014"
+    },
+    {
+        "sop_id": "SOP-022",
+        "domain": "FINANCIAL_ACCOUNTS",
+        "title": "Inter-Account Fund Transfer (Cash to Bank / Bank to Cash)",
+        "purpose": "Transfer liquid funds between internal accounts (e.g. daily counter cash deposit to bank, or bank withdrawal for cash float)",
+        "roles": [
+            "Accountant",
+            "Business Owner"
+        ],
+        "prerequisites": "Source account has sufficient balance; destination account active",
+        "starting_page": "Accounts (/accounts)",
+        "master_data": [
+            "Source Account",
+            "Destination Account"
+        ],
+        "branch_tenant_context": "Tenant wide (business_id)",
+        "steps": [
+            "1. Navigate to Accounts (/accounts) and click 'Transfer Funds'.",
+            "2. Select Source Account (e.g. 'Main Counter Cash').",
+            "3. Select Destination Account (e.g. 'Operating Bank Account').",
+            "4. Enter Transfer Amount.",
+            "5. Enter Transfer Reference / Bank Deposit Slip Number.",
+            "6. Click 'Execute Transfer'."
+        ],
+        "validation_rules": "Amount > 0; source balance >= transfer amount; source != destination",
+        "system_calculations": "Source New Balance = Source Old Balance - Amount; Destination New Balance = Destination Old Balance + Amount",
+        "database_effect": "Inserts account_transfers, creates debit account_movements on source, creates credit account_movements on destination with linked compound reference",
+        "inventory_effect": "Zero inventory effect",
+        "financial_effect": "Net business cash stays constant; balances shift between accounts",
+        "print_result": "Inter-Account Transfer Voucher printed",
+        "offline_behavior": "Online only for atomic double-entry transfer execution",
+        "success_result": "Funds successfully transferred between accounts",
+        "failure_handling": "Insufficient source balance triggers error and blocks transfer",
+        "reversal_procedure": "Execute reversing transfer in opposite direction with audit notes",
+        "source_traceability": "FLOW-013, FORM-025, ACTION-064, GAP-014"
+    },
+    {
+        "sop_id": "SOP-023",
+        "domain": "FINANCIAL_ACCOUNTS",
+        "title": "Capital Injection & Owner Drawing Management",
+        "purpose": "Record external equity investment into business or owner personal drawings out of company funds",
+        "roles": [
+            "Business Owner",
+            "Accountant"
+        ],
+        "prerequisites": "Owner authorization confirmed",
+        "starting_page": "Accounts (/accounts)",
+        "master_data": [
+            "Financial Accounts",
+            "Owner Equity Accounts"
+        ],
+        "branch_tenant_context": "Tenant wide (business_id)",
+        "steps": [
+            "1. Open Accounts (/accounts) and click 'Capital Transaction'.",
+            "2. Select Transaction Type: 'Capital Injection (Deposit)' or 'Owner Drawing (Withdrawal)'.",
+            "3. Select target Financial Account.",
+            "4. Enter Amount and descriptive notes.",
+            "5. Click 'Confirm Capital Movement'."
+        ],
+        "validation_rules": "Amount > 0; owner drawing requires sufficient account balance",
+        "system_calculations": "Injection: Account Balance + Amount; Drawing: Account Balance - Amount",
+        "database_effect": "Inserts account_movements (movement_category='capital_injection' or 'capital_drawing')",
+        "inventory_effect": "Zero inventory effect",
+        "financial_effect": "Alters business equity and liquidity without affecting operating sales/expense P&L",
+        "print_result": "Capital Transaction Voucher printed",
+        "offline_behavior": "Online only",
+        "success_result": "Equity transaction recorded accurately in cash flow statement",
+        "failure_handling": "Drawing exceeding account balance rejected",
+        "reversal_procedure": "Compensating capital adjustment entry",
+        "source_traceability": "FLOW-014, FORM-026, ACTION-065, ACTION-066, GAP-014"
+    },
+    {
+        "sop_id": "SOP-024",
+        "domain": "USERS_STAFF",
+        "title": "Staff User Creation, Role Assignment & Wage Persistence",
+        "purpose": "Create employee user credentials, assign branch and RBAC role, and persist wage/salary agreement details",
+        "roles": [
+            "Business Owner"
+        ],
+        "prerequisites": "Employee information, role, and salary agreement established",
+        "starting_page": "User Staff Governance (/users)",
+        "master_data": [
+            "User Master",
+            "Roles (ROLE-001..005)",
+            "Branches"
+        ],
+        "branch_tenant_context": "Tenant wide (business_id)",
+        "steps": [
+            "1. Navigate to Users (/users) and click '+ New User'.",
+            "2. Enter Full Name, Email / Login Username, and secure Password.",
+            "3. Select System Role: 'Business Owner', 'Branch Manager', 'Salesperson / Cashier', 'Accountant', or 'Inventory Manager'.",
+            "4. Assign primary Store Branch.",
+            "5. Enter Base Salary (MIG-009).",
+            "6. Select Payment Cycle: 'monthly', 'weekly', or 'bi-weekly'.",
+            "7. Set Next Payment Date.",
+            "8. Click 'Save User'."
+        ],
+        "validation_rules": "Email/Username unique; password >= 8 chars; salary >= 0 (MIG-009 / GAP-029)",
+        "system_calculations": "Initializes user account and payroll metadata fields",
+        "database_effect": "Inserts users row with base_salary, payment_cycle, next_payment_date (MIG-009) and assigns role via model_has_roles",
+        "inventory_effect": "Zero inventory effect",
+        "financial_effect": "Zero financial effect until payroll disbursement",
+        "print_result": "Staff employment record sheet",
+        "offline_behavior": "Online only for security governance",
+        "success_result": "User active and capable of logging into assigned branch POS",
+        "failure_handling": "Duplicate login credentials rejected by validator",
+        "reversal_procedure": "Deactivate user account (SOP-025)",
+        "source_traceability": "FLOW-015, FORM-022, ACTION-058, GAP-029, MIG-009"
+    },
+    {
+        "sop_id": "SOP-025",
+        "domain": "USERS_STAFF",
+        "title": "User Deactivation & Access Revocation",
+        "purpose": "Revoke staff system access immediately upon termination or leave without corrupting historical transaction audit trails",
+        "roles": [
+            "Business Owner"
+        ],
+        "prerequisites": "User is not currently operating an unclosed cash drawer session",
+        "starting_page": "User Staff Governance (/users)",
+        "master_data": [
+            "User Profile"
+        ],
+        "branch_tenant_context": "Tenant wide (business_id)",
+        "steps": [
+            "1. Locate staff member in Users list.",
+            "2. Click 'Deactivate User'.",
+            "3. Review confirmation modal verifying user has no open cash drawer shift.",
+            "4. Click 'Confirm Deactivation'."
+        ],
+        "validation_rules": "Cannot deactivate own current login account; requires Owner permission",
+        "system_calculations": "Sets is_active = false",
+        "database_effect": "Updates users.is_active = false; revokes active Sanctum API session tokens",
+        "inventory_effect": "Zero inventory effect",
+        "financial_effect": "Zero financial effect",
+        "print_result": "Revocation audit log",
+        "offline_behavior": "Token revoked on next online handshake",
+        "success_result": "User blocked from logging into POS or backend",
+        "failure_handling": "Attempt to deactivate self is blocked",
+        "reversal_procedure": "Click 'Activate User' to restore access",
+        "source_traceability": "FLOW-015, ACTION-060, GAP-015"
+    },
+    {
+        "sop_id": "SOP-026",
+        "domain": "SETTINGS_BRANCH",
+        "title": "Store Branch Configuration & Multi-Outlet Setup",
+        "purpose": "Create a physical branch outlet, assign default cash register, contact details, and receipt headers",
+        "roles": [
+            "Business Owner"
+        ],
+        "prerequisites": "Branch physical address confirmed",
+        "starting_page": "Branches (/branches)",
+        "master_data": [
+            "Branch Master",
+            "Tenant Profile"
+        ],
+        "branch_tenant_context": "Tenant wide (business_id)",
+        "steps": [
+            "1. Navigate to Branches (/branches) and click '+ Add Branch'.",
+            "2. Enter Branch Name, Physical Address, City, and Phone.",
+            "3. Select Default Currency and Receipt Header/Footer.",
+            "4. Check 'Enable POS Register' to create default cash register.",
+            "5. Click 'Save Branch'."
+        ],
+        "validation_rules": "Branch name unique within business",
+        "system_calculations": "Initializes branch inventory records and default accounts",
+        "database_effect": "Inserts branches row, creates default financial_accounts cash register for branch",
+        "inventory_effect": "Enables branch stock tracking for all catalog products",
+        "financial_effect": "Creates branch cash register ledger",
+        "print_result": "Branch profile slip",
+        "offline_behavior": "Cached in application state",
+        "success_result": "New branch available in POS header dropdown and inventory transfers",
+        "failure_handling": "Duplicate branch name rejected",
+        "reversal_procedure": "Edit branch details or deactivate if outlet closed",
+        "source_traceability": "FLOW-016, FORM-027, ACTION-067"
+    },
+    {
+        "sop_id": "SOP-027",
+        "domain": "OFFLINE_SYNC",
+        "title": "Preparing POS Device for Offline Operation",
+        "purpose": "Ensure POS tablet/desktop has a complete local cached copy of product catalog, customers, categories, and settings before losing connectivity",
+        "roles": [
+            "Salesperson / Cashier",
+            "Branch Manager"
+        ],
+        "prerequisites": "Device connected to local network / internet initially",
+        "starting_page": "POS Counter (/pos) or Sync Manager (/sync-manager)",
+        "master_data": [
+            "Catalog Data",
+            "Customers",
+            "Categories",
+            "Brands"
+        ],
+        "branch_tenant_context": "Assigned branch_id and active business_id",
+        "steps": [
+            "1. While online, open POS Counter (/pos).",
+            "2. Click 'Sync / Refresh Catalog' button in top toolbar.",
+            "3. System calls `/api/v1/sync/catalog` and populates Dexie local stores (products, categories, brands, customers).",
+            "4. Verify 'Offline Ready: YES (XXX Products Cached)' indicator appears in header.",
+            "5. Device can now operate completely disconnected from the internet."
+        ],
+        "validation_rules": "Must be authenticated online before going offline",
+        "system_calculations": "Downloads latest products, retail/wholesale prices, and customer balances into Dexie IndexedDB",
+        "database_effect": "Client-side bulkPut into localDb.products, localDb.categories, localDb.brands, localDb.customers",
+        "inventory_effect": "Initializes local offline working copy of stock counts",
+        "financial_effect": "Initializes local customer balance cache",
+        "print_result": "Sync summary toast notification",
+        "offline_behavior": "Device is fully primed for offline sales, expenses, and khata entries",
+        "success_result": "100% offline operational readiness confirmed",
+        "failure_handling": "If sync fails due to weak Wi-Fi, retry before disconnecting",
+        "reversal_procedure": "N/A",
+        "source_traceability": "FLOW-018, ACTION-078, GAP-021, GAP-030"
+    },
+    {
+        "sop_id": "SOP-028",
+        "domain": "OFFLINE_SYNC",
+        "title": "Performing Disconnected Offline POS Sales",
+        "purpose": "Process sales transactions when internet or server is completely down, printing local thermal receipts and queueing for background sync",
+        "roles": [
+            "Salesperson / Cashier"
+        ],
+        "prerequisites": "Catalog cached in Dexie localDb (SOP-027)",
+        "starting_page": "POS Counter (/pos)",
+        "master_data": [
+            "Dexie Local Catalog",
+            "Local Cash Drawer"
+        ],
+        "branch_tenant_context": "Assigned branch_id stored in localStorage",
+        "steps": [
+            "1. Observe POS header displays yellow 'OFFLINE MODE' indicator.",
+            "2. Scan barcodes or search cached products.",
+            "3. Add items to cart and select customer or walk-in.",
+            "4. Click 'Checkout' -> Select Cash or Khata payment.",
+            "5. Click 'Complete Sale' -> System generates unique client idempotency key (UUID) and temp ID.",
+            "6. Transaction is committed instantly to Dexie `offline_sales` store.",
+            "7. Local thermal printer issues receipt marked 'Offline Transaction #TEMP-XXXX'."
+        ],
+        "validation_rules": "Offline stock checks use local cached counts; client idempotency key generated",
+        "system_calculations": "Client calculates subtotal, tax, discounts, and change",
+        "database_effect": "Stored in IndexedDB offline_sales queue; zero immediate server DB mutation",
+        "inventory_effect": "Local cached stock count decremented immediately in browser memory",
+        "financial_effect": "Local cash shift total incremented",
+        "print_result": "Thermal receipt printed via local USB/Serial ESC-POS or Web Bluetooth",
+        "offline_behavior": "Queued safely in persistent browser IndexedDB storage",
+        "success_result": "Customer checkout completed seamlessly with zero downtime",
+        "failure_handling": "If browser storage full, alert prompts operator to avoid clearing browser history",
+        "reversal_procedure": "Offline sales can be voided from local queue before sync if entered erroneously",
+        "source_traceability": "FLOW-019, FORM-002, ACTION-008, GAP-019, GAP-021, GAP-023"
+    },
+    {
+        "sop_id": "SOP-029",
+        "domain": "OFFLINE_SYNC",
+        "title": "Offline Queue Sync Replay & Stock Conflict Resolution",
+        "purpose": "Reconnect POS device to network, replay queued offline sales/expenses/khata entries to server, remap temp IDs, and resolve stock conflicts",
+        "roles": [
+            "Salesperson / Cashier",
+            "Branch Manager"
+        ],
+        "prerequisites": "Network connection restored; pending items in offline queue",
+        "starting_page": "Sync Manager (/sync-manager)",
+        "master_data": [
+            "Offline Queues in Dexie",
+            "Server API Endpoints"
+        ],
+        "branch_tenant_context": "Assigned branch_id and active business_id",
+        "steps": [
+            "1. When network reconnects, system detects online state and displays 'Sync Pending (X items)'.",
+            "2. Background sync triggers automatically (or click 'Sync Now' in Sync Manager).",
+            "3. System sends bulk sync payload to `/api/v1/sync/bulk` in deterministic dependency order:",
+            "   a. Step 1: New offline customers synced and temp IDs remapped to server IDs.",
+            "   b. Step 2: Offline sales replayed with server recalculation and stock validation.",
+            "   c. Step 3: Offline khata payments and expenses replayed.",
+            "4. If all items succeed, queue is cleared and permanent server invoice numbers returned.",
+            "5. If a stock conflict occurs (e.g. concurrent multi-device overdraft):",
+            "   - Conflicting sale is flagged as 'STOCK_CONFLICT' with detailed shortfall explanation.",
+            "   - Manager inspects conflict in Sync Manager, reviews physical stock, and either approves compensating stock adjustment or cancels sale."
+        ],
+        "validation_rules": "Server validates idempotency keys (GAP-019) to prevent double-posting; server validates actual stock availability",
+        "system_calculations": "Server recalculates all totals authoritatively and remaps temp customer IDs across all dependent sale lines",
+        "database_effect": "Server atomically inserts permanent sales, sale_items (with snapshots), sale_payments, and account_movements; returns mapped IDs",
+        "inventory_effect": "Permanent server branch inventory decremented",
+        "financial_effect": "Server financial accounts and customer balances updated",
+        "print_result": "Sync completion notification; optional reprint of permanent server invoice",
+        "offline_behavior": "Empties Dexie offline stores upon verified server HTTP 200 response",
+        "success_result": "100% offline transactions reconciled into authoritative server ledger",
+        "failure_handling": "Duplicate submissions recognized via idempotency key and returned without re-inserting; stock conflicts quarantined for manager review",
+        "reversal_procedure": "Manager reviews rejected items in Sync Manager and takes corrective action",
+        "source_traceability": "FLOW-020, TABLE-029, ACTION-078, GAP-019, GAP-021, GAP-022"
+    },
+    {
+        "sop_id": "SOP-030",
+        "domain": "PRINTING_HARDWARE",
+        "title": "Thermal Receipt & Hardware Printer Setup",
+        "purpose": "Configure 80mm or 58mm thermal receipt printer via USB COM port, Network LAN IP, or Web Bluetooth",
+        "roles": [
+            "Salesperson / Cashier",
+            "Branch Manager"
+        ],
+        "prerequisites": "Thermal printer powered on and connected to device / LAN",
+        "starting_page": "Printer Settings (/settings/printer)",
+        "master_data": [
+            "Printer Settings Store"
+        ],
+        "branch_tenant_context": "Local Device Context",
+        "steps": [
+            "1. Navigate to Settings -> Printer Settings (/settings/printer).",
+            "2. Select Connection Type: 'USB / Serial COM', 'Network ESC-POS LAN (IP)', or 'Web Bluetooth'.",
+            "3. If Network: enter Printer IP (e.g. `192.168.1.200`) and Port (default `9100`).",
+            "4. Select Paper Width: '80mm (Standard POS)' or '58mm (Compact Mobile)'.",
+            "5. Toggle 'Auto-Print on Sale Completion' (enabled by default).",
+            "6. Click 'Test Print' to verify paper feed and character printing.",
+            "7. Click 'Save Printer Preferences'."
+        ],
+        "validation_rules": "Valid IP address and port (1024-65535); valid paper width selection",
+        "system_calculations": "Formats ESC-POS byte stream matching selected paper column width (48 cols for 80mm, 32 cols for 58mm)",
+        "database_effect": "Persists configuration in localStorage and Dexie device settings",
+        "inventory_effect": "Zero inventory effect",
+        "financial_effect": "Zero financial effect",
+        "print_result": "Test receipt with alignment grid printed",
+        "offline_behavior": "Saved locally in browser; functions without internet",
+        "success_result": "Thermal printer configured and responsive",
+        "failure_handling": "If test print fails: verify cable connection, paper roll orientation, and IP ping",
+        "reversal_procedure": "Reset to default browser print dialog if hardware channel fails",
+        "source_traceability": "FLOW-021, FORM-029, ACTION-072, ACTION-073, GAP-023"
+    },
+    {
+        "sop_id": "SOP-031",
+        "domain": "PRINTING_HARDWARE",
+        "title": "Printer Failure Post-Transaction Recovery",
+        "purpose": "Handle physical printer failure (paper out, jam, power loss) occurring after transaction has successfully committed to database without re-submitting sale",
+        "roles": [
+            "Salesperson / Cashier"
+        ],
+        "prerequisites": "Transaction committed successfully but printer failed to output paper",
+        "starting_page": "POS Counter (/pos) or Sales History (/sales/history)",
+        "master_data": [
+            "Committed Sale Record"
+        ],
+        "branch_tenant_context": "Assigned branch_id and active business_id",
+        "steps": [
+            "1. CRITICAL OPERATING PRINCIPLE: Transaction commit is independent of printer execution (GAP-023). Do NOT click 'Checkout' or re-enter the cart.",
+            "2. Inspect printer hardware: replenish paper roll, clear paper jam, or reconnect cable.",
+            "3. Once printer is online and ready:",
+            "4. On POS Counter: click the green 'Reprint Last Sale' button on the sale confirmation overlay.",
+            "5. Or navigate to Sales History (/sales/history), select the top transaction, and click 'Reprint'.",
+            "6. Receipt prints immediately using immutable historical snapshots (GAP-001)."
+        ],
+        "validation_rules": "Never re-enter items as a new sale to fix a print issue (prevents double-billing and duplicate stock decrement)",
+        "system_calculations": "Zero recalculation; sends existing frozen invoice data to printer pipeline",
+        "database_effect": "Zero database mutation; records optional reprint audit log",
+        "inventory_effect": "Zero inventory effect (prevents duplicate stock loss)",
+        "financial_effect": "Zero financial effect (prevents duplicate cash/khata charge)",
+        "print_result": "Duplicate thermal receipt printed",
+        "offline_behavior": "Reprint available from local offline storage",
+        "success_result": "Receipt reprinted safely without duplicating database records",
+        "failure_handling": "If printer remains broken, switch printer setting to standard browser PDF print",
+        "reversal_procedure": "N/A",
+        "source_traceability": "FLOW-021, ACTION-011, GAP-001, GAP-023"
+    },
+    {
+        "sop_id": "SOP-032",
+        "domain": "PRINTING_HARDWARE",
+        "title": "Desktop-to-Mobile Peer-to-Peer Device Pairing",
+        "purpose": "Pair a Mobile Tablet POS with a Desktop Counter POS via QR code to mirror product catalog, images, and local databases over local Wi-Fi",
+        "roles": [
+            "Branch Manager",
+            "Salesperson / Cashier",
+            "Business Owner"
+        ],
+        "prerequisites": "Both devices connected to same local Wi-Fi / LAN subnet",
+        "starting_page": "Device Pairing (/device-pairing)",
+        "master_data": [
+            "Desktop Local DB",
+            "Mobile Tablet Dexie DB"
+        ],
+        "branch_tenant_context": "Assigned branch_id and active business_id",
+        "steps": [
+            "1. On Desktop POS: Navigate to Device Pairing (/device-pairing) -> Click 'Generate Desktop Pairing QR Code'.",
+            "2. Desktop generates QR token payload containing local private IP (e.g. `192.168.1.100`), port (`8080`), and temporary token.",
+            "3. On Mobile Tablet POS: Open Device Pairing -> Click 'Scan Pairing QR Code'.",
+            "4. Scan the Desktop QR code using tablet camera.",
+            "5. Mobile `devicePairingService` validates pairing IP:",
+            "   - Enforces valid IPv4 octet syntax.",
+            "   - Enforces strict RFC1918 private address ranges (`10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16`).",
+            "   - Rejects public WAN addresses and validates unprivileged port (1024-65535).",
+            "   - Compares same-subnet network prefix against tablet local IP.",
+            "6. Mobile connects to Desktop POS endpoint `http://192.168.1.100:8080/api/sync-bundle`.",
+            "7. Products, categories, brands, customers, and base64 store images are streamed and imported into mobile Dexie localDb."
+        ],
+        "validation_rules": "Strict same-subnet validation (GAP-024); reject public WAN IPs; valid security token",
+        "system_calculations": "Counts synced products and images; verifies bundle integrity",
+        "database_effect": "Bulk imports catalog and assets into mobile tablet IndexedDB",
+        "inventory_effect": "Mobile tablet receives identical stock catalog",
+        "financial_effect": "Zero financial effect",
+        "print_result": "Pairing success screen displaying synced counts",
+        "offline_behavior": "Operates purely over local Wi-Fi without internet connectivity",
+        "success_result": "Mobile tablet fully paired and ready for mobile counter / floor checkout",
+        "failure_handling": "If subnet mismatch or public IP detected, connection is immediately blocked with security alert",
+        "reversal_procedure": "Click 'Unpair Device' to disconnect peer link",
+        "source_traceability": "FLOW-023, FORM-031, ACTION-076, ACTION-077, GAP-024"
+    },
+    {
+        "sop_id": "SOP-033",
+        "domain": "SUPPORT_RECONCILIATION",
+        "title": "Historical Sale Item Snapshot Reconciliation Drill",
+        "purpose": "Execute administrative dry-run inspection and non-destructive backfill for legacy sale items created prior to Phase-9 snapshot migrations",
+        "roles": [
+            "Business Owner",
+            "Accountant"
+        ],
+        "prerequisites": "Artisan CLI or Admin Support Console access",
+        "starting_page": "Admin Support Console / CLI",
+        "master_data": [
+            "Legacy Sale Items (NULL snapshots)",
+            "Product Catalog Master"
+        ],
+        "branch_tenant_context": "Tenant wide (business_id)",
+        "steps": [
+            "1. Open terminal in backend API directory (`c:\\xampp\\htdocs\\HBOS\\api`).",
+            "2. Execute dry-run audit command: `php artisan hbos:backfill-sale-item-snapshots --dry-run`.",
+            "3. Review output report detailing: total legacy sales inspected, items missing snapshots, matched products, and unmatched deleted products.",
+            "4. Verify that the backfill flags all populated rows as approximate (`snapshot_is_approximate = true`) to preserve historical truth integrity.",
+            "5. If audit verified and approved: execute live backfill: `php artisan hbos:backfill-sale-item-snapshots`.",
+            "6. Log execution timestamp and affected record count in administrative audit register."
+        ],
+        "validation_rules": "Always execute --dry-run first; never overwrite existing non-null snapshots; flag backfilled rows",
+        "system_calculations": "Reads product_name, sku, unit_cost, barcode from current product master and applies to legacy sale_items with NULL snapshots",
+        "database_effect": "Populates NULL snapshot columns on legacy sale_items; sets is_approximate flag",
+        "inventory_effect": "Zero inventory effect",
+        "financial_effect": "Zero financial effect; does not alter monetary totals",
+        "print_result": "Audit reconciliation report log",
+        "offline_behavior": "Server administrative command only",
+        "success_result": "Legacy invoices have baseline readable snapshots without fabricating authoritative historical truth",
+        "failure_handling": "If database connection fails, command exits cleanly without modifying records",
+        "reversal_procedure": "Rollback via migration reset or set snapshot columns back to NULL if needed",
+        "source_traceability": "GAP-001, REPAIR-001, MIG-001, LIM-001"
+    },
+    {
+        "sop_id": "SOP-034",
+        "domain": "SUPPORT_RECONCILIATION",
+        "title": "Customer Khata Ledger Balance Auditing & Discrepancy Reconciliation",
+        "purpose": "Audit mathematical variances between customers.balance and cumulative customer_ledgers debit/credit movements, and generate audit reports for manual review",
+        "roles": [
+            "Accountant",
+            "Business Owner"
+        ],
+        "prerequisites": "Accounting audit period open",
+        "starting_page": "Admin Support Console / CLI",
+        "master_data": [
+            "Customer Master",
+            "Customer Ledgers Movement History"
+        ],
+        "branch_tenant_context": "Tenant wide (business_id)",
+        "steps": [
+            "1. Execute dry-run audit: `php artisan hbos:audit-khata-ledger --dry-run`.",
+            "2. Review discrepancy report itemizing every customer where `balance != Sum(Debits) - Sum(Credits)`.",
+            "3. For each flagged discrepancy:",
+            "   a. Inspect historical transaction receipts and physical passbooks with customer.",
+            "   b. Determine whether difference originates from unrecorded cash receipt or legacy calculation defect.",
+            "4. If confirmed: post an explicit compensating ledger entry via Customer Khata interface with detailed audit reason.",
+            "5. Re-run `php artisan hbos:audit-khata-ledger --dry-run` to confirm zero remaining variance."
+        ],
+        "validation_rules": "Never auto-mutate customer balance without manual audit trail; preserve historical entries",
+        "system_calculations": "Calculated Ledger Balance = Sum(Debits) - Sum(Credits); Variance = customers.balance - Calculated Ledger Balance",
+        "database_effect": "Dry-run modifies nothing; manual compensation inserts explicit adjustment customer_ledgers row",
+        "inventory_effect": "Zero inventory effect",
+        "financial_effect": "Reconciles Accounts Receivable subledger with general ledger",
+        "print_result": "Khata Discrepancy Audit Log",
+        "offline_behavior": "Server administrative command only",
+        "success_result": "Customer balances 100% mathematically reconciled with ledger history",
+        "failure_handling": "Unresolved customer disputes referred to management for settlement",
+        "reversal_procedure": "Compensating adjustment entries can be reversed with supervisor authorization",
+        "source_traceability": "GAP-008, REPAIR-005, LIM-002"
+    },
+    {
+        "sop_id": "SOP-035",
+        "domain": "SUPPORT_RECONCILIATION",
+        "title": "Legacy NULL Expense Account Audit & Reclassification",
+        "purpose": "Audit legacy expenses created prior to mandatory financial account enforcement, generate reconciliation logs, and classify funding sources",
+        "roles": [
+            "Accountant",
+            "Business Owner"
+        ],
+        "prerequisites": "Legacy expense records exist in database",
+        "starting_page": "Admin Support Console / CLI",
+        "master_data": [
+            "Legacy Expenses Table",
+            "Financial Accounts"
+        ],
+        "branch_tenant_context": "Tenant wide (business_id)",
+        "steps": [
+            "1. Execute dry-run inspection: `php artisan hbos:repair-null-expense-accounts --dry-run`.",
+            "2. Review report listing all historical expense rows where `financial_account_id IS NULL`.",
+            "3. Inspect historical physical vouchers or branch cash sheets for the expense dates.",
+            "4. For deterministically proven cash expenses: assign default branch cash account ID.",
+            "5. For unidentifiable funding sources: flag record with audit note 'Legacy Pre-Remediation Unassigned Expense'.",
+            "6. Execute targeted update with audit log."
+        ],
+        "validation_rules": "Do not guess or fabricate funding bank accounts for historical audits",
+        "system_calculations": "Identifies count and monetary sum of unallocated legacy expenses",
+        "database_effect": "Assigns verified financial_account_id or audit flag; never destructively deletes rows",
+        "inventory_effect": "Zero inventory effect",
+        "financial_effect": "Provides transparent audit trail for historical P&L reporting",
+        "print_result": "Expense Account Reconciliation Audit Log",
+        "offline_behavior": "Server administrative command only",
+        "success_result": "Legacy expenses classified without corrupting financial history",
+        "failure_handling": "Uncertain records retained with explanatory notes",
+        "reversal_procedure": "Revert account ID if subsequent physical audit uncovers alternate funding",
+        "source_traceability": "GAP-013, REPAIR-003, MIG-004, LIM-003"
+    }
+]

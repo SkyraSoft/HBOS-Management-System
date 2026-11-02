@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 200" width="260" height="200">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFF8E1"/>
+      <stop offset="100%" stop-color="#FFFFFF"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="3" stdDeviation="3" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+  <rect width="260" height="200" rx="16" fill="url(#bgGrad)" stroke="#B71C1C" stroke-width="2" stroke-opacity="0.2"/>
+  <g filter="url(#shadow)">
+    <circle cx="100" cy="80" r="38" fill="#FF6F00" opacity="0.18"/>
+               <path d="M85 95 C85 75 100 65 115 65 C120 80 110 95 85 95 Z" fill="#2E7D32"/>
+               <path d="M75 105 C75 90 90 85 100 85 C105 98 95 105 75 105 Z" fill="#388E3C"/>
+               <path d="M70 110 Q100 125 130 110 L125 125 Q100 135 75 125 Z" fill="#B71C1C"/>
+               <path d="M92 60 Q96 50 92 40 M102 60 Q106 50 102 40" stroke="#FF6F00" stroke-width="3" stroke-linecap="round" fill="none"/>
+  </g>
+  <text x="130" y="152" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="15" font-weight="800" text-anchor="middle" fill="#B71C1C" letter-spacing="0.5">Khyber Tea & Spices</text>
+  <text x="130" y="172" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="10.5" font-weight="600" text-anchor="middle" fill="#FF6F00" letter-spacing="0.8">HERITAGE AROMA & TASTE</text>
+</svg>

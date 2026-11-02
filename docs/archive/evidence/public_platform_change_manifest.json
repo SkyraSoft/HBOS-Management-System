@@ -1,0 +1,175 @@
+{
+    "metadata": {
+        "program": "SkyraSoft HBOS Public Distribution & Multi-Tenant Platform Integrity Program",
+        "phase": "PROMPT 2 OF 3 \u2014 PRODUCTION CHANGE MANIFEST",
+        "generated_at": "2026-10-02T19:54:42+00:00"
+    },
+    "changes": [
+        {
+            "file": "api\/app\/Models\/SupplierReturn.php",
+            "change_type": "MODIFIED",
+            "platform_gap_ids": [
+                "PLATFORM-GAP-002"
+            ],
+            "purpose": "Attach Tenantable and Branchable traits to SupplierReturn model.",
+            "backend_impact": "Enforces global TenantScope on queries.",
+            "frontend_impact": "None",
+            "local_data_impact": "None",
+            "security_impact": "Prevents cross-tenant IDOR access to supplier returns.",
+            "compatibility_impact": "None (Additive)",
+            "tests": "PlatformIntegrityTest::test_cross_tenant_idor_protection_for_supplier_returns_and_products"
+        },
+        {
+            "file": "api\/config\/hbos_version.php",
+            "change_type": "CREATED",
+            "platform_gap_ids": [
+                "PLATFORM-GAP-007"
+            ],
+            "purpose": "Central configuration for client\/server version handshake and update gating.",
+            "backend_impact": "Defines min_supported_client_version, latest_client_version, and sync_schema_version.",
+            "frontend_impact": "None",
+            "local_data_impact": "None",
+            "security_impact": "Gating prevents outdated client payloads from corrupting database.",
+            "compatibility_impact": "None (Additive)",
+            "tests": "PlatformIntegrityTest::test_client_version_handshake_and_upgrade_required_response"
+        },
+        {
+            "file": "api\/app\/Http\/Middleware\/CheckClientVersion.php",
+            "change_type": "CREATED",
+            "platform_gap_ids": [
+                "PLATFORM-GAP-007"
+            ],
+            "purpose": "Inspects client semver and sync schema headers; returns HTTP 426 when client is outdated.",
+            "backend_impact": "Injects X-HBOS-Update-Status response headers.",
+            "frontend_impact": "Enables automated in-app update notification banner.",
+            "local_data_impact": "None",
+            "security_impact": "Protects against backward-incompatible sync mutations.",
+            "compatibility_impact": "None (Additive)",
+            "tests": "PlatformIntegrityTest::test_client_version_handshake_and_upgrade_required_response"
+        },
+        {
+            "file": "api\/app\/Http\/Controllers\/Api\/V1\/AuthController.php",
+            "change_type": "MODIFIED",
+            "platform_gap_ids": [
+                "PLATFORM-GAP-004",
+                "PLATFORM-GAP-005",
+                "PLATFORM-GAP-008"
+            ],
+            "purpose": "Email normalization, atomic defaults seeding (Main Cash + Settings), forgotPassword, resetPassword, logoutAllDevices.",
+            "backend_impact": "Complete self-service lifecycle with rate limiting and session revocation.",
+            "frontend_impact": "Enables full recovery and remote session termination.",
+            "local_data_impact": "None",
+            "security_impact": "Eliminates credential stuffing and token hijack risks.",
+            "compatibility_impact": "None (Additive)",
+            "tests": "PlatformIntegrityTest"
+        },
+        {
+            "file": "api\/routes\/api.php",
+            "change_type": "MODIFIED",
+            "platform_gap_ids": [
+                "PLATFORM-GAP-003",
+                "PLATFORM-GAP-005",
+                "PLATFORM-GAP-007"
+            ],
+            "purpose": "Attach CheckClientVersion middleware, throttle middleware to auth routes, and register password recovery routes.",
+            "backend_impact": "Enforces API-wide versioning and brute-force throttling.",
+            "frontend_impact": "None",
+            "local_data_impact": "None",
+            "security_impact": "Prevents bot account creation and brute-force login.",
+            "compatibility_impact": "None (Additive)",
+            "tests": "Phase10HardeningTest, PlatformIntegrityTest"
+        },
+        {
+            "file": "api\/app\/Http\/Controllers\/Api\/V1\/BrandController.php",
+            "change_type": "MODIFIED",
+            "platform_gap_ids": [
+                "PLATFORM-GAP-010"
+            ],
+            "purpose": "Store brand image uploads in businesses\/{business_id}\/brands directory.",
+            "backend_impact": "Tenant-partitioned asset paths.",
+            "frontend_impact": "None",
+            "local_data_impact": "None",
+            "security_impact": "Prevents cross-tenant file collisions.",
+            "compatibility_impact": "None (Additive)",
+            "tests": "BrandController tests"
+        },
+        {
+            "file": "api\/app\/Http\/Controllers\/Api\/V1\/ProductController.php",
+            "change_type": "MODIFIED",
+            "platform_gap_ids": [
+                "PLATFORM-GAP-010"
+            ],
+            "purpose": "Store product image uploads in businesses\/{business_id}\/products directory.",
+            "backend_impact": "Tenant-partitioned asset paths.",
+            "frontend_impact": "None",
+            "local_data_impact": "None",
+            "security_impact": "Prevents cross-tenant file collisions.",
+            "compatibility_impact": "None (Additive)",
+            "tests": "ProductController tests"
+        },
+        {
+            "file": "frontend\/src\/services\/localDb.js",
+            "change_type": "MODIFIED",
+            "platform_gap_ids": [
+                "PLATFORM-GAP-001"
+            ],
+            "purpose": "Dynamic tenant-namespaced database naming HBOS_Store_Biz_${business_id} and lifecycle open\/close hooks.",
+            "backend_impact": "None",
+            "frontend_impact": "Isolates IndexedDB stores per active business on shared PC.",
+            "local_data_impact": "Preserves offline outbox records upon logout without data loss.",
+            "security_impact": "Completely eliminates cross-tenant catalog\/customer debt visibility.",
+            "compatibility_impact": "None (Additive)",
+            "tests": "Frontend build verification"
+        },
+        {
+            "file": "frontend\/src\/stores\/auth.js",
+            "change_type": "MODIFIED",
+            "platform_gap_ids": [
+                "PLATFORM-GAP-001",
+                "PLATFORM-GAP-005"
+            ],
+            "purpose": "Wire openTenantDatabase and closeTenantDatabase on login\/logout; add logoutAllDevices action.",
+            "backend_impact": "None",
+            "frontend_impact": "Safe session cleanup and remote multi-device revocation.",
+            "local_data_impact": "Detaches active database instance on logout.",
+            "security_impact": "Ensures state is wiped from memory while keeping IndexedDB durable.",
+            "compatibility_impact": "None (Additive)",
+            "tests": "Frontend build verification"
+        },
+        {
+            "file": "frontend\/src\/api.js",
+            "change_type": "MODIFIED",
+            "platform_gap_ids": [
+                "PLATFORM-GAP-007"
+            ],
+            "purpose": "Send X-HBOS-App-Version and X-HBOS-Sync-Schema-Version headers; dispatch update events on status headers\/HTTP 426.",
+            "backend_impact": "None",
+            "frontend_impact": "Seamless version negotiation with cloud backend.",
+            "local_data_impact": "None",
+            "security_impact": "Gating prevents outdated sync payloads.",
+            "compatibility_impact": "None (Additive)",
+            "tests": "Frontend build verification"
+        },
+        {
+            "file": "api\/tests\/Feature\/PlatformIntegrityTest.php",
+            "change_type": "CREATED",
+            "platform_gap_ids": [
+                "PLATFORM-GAP-001",
+                "PLATFORM-GAP-002",
+                "PLATFORM-GAP-003",
+                "PLATFORM-GAP-004",
+                "PLATFORM-GAP-005",
+                "PLATFORM-GAP-007",
+                "PLATFORM-GAP-008",
+                "PLATFORM-GAP-010"
+            ],
+            "purpose": "Automated test suite verifying registration atomicity, defaults seeding, auth throttling, password recovery, session invalidation, IDOR protection, and version negotiation.",
+            "backend_impact": "Continuous regression prevention.",
+            "frontend_impact": "None",
+            "local_data_impact": "None",
+            "security_impact": "High",
+            "compatibility_impact": "None (Test)",
+            "tests": "PHPUnit test runner"
+        }
+    ]
+}

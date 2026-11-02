@@ -1,0 +1,59 @@
+{
+  "program": "SkyraSoft HBOS Retail Platform & Workforce Integrity Program",
+  "checkpoint": "2.3 Employee Accounts / Profiles / Role Foundations",
+  "registry_version": "1.0.0",
+  "date": "2026-10-03",
+  "human_actor_identity_principle": {
+    "shared_credentials_prohibited": true,
+    "chain_of_identity": "User -> Business membership -> Branch membership(s) -> Role -> Canonical Permissions",
+    "attribution_guarantee": "Every material operation records immutable human causer identification"
+  },
+  "employee_profile_schema": [
+    { "field": "phone", "type": "string", "source": "users table", "description": "Employee contact phone number" },
+    { "field": "employee_code", "type": "string", "source": "users table", "description": "Tenant-scoped employee ID code (e.g. EMP-001)" },
+    { "field": "job_title", "type": "string", "source": "users table", "description": "Formal organizational job title" },
+    { "field": "hire_date", "type": "date", "source": "users table", "description": "Date of employment commencement" },
+    { "field": "salary_amount", "type": "decimal:2", "source": "users table", "description": "Agreed wage/salary figure" },
+    { "field": "payment_cycle", "type": "string", "source": "users table", "description": "Monthly, bi-weekly, or weekly schedule" },
+    { "field": "next_payment_date", "type": "date", "source": "users table", "description": "Projected upcoming disbursement date" }
+  ],
+  "invitation_and_activation_model": {
+    "selected_model": "INVITATION_TOKEN_PASSWORD_SETUP",
+    "delivery_status": "INVITATION_FLOW_IMPLEMENTED / MAIL_DELIVERY_PENDING_CONFIGURATION",
+    "token_properties": {
+      "generation": "bin2hex(random_bytes(32)) - 64 cryptographically secure hex characters",
+      "storage": "Hashed via Hash::make() in database (never stored in plaintext)",
+      "lifetime": "48 hours from issuance",
+      "single_use": "Invalidated immediately upon successful password establishment (token set to null)",
+      "deactivation_invalidation": "Token invalidated immediately if user record is deactivated or deleted"
+    },
+    "activation_endpoint": "POST /api/v1/auth/accept-invitation",
+    "plaintext_passwords_in_email": "STRICTLY PROHIBITED"
+  },
+  "api_ui_reconciliation": {
+    "status": "RECONCILED",
+    "canonical_endpoint": "/api/v1/users",
+    "frontend_views_updated": [
+      "Frontend/src/views/EmployeesView.vue",
+      "Frontend/src/views/Settings/UsersView.vue"
+    ],
+    "capabilities_exposed": [
+      "List employees with active business and branch scoping",
+      "Create employee with role, branches, and invitation token generation",
+      "Display copyable single-use invitation link modal",
+      "Non-destructive deactivation toggling is_active status"
+    ]
+  },
+  "privilege_escalation_guards": {
+    "salesperson_restrictions": "Cannot create users, cannot assign roles, cannot modify branches",
+    "manager_restrictions": "Cannot create or promote to Business Owner, cannot assign platform roles",
+    "owner_protection": "Only authenticated Business Owner can grant administrative or owner roles"
+  },
+  "deactivation_security": {
+    "state": "is_active = false",
+    "token_revocation": "$user->tokens()->delete() executed immediately upon deactivation",
+    "login_policy": "Login rejected with HTTP 403 ('Your account is inactive')",
+    "token_policy": "Any existing Sanctum bearer token rejected with HTTP 401 Unauthenticated",
+    "historical_integrity": "Preserved. Historical sales, movements, payments, and activity logs remain attributed to user"
+  }
+}

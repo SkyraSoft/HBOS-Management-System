@@ -1,0 +1,1088 @@
+{
+    "AccountMovement": {
+        "name": "AccountMovement",
+        "table": "account_movements",
+        "soft_deletes": false,
+        "logs_activity": false,
+        "relationships": [
+            {
+                "name": "business",
+                "type": "belongsTo",
+                "target": "Business::class"
+            },
+            {
+                "name": "branch",
+                "type": "belongsTo",
+                "target": "Branch::class"
+            },
+            {
+                "name": "account",
+                "type": "belongsTo",
+                "target": "FinancialAccount::class, 'account_id'"
+            },
+            {
+                "name": "user",
+                "type": "belongsTo",
+                "target": "User::class"
+            },
+            {
+                "name": "reversedBy",
+                "type": "belongsTo",
+                "target": "User::class, 'reversed_by'"
+            }
+        ],
+        "fillable": [
+            "business_id",
+            "branch_id",
+            "account_id",
+            "type",
+            "movement_category",
+            "reference_type",
+            "reference_id",
+            "amount",
+            "date",
+            "description",
+            "user_id",
+            "idempotency_key",
+            "status",
+            "reversed_at",
+            "reversed_by",
+            "reversal_reason"
+        ],
+        "casts": {
+            "amount": "decimal:2",
+            "date": "date",
+            "reversed_at": "datetime"
+        }
+    },
+    "AccountTransfer": {
+        "name": "AccountTransfer",
+        "table": "account_transfers",
+        "soft_deletes": false,
+        "logs_activity": false,
+        "relationships": [
+            {
+                "name": "business",
+                "type": "belongsTo",
+                "target": "Business::class"
+            },
+            {
+                "name": "sourceAccount",
+                "type": "belongsTo",
+                "target": "FinancialAccount::class, 'source_account_id'"
+            },
+            {
+                "name": "destinationAccount",
+                "type": "belongsTo",
+                "target": "FinancialAccount::class, 'destination_account_id'"
+            },
+            {
+                "name": "user",
+                "type": "belongsTo",
+                "target": "User::class"
+            }
+        ],
+        "fillable": [
+            "business_id",
+            "source_account_id",
+            "destination_account_id",
+            "amount",
+            "date",
+            "notes",
+            "user_id",
+            "idempotency_key",
+            "status"
+        ],
+        "casts": {
+            "amount": "decimal:2",
+            "date": "date"
+        }
+    },
+    "ActivityLog": {
+        "name": "ActivityLog",
+        "table": "activity_log",
+        "soft_deletes": false,
+        "logs_activity": false,
+        "relationships": [
+            {
+                "name": "business",
+                "type": "belongsTo",
+                "target": "Business::class"
+            },
+            {
+                "name": "branch",
+                "type": "belongsTo",
+                "target": "Branch::class"
+            }
+        ],
+        "fillable": [
+            "log_name",
+            "description",
+            "subject_type",
+            "subject_id",
+            "event",
+            "causer_type",
+            "causer_id",
+            "properties",
+            "attribute_changes",
+            "business_id",
+            "branch_id"
+        ],
+        "casts": []
+    },
+    "Branch": {
+        "name": "Branch",
+        "table": "branchs",
+        "soft_deletes": false,
+        "logs_activity": true,
+        "relationships": [
+            {
+                "name": "business",
+                "type": "belongsTo",
+                "target": "Business::class"
+            },
+            {
+                "name": "users",
+                "type": "hasMany",
+                "target": "User::class"
+            },
+            {
+                "name": "assignedUsers",
+                "type": "belongsToMany",
+                "target": "User::class, 'branch_user'"
+            }
+        ],
+        "fillable": [
+            "business_id",
+            "name",
+            "code",
+            "phone",
+            "address",
+            "city",
+            "is_primary",
+            "status"
+        ],
+        "casts": []
+    },
+    "BranchInventory": {
+        "name": "BranchInventory",
+        "table": "branch_inventorys",
+        "soft_deletes": false,
+        "logs_activity": false,
+        "relationships": [
+            {
+                "name": "business",
+                "type": "belongsTo",
+                "target": "Business::class"
+            },
+            {
+                "name": "branch",
+                "type": "belongsTo",
+                "target": "Branch::class"
+            },
+            {
+                "name": "product",
+                "type": "belongsTo",
+                "target": "Product::class"
+            }
+        ],
+        "fillable": [
+            "business_id",
+            "branch_id",
+            "product_id",
+            "quantity_on_hand",
+            "minimum_stock",
+            "reorder_level"
+        ],
+        "casts": {
+            "quantity_on_hand": "integer",
+            "minimum_stock": "integer",
+            "reorder_level": "integer"
+        }
+    },
+    "Brand": {
+        "name": "Brand",
+        "table": "brands",
+        "soft_deletes": false,
+        "logs_activity": false,
+        "relationships": [
+            {
+                "name": "business",
+                "type": "belongsTo",
+                "target": "Business::class"
+            },
+            {
+                "name": "products",
+                "type": "hasMany",
+                "target": "Product::class"
+            }
+        ],
+        "fillable": [
+            "business_id",
+            "name",
+            "image"
+        ],
+        "casts": []
+    },
+    "Business": {
+        "name": "Business",
+        "table": "businesss",
+        "soft_deletes": false,
+        "logs_activity": false,
+        "relationships": [
+            {
+                "name": "branches",
+                "type": "hasMany",
+                "target": "Branch::class"
+            },
+            {
+                "name": "users",
+                "type": "belongsToMany",
+                "target": "User::class, 'business_user'"
+            }
+        ],
+        "fillable": [
+            "name",
+            "type",
+            "address",
+            "phone",
+            "email",
+            "logo",
+            "currency"
+        ],
+        "casts": []
+    },
+    "CashLedger": {
+        "name": "CashLedger",
+        "table": "cash_ledgers",
+        "soft_deletes": false,
+        "logs_activity": false,
+        "relationships": [
+            {
+                "name": "user",
+                "type": "belongsTo",
+                "target": "User::class, 'recorded_by'"
+            }
+        ],
+        "fillable": [
+            "business_id",
+            "branch_id",
+            "type",
+            "amount",
+            "reference_type",
+            "reference_id",
+            "description",
+            "recorded_by"
+        ],
+        "casts": []
+    },
+    "Category": {
+        "name": "Category",
+        "table": "categorys",
+        "soft_deletes": false,
+        "logs_activity": false,
+        "relationships": [
+            {
+                "name": "subcategories",
+                "type": "hasMany",
+                "target": "Subcategory::class"
+            }
+        ],
+        "fillable": [
+            "business_id",
+            "name",
+            "description"
+        ],
+        "casts": []
+    },
+    "Customer": {
+        "name": "Customer",
+        "table": "customers",
+        "soft_deletes": true,
+        "logs_activity": false,
+        "relationships": [
+            {
+                "name": "payments",
+                "type": "hasMany",
+                "target": "CustomerPayment::class"
+            },
+            {
+                "name": "sales",
+                "type": "hasMany",
+                "target": "Sale::class"
+            }
+        ],
+        "fillable": [
+            "business_id",
+            "name",
+            "phone",
+            "email",
+            "address",
+            "opening_balance"
+        ],
+        "casts": {
+            "opening_balance": "decimal:2",
+            "balance": "decimal:2"
+        }
+    },
+    "CustomerPayment": {
+        "name": "CustomerPayment",
+        "table": "customer_payments",
+        "soft_deletes": false,
+        "logs_activity": false,
+        "relationships": [
+            {
+                "name": "business",
+                "type": "belongsTo",
+                "target": "Business::class"
+            },
+            {
+                "name": "branch",
+                "type": "belongsTo",
+                "target": "Branch::class"
+            },
+            {
+                "name": "customer",
+                "type": "belongsTo",
+                "target": "Customer::class"
+            },
+            {
+                "name": "sale",
+                "type": "belongsTo",
+                "target": "Sale::class"
+            },
+            {
+                "name": "user",
+                "type": "belongsTo",
+                "target": "User::class"
+            },
+            {
+                "name": "reversedBy",
+                "type": "belongsTo",
+                "target": "User::class, 'reversed_by'"
+            }
+        ],
+        "fillable": [
+            "business_id",
+            "branch_id",
+            "customer_id",
+            "sale_id",
+            "user_id",
+            "payment_number",
+            "amount",
+            "payment_method",
+            "date",
+            "notes",
+            "idempotency_key",
+            "status",
+            "reversed_at",
+            "reversed_by",
+            "reversal_reason"
+        ],
+        "casts": {
+            "amount": "decimal:2",
+            "date": "date",
+            "reversed_at": "datetime"
+        }
+    },
+    "Employee": {
+        "name": "Employee",
+        "table": "employees",
+        "soft_deletes": false,
+        "logs_activity": false,
+        "relationships": [
+            {
+                "name": "business",
+                "type": "belongsTo",
+                "target": "Business::class"
+            }
+        ],
+        "fillable": [
+            "business_id",
+            "name",
+            "role",
+            "phone",
+            "salary_amount",
+            "payment_cycle",
+            "next_payment_date",
+            "is_active"
+        ],
+        "casts": []
+    },
+    "Expense": {
+        "name": "Expense",
+        "table": "expenses",
+        "soft_deletes": true,
+        "logs_activity": false,
+        "relationships": [
+            {
+                "name": "business",
+                "type": "belongsTo",
+                "target": "Business::class"
+            },
+            {
+                "name": "branch",
+                "type": "belongsTo",
+                "target": "Branch::class"
+            },
+            {
+                "name": "user",
+                "type": "belongsTo",
+                "target": "User::class"
+            },
+            {
+                "name": "categoryModel",
+                "type": "belongsTo",
+                "target": "ExpenseCategory::class, 'category_id'"
+            },
+            {
+                "name": "financialAccount",
+                "type": "belongsTo",
+                "target": "FinancialAccount::class, 'financial_account_id'"
+            },
+            {
+                "name": "voidedBy",
+                "type": "belongsTo",
+                "target": "User::class, 'voided_by'"
+            }
+        ],
+        "fillable": [
+            "business_id",
+            "branch_id",
+            "user_id",
+            "category_id",
+            "financial_account_id",
+            "category",
+            "amount",
+            "date",
+            "description",
+            "status",
+            "idempotency_key",
+            "voided_at",
+            "voided_by",
+            "void_reason"
+        ],
+        "casts": {
+            "amount": "decimal:2",
+            "date": "date",
+            "voided_at": "datetime"
+        }
+    },
+    "ExpenseCategory": {
+        "name": "ExpenseCategory",
+        "table": "expense_categorys",
+        "soft_deletes": false,
+        "logs_activity": false,
+        "relationships": [
+            {
+                "name": "business",
+                "type": "belongsTo",
+                "target": "Business::class"
+            }
+        ],
+        "fillable": [
+            "business_id",
+            "name"
+        ],
+        "casts": []
+    },
+    "FinancialAccount": {
+        "name": "FinancialAccount",
+        "table": "financial_accounts",
+        "soft_deletes": true,
+        "logs_activity": false,
+        "relationships": [
+            {
+                "name": "business",
+                "type": "belongsTo",
+                "target": "Business::class"
+            },
+            {
+                "name": "branch",
+                "type": "belongsTo",
+                "target": "Branch::class"
+            },
+            {
+                "name": "movements",
+                "type": "hasMany",
+                "target": "AccountMovement::class, 'account_id'"
+            }
+        ],
+        "fillable": [
+            "business_id",
+            "branch_id",
+            "name",
+            "type",
+            "account_number",
+            "bank_name",
+            "opening_balance",
+            "is_default",
+            "status"
+        ],
+        "casts": {
+            "opening_balance": "decimal:2",
+            "balance": "decimal:2",
+            "is_default": "boolean"
+        }
+    },
+    "InventoryMovement": {
+        "name": "InventoryMovement",
+        "table": "inventory_movements",
+        "soft_deletes": false,
+        "logs_activity": false,
+        "relationships": [
+            {
+                "name": "business",
+                "type": "belongsTo",
+                "target": "Business::class"
+            },
+            {
+                "name": "branch",
+                "type": "belongsTo",
+                "target": "Branch::class"
+            },
+            {
+                "name": "product",
+                "type": "belongsTo",
+                "target": "Product::class"
+            },
+            {
+                "name": "performedBy",
+                "type": "belongsTo",
+                "target": "User::class, 'performed_by'"
+            }
+        ],
+        "fillable": [
+            "business_id",
+            "branch_id",
+            "product_id",
+            "type",
+            "quantity",
+            "unit_cost",
+            "reference_type",
+            "reference_id",
+            "performed_by",
+            "notes",
+            "balance",
+            "description"
+        ],
+        "casts": {
+            "quantity": "integer",
+            "unit_cost": "float",
+            "balance": "integer"
+        }
+    },
+    "KhataTransaction": {
+        "name": "KhataTransaction",
+        "table": "khata_transactions",
+        "soft_deletes": false,
+        "logs_activity": false,
+        "relationships": [],
+        "fillable": [
+            "business_id",
+            "customer_id",
+            "type",
+            "amount",
+            "date",
+            "notes"
+        ],
+        "casts": []
+    },
+    "Product": {
+        "name": "Product",
+        "table": "products",
+        "soft_deletes": false,
+        "logs_activity": false,
+        "relationships": [
+            {
+                "name": "category",
+                "type": "belongsTo",
+                "target": "Category::class"
+            },
+            {
+                "name": "brand",
+                "type": "belongsTo",
+                "target": "Brand::class"
+            },
+            {
+                "name": "subcategory",
+                "type": "belongsTo",
+                "target": "Subcategory::class"
+            },
+            {
+                "name": "branchInventories",
+                "type": "hasMany",
+                "target": "BranchInventory::class"
+            }
+        ],
+        "fillable": [
+            "business_id",
+            "category_id",
+            "brand_id",
+            "subcategory_id",
+            "name",
+            "sku",
+            "barcode",
+            "cost_price",
+            "selling_price",
+            "stock",
+            "min_stock",
+            "unit",
+            "description",
+            "image",
+            "is_active"
+        ],
+        "casts": []
+    },
+    "Purchase": {
+        "name": "Purchase",
+        "table": "purchases",
+        "soft_deletes": false,
+        "logs_activity": false,
+        "relationships": [
+            {
+                "name": "items",
+                "type": "hasMany",
+                "target": "PurchaseItem::class"
+            },
+            {
+                "name": "supplier",
+                "type": "belongsTo",
+                "target": "Supplier::class"
+            },
+            {
+                "name": "branch",
+                "type": "belongsTo",
+                "target": "Branch::class"
+            },
+            {
+                "name": "user",
+                "type": "belongsTo",
+                "target": "User::class"
+            },
+            {
+                "name": "cancelledBy",
+                "type": "belongsTo",
+                "target": "User::class, 'cancelled_by'"
+            }
+        ],
+        "fillable": [
+            "business_id",
+            "branch_id",
+            "supplier_id",
+            "user_id",
+            "po_number",
+            "date",
+            "subtotal",
+            "total",
+            "paid_amount",
+            "due_amount",
+            "status",
+            "notes",
+            "cancelled_at",
+            "cancelled_by",
+            "cancellation_reason"
+        ],
+        "casts": {
+            "subtotal": "decimal:2",
+            "total": "decimal:2",
+            "paid_amount": "decimal:2",
+            "due_amount": "decimal:2",
+            "cancelled_at": "datetime"
+        }
+    },
+    "PurchaseItem": {
+        "name": "PurchaseItem",
+        "table": "purchase_items",
+        "soft_deletes": false,
+        "logs_activity": false,
+        "relationships": [
+            {
+                "name": "purchase",
+                "type": "belongsTo",
+                "target": "Purchase::class"
+            },
+            {
+                "name": "product",
+                "type": "belongsTo",
+                "target": "Product::class"
+            }
+        ],
+        "fillable": [
+            "purchase_id",
+            "product_id",
+            "quantity",
+            "unit_cost",
+            "total"
+        ],
+        "casts": {
+            "quantity": "integer",
+            "unit_cost": "decimal:2",
+            "total": "decimal:2"
+        }
+    },
+    "RecurringExpense": {
+        "name": "RecurringExpense",
+        "table": "recurring_expenses",
+        "soft_deletes": false,
+        "logs_activity": false,
+        "relationships": [],
+        "fillable": [
+            "business_id",
+            "category",
+            "amount",
+            "frequency",
+            "next_due_date",
+            "description"
+        ],
+        "casts": []
+    },
+    "Sale": {
+        "name": "Sale",
+        "table": "sales",
+        "soft_deletes": false,
+        "logs_activity": false,
+        "relationships": [
+            {
+                "name": "business",
+                "type": "belongsTo",
+                "target": "Business::class"
+            },
+            {
+                "name": "branch",
+                "type": "belongsTo",
+                "target": "Branch::class"
+            },
+            {
+                "name": "user",
+                "type": "belongsTo",
+                "target": "User::class"
+            },
+            {
+                "name": "customer",
+                "type": "belongsTo",
+                "target": "Customer::class"
+            },
+            {
+                "name": "items",
+                "type": "hasMany",
+                "target": "SaleItem::class"
+            },
+            {
+                "name": "returns",
+                "type": "hasMany",
+                "target": "SaleReturn::class"
+            },
+            {
+                "name": "cancelledBy",
+                "type": "belongsTo",
+                "target": "User::class, 'cancelled_by'"
+            }
+        ],
+        "fillable": [
+            "business_id",
+            "branch_id",
+            "user_id",
+            "customer_id",
+            "invoice_number",
+            "date",
+            "subtotal",
+            "discount",
+            "tax",
+            "total",
+            "paid_amount",
+            "due_amount",
+            "payment_method",
+            "status",
+            "notes",
+            "cancelled_at",
+            "cancelled_by",
+            "cancellation_reason",
+            "idempotency_key"
+        ],
+        "casts": {
+            "subtotal": "decimal:2",
+            "discount": "decimal:2",
+            "tax": "decimal:2",
+            "total": "decimal:2",
+            "paid_amount": "decimal:2",
+            "due_amount": "decimal:2",
+            "cancelled_at": "datetime"
+        }
+    },
+    "SaleItem": {
+        "name": "SaleItem",
+        "table": "sale_items",
+        "soft_deletes": false,
+        "logs_activity": false,
+        "relationships": [
+            {
+                "name": "sale",
+                "type": "belongsTo",
+                "target": "Sale::class"
+            },
+            {
+                "name": "product",
+                "type": "belongsTo",
+                "target": "Product::class"
+            },
+            {
+                "name": "returnItems",
+                "type": "hasMany",
+                "target": "SaleReturnItem::class"
+            }
+        ],
+        "fillable": [
+            "sale_id",
+            "product_id",
+            "quantity",
+            "unit_price",
+            "cost_price",
+            "discount",
+            "total",
+            "returned_quantity"
+        ],
+        "casts": {
+            "quantity": "integer",
+            "returned_quantity": "integer",
+            "unit_price": "decimal:2",
+            "cost_price": "decimal:2",
+            "discount": "decimal:2",
+            "total": "decimal:2"
+        }
+    },
+    "SaleReturn": {
+        "name": "SaleReturn",
+        "table": "sale_returns",
+        "soft_deletes": false,
+        "logs_activity": false,
+        "relationships": [
+            {
+                "name": "business",
+                "type": "belongsTo",
+                "target": "Business::class"
+            },
+            {
+                "name": "branch",
+                "type": "belongsTo",
+                "target": "Branch::class"
+            },
+            {
+                "name": "sale",
+                "type": "belongsTo",
+                "target": "Sale::class"
+            },
+            {
+                "name": "user",
+                "type": "belongsTo",
+                "target": "User::class"
+            },
+            {
+                "name": "items",
+                "type": "hasMany",
+                "target": "SaleReturnItem::class"
+            }
+        ],
+        "fillable": [
+            "business_id",
+            "branch_id",
+            "sale_id",
+            "user_id",
+            "return_number",
+            "refund_amount",
+            "reason",
+            "idempotency_key"
+        ],
+        "casts": {
+            "refund_amount": "decimal:2"
+        }
+    },
+    "SaleReturnItem": {
+        "name": "SaleReturnItem",
+        "table": "sale_return_items",
+        "soft_deletes": false,
+        "logs_activity": false,
+        "relationships": [
+            {
+                "name": "saleReturn",
+                "type": "belongsTo",
+                "target": "SaleReturn::class"
+            },
+            {
+                "name": "saleItem",
+                "type": "belongsTo",
+                "target": "SaleItem::class"
+            },
+            {
+                "name": "product",
+                "type": "belongsTo",
+                "target": "Product::class"
+            }
+        ],
+        "fillable": [
+            "sale_return_id",
+            "sale_item_id",
+            "product_id",
+            "quantity",
+            "unit_price",
+            "refund_amount"
+        ],
+        "casts": {
+            "unit_price": "decimal:2",
+            "refund_amount": "decimal:2"
+        }
+    },
+    "Setting": {
+        "name": "Setting",
+        "table": "settings",
+        "soft_deletes": false,
+        "logs_activity": false,
+        "relationships": [],
+        "fillable": [
+            "business_id",
+            "key",
+            "value",
+            "type"
+        ],
+        "casts": []
+    },
+    "Subcategory": {
+        "name": "Subcategory",
+        "table": "subcategorys",
+        "soft_deletes": false,
+        "logs_activity": false,
+        "relationships": [
+            {
+                "name": "business",
+                "type": "belongsTo",
+                "target": "Business::class"
+            },
+            {
+                "name": "category",
+                "type": "belongsTo",
+                "target": "Category::class"
+            },
+            {
+                "name": "products",
+                "type": "hasMany",
+                "target": "Product::class"
+            }
+        ],
+        "fillable": [
+            "business_id",
+            "category_id",
+            "name"
+        ],
+        "casts": []
+    },
+    "Supplier": {
+        "name": "Supplier",
+        "table": "suppliers",
+        "soft_deletes": false,
+        "logs_activity": false,
+        "relationships": [
+            {
+                "name": "purchases",
+                "type": "hasMany",
+                "target": "Purchase::class"
+            },
+            {
+                "name": "payments",
+                "type": "hasMany",
+                "target": "SupplierPayment::class"
+            }
+        ],
+        "fillable": [
+            "business_id",
+            "name",
+            "code",
+            "contact_person",
+            "phone",
+            "email",
+            "address",
+            "opening_balance",
+            "balance"
+        ],
+        "casts": {
+            "opening_balance": "decimal:2",
+            "balance": "decimal:2"
+        }
+    },
+    "SupplierPayment": {
+        "name": "SupplierPayment",
+        "table": "supplier_payments",
+        "soft_deletes": false,
+        "logs_activity": false,
+        "relationships": [
+            {
+                "name": "supplier",
+                "type": "belongsTo",
+                "target": "Supplier::class"
+            },
+            {
+                "name": "purchase",
+                "type": "belongsTo",
+                "target": "Purchase::class"
+            },
+            {
+                "name": "user",
+                "type": "belongsTo",
+                "target": "User::class"
+            }
+        ],
+        "fillable": [
+            "business_id",
+            "supplier_id",
+            "purchase_id",
+            "user_id",
+            "amount",
+            "date",
+            "payment_method",
+            "notes",
+            "idempotency_key"
+        ],
+        "casts": {
+            "amount": "decimal:2",
+            "date": "date"
+        }
+    },
+    "User": {
+        "name": "User",
+        "table": "users",
+        "soft_deletes": false,
+        "logs_activity": true,
+        "relationships": [
+            {
+                "name": "business",
+                "type": "belongsTo",
+                "target": "Business::class"
+            },
+            {
+                "name": "businesses",
+                "type": "belongsToMany",
+                "target": "Business::class, 'business_user'"
+            },
+            {
+                "name": "branches",
+                "type": "belongsToMany",
+                "target": "Branch::class, 'branch_user'"
+            },
+            {
+                "name": "branch",
+                "type": "belongsTo",
+                "target": "Branch::class"
+            }
+        ],
+        "fillable": [
+            "name",
+            "email",
+            "password",
+            "business_id",
+            "branch_id",
+            "role",
+            "is_active",
+            "last_login_at"
+        ],
+        "casts": []
+    }
+}

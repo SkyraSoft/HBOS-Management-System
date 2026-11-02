@@ -11,73 +11,62 @@
 
                 <div class="progress">
 
-
                     <!-- ACCOUNT -->
-
                     <div class="progress-step active">
-
                         <div class="step-circle">
                             <i class="bi bi-check"></i>
                         </div>
-
                         <div class="step-number">
                             Account
                         </div>
-
                     </div>
-
 
                     <div class="progress-line active"></div>
 
-
                     <!-- BUSINESS -->
-
                     <div class="progress-step active current">
-
                         <div class="step-circle">
                             <span>2</span>
                         </div>
-
                         <div class="step-number">
                             Business
                         </div>
-
                     </div>
-
 
                     <div class="progress-line"></div>
 
-
-                    <!-- PREFERENCES -->
-
+                    <!-- MAIN STORE -->
                     <div class="progress-step">
-
                         <div class="step-circle">
                             <span>3</span>
                         </div>
-
                         <div class="step-number">
-                            Preferences
+                            Main Store
                         </div>
-
                     </div>
-
 
                     <div class="progress-line"></div>
 
-
-                    <!-- COMPLETE -->
-
+                    <!-- PREFERENCES -->
                     <div class="progress-step">
-
                         <div class="step-circle">
                             <span>4</span>
                         </div>
+                        <div class="step-number">
+                            Preferences
+                        </div>
+                    </div>
 
+                    <div class="progress-line"></div>
+
+                    <!-- COMPLETE -->
+                    <div class="progress-step">
+                        <div class="step-circle">
+                            <span>5</span>
+                        </div>
                         <div class="step-number">
                             Complete
                         </div>
-
                     </div>
 
                 </div>
@@ -107,187 +96,109 @@
 
                     <!-- FORM -->
 
-                    <form class="setup-form" id="businessSetupForm" novalidate="">
-
+                    <form class="setup-form" id="businessSetupForm" @submit.prevent="handleContinue" novalidate="">
 
                         <!-- BUSINESS NAME + TYPE -->
-
                         <div class="form-row">
 
-
                             <!-- BUSINESS NAME -->
-
-                            <div class="form-group">
-
+                            <div class="form-group" :class="{ 'has-error': errors.name }">
                                 <label for="businessName" class="form-label">
-                                    Business Name
+                                    Business Name <span class="text-danger">*</span>
                                 </label>
-
                                 <div class="input-wrapper has-icon">
-
                                     <i class="bi bi-shop input-icon"></i>
-
-                                    <input type="text" id="businessName" class="form-control-custom" placeholder="e.g. Hanif General Store" autocomplete="organization" required="">
-
+                                    <input type="text" id="businessName" v-model="form.name" class="form-control-custom" placeholder="e.g. Hanif General Store" autocomplete="organization" required="">
                                 </div>
-
-                                <div class="error-message">
-                                    Please enter your business name.
+                                <div class="error-message" v-if="errors.name" style="display: block; color: #dc2626; font-size: 12px; margin-top: 4px;">
+                                    {{ errors.name }}
                                 </div>
-
                             </div>
 
-
                             <!-- BUSINESS TYPE -->
-
-                            <div class="form-group">
-
+                            <div class="form-group" :class="{ 'has-error': errors.type }">
                                 <label for="businessType" class="form-label">
                                     Business Type
                                 </label>
-
                                 <div class="select-wrapper">
-
                                     <i class="bi bi-diagram-3 select-icon"></i>
-
-                                    <select id="businessType" class="form-control-custom" required="">
-
-                                        <option value="" selected="" disabled="">
+                                    <select id="businessType" v-model="form.type" class="form-control-custom">
+                                        <option value="" disabled="">
                                             Select Type
                                         </option>
-
                                         <option value="General Store">
                                             General Store
                                         </option>
-
                                         <option value="Grocery Store">
                                             Grocery Store
                                         </option>
-
                                         <option value="Supermarket">
                                             Supermarket
                                         </option>
-
                                         <option value="Electronics">
                                             Electronics Store
                                         </option>
-
                                         <option value="Pharmacy">
                                             Pharmacy
                                         </option>
-
                                         <option value="Clothing">
                                             Clothing Store
                                         </option>
-
                                         <option value="Other">
                                             Other
                                         </option>
-
                                     </select>
-
                                     <i class="bi bi-chevron-down select-arrow"></i>
-
                                 </div>
-
-                                <div class="error-message">
-                                    Please select a business type.
-                                </div>
-
                             </div>
 
                         </div>
 
-
                         <!-- BUSINESS PHONE -->
-
                         <div class="form-group">
-
                             <label for="businessPhone" class="form-label">
                                 Business Phone
                             </label>
-
                             <div class="input-wrapper has-icon">
-
                                 <i class="bi bi-telephone input-icon"></i>
-
-                                <input type="tel" id="businessPhone" class="form-control-custom" placeholder="+92 300 1234567" autocomplete="tel" required="">
-
+                                <input type="tel" id="businessPhone" v-model="form.phone" class="form-control-custom" placeholder="+92 300 1234567" autocomplete="tel">
                             </div>
-
-                            <div class="error-message">
-                                Please enter your business phone number.
-                            </div>
-
                         </div>
 
-
                         <!-- DIVIDER -->
-
                         <div class="form-divider"></div>
 
-
                         <!-- STREET ADDRESS -->
-
                         <div class="form-group">
-
                             <label for="streetAddress" class="form-label">
                                 Street Address
                             </label>
-
                             <div class="input-wrapper has-icon">
-
                                 <i class="bi bi-geo-alt input-icon"></i>
-
-                                <input type="text" id="streetAddress" class="form-control-custom" placeholder="123 Market Street" autocomplete="street-address" required="">
-
+                                <input type="text" id="streetAddress" v-model="form.address" class="form-control-custom" placeholder="123 Market Street" autocomplete="street-address">
                             </div>
-
-                            <div class="error-message">
-                                Please enter your street address.
-                            </div>
-
                         </div>
 
-
                         <!-- CITY + COUNTRY -->
-
                         <div class="form-row">
 
-
                             <!-- CITY -->
-
                             <div class="form-group">
-
                                 <label for="city" class="form-label">
                                     City
                                 </label>
-
-                                <input type="text" id="city" class="form-control-custom" placeholder="Lahore" autocomplete="address-level2" required="">
-
-                                <div class="error-message">
-                                    Please enter your city.
-                                </div>
-
+                                <input type="text" id="city" v-model="form.city" class="form-control-custom" placeholder="Lahore" autocomplete="address-level2">
                             </div>
 
-
                             <!-- COUNTRY -->
-
                             <div class="form-group">
-
                                 <label for="country" class="form-label">
                                     Country
                                 </label>
-
                                 <div class="country-wrapper">
-
-                                    <input type="text" id="country" class="form-control-custom country-input" value="Pakistan" readonly="">
-
+                                    <input type="text" id="country" v-model="form.country" class="form-control-custom country-input">
                                     <i class="bi bi-bag-check country-lock"></i>
-
                                 </div>
-
                             </div>
 
                         </div>
@@ -296,51 +207,107 @@
 
                 </div>
 
-
                 <!-- =================================
                      FOOTER
                 ================================== -->
-
                 <div class="card-footer-custom">
 
-
                     <!-- BACK -->
-
-                    <button type="button" class="back-button" id="backButton">
-
+                    <button type="button" class="back-button" id="backButton" @click="handleBack">
                         <i class="bi bi-arrow-left"></i>
-
                         <span>
                             Back
                         </span>
-
                     </button>
 
-
                     <!-- CONTINUE -->
-
-                    <button type="submit" form="businessSetupForm" class="continue-button" id="continueButton">
-
+                    <button type="submit" form="businessSetupForm" class="continue-button" id="continueButton" :disabled="loading">
                         <span>
-                            Continue to Preferences
+                            {{ loading ? 'Saving...' : 'Continue to Store Setup' }}
                         </span>
-
                         <i class="bi bi-arrow-right"></i>
-
                     </button>
 
                 </div>
 
             </section>
 
-        
 </div>
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import api from '../api';
+import { useToast } from 'vue-toastification';
 
-onMounted(() => {
+const router = useRouter();
+const toast = useToast();
+const loading = ref(false);
+
+const form = reactive({
+  name: '',
+  type: 'General Store',
+  phone: '',
+  address: '',
+  city: 'Lahore',
+  country: 'Pakistan',
+});
+
+const errors = reactive({
+  name: '',
+  type: '',
+});
+
+const handleBack = () => {
+  router.push('/');
+};
+
+const handleContinue = async () => {
+  errors.name = '';
+  if (!form.name || !form.name.trim()) {
+    errors.name = 'Business name is required';
+    return;
+  }
+
+  loading.value = true;
+  try {
+    await api.post('/onboarding/step', {
+      step: 2,
+      name: form.name.trim(),
+      type: form.type,
+      phone: form.phone,
+      address: form.address,
+      city: form.city,
+      country: form.country,
+    });
+    router.push('/mainstoresetup');
+  } catch (err) {
+    console.error('Failed to save business onboarding step', err);
+    toast.error(err.response?.data?.message || 'Failed to save business details');
+  } finally {
+    loading.value = false;
+  }
+};
+
+onMounted(async () => {
+  try {
+    const res = await api.get('/onboarding/status');
+    const biz = res.data?.business;
+    if (biz) {
+      if (biz.onboarding_status === 'completed') {
+        router.push('/');
+        return;
+      }
+      if (biz.name) form.name = biz.name;
+      if (biz.type) form.type = biz.type;
+      if (biz.phone) form.phone = biz.phone;
+      if (biz.address) form.address = biz.address;
+      if (biz.country) form.country = biz.country;
+    }
+  } catch (err) {
+    console.warn('Could not fetch onboarding status', err);
+  }
 });
 </script>
 

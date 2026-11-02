@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HBOS Enterprise POS — Official Download Portal</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --accent-blue: #38bdf8;
+            --accent-purple: #818cf8;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --border-color: #334155;
+            --green: #22c55e;
+            --amber: #f59e0b;
+            --amber-bg: rgba(245, 158, 11, 0.1);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            padding: 50px 20px 40px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .logo-title {
+            font-size: 2.4rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+        }
+
+        .tagline {
+            font-size: 1.15rem;
+            color: var(--text-sub);
+            margin-top: 8px;
+            margin-bottom: 20px;
+        }
+
+        .release-pilot-banner {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--amber-bg);
+            border: 1px solid var(--amber);
+            border-radius: 8px;
+            padding: 12px 20px;
+            font-size: 0.9rem;
+            color: #fbbf24;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            text-align: left;
+        }
+
+        .release-pilot-banner strong {
+            color: #fef3c7;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 24px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3);
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            border-color: var(--accent-blue);
+        }
+
+        .card-icon {
+            font-size: 2.8rem;
+            margin-bottom: 14px;
+        }
+
+        .card h2 {
+            font-size: 1.45rem;
+            margin: 0 0 10px 0;
+            color: var(--accent-blue);
+        }
+
+        .card p {
+            color: var(--text-sub);
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(56, 189, 248, 0.12);
+            color: var(--accent-blue);
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin-bottom: 14px;
+            letter-spacing: 0.05em;
+        }
+
+        .badge-pending {
+            background: rgba(148, 163, 184, 0.15);
+            color: #cbd5e1;
+        }
+
+        .btn {
+            display: inline-block;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+            color: #04101e;
+            font-weight: 700;
+            text-decoration: none;
+            padding: 14px 24px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1rem;
+            transition: opacity 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 14px 0 rgba(56, 189, 248, 0.35);
+        }
+
+        .btn:hover {
+            opacity: 0.92;
+            box-shadow: 0 6px 20px 0 rgba(56, 189, 248, 0.5);
+        }
+
+        .btn-disabled {
+            background: #334155;
+            color: #94a3b8;
+            cursor: not-allowed;
+            border: none;
+            box-shadow: none;
+        }
+
+        .btn-disabled:hover {
+            opacity: 1;
+            box-shadow: none;
+        }
+
+        .badge-uat {
+            background: rgba(34, 197, 94, 0.15);
+            color: #4ade80;
+            border: 1px solid rgba(74, 222, 128, 0.3);
+        }
+
+        .card-uat {
+            border-color: rgba(56, 189, 248, 0.4);
+            background: linear-gradient(180deg, #1e293b 0%, #172554 100%);
+        }
+
+        .btn-secondary {
+            background: #334155;
+            color: #f1f5f9;
+            box-shadow: none;
+        }
+
+        .btn-secondary:hover {
+            background: #475569;
+            box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        .file-meta {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            margin-top: 12px;
+            text-align: center;
+            line-height: 1.4;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        }
+
+        .instructions {
+            margin-top: 50px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 30px;
+        }
+
+        .instructions h3 {
+            color: var(--accent-blue);
+            margin-top: 0;
+            font-size: 1.25rem;
+        }
+
+        ul {
+            padding-left: 20px;
+            color: var(--text-sub);
+        }
+
+        li {
+            margin-bottom: 12px;
+        }
+
+        .spec-box {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 16px;
+            font-size: 0.88rem;
+        }
+
+        .spec-box table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .spec-box td {
+            padding: 8px 10px;
+            border-bottom: 1px solid #1e293b;
+        }
+
+        .spec-box td:first-child {
+            color: #94a3b8;
+            width: 32%;
+            font-weight: 600;
+            vertical-align: top;
+        }
+
+        .spec-box td:last-child {
+            color: #f1f5f9;
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-sub);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border-color);
+            margin-top: 60px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1 class="logo-title">HBOS Enterprise Suite</h1>
+        <p class="tagline">Local-First Retail Management POS System — Official Distribution Portal</p>
+        <div class="release-pilot-banner">
+            <span>⚠️</span>
+            <div><strong>Internal Testing &amp; Qualification Portal (v1.0.0):</strong> Distributed strictly for Product Owner evaluation, hardware qualification, and internal testing. Production retail launch remains NO-GO pending merchant hardware acceptance and disposable-VM MariaDB runtime verification.</div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="grid">
+            <!-- Owner Testing / UAT Card -->
+            <div class="card card-uat">
+                <div>
+                    <div class="card-icon">🧪</div>
+                    <span class="badge badge-uat">OWNER TESTING / UAT BUILD (MSI)</span>
+                    <h2>HBOS POS — Owner Testing Build</h2>
+                    <p>Updated Windows UAT package featuring standard windowed desktop mode (1366&times;768 resizable, decorated, preventing screen trapping), integrated offline Demo Sandbox walkthrough engine, Welcome View, and fail-closed security guards. Intended exclusively for Product Owner testing and hardware qualification.</p>
+                </div>
+                <div>
+                    <a href="/downloads/HBOS_POS_1.0.0_STAGE3_UAT_x64_en-US.msi" class="btn" style="width: 100%; box-sizing: border-box;">Download Owner Testing Build (.msi)</a>
+                    <div class="file-meta">
+                        Package: Windows Installer (.msi) | Version: v1.0.0-STAGE3-ROLLING-DEMO | Arch: x64<br>
+                        Size: 22.41 MB (23,502,848 bytes)<br>
+                        SHA-256: CC033239C30F14A5B6B5DC54C517FCA38EF206048F229C2CD0329E4A04DE15E3<br>
+                        <span style="color: #4ade80;">&#10004; Windowed Mode &bull; 7-Month Dynamic Rolling Demo &bull; WiX MSI Only</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Preserved Previous Pilot Card -->
+            <div class="card">
+                <div>
+                    <div class="card-icon">💻</div>
+                    <span class="badge">PRESERVED PREVIOUS BUILD (MSI)</span>
+                    <h2>HBOS POS — Previous Distribution</h2>
+                    <p>Previous pilot installation package. Preserved for rollback and continuity until the Product Owner completes qualification of the Stage 3 UAT build.</p>
+                </div>
+                <div>
+                    <a href="/downloads/HBOS_POS_1.0.0_x64_en-US.msi" class="btn btn-secondary" style="width: 100%; box-sizing: border-box;">Download Previous Build (.msi)</a>
+                    <div class="file-meta">
+                        Package: Windows Installer (.msi) | Arch: x64 | Size: 2.58 MB (2,711,552 bytes)<br>
+                        SHA-256: EF5055CDC62FC339F3D663D2691A390C860D84A26D89171E5D52414C1D86623A<br>
+                        <span>&#8634; Preserved Rollback Baseline</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Android Card -->
+            <div class="card">
+                <div>
+                    <div class="card-icon">📱</div>
+                    <span class="badge badge-pending">ANDROID TABLET (TESTING)</span>
+                    <h2>HBOS POS for Android</h2>
+                    <p>Capacitor mobile architecture designed for touch screens and mobile order-taking with offline IndexedDB outbox. Android binary package is currently undergoing hardware driver qualification and is not yet available for public distribution.</p>
+                </div>
+                <div>
+                    <button class="btn btn-disabled" disabled style="width: 100%; box-sizing: border-box;">Android version — Testing / Coming Soon</button>
+                    <div class="file-meta">
+                        Status: In Development &amp; Hardware Testing<br>
+                        Release Candidate: Pending Driver Qualification
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Verified Distribution Specifications -->
+        <div class="instructions">
+            <h3>📦 Distribution Package Specifications</h3>
+            <div class="spec-box">
+                <table>
+                    <tr>
+                        <td>Product Identity:</td>
+                        <td>HBOS POS (Hyperlocal Business Operating System)</td>
+                    </tr>
+                    <tr>
+                        <td>Active Testing Build:</td>
+                        <td>v1.0.0-STAGE3 (Owner Testing / UAT Release)</td>
+                    </tr>
+                    <tr>
+                        <td>Testing Package (.msi):</td>
+                        <td>HBOS_POS_1.0.0_STAGE3_UAT_x64_en-US.msi</td>
+                    </tr>
+                    <tr>
+                        <td>Testing Package Size:</td>
+                        <td>23,502,848 bytes (22.41 MB)</td>
+                    </tr>
+                    <tr>
+                        <td>Testing Checksum (SHA-256):</td>
+                        <td>CC033239C30F14A5B6B5DC54C517FCA38EF206048F229C2CD0329E4A04DE15E3</td>
+                    </tr>
+                    <tr>
+                        <td>Preserved Rollback (.msi):</td>
+                        <td>HBOS_POS_1.0.0_x64_en-US.msi (2,711,552 bytes | SHA-256: EF5055CD...)</td>
+                    </tr>
+                    <tr>
+                        <td>Installer Format Note:</td>
+                        <td>Only genuine WiX MSI installers are published. Raw compiled binaries are never distributed as installers, and no unsupported EXE installer is fabricated.</td>
+                    </tr>
+                    <tr>
+                        <td>Target Architecture:</td>
+                        <td>x64 (AMD64 64-bit Architecture) &bull; Windows 10 / 11 with WebView2</td>
+                    </tr>
+                    <tr>
+                        <td>Testing Gate Status:</td>
+                        <td>Owner Hardware Qualification Pending &bull; Production Status: NO-GO</td>
+                    </tr>
+                </table>
+            </div>
+
+            <h3 style="margin-top: 30px;">⚡ Installation &amp; Setup Instructions</h3>
+            <ul>
+                <li><strong>Windows Installation:</strong> Download <code>HBOS_POS_1.0.0_STAGE3_UAT_x64_en-US.msi</code> and run the installer. Standard per-user and per-machine installations are fully supported.</li>
+                <li><strong>Window Trapping Remediation:</strong> The UAT build runs in a standard windowed frame (1366&times;768 resizable) with minimize/maximize/close controls, eliminating previous kiosk screen trapping.</li>
+                <li><strong>Offline Demo Walkthrough:</strong> On startup, select <em>&ldquo;Explore Demo Mode&rdquo;</em> to execute full end-to-end retail scenarios locally without connecting to backend databases.</li>
+                <li><strong>Local-First Offline Resilience:</strong> The application runs locally using an IndexedDB transaction queue. Pending offline sales persist across application restarts and synchronize automatically when connectivity is established.</li>
+                <li><strong>Printer Configuration:</strong> Access <em>Settings &gt; Receipts</em> within the application to configure 80mm/58mm thermal roll printing or A4/A5 laser/inkjet invoices. Hardware drawer kick depends on printer-driver configuration.</li>
+            </ul>
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2026 SkyraSoft Engineering. Hyperlocal Business Operating System (HBOS) — Internal Testing &amp; Qualification Portal.
+    </footer>
+
+</body>
+</html>

@@ -5,15 +5,146 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Middleware\ResolveActiveBusiness;
 use App\Models\Product;
+use App\Models\ProductBarcode;
 use App\Models\Category;
 use App\Models\Brand;
 use App\Models\Subcategory;
 use App\Services\AuditService;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
+    protected function canViewCosts($user): bool
+    {
+        if (!$user) return false;
+        if ($user->hasRole('Business Owner')) return true;
+        try {
+            if ($user->hasPermissionTo('view product costs')) return true;
+        } catch (\Throwable $e) {
+            return false;
+        }
+        return false;
+    }
+
+    protected function formatProduct($product, $user): array
+    {
+        $arr = $product->toArray();
+        $canCost = $this->canViewCosts($user);
+
+        if (!$canCost) {
+            unset($arr['cost_price'], $arr['cost']);
+        }
+
+        $altBarcodes = [];
+        if ($product->relationLoaded('barcodes')) {
+            $altBarcodes = $product->barcodes->where('barcode_type', 'ALTERNATE')->pluck('barcode')->values()->toArray();
+        } else {
+            $altBarcodes = ProductBarcode::where('product_id', $product->id)
+                ->where('barcode_type', 'ALTERNATE')
+                ->pluck('barcode')
+                ->toArray();
+        }
+
+        $arr['alternate_barcodes'] = $altBarcodes;
+        $arr['primary_barcode'] = $product->barcode ?? null;
+
+        if ($canCost) {
+            $sellingPrice = floatval($product->selling_price ?? 0);
+            $costPrice = floatval($product->cost_price ?? 0);
+            $grossMarginAmount = round($sellingPrice - $costPrice, 2);
+            $grossMarginPercent = $sellingPrice > 0 ? round(($grossMarginAmount / $sellingPrice) * 100, 1) : 0.0;
+            $arr['gross_margin_amount'] = $grossMarginAmount;
+            $arr['gross_margin_percentage'] = $grossMarginPercent;
+        }
+
+        return $arr;
+    }
+
+    protected function syncBarcodes(Product $product, int $businessId, ?string $primaryBarcode, ?array $altBarcodes): void
+    {
+        $primaryBarcode = !is_null($primaryBarcode) ? trim((string)$primaryBarcode) : null;
+        if ($primaryBarcode === '') $primaryBarcode = null;
+
+        if ($primaryBarcode !== null) {
+            $collision = ProductBarcode::where('business_id', $businessId)
+                ->where('barcode', $primaryBarcode)
+                ->where('product_id', '!=', $product->id)
+                ->first();
+            if ($collision) {
+                throw ValidationException::withMessages([
+                    'barcode' => ["Barcode '{$primaryBarcode}' is already assigned to another product in this business."]
+                ]);
+            }
+
+            // Clean up any other PRIMARY barcode for this product if barcode changed
+            ProductBarcode::where('business_id', $businessId)
+                ->where('product_id', $product->id)
+                ->where('barcode_type', 'PRIMARY')
+                ->where('barcode', '!=', $primaryBarcode)
+                ->delete();
+
+            ProductBarcode::updateOrCreate(
+                ['business_id' => $businessId, 'product_id' => $product->id, 'barcode_type' => 'PRIMARY'],
+                ['barcode' => $primaryBarcode]
+            );
+        } else {
+            ProductBarcode::where('business_id', $businessId)
+                ->where('product_id', $product->id)
+                ->where('barcode_type', 'PRIMARY')
+                ->delete();
+        }
+
+        if ($altBarcodes !== null) {
+            $cleaned = [];
+            foreach ($altBarcodes as $b) {
+                $trimmed = trim((string)$b);
+                if ($trimmed !== '') {
+                    if ($primaryBarcode !== null && $trimmed === $primaryBarcode) {
+                        throw ValidationException::withMessages([
+                            'alternate_barcodes' => ["Alternate barcode '{$trimmed}' cannot be identical to primary barcode."]
+                        ]);
+                    }
+                    if (in_array($trimmed, $cleaned)) {
+                        throw ValidationException::withMessages([
+                            'alternate_barcodes' => ["Duplicate alternate barcode '{$trimmed}' provided in request."]
+                        ]);
+                    }
+                    $cleaned[] = $trimmed;
+                }
+            }
+
+            if (!empty($cleaned)) {
+                $conflict = ProductBarcode::where('business_id', $businessId)
+                    ->whereIn('barcode', $cleaned)
+                    ->where('product_id', '!=', $product->id)
+                    ->first();
+                if ($conflict) {
+                    throw ValidationException::withMessages([
+                        'alternate_barcodes' => ["Barcode '{$conflict->barcode}' is already assigned to another product in this business."]
+                    ]);
+                }
+            }
+
+            ProductBarcode::where('business_id', $businessId)
+                ->where('product_id', $product->id)
+                ->where('barcode_type', 'ALTERNATE')
+                ->whereNotIn('barcode', $cleaned)
+                ->delete();
+
+            foreach ($cleaned as $altB) {
+                ProductBarcode::firstOrCreate([
+                    'business_id' => $businessId,
+                    'product_id' => $product->id,
+                    'barcode' => $altB,
+                    'barcode_type' => 'ALTERNATE',
+                ]);
+            }
+        }
+    }
+
     public function index(Request $request)
     {
         if (!$request->user()->hasPermissionTo('view products')) {
@@ -21,7 +152,37 @@ class ProductController extends Controller
         }
 
         $businessId = ResolveActiveBusiness::requireActiveBusinessId();
-        $products = Product::with(['category', 'brand', 'subcategory'])->get();
+        $query = Product::with(['category', 'brand', 'subcategory', 'barcodes'])
+            ->where('business_id', $businessId);
+
+        if ($request->has('search') && !empty($request->search)) {
+            $search = trim($request->search);
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('sku', 'like', "%{$search}%")
+                  ->orWhere('barcode', 'like', "%{$search}%")
+                  ->orWhereHas('barcodes', function ($bQ) use ($search) {
+                      $bQ->where('barcode', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        if ($request->has('barcode') && !empty($request->barcode)) {
+            $barcode = trim($request->barcode);
+            $query->where(function ($q) use ($barcode) {
+                $q->where('barcode', $barcode)
+                  ->orWhereHas('barcodes', function ($bQ) use ($barcode) {
+                      $bQ->where('barcode', $barcode);
+                  });
+            });
+        }
+
+        if ($request->has('is_active') || $request->has('active')) {
+            $activeVal = $request->input('is_active', $request->input('active'));
+            $query->where('is_active', filter_var($activeVal, FILTER_VALIDATE_BOOLEAN));
+        }
+
+        $products = $query->get()->map(fn($p) => $this->formatProduct($p, $request->user()));
         return response()->json($products);
     }
 
@@ -92,6 +253,13 @@ class ProductController extends Controller
 
         $activeBusinessId = ResolveActiveBusiness::requireActiveBusinessId();
 
+        if ($request->has('alternate_barcodes') && is_string($request->alternate_barcodes)) {
+            $decoded = json_decode($request->alternate_barcodes, true);
+            if (is_array($decoded)) {
+                $request->merge(['alternate_barcodes' => $decoded]);
+            }
+        }
+
         $request->validate([
             'category_id' => 'nullable',
             'brand_id' => 'nullable',
@@ -115,16 +283,29 @@ class ProductController extends Controller
             ],
             'cost_price' => 'required|numeric|min:0',
             'selling_price' => 'required|numeric|min:0',
-            'stock' => 'required|integer|min:0',
-            'min_stock' => 'nullable|integer|min:0',
+            'wholesale_price' => 'nullable|numeric|min:0',
+            'stock' => 'required|numeric|min:0',
+            'min_stock' => 'nullable|numeric|min:0',
+            'allow_fractional' => 'nullable|boolean',
+            'sale_unit' => 'nullable|string|max:20',
+            'conversion_factor' => 'nullable|numeric|min:0.001',
             'unit' => 'nullable|string|max:255',
             'description' => 'nullable|string',
             'is_active' => 'nullable',
             'image' => 'nullable',
             'has_variations' => 'nullable|boolean',
             'attributes' => 'nullable|array',
-            'variations' => 'nullable|array'
+            'variations' => 'nullable|array',
+            'alternate_barcodes' => 'nullable|array',
+            'alternate_barcodes.*' => 'string|max:100',
         ]);
+
+        // Below-cost wholesale pricing policy enforcement
+        if ($request->filled('wholesale_price') && (float)$request->wholesale_price > 0 && (float)$request->wholesale_price < (float)$request->cost_price) {
+            if (!$request->user()->hasRole('Business Owner')) {
+                return response()->json(['message' => 'Configuring wholesale price below cost price requires Business Owner authorization.'], 403);
+            }
+        }
 
         // Cross-tenant relationship validation
         if ($request->filled('category_id') && is_numeric($request->category_id)) {
@@ -148,8 +329,9 @@ class ProductController extends Controller
 
         $imagePath = null;
         try {
+            $storageDir = 'businesses/' . $activeBusinessId . '/products';
             if ($request->hasFile('image') && $request->file('image')->isValid()) {
-                $path = $request->file('image')->store('uploads', 'public');
+                $path = $request->file('image')->store($storageDir, 'public');
                 $imagePath = asset('storage/' . $path);
             } else if ($request->filled('image_base64')) {
                 $base64Data = $request->image_base64;
@@ -158,8 +340,8 @@ class ProductController extends Controller
                     $type = strtolower($type[1]);
                     $base64Data = base64_decode($base64Data);
                     $filename = 'img_' . uniqid() . '.' . $type;
-                    \Storage::disk('public')->put('uploads/' . $filename, $base64Data);
-                    $imagePath = asset('storage/uploads/' . $filename);
+                    \Storage::disk('public')->put($storageDir . '/' . $filename, $base64Data);
+                    $imagePath = asset('storage/' . $storageDir . '/' . $filename);
                 }
             } else if ($request->filled('image_url') && !empty($request->image_url)) {
                 $imagePath = $request->image_url;
@@ -209,29 +391,69 @@ class ProductController extends Controller
             $subcategoryId = $sub->id;
         }
 
-        $product = Product::create([
-            'business_id' => $activeBusinessId,
-            'category_id' => $categoryId,
-            'brand_id' => $brandId,
-            'subcategory_id' => $subcategoryId,
-            'name' => $request->name,
-            'sku' => $request->sku,
-            'barcode' => $request->barcode,
-            'cost_price' => $request->cost_price,
-            'selling_price' => $request->selling_price,
-            'stock' => $request->stock,
-            'min_stock' => $request->min_stock ?? 0,
-            'expected_sell_date' => $request->expected_sell_date,
-            'unit' => $request->unit ?? 'pcs',
-            'description' => $request->description,
-            'image' => $imagePath,
-            'is_active' => $request->is_active !== false && $request->is_active !== '0',
-            'has_variations' => $request->has_variations ?? false,
-            'attributes' => $request->attributes ? json_encode($request->attributes) : null,
-            'variations' => $request->variations ? json_encode($request->variations) : null
-        ]);
+        return DB::transaction(function () use ($request, $activeBusinessId, $categoryId, $brandId, $subcategoryId, $imagePath) {
+            $product = Product::create([
+                'business_id' => $activeBusinessId,
+                'category_id' => $categoryId,
+                'brand_id' => $brandId,
+                'subcategory_id' => $subcategoryId,
+                'name' => $request->name,
+                'sku' => $request->sku,
+                'barcode' => $request->barcode,
+                'cost_price' => $request->cost_price,
+                'selling_price' => $request->selling_price,
+                'wholesale_price' => $request->wholesale_price ?? null,
+                'stock' => $request->stock,
+                'min_stock' => $request->min_stock ?? 0,
+                'allow_fractional' => $request->has('allow_fractional') ? filter_var($request->allow_fractional, FILTER_VALIDATE_BOOLEAN) : false,
+                'sale_unit' => $request->sale_unit ?? null,
+                'conversion_factor' => $request->conversion_factor ?? 1.000,
+                'expected_sell_date' => $request->expected_sell_date,
+                'unit' => $request->unit ?? 'pcs',
+                'description' => $request->description,
+                'image' => $imagePath,
+                'is_active' => $request->has('is_active') ? filter_var($request->is_active, FILTER_VALIDATE_BOOLEAN) : true,
+                'has_variations' => $request->has_variations ?? false,
+                'attributes' => $request->attributes ? json_encode($request->attributes) : null,
+                'variations' => $request->variations ? json_encode($request->variations) : null
+            ]);
 
-        return response()->json($product->load(['category', 'brand', 'subcategory']), 201);
+            // Provision BranchInventory and initial opening stock movement
+            $targetBranchId = $request->input('branch_id')
+                ?? $request->user()->branch_id
+                ?? \App\Models\Branch::where('business_id', $activeBusinessId)->value('id');
+
+            if ($targetBranchId) {
+                \App\Models\BranchInventory::create([
+                    'business_id' => $activeBusinessId,
+                    'branch_id' => $targetBranchId,
+                    'product_id' => $product->id,
+                    'quantity_on_hand' => (float)$request->stock,
+                    'minimum_stock' => $product->min_stock ?? 0.000,
+                ]);
+
+                if ((float)$request->stock > 0) {
+                    \App\Models\InventoryMovement::create([
+                        'business_id' => $activeBusinessId,
+                        'branch_id' => $targetBranchId,
+                        'product_id' => $product->id,
+                        'type' => 'adjustment',
+                        'quantity' => (float)$request->stock,
+                        'unit_cost' => $product->cost_price ?? 0,
+                        'reference_type' => 'opening_stock',
+                        'reference_id' => $product->id,
+                        'performed_by' => $request->user()->id,
+                        'balance' => (float)$request->stock,
+                        'notes' => 'Initial product opening stock',
+                    ]);
+                }
+            }
+
+            // Sync canonical product_barcodes table
+            $this->syncBarcodes($product, $activeBusinessId, $request->barcode, $request->input('alternate_barcodes'));
+
+            return response()->json($this->formatProduct($product->load(['category', 'brand', 'subcategory', 'barcodes']), $request->user()), 201);
+        });
     }
 
     public function show(Request $request, string $id)
@@ -240,8 +462,12 @@ class ProductController extends Controller
             return response()->json(['message' => 'Unauthorized action.'], 403);
         }
 
-        $product = Product::with(['category', 'brand', 'subcategory'])->findOrFail($id);
-        return response()->json($product);
+        $activeBusinessId = ResolveActiveBusiness::requireActiveBusinessId();
+        $product = Product::with(['category', 'brand', 'subcategory', 'barcodes'])
+            ->where('business_id', $activeBusinessId)
+            ->findOrFail($id);
+
+        return response()->json($this->formatProduct($product, $request->user()));
     }
 
     public function update(Request $request, string $id)
@@ -252,6 +478,13 @@ class ProductController extends Controller
 
         $activeBusinessId = ResolveActiveBusiness::requireActiveBusinessId();
         $product = Product::where('business_id', $activeBusinessId)->findOrFail($id);
+
+        if ($request->has('alternate_barcodes') && is_string($request->alternate_barcodes)) {
+            $decoded = json_decode($request->alternate_barcodes, true);
+            if (is_array($decoded)) {
+                $request->merge(['alternate_barcodes' => $decoded]);
+            }
+        }
 
         $request->validate([
             'category_id' => 'nullable',
@@ -276,13 +509,25 @@ class ProductController extends Controller
             ],
             'cost_price' => 'required|numeric|min:0',
             'selling_price' => 'required|numeric|min:0',
-            'stock' => 'nullable|integer|min:0',
-            'min_stock' => 'nullable|integer|min:0',
+            'wholesale_price' => 'nullable|numeric|min:0',
+            'stock' => 'nullable|numeric|min:0',
+            'min_stock' => 'nullable|numeric|min:0',
+            'allow_fractional' => 'nullable|boolean',
+            'sale_unit' => 'nullable|string|max:20',
+            'conversion_factor' => 'nullable|numeric|min:0.001',
             'unit' => 'nullable|string|max:255',
             'description' => 'nullable|string',
             'is_active' => 'nullable',
-            'image' => 'nullable'
+            'image' => 'nullable',
+            'alternate_barcodes' => 'nullable|array',
+            'alternate_barcodes.*' => 'string|max:100',
         ]);
+
+        if ($request->filled('wholesale_price') && (float)$request->wholesale_price > 0 && (float)$request->wholesale_price < (float)$request->cost_price) {
+            if (!$request->user()->hasRole('Business Owner')) {
+                return response()->json(['message' => 'Configuring wholesale price below cost price requires Business Owner authorization.'], 403);
+            }
+        }
 
         // Cross-tenant relationship validation
         if ($request->filled('category_id') && is_numeric($request->category_id)) {
@@ -306,10 +551,10 @@ class ProductController extends Controller
 
         $data = $request->only([
             'category_id', 'brand_id', 'subcategory_id', 'name', 'sku', 'barcode', 'cost_price', 'selling_price',
-            'expected_sell_date', 'unit', 'description', 'has_variations'
+            'wholesale_price', 'expected_sell_date', 'unit', 'description', 'has_variations',
+            'allow_fractional', 'sale_unit', 'conversion_factor'
         ]);
         unset($data['stock'], $data['min_stock']);
-
 
         if ($request->has('category') || $request->has('category_id')) {
             if ($request->filled('category_id') && is_numeric($request->category_id)) {
@@ -345,12 +590,16 @@ class ProductController extends Controller
         }
         
         if ($request->has('is_active')) {
-            $data['is_active'] = $request->is_active !== false && $request->is_active !== '0';
+            $data['is_active'] = filter_var($request->is_active, FILTER_VALIDATE_BOOLEAN);
+        }
+        if ($request->has('allow_fractional')) {
+            $data['allow_fractional'] = filter_var($request->allow_fractional, FILTER_VALIDATE_BOOLEAN);
         }
 
         try {
+            $storageDir = 'businesses/' . $activeBusinessId . '/products';
             if ($request->hasFile('image') && $request->file('image')->isValid()) {
-                $path = $request->file('image')->store('uploads', 'public');
+                $path = $request->file('image')->store($storageDir, 'public');
                 $data['image'] = asset('storage/' . $path);
             } else if ($request->filled('image_url') && !empty($request->image_url)) {
                 $data['image'] = $request->image_url;
@@ -374,44 +623,70 @@ class ProductController extends Controller
 
         $oldCostPrice = (float) $product->cost_price;
         $oldSellingPrice = (float) $product->selling_price;
+        $oldWholesalePrice = (float) ($product->wholesale_price ?? 0);
+        $oldBarcode = (string) ($product->barcode ?? '');
         $oldIsActive = (bool) $product->is_active;
 
-        $product->update($data);
+        return DB::transaction(function () use (
+            $product, $data, $request, $activeBusinessId,
+            $oldCostPrice, $oldSellingPrice, $oldWholesalePrice, $oldBarcode, $oldIsActive
+        ) {
+            $lockedProduct = Product::where('business_id', $activeBusinessId)
+                ->where('id', $product->id)
+                ->lockForUpdate()
+                ->firstOrFail();
 
-        $costChanged = array_key_exists('cost_price', $data) && (float)$data['cost_price'] !== $oldCostPrice;
-        $priceChanged = array_key_exists('selling_price', $data) && (float)$data['selling_price'] !== $oldSellingPrice;
-        $activeChanged = array_key_exists('is_active', $data) && (bool)$data['is_active'] !== $oldIsActive;
+            $lockedProduct->update($data);
 
-        if ($costChanged || $priceChanged || $activeChanged) {
-            $oldValues = [];
-            $newValues = [];
-            if ($costChanged) {
-                $oldValues['cost_price'] = $oldCostPrice;
-                $newValues['cost_price'] = (float)$product->cost_price;
+            // Sync canonical barcodes in product_barcodes table
+            $altBarcodes = $request->has('alternate_barcodes') ? $request->input('alternate_barcodes') : null;
+            $this->syncBarcodes($lockedProduct, $activeBusinessId, $lockedProduct->barcode, $altBarcodes);
+
+            $costChanged = array_key_exists('cost_price', $data) && (float)$data['cost_price'] !== $oldCostPrice;
+            $priceChanged = array_key_exists('selling_price', $data) && (float)$data['selling_price'] !== $oldSellingPrice;
+            $wholesaleChanged = array_key_exists('wholesale_price', $data) && (float)($data['wholesale_price'] ?? 0) !== $oldWholesalePrice;
+            $barcodeChanged = array_key_exists('barcode', $data) && (string)($data['barcode'] ?? '') !== $oldBarcode;
+            $activeChanged = array_key_exists('is_active', $data) && (bool)$data['is_active'] !== $oldIsActive;
+
+            if ($costChanged || $priceChanged || $wholesaleChanged || $barcodeChanged || $activeChanged) {
+                $oldValues = [];
+                $newValues = [];
+                if ($costChanged) {
+                    $oldValues['cost_price'] = $oldCostPrice;
+                    $newValues['cost_price'] = (float)$lockedProduct->cost_price;
+                }
+                if ($priceChanged) {
+                    $oldValues['selling_price'] = $oldSellingPrice;
+                    $newValues['selling_price'] = (float)$lockedProduct->selling_price;
+                }
+                if ($wholesaleChanged) {
+                    $oldValues['wholesale_price'] = $oldWholesalePrice;
+                    $newValues['wholesale_price'] = (float)($lockedProduct->wholesale_price ?? 0);
+                }
+                if ($barcodeChanged) {
+                    $oldValues['barcode'] = $oldBarcode;
+                    $newValues['barcode'] = (string)($lockedProduct->barcode ?? '');
+                }
+                if ($activeChanged) {
+                    $oldValues['is_active'] = $oldIsActive;
+                    $newValues['is_active'] = (bool)$lockedProduct->is_active;
+                }
+
+                AuditService::logMutation(
+                    'governance',
+                    'updated',
+                    "Product {$lockedProduct->name} pricing or barcode updated",
+                    $lockedProduct,
+                    $oldValues,
+                    $newValues,
+                    ['product_id' => $lockedProduct->id, 'sku' => $lockedProduct->sku],
+                    null,
+                    $request->user()
+                );
             }
-            if ($priceChanged) {
-                $oldValues['selling_price'] = $oldSellingPrice;
-                $newValues['selling_price'] = (float)$product->selling_price;
-            }
-            if ($activeChanged) {
-                $oldValues['is_active'] = $oldIsActive;
-                $newValues['is_active'] = (bool)$product->is_active;
-            }
 
-            AuditService::logMutation(
-                'governance',
-                'updated',
-                "Product {$product->name} pricing or status updated",
-                $product,
-                $oldValues,
-                $newValues,
-                ['product_id' => $product->id, 'sku' => $product->sku],
-                null,
-                $request->user()
-            );
-        }
-
-        return response()->json($product->load(['category', 'brand', 'subcategory']));
+            return response()->json($this->formatProduct($lockedProduct->fresh(['category', 'brand', 'subcategory', 'barcodes']), $request->user()));
+        });
     }
 
     public function destroy(Request $request, string $id)

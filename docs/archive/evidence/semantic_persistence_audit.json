@@ -1,0 +1,4082 @@
+[
+    {
+        "field_id": "FIELD-001",
+        "label": "username",
+        "form_id": "FORM-001",
+        "form_name": "User Login Form",
+        "page": "ROUTE-030 (LoginView.vue) \/ Root \/ SECTION-005",
+        "logical_destination": "users.username",
+        "mapping_type": "REQUEST_ONLY",
+        "physical_destinations": [
+            "N\/A \u2014 REQUEST_ONLY"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 REQUEST_ONLY"
+        ],
+        "evidence": "User login identifier passed in authentication request",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-002",
+        "label": "password",
+        "form_id": "FORM-001",
+        "form_name": "User Login Form",
+        "page": "ROUTE-030 (LoginView.vue) \/ Root \/ SECTION-005",
+        "logical_destination": "users.password",
+        "mapping_type": "REQUEST_ONLY",
+        "physical_destinations": [
+            "N\/A \u2014 REQUEST_ONLY"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 REQUEST_ONLY"
+        ],
+        "evidence": "User login password passed in authentication request",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-003",
+        "label": "remember_me",
+        "form_id": "FORM-001",
+        "form_name": "User Login Form",
+        "page": "ROUTE-030 (LoginView.vue) \/ Root \/ SECTION-005",
+        "logical_destination": "personal_access_tokens.expires_at",
+        "mapping_type": "TRANSIENT_UI_ONLY",
+        "physical_destinations": [
+            "N\/A \u2014 TRANSIENT_UI_ONLY"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 TRANSIENT_UI_ONLY"
+        ],
+        "evidence": "Remember-me session checkbox stored in localStorage \/ client session",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-004",
+        "label": "name",
+        "form_id": "FORM-002",
+        "form_name": "Business Owner Registration Form",
+        "page": "ROUTE-031 (RegisterView.vue) \/ Root \/ SECTION-006",
+        "logical_destination": "users.name",
+        "mapping_type": "REQUEST_ONLY",
+        "physical_destinations": [
+            "N\/A \u2014 REQUEST_ONLY"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 REQUEST_ONLY"
+        ],
+        "evidence": "Password confirmation match validation check in User Registration",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-005",
+        "label": "email",
+        "form_id": "FORM-002",
+        "form_name": "Business Owner Registration Form",
+        "page": "ROUTE-031 (RegisterView.vue) \/ Root \/ SECTION-006",
+        "logical_destination": "users.email",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "users.email"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-015"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/AuthController.php:L68 \u2014 validated email | api\/database\/migrations\/2014_10_12_000000_create_users_table.php:L19 \u2014 string(\"email\")->unique()",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-006",
+        "label": "phone",
+        "form_id": "FORM-002",
+        "form_name": "Business Owner Registration Form",
+        "page": "ROUTE-031 (RegisterView.vue) \/ Root \/ SECTION-006",
+        "logical_destination": "users.phone",
+        "mapping_type": "UNPERSISTED_UI_INPUT",
+        "physical_destinations": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "evidence": "Owner registration mobile phone captured in RegisterView.vue (FORM-002) but users table has no phone column; discarded by AuthController@register.",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "P1-FIELD-GAP-001",
+        "remediation": "Phase 9 \u2014 Add phone nullable string column to users table."
+    },
+    {
+        "field_id": "FIELD-007",
+        "label": "business_name",
+        "form_id": "FORM-002",
+        "form_name": "Business Owner Registration Form",
+        "page": "ROUTE-031 (RegisterView.vue) \/ Root \/ SECTION-006",
+        "logical_destination": "businesses.name",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "businesses.name"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-002"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/AuthController.php:L85 \u2014 Business::create() | api\/database\/migrations\/2026_08_24_051340_create_businesses_table.php:L18 \u2014 string(\"name\")",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-008",
+        "label": "business_type",
+        "form_id": "FORM-002",
+        "form_name": "Business Owner Registration Form",
+        "page": "ROUTE-031 (RegisterView.vue) \/ Root \/ SECTION-006",
+        "logical_destination": "businesses.business_type",
+        "mapping_type": "EXACT_PHYSICAL_RENAME",
+        "physical_destinations": [
+            "businesses.type"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-003"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/AuthController.php:L86, api\/app\/Models\/Business.php:L15 \u2014 Business industry type stored in physical column type",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-009",
+        "label": "password",
+        "form_id": "FORM-002",
+        "form_name": "Business Owner Registration Form",
+        "page": "ROUTE-031 (RegisterView.vue) \/ Root \/ SECTION-006",
+        "logical_destination": "users.password",
+        "mapping_type": "TRANSFORMED_STORAGE",
+        "physical_destinations": [
+            "users.password"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-020"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/AuthController.php:L41 \u2014 Hash::make()",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-010",
+        "label": "password_confirmation",
+        "form_id": "FORM-002",
+        "form_name": "Business Owner Registration Form",
+        "page": "ROUTE-031 (RegisterView.vue) \/ Root \/ SECTION-006",
+        "logical_destination": "N\/A",
+        "mapping_type": "REQUEST_ONLY",
+        "physical_destinations": [
+            "N\/A \u2014 REQUEST_ONLY"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 REQUEST_ONLY"
+        ],
+        "evidence": "Password confirmation match validation check in Owner Registration",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-011",
+        "label": "business_name",
+        "form_id": "FORM-003",
+        "form_name": "Business Setup Step 1",
+        "page": "ROUTE-004 (BusniessSetupView.vue) \/ Root \/ SECTION-007",
+        "logical_destination": "businesses.name",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "businesses.name"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-002"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/BusinessSetupController.php:L30-L45 \u2014 storeStep1() | api\/database\/migrations\/2026_08_24_051340_create_businesses_table.php:L18 \u2014 string(\"name\")",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-012",
+        "label": "business_type",
+        "form_id": "FORM-003",
+        "form_name": "Business Setup Step 1",
+        "page": "ROUTE-004 (BusniessSetupView.vue) \/ Root \/ SECTION-007",
+        "logical_destination": "businesses.business_type",
+        "mapping_type": "EXACT_PHYSICAL_RENAME",
+        "physical_destinations": [
+            "businesses.type"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-003"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/AuthController.php:L86, api\/app\/Models\/Business.php:L15 \u2014 Business industry type stored in physical column type",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-013",
+        "label": "currency",
+        "form_id": "FORM-003",
+        "form_name": "Business Setup Step 1",
+        "page": "ROUTE-004 (BusniessSetupView.vue) \/ Root \/ SECTION-007",
+        "logical_destination": "businesses.currency",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "businesses.currency"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-008"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/BusinessSetupController.php:L38 \u2014 currency lock | api\/database\/migrations\/2026_08_24_051340_create_businesses_table.php:L20 \u2014 string(\"currency\",3)->default(\"PKR\")",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-014",
+        "label": "tax_number",
+        "form_id": "FORM-003",
+        "form_name": "Business Setup Step 1",
+        "page": "ROUTE-004 (BusniessSetupView.vue) \/ Root \/ SECTION-007",
+        "logical_destination": "businesses.tax_number",
+        "mapping_type": "UNPERSISTED_UI_INPUT",
+        "physical_destinations": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "evidence": "Tax NTN number captured in BusinessSetupView.vue (FORM-003) but absent from businesses table schema and discarded by BusinessController@store.",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "P1-FIELD-GAP-004",
+        "remediation": "Phase 9 \u2014 Add tax_number column to businesses table or persist to settings table."
+    },
+    {
+        "field_id": "FIELD-015",
+        "label": "phone",
+        "form_id": "FORM-003",
+        "form_name": "Business Setup Step 1",
+        "page": "ROUTE-004 (BusniessSetupView.vue) \/ Root \/ SECTION-007",
+        "logical_destination": "businesses.phone",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "businesses.phone"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-005"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/BusinessSetupController.php:L42 \u2014 phone | api\/database\/migrations\/2026_08_24_051340_create_businesses_table.php:L22 \u2014 string(\"phone\")->nullable()",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-016",
+        "label": "email",
+        "form_id": "FORM-003",
+        "form_name": "Business Setup Step 1",
+        "page": "ROUTE-004 (BusniessSetupView.vue) \/ Root \/ SECTION-007",
+        "logical_destination": "businesses.email",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "businesses.email"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-006"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/BusinessSetupController.php:L44 \u2014 email | api\/database\/migrations\/2026_08_24_051340_create_businesses_table.php:L23 \u2014 string(\"email\")->nullable()",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-017",
+        "label": "address",
+        "form_id": "FORM-003",
+        "form_name": "Business Setup Step 1",
+        "page": "ROUTE-004 (BusniessSetupView.vue) \/ Root \/ SECTION-007",
+        "logical_destination": "businesses.address",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "businesses.address"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-004"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/BusinessSetupController.php:L46 \u2014 address | api\/database\/migrations\/2026_08_24_051340_create_businesses_table.php:L24 \u2014 text(\"address\")->nullable()",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-018",
+        "label": "branch_name",
+        "form_id": "FORM-004",
+        "form_name": "Branch Setup Step 2",
+        "page": "ROUTE-005 (BusinessSetup1View.vue) \/ Root \/ SECTION-008",
+        "logical_destination": "branches.name",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "branches.name"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-031"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/BusinessSetupController.php:L60-L75 \u2014 storeStep2() | api\/database\/migrations\/2026_08_24_051341_create_branches_table.php:L18 \u2014 string(\"name\")",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-019",
+        "label": "branch_code",
+        "form_id": "FORM-004",
+        "form_name": "Branch Setup Step 2",
+        "page": "ROUTE-005 (BusinessSetup1View.vue) \/ Root \/ SECTION-008",
+        "logical_destination": "branches.code",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "branches.code"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-032"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/BusinessSetupController.php:L65 \u2014 branch code | api\/database\/migrations\/2026_08_24_051341_create_branches_table.php:L19 \u2014 string(\"code\")->unique()",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-020",
+        "label": "location",
+        "form_id": "FORM-004",
+        "form_name": "Branch Setup Step 2",
+        "page": "ROUTE-005 (BusinessSetup1View.vue) \/ Root \/ SECTION-008",
+        "logical_destination": "branches.location",
+        "mapping_type": "EXACT_PHYSICAL_RENAME",
+        "physical_destinations": [
+            "branches.address"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-034"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/BranchController.php:L45, api\/app\/Models\/Branch.php:L21 \u2014 Physical branch street location stored in physical column address",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-021",
+        "label": "pos_register_name",
+        "form_id": "FORM-004",
+        "form_name": "Branch Setup Step 2",
+        "page": "ROUTE-005 (BusinessSetup1View.vue) \/ Root \/ SECTION-008",
+        "logical_destination": "financial_accounts.name",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "financial_accounts.name"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-327"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/BusinessSetupController.php:L72 \u2014 creates cash register | api\/database\/migrations\/2026_09_16_000000_create_financial_accounts_table.php:L18 \u2014 string(\"name\")",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-022",
+        "label": "business_logo",
+        "form_id": "FORM-005",
+        "form_name": "Business Branding & Profile Form",
+        "page": "ROUTE-003 (InformationView.vue) \/ Root \/ SECTION-009",
+        "logical_destination": "businesses.logo_url",
+        "mapping_type": "EXACT_PHYSICAL_RENAME",
+        "physical_destinations": [
+            "businesses.logo"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-007"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/BusinessController.php:L48, api\/app\/Models\/Business.php:L19 \u2014 Business logo storage path stored in physical column logo",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-023",
+        "label": "business_name",
+        "form_id": "FORM-005",
+        "form_name": "Business Branding & Profile Form",
+        "page": "ROUTE-003 (InformationView.vue) \/ Root \/ SECTION-009",
+        "logical_destination": "businesses.name",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "businesses.name"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-002"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/ProfileController.php:L20-L32 \u2014 update() | api\/database\/migrations\/2026_08_24_051340_create_businesses_table.php:L18 \u2014 string(\"name\")",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-024",
+        "label": "business_type",
+        "form_id": "FORM-005",
+        "form_name": "Business Branding & Profile Form",
+        "page": "ROUTE-003 (InformationView.vue) \/ Root \/ SECTION-009",
+        "logical_destination": "businesses.business_type",
+        "mapping_type": "EXACT_PHYSICAL_RENAME",
+        "physical_destinations": [
+            "businesses.type"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-003"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/AuthController.php:L86, api\/app\/Models\/Business.php:L15 \u2014 Business industry type stored in physical column type",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-025",
+        "label": "phone",
+        "form_id": "FORM-005",
+        "form_name": "Business Branding & Profile Form",
+        "page": "ROUTE-003 (InformationView.vue) \/ Root \/ SECTION-009",
+        "logical_destination": "businesses.phone",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "businesses.phone"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-005"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/ProfileController.php:L26 \u2014 phone | api\/database\/migrations\/2026_08_24_051340_create_businesses_table.php:L22 \u2014 string(\"phone\")",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-026",
+        "label": "street_address",
+        "form_id": "FORM-005",
+        "form_name": "Business Branding & Profile Form",
+        "page": "ROUTE-003 (InformationView.vue) \/ Root \/ SECTION-009",
+        "logical_destination": "businesses.address",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "businesses.address"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-004"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/ProfileController.php:L27 \u2014 address | api\/database\/migrations\/2026_08_24_051340_create_businesses_table.php:L24 \u2014 text(\"address\")",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-027",
+        "label": "city",
+        "form_id": "FORM-005",
+        "form_name": "Business Branding & Profile Form",
+        "page": "ROUTE-003 (InformationView.vue) \/ Root \/ SECTION-009",
+        "logical_destination": "businesses.city",
+        "mapping_type": "UNPERSISTED_UI_INPUT",
+        "physical_destinations": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "evidence": "Business city captured in InformationView.vue (FORM-005) but absent from businesses table schema (present on branches table only).",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "P1-FIELD-GAP-026",
+        "remediation": "Phase 9 \u2014 Add city column to businesses table or update active branch city."
+    },
+    {
+        "field_id": "FIELD-028",
+        "label": "currency",
+        "form_id": "FORM-006",
+        "form_name": "Business Preferences Form",
+        "page": "ROUTE-011 (PreferencesView.vue) \/ step-preferences \/ SECTION-010",
+        "logical_destination": "preferences.currency",
+        "mapping_type": "KEY_VALUE_STORAGE",
+        "physical_destinations": [
+            "settings.key ('currency_symbol')",
+            "settings.value"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-382, DBCOL-383"
+        ],
+        "evidence": "SettingController.php:L35 \u2014 currency_symbol key allowlist",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-029",
+        "label": "timezone",
+        "form_id": "FORM-006",
+        "form_name": "Business Preferences Form",
+        "page": "ROUTE-011 (PreferencesView.vue) \/ step-preferences \/ SECTION-010",
+        "logical_destination": "preferences.timezone",
+        "mapping_type": "KEY_VALUE_STORAGE",
+        "physical_destinations": [
+            "settings.key ('timezone')",
+            "settings.value"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-382, DBCOL-383"
+        ],
+        "evidence": "SettingController.php:L20-L40 \u2014 timezone configuration key",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-030",
+        "label": "date_format",
+        "form_id": "FORM-006",
+        "form_name": "Business Preferences Form",
+        "page": "ROUTE-011 (PreferencesView.vue) \/ step-preferences \/ SECTION-010",
+        "logical_destination": "preferences.date_format",
+        "mapping_type": "KEY_VALUE_STORAGE",
+        "physical_destinations": [
+            "settings.key ('date_format')",
+            "settings.value"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-382, DBCOL-383"
+        ],
+        "evidence": "SettingController.php:L20-L40 \u2014 date_format mask configuration key",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-031",
+        "label": "tax_enabled",
+        "form_id": "FORM-006",
+        "form_name": "Business Preferences Form",
+        "page": "ROUTE-011 (PreferencesView.vue) \/ step-preferences \/ SECTION-010",
+        "logical_destination": "preferences.tax_enabled",
+        "mapping_type": "KEY_VALUE_STORAGE",
+        "physical_destinations": [
+            "settings.key ('show_tax_number')",
+            "settings.value"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-382, DBCOL-383"
+        ],
+        "evidence": "SettingController.php:L26 \u2014 show_tax_number key allowlist",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-032",
+        "label": "tax_rate",
+        "form_id": "FORM-006",
+        "form_name": "Business Preferences Form",
+        "page": "ROUTE-011 (PreferencesView.vue) \/ step-preferences \/ SECTION-010",
+        "logical_destination": "preferences.tax_rate",
+        "mapping_type": "KEY_VALUE_STORAGE",
+        "physical_destinations": [
+            "settings.key ('tax_number')",
+            "settings.value"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-382, DBCOL-383"
+        ],
+        "evidence": "SettingController.php:L27 \u2014 tax_number key allowlist",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-033",
+        "label": "receipt_footer",
+        "form_id": "FORM-006",
+        "form_name": "Business Preferences Form",
+        "page": "ROUTE-011 (PreferencesView.vue) \/ step-preferences \/ SECTION-010",
+        "logical_destination": "preferences.receipt_footer",
+        "mapping_type": "KEY_VALUE_STORAGE",
+        "physical_destinations": [
+            "settings.key ('receipt_footer')",
+            "settings.value"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-382, DBCOL-383"
+        ],
+        "evidence": "SettingController.php:L24 \u2014 receipt_footer key allowlist",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-034",
+        "label": "name",
+        "form_id": "FORM-007",
+        "form_name": "Master Product Drawer Form",
+        "page": "ROUTE-006 (InventryView.vue) \/ products \/ SECTION-036",
+        "logical_destination": "products.name",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "products.name"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-107"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/ProductController.php:L40-L65 \u2014 store(), update() | api\/database\/migrations\/2026_08_24_051344_create_products_table.php:L18 \u2014 string(\"name\")",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-035",
+        "label": "sku",
+        "form_id": "FORM-007",
+        "form_name": "Master Product Drawer Form",
+        "page": "ROUTE-006 (InventryView.vue) \/ products \/ SECTION-036",
+        "logical_destination": "products.sku",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "products.sku"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-108"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/ProductController.php:L45 \u2014 sku | api\/database\/migrations\/2026_08_24_051344_create_products_table.php:L19 \u2014 string(\"sku\")->unique()",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-036",
+        "label": "barcode",
+        "form_id": "FORM-007",
+        "form_name": "Master Product Drawer Form",
+        "page": "ROUTE-006 (InventryView.vue) \/ products \/ SECTION-036",
+        "logical_destination": "products.barcode",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "products.barcode"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-109"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/ProductController.php:L48 \u2014 barcode | api\/database\/migrations\/2026_08_24_051344_create_products_table.php:L20 \u2014 string(\"barcode\")->nullable()->unique()",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-037",
+        "label": "category_id",
+        "form_id": "FORM-007",
+        "form_name": "Master Product Drawer Form",
+        "page": "ROUTE-006 (InventryView.vue) \/ products \/ SECTION-036",
+        "logical_destination": "products.category_id",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "products.category_id"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-106"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/ProductController.php:L50 \u2014 category_id | api\/database\/migrations\/2026_08_24_051344_create_products_table.php:L21 \u2014 foreignId(\"category_id\")->constrained()",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-038",
+        "label": "subcategory_id",
+        "form_id": "FORM-007",
+        "form_name": "Master Product Drawer Form",
+        "page": "ROUTE-006 (InventryView.vue) \/ products \/ SECTION-036",
+        "logical_destination": "products.subcategory_id",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "products.subcategory_id"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-125"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/ProductController.php:L52 \u2014 subcategory_id | api\/database\/migrations\/2026_08_24_051344_create_products_table.php:L22 \u2014 foreignId(\"subcategory_id\")->nullable()->constrained()",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-039",
+        "label": "brand_id",
+        "form_id": "FORM-007",
+        "form_name": "Master Product Drawer Form",
+        "page": "ROUTE-006 (InventryView.vue) \/ products \/ SECTION-036",
+        "logical_destination": "products.brand_id",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "products.brand_id"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-124"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/ProductController.php:L54 \u2014 brand_id | api\/database\/migrations\/2026_08_24_051344_create_products_table.php:L23 \u2014 foreignId(\"brand_id\")->nullable()->constrained()",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-040",
+        "label": "cost_price",
+        "form_id": "FORM-007",
+        "form_name": "Master Product Drawer Form",
+        "page": "ROUTE-006 (InventryView.vue) \/ products \/ SECTION-036",
+        "logical_destination": "products.cost_price",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "products.cost_price"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-110"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/ProductController.php:L56 \u2014 cost_price | api\/database\/migrations\/2026_08_24_051344_create_products_table.php:L24 \u2014 decimal(\"cost_price\",12,2)->default(0)",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-041",
+        "label": "selling_price",
+        "form_id": "FORM-007",
+        "form_name": "Master Product Drawer Form",
+        "page": "ROUTE-006 (InventryView.vue) \/ products \/ SECTION-036",
+        "logical_destination": "products.selling_price",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "products.selling_price"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-111"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/ProductController.php:L58 \u2014 selling_price | api\/database\/migrations\/2026_08_24_051344_create_products_table.php:L25 \u2014 decimal(\"selling_price\",12,2)->default(0)",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-042",
+        "label": "wholesale_price",
+        "form_id": "FORM-007",
+        "form_name": "Master Product Drawer Form",
+        "page": "ROUTE-006 (InventryView.vue) \/ products \/ SECTION-036",
+        "logical_destination": "products.wholesale_price",
+        "mapping_type": "UNPERSISTED_UI_INPUT",
+        "physical_destinations": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "evidence": "Wholesale price captured in ProductView.vue (FORM-009) but absent from products table schema and ignored by POS checkout.",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "P1-FIELD-GAP-002",
+        "remediation": "Phase 9 \u2014 Add wholesale_price decimal column to products table."
+    },
+    {
+        "field_id": "FIELD-043",
+        "label": "opening_stock",
+        "form_id": "FORM-007",
+        "form_name": "Master Product Drawer Form",
+        "page": "ROUTE-006 (InventryView.vue) \/ products \/ SECTION-036",
+        "logical_destination": "branch_inventory.stock",
+        "mapping_type": "EXACT_PHYSICAL_RENAME",
+        "physical_destinations": [
+            "branch_inventories.quantity_on_hand"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-130"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/ProductController.php:L95, api\/app\/Models\/BranchInventory.php:L18 \u2014 Branch physical on-hand stock quantity stored in quantity_on_hand",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-044",
+        "label": "min_stock",
+        "form_id": "FORM-007",
+        "form_name": "Master Product Drawer Form",
+        "page": "ROUTE-006 (InventryView.vue) \/ products \/ SECTION-036",
+        "logical_destination": "products.min_stock",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "products.min_stock"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-113"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/ProductController.php:L62 \u2014 min_stock | api\/database\/migrations\/2026_08_24_051344_create_products_table.php:L27 \u2014 integer(\"min_stock\")->default(5)",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-045",
+        "label": "unit",
+        "form_id": "FORM-007",
+        "form_name": "Master Product Drawer Form",
+        "page": "ROUTE-006 (InventryView.vue) \/ products \/ SECTION-036",
+        "logical_destination": "products.unit",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "products.unit"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-115"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/ProductController.php:L63 \u2014 unit | api\/database\/migrations\/2026_08_24_051344_create_products_table.php:L28 \u2014 string(\"unit\")->default(\"Piece\")",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-046",
+        "label": "image",
+        "form_id": "FORM-007",
+        "form_name": "Master Product Drawer Form",
+        "page": "ROUTE-006 (InventryView.vue) \/ products \/ SECTION-036",
+        "logical_destination": "products.image_url",
+        "mapping_type": "EXACT_PHYSICAL_RENAME",
+        "physical_destinations": [
+            "products.image"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-117"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/ProductController.php:L65, api\/app\/Models\/Product.php:L24 \u2014 Product picture asset path stored in physical column image",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-047",
+        "label": "description",
+        "form_id": "FORM-007",
+        "form_name": "Master Product Drawer Form",
+        "page": "ROUTE-006 (InventryView.vue) \/ products \/ SECTION-036",
+        "logical_destination": "products.description",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "products.description"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-116"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/ProductController.php:L66 \u2014 description | api\/database\/migrations\/2026_08_24_051344_create_products_table.php:L30 \u2014 text(\"description\")->nullable()",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-048",
+        "label": "adjustment_type",
+        "form_id": "FORM-008",
+        "form_name": "Quick Stock Adjustment Form",
+        "page": "ROUTE-006 (InventryView.vue) \/ products \/ SECTION-037",
+        "logical_destination": "inventory_movements.type",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "inventory_movements.type"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-139"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/InventoryController.php:L75-L95 \u2014 adjust() | api\/database\/migrations\/2026_09_15_000000_create_branch_inventories_and_update_movements_table.php:L25 \u2014 string(\"type\")",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-049",
+        "label": "quantity",
+        "form_id": "FORM-008",
+        "form_name": "Quick Stock Adjustment Form",
+        "page": "ROUTE-006 (InventryView.vue) \/ products \/ SECTION-037",
+        "logical_destination": "inventory_movements.quantity",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "inventory_movements.quantity"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-143"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/InventoryController.php:L80 \u2014 quantity | api\/database\/migrations\/2026_09_15_000000_create_branch_inventories_and_update_movements_table.php:L26 \u2014 integer(\"quantity\")",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-050",
+        "label": "reason",
+        "form_id": "FORM-008",
+        "form_name": "Quick Stock Adjustment Form",
+        "page": "ROUTE-006 (InventryView.vue) \/ products \/ SECTION-037",
+        "logical_destination": "inventory_movements.description",
+        "mapping_type": "EXACT_PHYSICAL_RENAME",
+        "physical_destinations": [
+            "inventory_movements.notes"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-146"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/InventoryController.php:L80, api\/app\/Models\/InventoryMovement.php:L25 \u2014 Inventory movement textual narrative stored in physical column notes",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-051",
+        "label": "unit_cost_override",
+        "form_id": "FORM-008",
+        "form_name": "Quick Stock Adjustment Form",
+        "page": "ROUTE-006 (InventryView.vue) \/ products \/ SECTION-037",
+        "logical_destination": "inventory_movements.unit_cost",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "inventory_movements.unit_cost"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-144"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/InventoryController.php:L88 \u2014 saves unit_cost to movement | api\/database\/migrations\/2026_09_15_000000_create_branch_inventories_and_update_movements_table.php:L27 \u2014 decimal(\"unit_cost\",12,2)->nullable()",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-052",
+        "label": "name",
+        "form_id": "FORM-009",
+        "form_name": "Master Category Form",
+        "page": "ROUTE-006 (InventryView.vue) \/ categories \/ SECTION-038",
+        "logical_destination": "categories.name",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "categories.name"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-088"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/CategoryController.php:L30-L50 \u2014 store(), update() | api\/database\/migrations\/2026_08_24_051343_create_categories_table.php:L18 \u2014 string(\"name\")",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-053",
+        "label": "parent_id",
+        "form_id": "FORM-009",
+        "form_name": "Master Category Form",
+        "page": "ROUTE-006 (InventryView.vue) \/ categories \/ SECTION-038",
+        "logical_destination": "categories.parent_id",
+        "mapping_type": "EXACT_PHYSICAL_RENAME",
+        "physical_destinations": [
+            "subcategories.category_id"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-094"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/SubcategoryController.php:L35, api\/app\/Models\/Subcategory.php:L16 \u2014 Subcategory parent category relation stored in subcategories.category_id",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-054",
+        "label": "slug",
+        "form_id": "FORM-009",
+        "form_name": "Master Category Form",
+        "page": "ROUTE-006 (InventryView.vue) \/ categories \/ SECTION-038",
+        "logical_destination": "categories.slug",
+        "mapping_type": "UNPERSISTED_UI_INPUT",
+        "physical_destinations": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "evidence": "Category URL slug captured in Category modal but categories schema only contains name and description.",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "P1-FIELD-GAP-005",
+        "remediation": "Phase 9 \u2014 Add slug column to categories table or generate dynamically in frontend."
+    },
+    {
+        "field_id": "FIELD-055",
+        "label": "color_theme",
+        "form_id": "FORM-009",
+        "form_name": "Master Category Form",
+        "page": "ROUTE-006 (InventryView.vue) \/ categories \/ SECTION-038",
+        "logical_destination": "categories.color",
+        "mapping_type": "UNPERSISTED_UI_INPUT",
+        "physical_destinations": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "evidence": "Category color theme picker captured in CategoriesView.vue but categories schema has no color column.",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "P1-FIELD-GAP-006",
+        "remediation": "Phase 9 \u2014 Add color_theme column to categories table."
+    },
+    {
+        "field_id": "FIELD-056",
+        "label": "status",
+        "form_id": "FORM-009",
+        "form_name": "Master Category Form",
+        "page": "ROUTE-006 (InventryView.vue) \/ categories \/ SECTION-038",
+        "logical_destination": "categories.is_active",
+        "mapping_type": "UNPERSISTED_UI_INPUT",
+        "physical_destinations": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "evidence": "Category active status toggle captured in CategoriesView.vue but categories schema has no is_active column.",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "P1-FIELD-GAP-007",
+        "remediation": "Phase 9 \u2014 Add is_active boolean column to categories table."
+    },
+    {
+        "field_id": "FIELD-057",
+        "label": "name",
+        "form_id": "FORM-010",
+        "form_name": "Master Brand Form",
+        "page": "ROUTE-006 (InventryView.vue) \/ brands \/ SECTION-039",
+        "logical_destination": "brands.name",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "brands.name"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-100"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/BrandController.php:L30-L50 \u2014 store(), update() | api\/database\/migrations\/2026_08_24_051344_create_brands_table.php:L18 \u2014 string(\"name\")",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-058",
+        "label": "company",
+        "form_id": "FORM-010",
+        "form_name": "Master Brand Form",
+        "page": "ROUTE-006 (InventryView.vue) \/ brands \/ SECTION-039",
+        "logical_destination": "brands.company",
+        "mapping_type": "UNPERSISTED_UI_INPUT",
+        "physical_destinations": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "evidence": "Brand parent company name captured in Brand modal but brands schema only contains name and image.",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "P1-FIELD-GAP-008",
+        "remediation": "Phase 9 \u2014 Add company string column to brands table."
+    },
+    {
+        "field_id": "FIELD-059",
+        "label": "logo_url",
+        "form_id": "FORM-010",
+        "form_name": "Master Brand Form",
+        "page": "ROUTE-006 (InventryView.vue) \/ brands \/ SECTION-039",
+        "logical_destination": "brands.logo_url",
+        "mapping_type": "EXACT_PHYSICAL_RENAME",
+        "physical_destinations": [
+            "brands.image"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-101"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/BrandController.php:L40, api\/app\/Models\/Brand.php:L18 \u2014 Brand logo image path stored in physical column image",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-060",
+        "label": "description",
+        "form_id": "FORM-010",
+        "form_name": "Master Brand Form",
+        "page": "ROUTE-006 (InventryView.vue) \/ brands \/ SECTION-039",
+        "logical_destination": "brands.description",
+        "mapping_type": "UNPERSISTED_UI_INPUT",
+        "physical_destinations": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "evidence": "Brand description captured in Brand modal but brands schema only contains name and image.",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "P1-FIELD-GAP-009",
+        "remediation": "Phase 9 \u2014 Add description text column to brands table."
+    },
+    {
+        "field_id": "FIELD-061",
+        "label": "customer_id",
+        "form_id": "FORM-011",
+        "form_name": "Point of Sale Checkout Form",
+        "page": "ROUTE-002 (PosSaleView.vue) \/ Root \/ SECTION-064",
+        "logical_destination": "sales.customer_id",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "sales.customer_id"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-153"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/SaleController.php:L40-L70 \u2014 store() | api\/database\/migrations\/2026_08_24_051345_create_sales_table.php:L19 \u2014 foreignId(\"customer_id\")->constrained()",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-062",
+        "label": "payment_method",
+        "form_id": "FORM-011",
+        "form_name": "Point of Sale Checkout Form",
+        "page": "ROUTE-002 (PosSaleView.vue) \/ Root \/ SECTION-064",
+        "logical_destination": "sales.payment_method",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "sales.payment_method"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-164"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/SaleController.php:L45 \u2014 payment_method | api\/database\/migrations\/2026_08_24_051345_create_sales_table.php:L26 \u2014 string(\"payment_method\")->default(\"cash\")",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-063",
+        "label": "tendered_amount",
+        "form_id": "FORM-011",
+        "form_name": "Point of Sale Checkout Form",
+        "page": "ROUTE-002 (PosSaleView.vue) \/ Root \/ SECTION-064",
+        "logical_destination": "sales.tendered_amount",
+        "mapping_type": "EXACT_PHYSICAL_RENAME",
+        "physical_destinations": [
+            "sales.paid_amount"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-160"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/SaleController.php:L115, api\/app\/Models\/Sale.php:L28 \u2014 Customer tendered cash stored as transaction paid_amount",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-064",
+        "label": "discount_type",
+        "form_id": "FORM-011",
+        "form_name": "Point of Sale Checkout Form",
+        "page": "ROUTE-002 (PosSaleView.vue) \/ Root \/ SECTION-064",
+        "logical_destination": "sales.discount_type",
+        "mapping_type": "UNPERSISTED_UI_INPUT",
+        "physical_destinations": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "evidence": "POS discount type toggle (fixed\/percentage) is transient; only net computed discount amount is stored in sales.discount.",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "P1-FIELD-GAP-010",
+        "remediation": "Phase 9 \u2014 Add discount_type enum column to sales table."
+    },
+    {
+        "field_id": "FIELD-065",
+        "label": "discount_value",
+        "form_id": "FORM-011",
+        "form_name": "Point of Sale Checkout Form",
+        "page": "ROUTE-002 (PosSaleView.vue) \/ Root \/ SECTION-064",
+        "logical_destination": "sales.discount",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "sales.discount"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-157"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/SaleController.php:L52 \u2014 discount | api\/database\/migrations\/2026_08_24_051345_create_sales_table.php:L22 \u2014 decimal(\"discount\",12,2)->default(0)",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-066",
+        "label": "tax_rate",
+        "form_id": "FORM-011",
+        "form_name": "Point of Sale Checkout Form",
+        "page": "ROUTE-002 (PosSaleView.vue) \/ Root \/ SECTION-064",
+        "logical_destination": "sales.tax_rate",
+        "mapping_type": "UNPERSISTED_UI_INPUT",
+        "physical_destinations": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "evidence": "POS tax rate selector is transient; only net calculated tax amount is stored in sales.tax.",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "P1-FIELD-GAP-011",
+        "remediation": "Phase 9 \u2014 Add tax_rate decimal column to sales table."
+    },
+    {
+        "field_id": "FIELD-067",
+        "label": "card_auth_code",
+        "form_id": "FORM-011",
+        "form_name": "Point of Sale Checkout Form",
+        "page": "ROUTE-002 (PosSaleView.vue) \/ Root \/ SECTION-064",
+        "logical_destination": "NOT_PRESENT",
+        "mapping_type": "TRANSIENT_UI_ONLY",
+        "physical_destinations": [
+            "N\/A \u2014 TRANSIENT_UI_ONLY"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 TRANSIENT_UI_ONLY"
+        ],
+        "evidence": "POS live interactive product search query",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-068",
+        "label": "order_notes",
+        "form_id": "FORM-011",
+        "form_name": "Point of Sale Checkout Form",
+        "page": "ROUTE-002 (PosSaleView.vue) \/ Root \/ SECTION-064",
+        "logical_destination": "sales.notes",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "sales.notes"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-165"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/SaleController.php:L55 \u2014 notes | api\/database\/migrations\/2026_08_24_051345_create_sales_table.php:L30 \u2014 text(\"notes\")->nullable()",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-069",
+        "label": "name",
+        "form_id": "FORM-012",
+        "form_name": "Quick Add Customer POS Form",
+        "page": "ROUTE-002 (PosSaleView.vue) \/ Root \/ SECTION-064",
+        "logical_destination": "customers.name",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "customers.name"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-204"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/CustomerController.php:L30-L50 \u2014 store() | api\/database\/migrations\/2026_08_24_051346_create_customers_table.php:L18 \u2014 string(\"name\")",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-070",
+        "label": "phone",
+        "form_id": "FORM-012",
+        "form_name": "Quick Add Customer POS Form",
+        "page": "ROUTE-002 (PosSaleView.vue) \/ Root \/ SECTION-064",
+        "logical_destination": "customers.phone",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "customers.phone"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-205"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/CustomerController.php:L35 \u2014 phone | api\/database\/migrations\/2026_08_24_051346_create_customers_table.php:L19 \u2014 string(\"phone\")",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-071",
+        "label": "credit_limit",
+        "form_id": "FORM-012",
+        "form_name": "Quick Add Customer POS Form",
+        "page": "ROUTE-002 (PosSaleView.vue) \/ Root \/ SECTION-064",
+        "logical_destination": "customers.credit_limit",
+        "mapping_type": "UNPERSISTED_UI_INPUT",
+        "physical_destinations": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "evidence": "Customer credit limit threshold captured in Customer modal but absent from customers table schema.",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "P1-FIELD-GAP-020",
+        "remediation": "Phase 9 \u2014 Add credit_limit decimal column to customers table."
+    },
+    {
+        "field_id": "FIELD-072",
+        "label": "return_quantities",
+        "form_id": "FORM-013",
+        "form_name": "Sales Return & Refund Form",
+        "page": "ROUTE-007 (SalesView.vue) \/ Root \/ SECTION-085",
+        "logical_destination": "sale_return_items.quantity",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "sale_return_items.quantity"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-197"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/SaleReturnRefundController.php:L35-L60 \u2014 settleRefund() | api\/database\/migrations\/2026_09_18_000000_create_sale_return_items_table.php:L18 \u2014 integer(\"quantity\")",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-073",
+        "label": "restock_condition",
+        "form_id": "FORM-013",
+        "form_name": "Sales Return & Refund Form",
+        "page": "ROUTE-007 (SalesView.vue) \/ Root \/ SECTION-085",
+        "logical_destination": "sale_returns.restock",
+        "mapping_type": "UNPERSISTED_UI_INPUT",
+        "physical_destinations": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "evidence": "Sale return restock physical condition toggle is transient; only reason string is stored in sale_returns.reason.",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "P1-FIELD-GAP-012",
+        "remediation": "Phase 9 \u2014 Add restock_condition column to sale_returns table."
+    },
+    {
+        "field_id": "FIELD-074",
+        "label": "refund_channel",
+        "form_id": "FORM-013",
+        "form_name": "Sales Return & Refund Form",
+        "page": "ROUTE-007 (SalesView.vue) \/ Root \/ SECTION-085",
+        "logical_destination": "sale_returns.refund_channel",
+        "mapping_type": "UNPERSISTED_UI_INPUT",
+        "physical_destinations": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "evidence": "Sale return refund disbursement channel toggle is transient; only refund_amount is stored in sale_returns.",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "P1-FIELD-GAP-013",
+        "remediation": "Phase 9 \u2014 Add refund_channel column to sale_returns table."
+    },
+    {
+        "field_id": "FIELD-075",
+        "label": "refund_reason",
+        "form_id": "FORM-013",
+        "form_name": "Sales Return & Refund Form",
+        "page": "ROUTE-007 (SalesView.vue) \/ Root \/ SECTION-085",
+        "logical_destination": "sale_returns.reason",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "sale_returns.reason"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-189"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/SaleReturnRefundController.php:L48 \u2014 reason | api\/database\/migrations\/2026_09_18_000000_create_sale_returns_table.php:L24 \u2014 string(\"reason\")->nullable()",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-076",
+        "label": "supplier_id",
+        "form_id": "FORM-014",
+        "form_name": "Purchase Order & GRN Form",
+        "page": "ROUTE-012 (PurchaseView.vue) \/ Root \/ SECTION-100",
+        "logical_destination": "purchases.supplier_id",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "purchases.supplier_id"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-256"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/PurchaseController.php:L35-L60 \u2014 store() | api\/database\/migrations\/2026_08_24_051347_create_purchases_table.php:L18 \u2014 foreignId(\"supplier_id\")->constrained()",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-077",
+        "label": "bill_number",
+        "form_id": "FORM-014",
+        "form_name": "Purchase Order & GRN Form",
+        "page": "ROUTE-012 (PurchaseView.vue) \/ Root \/ SECTION-100",
+        "logical_destination": "purchases.bill_number",
+        "mapping_type": "EXACT_PHYSICAL_RENAME",
+        "physical_destinations": [
+            "purchases.po_number"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-258"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/PurchaseController.php:L40, api\/app\/Models\/Purchase.php:L20 \u2014 Supplier invoice\/bill identifier stored in physical column po_number",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-078",
+        "label": "purchase_date",
+        "form_id": "FORM-014",
+        "form_name": "Purchase Order & GRN Form",
+        "page": "ROUTE-012 (PurchaseView.vue) \/ Root \/ SECTION-100",
+        "logical_destination": "purchases.purchase_date",
+        "mapping_type": "EXACT_PHYSICAL_RENAME",
+        "physical_destinations": [
+            "purchases.date"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-259"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/PurchaseController.php:L42, api\/app\/Models\/Purchase.php:L21 \u2014 Purchase transaction execution date stored in physical column date",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-079",
+        "label": "destination_branch",
+        "form_id": "FORM-014",
+        "form_name": "Purchase Order & GRN Form",
+        "page": "ROUTE-012 (PurchaseView.vue) \/ Root \/ SECTION-100",
+        "logical_destination": "purchases.branch_id",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "purchases.branch_id"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-255"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/PurchaseController.php:L45 \u2014 branch_id | api\/database\/migrations\/2026_08_24_051347_create_purchases_table.php:L21 \u2014 foreignId(\"branch_id\")->constrained()",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-080",
+        "label": "shipping_charges",
+        "form_id": "FORM-014",
+        "form_name": "Purchase Order & GRN Form",
+        "page": "ROUTE-012 (PurchaseView.vue) \/ Root \/ SECTION-100",
+        "logical_destination": "purchases.shipping_charges",
+        "mapping_type": "UNPERSISTED_UI_INPUT",
+        "physical_destinations": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "evidence": "Purchase shipping charges captured in Purchase form but collapsed directly into purchases.total without dedicated line item column.",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "P1-FIELD-GAP-014",
+        "remediation": "Phase 9 \u2014 Add shipping_charges decimal column to purchases table."
+    },
+    {
+        "field_id": "FIELD-081",
+        "label": "amount_paid_now",
+        "form_id": "FORM-014",
+        "form_name": "Purchase Order & GRN Form",
+        "page": "ROUTE-012 (PurchaseView.vue) \/ Root \/ SECTION-100",
+        "logical_destination": "purchases.paid_amount",
+        "mapping_type": "UNPERSISTED_UI_INPUT",
+        "physical_destinations": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "evidence": "POS discount type (fixed vs percentage) toggle is transient; only net computed discount amount is stored in sales.discount.",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "P1-FIELD-GAP-010",
+        "remediation": "Phase 9 \u2014 Add discount_type enum column to sales table."
+    },
+    {
+        "field_id": "FIELD-082",
+        "label": "payment_account_id",
+        "form_id": "FORM-014",
+        "form_name": "Purchase Order & GRN Form",
+        "page": "ROUTE-012 (PurchaseView.vue) \/ Root \/ SECTION-100",
+        "logical_destination": "account_movements.account_id",
+        "mapping_type": "UNPERSISTED_UI_INPUT",
+        "physical_destinations": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "evidence": "POS tax rate percentage selector is transient; only net calculated tax amount is stored in sales.tax.",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "P1-FIELD-GAP-011",
+        "remediation": "Phase 9 \u2014 Add tax_rate decimal column to sales table."
+    },
+    {
+        "field_id": "FIELD-083",
+        "label": "product_search",
+        "form_id": "FORM-015",
+        "form_name": "Purchase Line Item Form",
+        "page": "ROUTE-012 (PurchaseView.vue) \/ Root \/ SECTION-101",
+        "logical_destination": "purchase_items.product_id",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "purchase_items.product_id"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-273"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/PurchaseController.php:L65 \u2014 validates product_id | api\/database\/migrations\/2026_08_24_051343_create_purchase_items_table.php:L18 \u2014 foreignId(\"product_id\")->constrained()",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-084",
+        "label": "quantity_received",
+        "form_id": "FORM-015",
+        "form_name": "Purchase Line Item Form",
+        "page": "ROUTE-012 (PurchaseView.vue) \/ Root \/ SECTION-101",
+        "logical_destination": "purchase_items.quantity",
+        "mapping_type": "TRANSIENT_UI_ONLY",
+        "physical_destinations": [
+            "N\/A \u2014 TRANSIENT_UI_ONLY"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 TRANSIENT_UI_ONLY"
+        ],
+        "evidence": "POS computed change due return calculation",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-085",
+        "label": "unit_purchase_cost",
+        "form_id": "FORM-015",
+        "form_name": "Purchase Line Item Form",
+        "page": "ROUTE-012 (PurchaseView.vue) \/ Root \/ SECTION-101",
+        "logical_destination": "purchase_items.unit_cost",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "purchase_items.unit_cost"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-275"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/PurchaseController.php:L70 \u2014 unit_cost | api\/database\/migrations\/2026_08_24_051343_create_purchase_items_table.php:L20 \u2014 decimal(\"unit_cost\",12,2)",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-086",
+        "label": "line_discount",
+        "form_id": "FORM-015",
+        "form_name": "Purchase Line Item Form",
+        "page": "ROUTE-012 (PurchaseView.vue) \/ Root \/ SECTION-101",
+        "logical_destination": "purchase_items.discount",
+        "mapping_type": "UNPERSISTED_UI_INPUT",
+        "physical_destinations": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "evidence": "Purchase line item discount captured in UI but collapsed into purchase_items.total without dedicated column.",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "P1-FIELD-GAP-015",
+        "remediation": "Phase 9 \u2014 Add discount decimal column to purchase_items table."
+    },
+    {
+        "field_id": "FIELD-087",
+        "label": "line_tax",
+        "form_id": "FORM-015",
+        "form_name": "Purchase Line Item Form",
+        "page": "ROUTE-012 (PurchaseView.vue) \/ Root \/ SECTION-101",
+        "logical_destination": "purchase_items.tax",
+        "mapping_type": "UNPERSISTED_UI_INPUT",
+        "physical_destinations": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "evidence": "Sale return restock physical condition toggle is transient; only reason string is stored in sale_returns.reason.",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "P1-FIELD-GAP-012",
+        "remediation": "Phase 9 \u2014 Add restock_condition column to sale_returns table."
+    },
+    {
+        "field_id": "FIELD-088",
+        "label": "name",
+        "form_id": "FORM-016",
+        "form_name": "Supplier Registration Form",
+        "page": "ROUTE-014 (SupplierView.vue) \/ Root \/ SECTION-105",
+        "logical_destination": "suppliers.name",
+        "mapping_type": "UNPERSISTED_UI_INPUT",
+        "physical_destinations": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "evidence": "Sale return refund disbursement channel toggle is transient; only refund_amount is stored in sale_returns.",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "P1-FIELD-GAP-013",
+        "remediation": "Phase 9 \u2014 Add refund_channel column to sale_returns table."
+    },
+    {
+        "field_id": "FIELD-089",
+        "label": "contact_person",
+        "form_id": "FORM-016",
+        "form_name": "Supplier Registration Form",
+        "page": "ROUTE-014 (SupplierView.vue) \/ Root \/ SECTION-105",
+        "logical_destination": "suppliers.contact_person",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "suppliers.contact_person"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-245"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/SupplierController.php:L35 \u2014 contact_person | api\/database\/migrations\/2026_08_24_051348_create_suppliers_table.php:L19 \u2014 string(\"contact_person\")->nullable()",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-090",
+        "label": "phone",
+        "form_id": "FORM-016",
+        "form_name": "Supplier Registration Form",
+        "page": "ROUTE-014 (SupplierView.vue) \/ Root \/ SECTION-105",
+        "logical_destination": "suppliers.phone",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "suppliers.phone"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-246"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/SupplierController.php:L38 \u2014 phone | api\/database\/migrations\/2026_08_24_051348_create_suppliers_table.php:L20 \u2014 string(\"phone\")",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-091",
+        "label": "email",
+        "form_id": "FORM-016",
+        "form_name": "Supplier Registration Form",
+        "page": "ROUTE-014 (SupplierView.vue) \/ Root \/ SECTION-105",
+        "logical_destination": "suppliers.email",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "suppliers.email"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-247"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/SupplierController.php:L40 \u2014 email | api\/database\/migrations\/2026_08_24_051348_create_suppliers_table.php:L21 \u2014 string(\"email\")->nullable()",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-092",
+        "label": "address",
+        "form_id": "FORM-016",
+        "form_name": "Supplier Registration Form",
+        "page": "ROUTE-014 (SupplierView.vue) \/ Root \/ SECTION-105",
+        "logical_destination": "suppliers.address",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "suppliers.address"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-248"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/SupplierController.php:L42 \u2014 address | api\/database\/migrations\/2026_08_24_051348_create_suppliers_table.php:L22 \u2014 text(\"address\")->nullable()",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-093",
+        "label": "ntn_number",
+        "form_id": "FORM-016",
+        "form_name": "Supplier Registration Form",
+        "page": "ROUTE-014 (SupplierView.vue) \/ Root \/ SECTION-105",
+        "logical_destination": "suppliers.ntn_number",
+        "mapping_type": "UNPERSISTED_UI_INPUT",
+        "physical_destinations": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "evidence": "Supplier NTN tax registration number captured in Supplier form but absent from suppliers schema.",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "P1-FIELD-GAP-017",
+        "remediation": "Phase 9 \u2014 Add ntn_number string column to suppliers table."
+    },
+    {
+        "field_id": "FIELD-094",
+        "label": "opening_balance",
+        "form_id": "FORM-016",
+        "form_name": "Supplier Registration Form",
+        "page": "ROUTE-014 (SupplierView.vue) \/ Root \/ SECTION-105",
+        "logical_destination": "suppliers.balance",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "suppliers.balance"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-250"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/SupplierController.php:L46 \u2014 sets suppliers.balance | api\/database\/migrations\/2026_08_24_051348_create_suppliers_table.php:L24 \u2014 decimal(\"balance\",12,2)->default(0)",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-095",
+        "label": "supplier_id",
+        "form_id": "FORM-017",
+        "form_name": "Supplier Bill Settlement Form",
+        "page": "ROUTE-013 (SupplierpayableView.vue) \/ payables \/ SECTION-110",
+        "logical_destination": "supplier_payments.supplier_id",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "supplier_payments.supplier_id"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-282"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/SupplierPaymentController.php:L30-L55 \u2014 store() | api\/database\/migrations\/2026_09_17_000000_create_supplier_payments_table.php:L18 \u2014 foreignId(\"supplier_id\")->constrained()",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-096",
+        "label": "payment_amount",
+        "form_id": "FORM-017",
+        "form_name": "Supplier Bill Settlement Form",
+        "page": "ROUTE-013 (SupplierpayableView.vue) \/ payables \/ SECTION-110",
+        "logical_destination": "supplier_payments.amount",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "supplier_payments.amount"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-285"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/SupplierPaymentController.php:L35 \u2014 amount | api\/database\/migrations\/2026_09_17_000000_create_supplier_payments_table.php:L19 \u2014 decimal(\"amount\",12,2)",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-097",
+        "label": "payment_date",
+        "form_id": "FORM-017",
+        "form_name": "Supplier Bill Settlement Form",
+        "page": "ROUTE-013 (SupplierpayableView.vue) \/ payables \/ SECTION-110",
+        "logical_destination": "supplier_payments.payment_date",
+        "mapping_type": "EXACT_PHYSICAL_RENAME",
+        "physical_destinations": [
+            "supplier_payments.date"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-286"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/SupplierPaymentController.php:L45, api\/app\/Models\/SupplierPayment.php:L19 \u2014 Supplier payment disbursement date stored in physical column date",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-098",
+        "label": "financial_account_id",
+        "form_id": "FORM-017",
+        "form_name": "Supplier Bill Settlement Form",
+        "page": "ROUTE-013 (SupplierpayableView.vue) \/ payables \/ SECTION-110",
+        "logical_destination": "account_movements.account_id",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "account_movements.account_id"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-341"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/SupplierPaymentController.php:L40 \u2014 financial_account_id | api\/database\/migrations\/2026_09_16_000001_create_account_movements_table.php:L18 \u2014 foreignId(\"account_id\")",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-099",
+        "label": "reference_number",
+        "form_id": "FORM-017",
+        "form_name": "Supplier Bill Settlement Form",
+        "page": "ROUTE-013 (SupplierpayableView.vue) \/ payables \/ SECTION-110",
+        "logical_destination": "supplier_payments.reference",
+        "mapping_type": "UNPERSISTED_UI_INPUT",
+        "physical_destinations": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "evidence": "Purchase shipping charges captured in Purchase form but collapsed directly into purchases.total without dedicated line item column.",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "P1-FIELD-GAP-014",
+        "remediation": "Phase 9 \u2014 Add shipping_charges decimal column to purchases table."
+    },
+    {
+        "field_id": "FIELD-100",
+        "label": "notes",
+        "form_id": "FORM-017",
+        "form_name": "Supplier Bill Settlement Form",
+        "page": "ROUTE-013 (SupplierpayableView.vue) \/ payables \/ SECTION-110",
+        "logical_destination": "supplier_payments.notes",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "supplier_payments.notes"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-288"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/SupplierPaymentController.php:L45 \u2014 notes | api\/database\/migrations\/2026_09_17_000000_create_supplier_payments_table.php:L22 \u2014 text(\"notes\")->nullable()",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-101",
+        "label": "name",
+        "form_id": "FORM-018",
+        "form_name": "Customer Master Creation Form",
+        "page": "ROUTE-015 (CustomerView.vue) \/ Root \/ SECTION-120",
+        "logical_destination": "customers.name",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "customers.name"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-204"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/CustomerController.php:L30-L50 \u2014 store(), update() | api\/database\/migrations\/2026_08_24_051346_create_customers_table.php:L18 \u2014 string(\"name\")",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-102",
+        "label": "phone",
+        "form_id": "FORM-018",
+        "form_name": "Customer Master Creation Form",
+        "page": "ROUTE-015 (CustomerView.vue) \/ Root \/ SECTION-120",
+        "logical_destination": "customers.phone",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "customers.phone"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-205"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/CustomerController.php:L35 \u2014 phone | api\/database\/migrations\/2026_08_24_051346_create_customers_table.php:L19 \u2014 string(\"phone\")",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-103",
+        "label": "secondary_phone",
+        "form_id": "FORM-018",
+        "form_name": "Customer Master Creation Form",
+        "page": "ROUTE-015 (CustomerView.vue) \/ Root \/ SECTION-120",
+        "logical_destination": "customers.secondary_phone",
+        "mapping_type": "UNPERSISTED_UI_INPUT",
+        "physical_destinations": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "evidence": "Purchase line item discount captured in UI but collapsed into purchase_items.total without dedicated column.",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "P1-FIELD-GAP-015",
+        "remediation": "Phase 9 \u2014 Add discount decimal column to purchase_items table."
+    },
+    {
+        "field_id": "FIELD-104",
+        "label": "email",
+        "form_id": "FORM-018",
+        "form_name": "Customer Master Creation Form",
+        "page": "ROUTE-015 (CustomerView.vue) \/ Root \/ SECTION-120",
+        "logical_destination": "customers.email",
+        "mapping_type": "UNPERSISTED_UI_INPUT",
+        "physical_destinations": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "evidence": "Purchase line item tax captured in UI but collapsed into purchase_items.total without dedicated column.",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "P1-FIELD-GAP-016",
+        "remediation": "Phase 9 \u2014 Add tax decimal column to purchase_items table."
+    },
+    {
+        "field_id": "FIELD-105",
+        "label": "address",
+        "form_id": "FORM-018",
+        "form_name": "Customer Master Creation Form",
+        "page": "ROUTE-015 (CustomerView.vue) \/ Root \/ SECTION-120",
+        "logical_destination": "customers.address",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "customers.address"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-207"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/CustomerController.php:L42 \u2014 address | api\/database\/migrations\/2026_08_24_051346_create_customers_table.php:L22 \u2014 text(\"address\")->nullable()",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-106",
+        "label": "city",
+        "form_id": "FORM-018",
+        "form_name": "Customer Master Creation Form",
+        "page": "ROUTE-015 (CustomerView.vue) \/ Root \/ SECTION-120",
+        "logical_destination": "customers.city",
+        "mapping_type": "UNPERSISTED_UI_INPUT",
+        "physical_destinations": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "evidence": "Customer city captured in Customer form but absent from customers schema.",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "P1-FIELD-GAP-019",
+        "remediation": "Phase 9 \u2014 Add city string column to customers table."
+    },
+    {
+        "field_id": "FIELD-107",
+        "label": "credit_limit",
+        "form_id": "FORM-018",
+        "form_name": "Customer Master Creation Form",
+        "page": "ROUTE-015 (CustomerView.vue) \/ Root \/ SECTION-120",
+        "logical_destination": "customers.credit_limit",
+        "mapping_type": "UNPERSISTED_UI_INPUT",
+        "physical_destinations": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "evidence": "Customer credit limit threshold captured in Customer form but absent from customers schema.",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "P1-FIELD-GAP-020",
+        "remediation": "Phase 9 \u2014 Add credit_limit decimal column to customers table."
+    },
+    {
+        "field_id": "FIELD-108",
+        "label": "opening_balance",
+        "form_id": "FORM-018",
+        "form_name": "Customer Master Creation Form",
+        "page": "ROUTE-015 (CustomerView.vue) \/ Root \/ SECTION-120",
+        "logical_destination": "customers.current_balance",
+        "mapping_type": "EXACT_PHYSICAL_RENAME",
+        "physical_destinations": [
+            "customers.opening_balance"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-208"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/CustomerController.php:L45, api\/app\/Models\/Customer.php:L20 \u2014 Customer opening balance on creation stored in opening_balance",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-109",
+        "label": "customer_type",
+        "form_id": "FORM-018",
+        "form_name": "Customer Master Creation Form",
+        "page": "ROUTE-015 (CustomerView.vue) \/ Root \/ SECTION-120",
+        "logical_destination": "customers.customer_type",
+        "mapping_type": "UNPERSISTED_UI_INPUT",
+        "physical_destinations": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "evidence": "Customer category\/tier classification captured in Customer form but absent from customers schema.",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "P1-FIELD-GAP-021",
+        "remediation": "Phase 9 \u2014 Add customer_type enum\/string column to customers table."
+    },
+    {
+        "field_id": "FIELD-110",
+        "label": "customer_id",
+        "form_id": "FORM-019",
+        "form_name": "Customer Payment Collection Form",
+        "page": "ROUTE-015 (CustomerView.vue) \/ Root \/ SECTION-125",
+        "logical_destination": "customer_payments.customer_id",
+        "mapping_type": "UNPERSISTED_UI_INPUT",
+        "physical_destinations": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "evidence": "Supplier NTN tax registration number captured in Supplier form but absent from suppliers schema.",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "P1-FIELD-GAP-017",
+        "remediation": "Phase 9 \u2014 Add ntn_number string column to suppliers table."
+    },
+    {
+        "field_id": "FIELD-111",
+        "label": "amount_received",
+        "form_id": "FORM-019",
+        "form_name": "Customer Payment Collection Form",
+        "page": "ROUTE-015 (CustomerView.vue) \/ Root \/ SECTION-125",
+        "logical_destination": "customer_payments.amount",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "customer_payments.amount"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-230"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/CustomerPaymentController.php:L35 \u2014 amount | api\/database\/migrations\/2026_09_19_000001_create_customer_payments_table.php:L19 \u2014 decimal(\"amount\",12,2)",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-112",
+        "label": "receiving_account_id",
+        "form_id": "FORM-019",
+        "form_name": "Customer Payment Collection Form",
+        "page": "ROUTE-015 (CustomerView.vue) \/ Root \/ SECTION-125",
+        "logical_destination": "account_movements.account_id",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "account_movements.account_id"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-341"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/CustomerPaymentController.php:L38 \u2014 financial_account_id | api\/database\/migrations\/2026_09_16_000001_create_account_movements_table.php:L18 \u2014 foreignId(\"account_id\")",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-113",
+        "label": "payment_date",
+        "form_id": "FORM-019",
+        "form_name": "Customer Payment Collection Form",
+        "page": "ROUTE-015 (CustomerView.vue) \/ Root \/ SECTION-125",
+        "logical_destination": "customer_payments.payment_date",
+        "mapping_type": "EXACT_PHYSICAL_RENAME",
+        "physical_destinations": [
+            "customer_payments.date"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-232"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/CustomerPaymentController.php:L40, api\/app\/Models\/CustomerPayment.php:L19 \u2014 Customer khata payment collection date stored in physical column date",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-114",
+        "label": "receipt_number",
+        "form_id": "FORM-019",
+        "form_name": "Customer Payment Collection Form",
+        "page": "ROUTE-015 (CustomerView.vue) \/ Root \/ SECTION-125",
+        "logical_destination": "customer_payments.receipt_number",
+        "mapping_type": "EXACT_PHYSICAL_RENAME",
+        "physical_destinations": [
+            "customer_payments.payment_number"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-229"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/CustomerPaymentController.php:L38, api\/app\/Models\/CustomerPayment.php:L17 \u2014 Customer payment receipt voucher sequence stored in payment_number",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-115",
+        "label": "notes",
+        "form_id": "FORM-019",
+        "form_name": "Customer Payment Collection Form",
+        "page": "ROUTE-015 (CustomerView.vue) \/ Root \/ SECTION-125",
+        "logical_destination": "customer_payments.notes",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "customer_payments.notes"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-233"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/CustomerPaymentController.php:L45 \u2014 notes | api\/database\/migrations\/2026_09_19_000001_create_customer_payments_table.php:L22 \u2014 text(\"notes\")->nullable()",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-116",
+        "label": "customer_id",
+        "form_id": "FORM-020",
+        "form_name": "Khata Settlement Form",
+        "page": "ROUTE-018 (KhataView.vue) \/ Root \/ SECTION-130",
+        "logical_destination": "customer_payments.customer_id",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "customer_payments.customer_id"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-226"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/KhataController.php:L40-L65 \u2014 settle() | api\/database\/migrations\/2026_09_19_000001_create_customer_payments_table.php:L18 \u2014 foreignId(\"customer_id\")",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-117",
+        "label": "settle_amount",
+        "form_id": "FORM-020",
+        "form_name": "Khata Settlement Form",
+        "page": "ROUTE-018 (KhataView.vue) \/ Root \/ SECTION-130",
+        "logical_destination": "customer_payments.amount",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "customer_payments.amount"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-230"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/KhataController.php:L45 \u2014 amount | api\/database\/migrations\/2026_09_19_000001_create_customer_payments_table.php:L19 \u2014 decimal(\"amount\",12,2)",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-118",
+        "label": "account_id",
+        "form_id": "FORM-020",
+        "form_name": "Khata Settlement Form",
+        "page": "ROUTE-018 (KhataView.vue) \/ Root \/ SECTION-130",
+        "logical_destination": "account_movements.account_id",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "account_movements.account_id"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-341"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/KhataController.php:L48 \u2014 account_id | api\/database\/migrations\/2026_09_16_000001_create_account_movements_table.php:L18 \u2014 foreignId(\"account_id\")",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-119",
+        "label": "notes",
+        "form_id": "FORM-020",
+        "form_name": "Khata Settlement Form",
+        "page": "ROUTE-018 (KhataView.vue) \/ Root \/ SECTION-130",
+        "logical_destination": "customer_payments.notes",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "customer_payments.notes"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-233"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/KhataController.php:L50 \u2014 notes | api\/database\/migrations\/2026_09_19_000001_create_customer_payments_table.php:L22 \u2014 text(\"notes\")->nullable()",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-120",
+        "label": "account_party",
+        "form_id": "FORM-021",
+        "form_name": "Debt Return Form",
+        "page": "ROUTE-019 (ReturnDebtView.vue) \/ Root \/ SECTION-135",
+        "logical_destination": "account_movements.reference_id",
+        "mapping_type": "UNPERSISTED_UI_INPUT",
+        "physical_destinations": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "evidence": "Customer secondary phone captured in Customer form but absent from customers schema.",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "P1-FIELD-GAP-018",
+        "remediation": "Phase 9 \u2014 Add secondary_phone string column to customers table."
+    },
+    {
+        "field_id": "FIELD-121",
+        "label": "return_amount",
+        "form_id": "FORM-021",
+        "form_name": "Debt Return Form",
+        "page": "ROUTE-019 (ReturnDebtView.vue) \/ Root \/ SECTION-135",
+        "logical_destination": "account_movements.amount",
+        "mapping_type": "UNPERSISTED_UI_INPUT",
+        "physical_destinations": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "evidence": "Customer city captured in Customer form but absent from customers schema.",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "P1-FIELD-GAP-019",
+        "remediation": "Phase 9 \u2014 Add city string column to customers table."
+    },
+    {
+        "field_id": "FIELD-122",
+        "label": "payment_method",
+        "form_id": "FORM-021",
+        "form_name": "Debt Return Form",
+        "page": "ROUTE-019 (ReturnDebtView.vue) \/ Root \/ SECTION-135",
+        "logical_destination": "account_movements.type",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "account_movements.type"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-342"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/KhataController.php:L78 \u2014 method | api\/database\/migrations\/2026_09_16_000001_create_account_movements_table.php:L19 \u2014 string(\"type\")",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-123",
+        "label": "notes",
+        "form_id": "FORM-021",
+        "form_name": "Debt Return Form",
+        "page": "ROUTE-019 (ReturnDebtView.vue) \/ Root \/ SECTION-135",
+        "logical_destination": "account_movements.notes",
+        "mapping_type": "EXACT_PHYSICAL_RENAME",
+        "physical_destinations": [
+            "account_movements.description"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-348"
+        ],
+        "evidence": "api\/app\/Services\/AccountMovementService.php:L48, api\/app\/Models\/AccountMovement.php:L24 \u2014 Movement narrative notes stored in description",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-124",
+        "label": "description",
+        "form_id": "FORM-022",
+        "form_name": "Full-Page Expense Form",
+        "page": "ROUTE-016 (ExpensesView.vue) \/ add \/ SECTION-144",
+        "logical_destination": "expenses.title",
+        "mapping_type": "UNPERSISTED_UI_INPUT",
+        "physical_destinations": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "evidence": "Customer credit limit threshold captured in Customer form but absent from customers schema.",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "P1-FIELD-GAP-020",
+        "remediation": "Phase 9 \u2014 Add credit_limit decimal column to customers table."
+    },
+    {
+        "field_id": "FIELD-125",
+        "label": "category",
+        "form_id": "FORM-022",
+        "form_name": "Full-Page Expense Form",
+        "page": "ROUTE-016 (ExpensesView.vue) \/ add \/ SECTION-144",
+        "logical_destination": "expenses.category_id",
+        "mapping_type": "UNPERSISTED_UI_INPUT",
+        "physical_destinations": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "evidence": "Customer category\/tier classification captured in Customer form but absent from customers schema.",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "P1-FIELD-GAP-021",
+        "remediation": "Phase 9 \u2014 Add customer_type enum\/string column to customers table."
+    },
+    {
+        "field_id": "FIELD-126",
+        "label": "amount",
+        "form_id": "FORM-022",
+        "form_name": "Full-Page Expense Form",
+        "page": "ROUTE-016 (ExpensesView.vue) \/ add \/ SECTION-144",
+        "logical_destination": "expenses.amount",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "expenses.amount"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-299"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/ExpenseController.php:L42 \u2014 amount | api\/database\/migrations\/2026_08_24_051349_create_expenses_table.php:L20 \u2014 decimal(\"amount\",12,2)",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-127",
+        "label": "date",
+        "form_id": "FORM-022",
+        "form_name": "Full-Page Expense Form",
+        "page": "ROUTE-016 (ExpensesView.vue) \/ add \/ SECTION-144",
+        "logical_destination": "expenses.date",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "expenses.date"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-305"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/ExpenseController.php:L45 \u2014 date | api\/database\/migrations\/2026_08_24_051349_create_expenses_table.php:L21 \u2014 date(\"date\")",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-128",
+        "label": "method",
+        "form_id": "FORM-022",
+        "form_name": "Full-Page Expense Form",
+        "page": "ROUTE-016 (ExpensesView.vue) \/ add \/ SECTION-144",
+        "logical_destination": "expenses.payment_method",
+        "mapping_type": "REQUEST_ONLY",
+        "physical_destinations": [
+            "N\/A \u2014 REQUEST_ONLY"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 REQUEST_ONLY"
+        ],
+        "evidence": "Expense payment method selector used to route transaction into financial accounts",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-129",
+        "label": "reference",
+        "form_id": "FORM-022",
+        "form_name": "Full-Page Expense Form",
+        "page": "ROUTE-016 (ExpensesView.vue) \/ add \/ SECTION-144",
+        "logical_destination": "expenses.reference",
+        "mapping_type": "EXACT_PHYSICAL_RENAME",
+        "physical_destinations": [
+            "expenses.description"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-306"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/ExpenseController.php:L35 \u2014 Expense voucher reference stored in description",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-130",
+        "label": "branch",
+        "form_id": "FORM-022",
+        "form_name": "Full-Page Expense Form",
+        "page": "ROUTE-016 (ExpensesView.vue) \/ add \/ SECTION-144",
+        "logical_destination": "expenses.branch_id",
+        "mapping_type": "UNPERSISTED_UI_INPUT",
+        "physical_destinations": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "evidence": "Expense receipt image upload captured in UI but absent from expenses table schema.",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "P1-FIELD-GAP-027",
+        "remediation": "Phase 9 \u2014 Add receipt_image string column to expenses table."
+    },
+    {
+        "field_id": "FIELD-131",
+        "label": "receipt_image",
+        "form_id": "FORM-022",
+        "form_name": "Full-Page Expense Form",
+        "page": "ROUTE-016 (ExpensesView.vue) \/ add \/ SECTION-144",
+        "logical_destination": "expenses.receipt_url",
+        "mapping_type": "UNPERSISTED_UI_INPUT",
+        "physical_destinations": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "evidence": "Expense receipt image upload captured in UI but absent from expenses table schema.",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "P1-FIELD-GAP-027",
+        "remediation": "Phase 9 \u2014 Add receipt_image string column to expenses table."
+    },
+    {
+        "field_id": "FIELD-132",
+        "label": "notes",
+        "form_id": "FORM-022",
+        "form_name": "Full-Page Expense Form",
+        "page": "ROUTE-016 (ExpensesView.vue) \/ add \/ SECTION-144",
+        "logical_destination": "expenses.notes",
+        "mapping_type": "EXACT_PHYSICAL_RENAME",
+        "physical_destinations": [
+            "expenses.description"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-306"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/ExpenseController.php:L35, api\/app\/Models\/Expense.php:L18 \u2014 Expense notes recorded within physical column description",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-133",
+        "label": "description",
+        "form_id": "FORM-023",
+        "form_name": "Quick Expense Popup Form",
+        "page": "ROUTE-016 (ExpensesView.vue) \/ overview \/ SECTION-143",
+        "logical_destination": "expenses.title",
+        "mapping_type": "EXACT_PHYSICAL_RENAME",
+        "physical_destinations": [
+            "expenses.description"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-306"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/ExpenseController.php:L35, api\/app\/Models\/Expense.php:L18 \u2014 Expense description\/title stored in physical column description",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-134",
+        "label": "category",
+        "form_id": "FORM-023",
+        "form_name": "Quick Expense Popup Form",
+        "page": "ROUTE-016 (ExpensesView.vue) \/ overview \/ SECTION-143",
+        "logical_destination": "expenses.category_id",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "expenses.category_id"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-296"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/ExpenseController.php:L40 \u2014 category_id | api\/database\/migrations\/2026_08_24_051349_create_expenses_table.php:L19 \u2014 foreignId(\"category_id\")",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-135",
+        "label": "amount",
+        "form_id": "FORM-023",
+        "form_name": "Quick Expense Popup Form",
+        "page": "ROUTE-016 (ExpensesView.vue) \/ overview \/ SECTION-143",
+        "logical_destination": "expenses.amount",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "expenses.amount"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-299"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/ExpenseController.php:L42 \u2014 amount | api\/database\/migrations\/2026_08_24_051349_create_expenses_table.php:L20 \u2014 decimal(\"amount\",12,2)",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-136",
+        "label": "financial_account_id",
+        "form_id": "FORM-023",
+        "form_name": "Quick Expense Popup Form",
+        "page": "ROUTE-016 (ExpensesView.vue) \/ overview \/ SECTION-143",
+        "logical_destination": "account_movements.account_id",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "account_movements.account_id"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-341"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/ExpenseController.php:L44 \u2014 financial_account_id | api\/database\/migrations\/2026_09_16_000001_create_account_movements_table.php:L18 \u2014 foreignId(\"account_id\")",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-137",
+        "label": "date",
+        "form_id": "FORM-023",
+        "form_name": "Quick Expense Popup Form",
+        "page": "ROUTE-016 (ExpensesView.vue) \/ overview \/ SECTION-143",
+        "logical_destination": "expenses.date",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "expenses.date"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-305"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/ExpenseController.php:L45 \u2014 date | api\/database\/migrations\/2026_08_24_051349_create_expenses_table.php:L21 \u2014 date(\"date\")",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-138",
+        "label": "notes",
+        "form_id": "FORM-023",
+        "form_name": "Quick Expense Popup Form",
+        "page": "ROUTE-016 (ExpensesView.vue) \/ overview \/ SECTION-143",
+        "logical_destination": "expenses.notes",
+        "mapping_type": "REQUEST_ONLY",
+        "physical_destinations": [
+            "N\/A \u2014 REQUEST_ONLY"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 REQUEST_ONLY"
+        ],
+        "evidence": "Expense payment method selector used to route transaction into financial accounts",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-139",
+        "label": "category_name",
+        "form_id": "FORM-024",
+        "form_name": "Expense Category Form",
+        "page": "ROUTE-016 (ExpensesView.vue) \/ categories \/ SECTION-145",
+        "logical_destination": "expense_categories.name",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "expense_categories.name"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-312"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/ExpenseCategoryController.php:L30-L50 \u2014 store(), update() | api\/database\/migrations\/2026_08_24_051348_create_expense_categories_table.php:L18 \u2014 string(\"name\")",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-140",
+        "label": "monthly_budget",
+        "form_id": "FORM-024",
+        "form_name": "Expense Category Form",
+        "page": "ROUTE-016 (ExpensesView.vue) \/ categories \/ SECTION-145",
+        "logical_destination": "expense_categories.monthly_budget",
+        "mapping_type": "UNPERSISTED_UI_INPUT",
+        "physical_destinations": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "evidence": "Expense category monthly budget captured in Expense Category form but absent from expense_categories schema.",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "P1-FIELD-GAP-022",
+        "remediation": "Phase 9 \u2014 Add monthly_budget decimal column to expense_categories table."
+    },
+    {
+        "field_id": "FIELD-141",
+        "label": "description",
+        "form_id": "FORM-024",
+        "form_name": "Expense Category Form",
+        "page": "ROUTE-016 (ExpensesView.vue) \/ categories \/ SECTION-145",
+        "logical_destination": "expense_categories.description",
+        "mapping_type": "UNPERSISTED_UI_INPUT",
+        "physical_destinations": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "evidence": "Expense category description captured in Expense Category form but absent from expense_categories schema.",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "P1-FIELD-GAP-023",
+        "remediation": "Phase 9 \u2014 Add description text column to expense_categories table."
+    },
+    {
+        "field_id": "FIELD-142",
+        "label": "title",
+        "form_id": "FORM-025",
+        "form_name": "Recurring Expense Form",
+        "page": "ROUTE-016 (ExpensesView.vue) \/ overview \/ SECTION-146",
+        "logical_destination": "recurring_expenses.title",
+        "mapping_type": "EXACT_PHYSICAL_RENAME",
+        "physical_destinations": [
+            "recurring_expenses.description"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-321"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/RecurringExpenseController.php:L30, api\/app\/Models\/RecurringExpense.php:L18 \u2014 Recurring schedule title stored in physical column description",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-143",
+        "label": "category_id",
+        "form_id": "FORM-025",
+        "form_name": "Recurring Expense Form",
+        "page": "ROUTE-016 (ExpensesView.vue) \/ overview \/ SECTION-146",
+        "logical_destination": "recurring_expenses.category_id",
+        "mapping_type": "EXACT_PHYSICAL_RENAME",
+        "physical_destinations": [
+            "recurring_expenses.category"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-317"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/RecurringExpenseController.php:L32, api\/app\/Models\/RecurringExpense.php:L17 \u2014 Recurring expense category stored as string in recurring_expenses.category",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-144",
+        "label": "amount",
+        "form_id": "FORM-025",
+        "form_name": "Recurring Expense Form",
+        "page": "ROUTE-016 (ExpensesView.vue) \/ overview \/ SECTION-146",
+        "logical_destination": "recurring_expenses.amount",
+        "mapping_type": "UNPERSISTED_UI_INPUT",
+        "physical_destinations": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "evidence": "Expense category monthly budget captured in Expense Category form but absent from expense_categories schema.",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "P1-FIELD-GAP-022",
+        "remediation": "Phase 9 \u2014 Add monthly_budget decimal column to expense_categories table."
+    },
+    {
+        "field_id": "FIELD-145",
+        "label": "frequency",
+        "form_id": "FORM-025",
+        "form_name": "Recurring Expense Form",
+        "page": "ROUTE-016 (ExpensesView.vue) \/ overview \/ SECTION-146",
+        "logical_destination": "recurring_expenses.frequency",
+        "mapping_type": "UNPERSISTED_UI_INPUT",
+        "physical_destinations": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "evidence": "Expense category description captured in Expense Category form but absent from expense_categories schema.",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "P1-FIELD-GAP-023",
+        "remediation": "Phase 9 \u2014 Add description text column to expense_categories table."
+    },
+    {
+        "field_id": "FIELD-146",
+        "label": "start_date",
+        "form_id": "FORM-025",
+        "form_name": "Recurring Expense Form",
+        "page": "ROUTE-016 (ExpensesView.vue) \/ overview \/ SECTION-146",
+        "logical_destination": "recurring_expenses.start_date",
+        "mapping_type": "EXACT_PHYSICAL_RENAME",
+        "physical_destinations": [
+            "recurring_expenses.next_due_date"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-320"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/RecurringExpenseController.php:L34, api\/app\/Models\/RecurringExpense.php:L21 \u2014 Schedule initial start date stored as initial next_due_date",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-147",
+        "label": "name",
+        "form_id": "FORM-026",
+        "form_name": "Employee & HR Form",
+        "page": "ROUTE-020 (EmployeesView.vue) \/ Root \/ SECTION-150",
+        "logical_destination": "employees.name",
+        "mapping_type": "UNPERSISTED_UI_INPUT",
+        "physical_destinations": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "evidence": "Staff employee legal full name captured in EmployeesView.vue (FORM-026) but employees table was dropped in migration 2026_09_13_104137 and no backend EmployeeController or API route exists.",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "P1-FIELD-GAP-003",
+        "remediation": "Phase 9 \u2014 Re-introduce employees table migration and EmployeeController API."
+    },
+    {
+        "field_id": "FIELD-148",
+        "label": "role",
+        "form_id": "FORM-026",
+        "form_name": "Employee & HR Form",
+        "page": "ROUTE-020 (EmployeesView.vue) \/ Root \/ SECTION-150",
+        "logical_destination": "employees.role",
+        "mapping_type": "UNPERSISTED_UI_INPUT",
+        "physical_destinations": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "evidence": "Staff role designation captured in EmployeesView.vue (FORM-026) but employees table was dropped and no backend EmployeeController exists.",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "P1-FIELD-GAP-003",
+        "remediation": "Phase 9 \u2014 Re-introduce employees table migration and EmployeeController API."
+    },
+    {
+        "field_id": "FIELD-149",
+        "label": "phone",
+        "form_id": "FORM-026",
+        "form_name": "Employee & HR Form",
+        "page": "ROUTE-020 (EmployeesView.vue) \/ Root \/ SECTION-150",
+        "logical_destination": "employees.phone",
+        "mapping_type": "UNPERSISTED_UI_INPUT",
+        "physical_destinations": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "evidence": "Staff personal contact phone captured in EmployeesView.vue (FORM-026) but employees table was dropped and no backend EmployeeController exists.",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "P1-FIELD-GAP-003",
+        "remediation": "Phase 9 \u2014 Re-introduce employees table migration and EmployeeController API."
+    },
+    {
+        "field_id": "FIELD-150",
+        "label": "salary_amount",
+        "form_id": "FORM-026",
+        "form_name": "Employee & HR Form",
+        "page": "ROUTE-020 (EmployeesView.vue) \/ Root \/ SECTION-150",
+        "logical_destination": "employees.salary_amount",
+        "mapping_type": "UNPERSISTED_UI_INPUT",
+        "physical_destinations": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "evidence": "Staff base salary amount captured in EmployeesView.vue (FORM-026) but employees table was dropped and no backend EmployeeController exists.",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "P1-FIELD-GAP-003",
+        "remediation": "Phase 9 \u2014 Re-introduce employees table migration and EmployeeController API."
+    },
+    {
+        "field_id": "FIELD-151",
+        "label": "payment_cycle",
+        "form_id": "FORM-026",
+        "form_name": "Employee & HR Form",
+        "page": "ROUTE-020 (EmployeesView.vue) \/ Root \/ SECTION-150",
+        "logical_destination": "employees.payment_cycle",
+        "mapping_type": "UNPERSISTED_UI_INPUT",
+        "physical_destinations": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "evidence": "Staff wage payment cycle captured in EmployeesView.vue (FORM-026) but employees table was dropped and no backend EmployeeController exists.",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "P1-FIELD-GAP-003",
+        "remediation": "Phase 9 \u2014 Re-introduce employees table migration and EmployeeController API."
+    },
+    {
+        "field_id": "FIELD-152",
+        "label": "next_payment_date",
+        "form_id": "FORM-026",
+        "form_name": "Employee & HR Form",
+        "page": "ROUTE-020 (EmployeesView.vue) \/ Root \/ SECTION-150",
+        "logical_destination": "employees.next_payment_date",
+        "mapping_type": "UNPERSISTED_UI_INPUT",
+        "physical_destinations": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "evidence": "Staff scheduled next pay date captured in EmployeesView.vue (FORM-026) but employees table was dropped and no backend EmployeeController exists.",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "P1-FIELD-GAP-003",
+        "remediation": "Phase 9 \u2014 Re-introduce employees table migration and EmployeeController API."
+    },
+    {
+        "field_id": "FIELD-153",
+        "label": "name",
+        "form_id": "FORM-027",
+        "form_name": "User & Staff Governance Form",
+        "page": "ROUTE-021 (UsersView.vue) \/ users \/ SECTION-173",
+        "logical_destination": "users.name",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "users.name"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-014"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/UserGovernanceController.php:L30-L55 \u2014 store(), update() | api\/database\/migrations\/2014_10_12_000000_create_users_table.php:L17 \u2014 string(\"name\")",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-154",
+        "label": "username",
+        "form_id": "FORM-027",
+        "form_name": "User & Staff Governance Form",
+        "page": "ROUTE-021 (UsersView.vue) \/ users \/ SECTION-173",
+        "logical_destination": "users.username",
+        "mapping_type": "UNPERSISTED_UI_INPUT",
+        "physical_destinations": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "evidence": "User username field captured in User governance form but authentication and user identity uses email directly; username is not stored.",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "P1-FIELD-GAP-024",
+        "remediation": "Phase 9 \u2014 Align user creation UI to rely solely on email or add username column."
+    },
+    {
+        "field_id": "FIELD-155",
+        "label": "email",
+        "form_id": "FORM-027",
+        "form_name": "User & Staff Governance Form",
+        "page": "ROUTE-021 (UsersView.vue) \/ users \/ SECTION-173",
+        "logical_destination": "users.email",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "users.email"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-015"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/UserGovernanceController.php:L38 \u2014 email | api\/database\/migrations\/2014_10_12_000000_create_users_table.php:L19 \u2014 string(\"email\")->nullable()",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-156",
+        "label": "password",
+        "form_id": "FORM-027",
+        "form_name": "User & Staff Governance Form",
+        "page": "ROUTE-021 (UsersView.vue) \/ users \/ SECTION-173",
+        "logical_destination": "users.password",
+        "mapping_type": "TRANSFORMED_STORAGE",
+        "physical_destinations": [
+            "users.password"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-020"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/UserGovernanceController.php:L65 \u2014 Hash::make()",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-157",
+        "label": "branch_id",
+        "form_id": "FORM-027",
+        "form_name": "User & Staff Governance Form",
+        "page": "ROUTE-021 (UsersView.vue) \/ users \/ SECTION-173",
+        "logical_destination": "users.branch_id",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "users.branch_id"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-013"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/UserGovernanceController.php:L46 \u2014 branch_id | api\/database\/migrations\/2026_08_24_051340_create_users_table.php:L21 \u2014 foreignId(\"branch_id\")->constrained()",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-158",
+        "label": "role",
+        "form_id": "FORM-027",
+        "form_name": "User & Staff Governance Form",
+        "page": "ROUTE-021 (UsersView.vue) \/ users \/ SECTION-173",
+        "logical_destination": "model_has_roles.role_id",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "model_has_roles.role_id"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-080"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/UserGovernanceController.php:L50 \u2014 syncRoles() | api\/database\/migrations\/2026_08_24_000000_create_permission_tables.php:L35",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-159",
+        "label": "permissions",
+        "form_id": "FORM-027",
+        "form_name": "User & Staff Governance Form",
+        "page": "ROUTE-021 (UsersView.vue) \/ users \/ SECTION-173",
+        "logical_destination": "model_has_permissions.permission_id",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "model_has_permissions.permission_id"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-076"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/UserGovernanceController.php:L55 \u2014 syncPermissions() | api\/database\/migrations\/2026_08_24_000000_create_permission_tables.php:L40",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-160",
+        "label": "current_password",
+        "form_id": "FORM-028",
+        "form_name": "Password Change Form",
+        "page": "ROUTE-022 (SecurityView.vue) \/ security \/ SECTION-178",
+        "logical_destination": "N\/A",
+        "mapping_type": "REQUEST_ONLY",
+        "physical_destinations": [
+            "N\/A \u2014 REQUEST_ONLY"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 REQUEST_ONLY"
+        ],
+        "evidence": "User profile current password verification input",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-161",
+        "label": "new_password",
+        "form_id": "FORM-028",
+        "form_name": "Password Change Form",
+        "page": "ROUTE-022 (SecurityView.vue) \/ security \/ SECTION-178",
+        "logical_destination": "users.password",
+        "mapping_type": "TRANSFORMED_STORAGE",
+        "physical_destinations": [
+            "users.password"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-020"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/ProfileController.php:L45 \u2014 Hash::make()",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-162",
+        "label": "new_password_confirmation",
+        "form_id": "FORM-028",
+        "form_name": "Password Change Form",
+        "page": "ROUTE-022 (SecurityView.vue) \/ security \/ SECTION-178",
+        "logical_destination": "N\/A",
+        "mapping_type": "REQUEST_ONLY",
+        "physical_destinations": [
+            "N\/A \u2014 REQUEST_ONLY"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 REQUEST_ONLY"
+        ],
+        "evidence": "User profile new password confirmation match input",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-163",
+        "label": "business_name",
+        "form_id": "FORM-029",
+        "form_name": "Receipt & Invoice Template Form",
+        "page": "ROUTE-022 (ReceiptsView.vue) \/ receipts \/ SECTION-176",
+        "logical_destination": "preferences.receipt_header_name",
+        "mapping_type": "KEY_VALUE_STORAGE",
+        "physical_destinations": [
+            "settings.key ('receipt_header')",
+            "settings.value"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-382, DBCOL-383"
+        ],
+        "evidence": "SettingController.php:L23 \u2014 receipt_header key allowlist",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-164",
+        "label": "tagline",
+        "form_id": "FORM-029",
+        "form_name": "Receipt & Invoice Template Form",
+        "page": "ROUTE-022 (ReceiptsView.vue) \/ receipts \/ SECTION-176",
+        "logical_destination": "preferences.receipt_tagline",
+        "mapping_type": "KEY_VALUE_STORAGE",
+        "physical_destinations": [
+            "settings.key ('business_tagline')",
+            "settings.value"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-382, DBCOL-383"
+        ],
+        "evidence": "SettingController.php:L36 \u2014 business_tagline key allowlist",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-165",
+        "label": "header_line_1",
+        "form_id": "FORM-029",
+        "form_name": "Receipt & Invoice Template Form",
+        "page": "ROUTE-022 (ReceiptsView.vue) \/ receipts \/ SECTION-176",
+        "logical_destination": "preferences.receipt_header_line_1",
+        "mapping_type": "KEY_VALUE_STORAGE",
+        "physical_destinations": [
+            "settings.key ('receipt_header')",
+            "settings.value"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-382, DBCOL-383"
+        ],
+        "evidence": "SettingController.php:L23 \u2014 receipt_header address line 1 allowlist",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-166",
+        "label": "header_line_2",
+        "form_id": "FORM-029",
+        "form_name": "Receipt & Invoice Template Form",
+        "page": "ROUTE-022 (ReceiptsView.vue) \/ receipts \/ SECTION-176",
+        "logical_destination": "preferences.receipt_header_line_2",
+        "mapping_type": "KEY_VALUE_STORAGE",
+        "physical_destinations": [
+            "settings.key ('receipt_header')",
+            "settings.value"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-382, DBCOL-383"
+        ],
+        "evidence": "SettingController.php:L23 \u2014 receipt_header address line 2 allowlist",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-167",
+        "label": "footer_text",
+        "form_id": "FORM-029",
+        "form_name": "Receipt & Invoice Template Form",
+        "page": "ROUTE-022 (ReceiptsView.vue) \/ receipts \/ SECTION-176",
+        "logical_destination": "preferences.receipt_footer_text",
+        "mapping_type": "KEY_VALUE_STORAGE",
+        "physical_destinations": [
+            "settings.key ('invoice_footer_note')",
+            "settings.value"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-382, DBCOL-383"
+        ],
+        "evidence": "SettingController.php:L29 \u2014 invoice_footer_note key allowlist",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-168",
+        "label": "paper_size",
+        "form_id": "FORM-029",
+        "form_name": "Receipt & Invoice Template Form",
+        "page": "ROUTE-022 (ReceiptsView.vue) \/ receipts \/ SECTION-176",
+        "logical_destination": "preferences.paper_size",
+        "mapping_type": "KEY_VALUE_STORAGE",
+        "physical_destinations": [
+            "settings.key ('receipt_printer_size')",
+            "settings.value"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-382, DBCOL-383"
+        ],
+        "evidence": "SettingController.php:L25 \u2014 receipt_printer_size key allowlist",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-169",
+        "label": "show_barcode",
+        "form_id": "FORM-029",
+        "form_name": "Receipt & Invoice Template Form",
+        "page": "ROUTE-022 (ReceiptsView.vue) \/ receipts \/ SECTION-176",
+        "logical_destination": "preferences.show_barcode",
+        "mapping_type": "KEY_VALUE_STORAGE",
+        "physical_destinations": [
+            "settings.key ('receipt_settings')",
+            "settings.value"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-382, DBCOL-383"
+        ],
+        "evidence": "SettingController.php:L31 \u2014 receipt_settings JSON object key",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-170",
+        "label": "show_cashier",
+        "form_id": "FORM-029",
+        "form_name": "Receipt & Invoice Template Form",
+        "page": "ROUTE-022 (ReceiptsView.vue) \/ receipts \/ SECTION-176",
+        "logical_destination": "preferences.show_cashier",
+        "mapping_type": "KEY_VALUE_STORAGE",
+        "physical_destinations": [
+            "settings.key ('receipt_settings')",
+            "settings.value"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-382, DBCOL-383"
+        ],
+        "evidence": "SettingController.php:L31 \u2014 receipt_settings JSON object key",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-171",
+        "label": "account_name",
+        "form_id": "FORM-030",
+        "form_name": "Financial Account Form",
+        "page": "ROUTE-023 (AccountsView.vue) \/ Root \/ SECTION-180",
+        "logical_destination": "financial_accounts.name",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "financial_accounts.name"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-327"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/FinancialAccountController.php:L30-L50 \u2014 store() | api\/database\/migrations\/2026_09_18_000004_create_financial_accounts_table.php:L18 \u2014 string(\"name\")",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-172",
+        "label": "type",
+        "form_id": "FORM-030",
+        "form_name": "Financial Account Form",
+        "page": "ROUTE-023 (AccountsView.vue) \/ Root \/ SECTION-180",
+        "logical_destination": "financial_accounts.type",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "financial_accounts.type"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-328"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/FinancialAccountController.php:L35 \u2014 type | api\/database\/migrations\/2026_09_18_000004_create_financial_accounts_table.php:L19 \u2014 string(\"type\")->default(\"Cash\")",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-173",
+        "label": "branch_id",
+        "form_id": "FORM-030",
+        "form_name": "Financial Account Form",
+        "page": "ROUTE-023 (AccountsView.vue) \/ Root \/ SECTION-180",
+        "logical_destination": "financial_accounts.branch_id",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "financial_accounts.branch_id"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-326"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/FinancialAccountController.php:L38 \u2014 branch_id | api\/database\/migrations\/2026_09_18_000004_create_financial_accounts_table.php:L20 \u2014 foreignId(\"branch_id\")->constrained()",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-174",
+        "label": "opening_balance",
+        "form_id": "FORM-030",
+        "form_name": "Financial Account Form",
+        "page": "ROUTE-023 (AccountsView.vue) \/ Root \/ SECTION-180",
+        "logical_destination": "financial_accounts.current_balance",
+        "mapping_type": "EXACT_PHYSICAL_RENAME",
+        "physical_destinations": [
+            "financial_accounts.balance"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-332"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/FinancialAccountController.php:L40, api\/app\/Models\/FinancialAccount.php:L20 \u2014 Current ledger balance stored in physical column balance",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-175",
+        "label": "account_number",
+        "form_id": "FORM-030",
+        "form_name": "Financial Account Form",
+        "page": "ROUTE-023 (AccountsView.vue) \/ Root \/ SECTION-180",
+        "logical_destination": "financial_accounts.account_number",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "financial_accounts.account_number"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-329"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/FinancialAccountController.php:L46 \u2014 account_number | api\/database\/migrations\/2026_09_18_000004_create_financial_accounts_table.php:L22 \u2014 string(\"account_number\")->nullable()",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-176",
+        "label": "account_id",
+        "form_id": "FORM-031",
+        "form_name": "Capital Inflow Form",
+        "page": "ROUTE-023 (AccountsView.vue) \/ Root \/ SECTION-181",
+        "logical_destination": "account_movements.account_id",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "account_movements.account_id"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-341"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/FinancialAccountController.php:L65-L85 \u2014 capitalIn() | api\/database\/migrations\/2026_09_18_000005_create_account_movements_table.php:L18 \u2014 foreignId(\"account_id\")->constrained()",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-177",
+        "label": "amount",
+        "form_id": "FORM-031",
+        "form_name": "Capital Inflow Form",
+        "page": "ROUTE-023 (AccountsView.vue) \/ Root \/ SECTION-181",
+        "logical_destination": "account_movements.amount",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "account_movements.amount"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-346"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/FinancialAccountController.php:L70 \u2014 amount | api\/database\/migrations\/2026_09_18_000005_create_account_movements_table.php:L19 \u2014 decimal(\"amount\",12,2)",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-178",
+        "label": "reference",
+        "form_id": "FORM-031",
+        "form_name": "Capital Inflow Form",
+        "page": "ROUTE-023 (AccountsView.vue) \/ Root \/ SECTION-181",
+        "logical_destination": "account_movements.reference",
+        "mapping_type": "EXACT_PHYSICAL_RENAME",
+        "physical_destinations": [
+            "account_movements.reference_id"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-345"
+        ],
+        "evidence": "api\/app\/Services\/AccountMovementService.php:L45, api\/app\/Models\/AccountMovement.php:L22 \u2014 External bank \/ deposit reference stored in reference_id",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-179",
+        "label": "notes",
+        "form_id": "FORM-031",
+        "form_name": "Capital Inflow Form",
+        "page": "ROUTE-023 (AccountsView.vue) \/ Root \/ SECTION-181",
+        "logical_destination": "account_movements.notes",
+        "mapping_type": "EXACT_PHYSICAL_RENAME",
+        "physical_destinations": [
+            "account_movements.description"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-348"
+        ],
+        "evidence": "api\/app\/Services\/AccountMovementService.php:L48, api\/app\/Models\/AccountMovement.php:L24 \u2014 Movement narrative notes stored in description",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-180",
+        "label": "account_id",
+        "form_id": "FORM-032",
+        "form_name": "Capital Outflow Form",
+        "page": "ROUTE-023 (AccountsView.vue) \/ Root \/ SECTION-182",
+        "logical_destination": "account_movements.account_id",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "account_movements.account_id"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-341"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/FinancialAccountController.php:L90-L110 \u2014 capitalOut() | api\/database\/migrations\/2026_09_18_000005_create_account_movements_table.php:L18 \u2014 foreignId(\"account_id\")->constrained()",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-181",
+        "label": "amount",
+        "form_id": "FORM-032",
+        "form_name": "Capital Outflow Form",
+        "page": "ROUTE-023 (AccountsView.vue) \/ Root \/ SECTION-182",
+        "logical_destination": "account_movements.amount",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "account_movements.amount"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-346"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/FinancialAccountController.php:L95 \u2014 amount | api\/database\/migrations\/2026_09_18_000005_create_account_movements_table.php:L19 \u2014 decimal(\"amount\",12,2)",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-182",
+        "label": "reason",
+        "form_id": "FORM-032",
+        "form_name": "Capital Outflow Form",
+        "page": "ROUTE-023 (AccountsView.vue) \/ Root \/ SECTION-182",
+        "logical_destination": "account_movements.reason",
+        "mapping_type": "EXACT_PHYSICAL_RENAME",
+        "physical_destinations": [
+            "account_movements.description"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-348"
+        ],
+        "evidence": "api\/app\/Services\/AccountMovementService.php:L48, api\/app\/Models\/AccountMovement.php:L24 \u2014 Capital movement reason stored in description",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-183",
+        "label": "notes",
+        "form_id": "FORM-032",
+        "form_name": "Capital Outflow Form",
+        "page": "ROUTE-023 (AccountsView.vue) \/ Root \/ SECTION-182",
+        "logical_destination": "account_movements.notes",
+        "mapping_type": "EXACT_PHYSICAL_RENAME",
+        "physical_destinations": [
+            "account_movements.description"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-348"
+        ],
+        "evidence": "api\/app\/Services\/AccountMovementService.php:L48, api\/app\/Models\/AccountMovement.php:L24 \u2014 Movement narrative notes stored in description",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-184",
+        "label": "from_account_id",
+        "form_id": "FORM-033",
+        "form_name": "Inter-Account Transfer Form",
+        "page": "ROUTE-023 (AccountsView.vue) \/ Root \/ SECTION-183",
+        "logical_destination": "account_transfers.from_account_id",
+        "mapping_type": "EXACT_PHYSICAL_RENAME",
+        "physical_destinations": [
+            "account_transfers.source_account_id"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-359"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/AccountTransferController.php:L35, api\/app\/Models\/AccountTransfer.php:L18 \u2014 Source debit account stored in source_account_id",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-185",
+        "label": "to_account_id",
+        "form_id": "FORM-033",
+        "form_name": "Inter-Account Transfer Form",
+        "page": "ROUTE-023 (AccountsView.vue) \/ Root \/ SECTION-183",
+        "logical_destination": "account_transfers.to_account_id",
+        "mapping_type": "EXACT_PHYSICAL_RENAME",
+        "physical_destinations": [
+            "account_transfers.destination_account_id"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-360"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/AccountTransferController.php:L36, api\/app\/Models\/AccountTransfer.php:L19 \u2014 Destination credit account stored in destination_account_id",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-186",
+        "label": "amount",
+        "form_id": "FORM-033",
+        "form_name": "Inter-Account Transfer Form",
+        "page": "ROUTE-023 (AccountsView.vue) \/ Root \/ SECTION-183",
+        "logical_destination": "account_transfers.amount",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "account_transfers.amount"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-361"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/AccountTransferController.php:L38 \u2014 amount | api\/database\/migrations\/2026_09_18_000006_create_account_transfers_table.php:L20 \u2014 decimal(\"amount\",12,2)",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-187",
+        "label": "transfer_date",
+        "form_id": "FORM-033",
+        "form_name": "Inter-Account Transfer Form",
+        "page": "ROUTE-023 (AccountsView.vue) \/ Root \/ SECTION-183",
+        "logical_destination": "account_transfers.transfer_date",
+        "mapping_type": "EXACT_PHYSICAL_RENAME",
+        "physical_destinations": [
+            "account_transfers.date"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-362"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/AccountTransferController.php:L38, api\/app\/Models\/AccountTransfer.php:L21 \u2014 Transfer execution date stored in physical column date",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-188",
+        "label": "reference",
+        "form_id": "FORM-033",
+        "form_name": "Inter-Account Transfer Form",
+        "page": "ROUTE-023 (AccountsView.vue) \/ Root \/ SECTION-183",
+        "logical_destination": "account_transfers.reference",
+        "mapping_type": "EXACT_PHYSICAL_RENAME",
+        "physical_destinations": [
+            "account_transfers.notes"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-363"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/AccountTransferController.php:L40, api\/app\/Models\/AccountTransfer.php:L23 \u2014 Transfer reference narrative stored in notes",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-189",
+        "label": "payment_account",
+        "form_id": "FORM-034",
+        "form_name": "Notification Pay Expense Form",
+        "page": "ActionModalFactory.vue (MODAL-025)",
+        "logical_destination": "expenses.financial_account_id",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "expenses.financial_account_id"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-297"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/NeedsAttentionController.php:L45-L70 \u2014 payExpense() | api\/database\/migrations\/2026_08_24_051349_create_expenses_table.php:L22 \u2014 foreignId(\"financial_account_id\")->nullable()",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-190",
+        "label": "notes",
+        "form_id": "FORM-034",
+        "form_name": "Notification Pay Expense Form",
+        "page": "ActionModalFactory.vue (MODAL-025)",
+        "logical_destination": "expenses.notes",
+        "mapping_type": "EXACT_PHYSICAL_RENAME",
+        "physical_destinations": [
+            "expenses.description"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-306"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/ExpenseController.php:L35, api\/app\/Models\/Expense.php:L18 \u2014 Expense notes recorded within physical column description",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-191",
+        "label": "salary_account",
+        "form_id": "FORM-035",
+        "form_name": "Notification Pay Salary Form",
+        "page": "ActionModalFactory.vue (MODAL-025)",
+        "logical_destination": "account_movements.account_id",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "account_movements.account_id"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-341"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/NeedsAttentionController.php:L75-L100 \u2014 paySalary() | api\/database\/migrations\/2026_09_18_000005_create_account_movements_table.php:L18 \u2014 foreignId(\"account_id\")->constrained()",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-192",
+        "label": "notes",
+        "form_id": "FORM-035",
+        "form_name": "Notification Pay Salary Form",
+        "page": "ActionModalFactory.vue (MODAL-025)",
+        "logical_destination": "account_movements.notes",
+        "mapping_type": "EXACT_PHYSICAL_RENAME",
+        "physical_destinations": [
+            "account_movements.description"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-348"
+        ],
+        "evidence": "api\/app\/Services\/AccountMovementService.php:L48, api\/app\/Models\/AccountMovement.php:L24 \u2014 Movement narrative notes stored in description",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-193",
+        "label": "supplier_id",
+        "form_id": "FORM-036",
+        "form_name": "Smart Reorder Submission Form",
+        "page": "ROUTE-025 (ReorderDetailView.vue) \/ review \/ SECTION-030",
+        "logical_destination": "purchases.supplier_id",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "purchases.supplier_id"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-256"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/ReorderController.php:L35-L65 \u2014 createPO() | api\/database\/migrations\/2026_08_24_051342_create_purchases_table.php:L18 \u2014 foreignId(\"supplier_id\")->constrained()",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-194",
+        "label": "reorder_quantity",
+        "form_id": "FORM-036",
+        "form_name": "Smart Reorder Submission Form",
+        "page": "ROUTE-025 (ReorderDetailView.vue) \/ review \/ SECTION-030",
+        "logical_destination": "purchase_items.quantity",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "purchase_items.quantity"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-274"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/ReorderController.php:L42 \u2014 quantity | api\/database\/migrations\/2026_08_24_051343_create_purchase_items_table.php:L19 \u2014 integer(\"quantity\")",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-195",
+        "label": "delivery_date",
+        "form_id": "FORM-036",
+        "form_name": "Smart Reorder Submission Form",
+        "page": "ROUTE-025 (ReorderDetailView.vue) \/ review \/ SECTION-030",
+        "logical_destination": "purchases.expected_delivery_date",
+        "mapping_type": "UNPERSISTED_UI_INPUT",
+        "physical_destinations": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 NON_PERSISTED_EXPECTED"
+        ],
+        "evidence": "Purchase order expected delivery date captured in ReorderDetailView.vue (FORM-036) but purchases table schema has no expected_delivery_date column.",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "P1-FIELD-GAP-025",
+        "remediation": "Phase 9 \u2014 Add expected_delivery_date date column to purchases table."
+    },
+    {
+        "field_id": "FIELD-196",
+        "label": "approval_notes",
+        "form_id": "FORM-036",
+        "form_name": "Smart Reorder Submission Form",
+        "page": "ROUTE-025 (ReorderDetailView.vue) \/ review \/ SECTION-030",
+        "logical_destination": "purchases.notes",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "purchases.notes"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-265"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/ReorderController.php:L52 \u2014 notes | api\/database\/migrations\/2026_08_24_051342_create_purchases_table.php:L25 \u2014 text(\"notes\")->nullable()",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-197",
+        "label": "name",
+        "form_id": "FORM-037",
+        "form_name": "Standalone Product Edit Form",
+        "page": "ROUTE-009 (ProductEditView.vue) \/ Root \/ SECTION-036",
+        "logical_destination": "products.name",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "products.name"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-107"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/ProductController.php:L80-L110 \u2014 update() | api\/database\/migrations\/2026_08_24_051341_create_products_table.php:L18 \u2014 string(\"name\")",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-198",
+        "label": "category",
+        "form_id": "FORM-037",
+        "form_name": "Standalone Product Edit Form",
+        "page": "ROUTE-009 (ProductEditView.vue) \/ Root \/ SECTION-036",
+        "logical_destination": "products.category_id",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "products.category_id"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-106"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/ProductController.php:L85 \u2014 category_id | api\/database\/migrations\/2026_08_24_051341_create_products_table.php:L19 \u2014 foreignId(\"category_id\")->constrained()",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-199",
+        "label": "cost",
+        "form_id": "FORM-037",
+        "form_name": "Standalone Product Edit Form",
+        "page": "ROUTE-009 (ProductEditView.vue) \/ Root \/ SECTION-036",
+        "logical_destination": "products.cost_price",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "products.cost_price"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-110"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/ProductController.php:L88 \u2014 cost_price | api\/database\/migrations\/2026_08_24_051341_create_products_table.php:L20 \u2014 decimal(\"cost_price\",12,2)",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-200",
+        "label": "price",
+        "form_id": "FORM-037",
+        "form_name": "Standalone Product Edit Form",
+        "page": "ROUTE-009 (ProductEditView.vue) \/ Root \/ SECTION-036",
+        "logical_destination": "products.selling_price",
+        "mapping_type": "DIRECT_PHYSICAL_COLUMN",
+        "physical_destinations": [
+            "products.selling_price"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-111"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/ProductController.php:L92 \u2014 selling_price | api\/database\/migrations\/2026_08_24_051341_create_products_table.php:L21 \u2014 decimal(\"selling_price\",12,2)",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-201",
+        "label": "stock",
+        "form_id": "FORM-037",
+        "form_name": "Standalone Product Edit Form",
+        "page": "ROUTE-009 (ProductEditView.vue) \/ Root \/ SECTION-036",
+        "logical_destination": "branch_inventory.stock",
+        "mapping_type": "EXACT_PHYSICAL_RENAME",
+        "physical_destinations": [
+            "branch_inventories.quantity_on_hand"
+        ],
+        "canonical_dbcols": [
+            "DBCOL-130"
+        ],
+        "evidence": "api\/app\/Http\/Controllers\/Api\/V1\/ProductController.php:L95, api\/app\/Models\/BranchInventory.php:L18 \u2014 Branch physical on-hand stock quantity stored in quantity_on_hand",
+        "semantic_match": "PROVEN",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-202",
+        "label": "device_name",
+        "form_id": "FORM-038",
+        "form_name": "Device Pairing Configuration Form",
+        "page": "ROUTE-024 (SyncView.vue) \/ sync \/ SECTION-186",
+        "logical_destination": "devices.name",
+        "mapping_type": "LOCAL_ONLY_PERSISTENCE",
+        "physical_destinations": [
+            "N\/A \u2014 IndexedDB (localDb) \/ localStorage"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 LOCAL_ONLY_PERSISTENCE"
+        ],
+        "evidence": "Frontend\/src\/services\/devicePairingService.js:L24",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-203",
+        "label": "terminal_type",
+        "form_id": "FORM-038",
+        "form_name": "Device Pairing Configuration Form",
+        "page": "ROUTE-024 (SyncView.vue) \/ sync \/ SECTION-186",
+        "logical_destination": "devices.terminal_type",
+        "mapping_type": "LOCAL_ONLY_PERSISTENCE",
+        "physical_destinations": [
+            "N\/A \u2014 IndexedDB (localDb) \/ localStorage"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 LOCAL_ONLY_PERSISTENCE"
+        ],
+        "evidence": "Frontend\/src\/services\/devicePairingService.js:L24",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-204",
+        "label": "assigned_branch",
+        "form_id": "FORM-038",
+        "form_name": "Device Pairing Configuration Form",
+        "page": "ROUTE-024 (SyncView.vue) \/ sync \/ SECTION-186",
+        "logical_destination": "devices.branch_id",
+        "mapping_type": "LOCAL_ONLY_PERSISTENCE",
+        "physical_destinations": [
+            "N\/A \u2014 IndexedDB (localDb) \/ localStorage"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 LOCAL_ONLY_PERSISTENCE"
+        ],
+        "evidence": "Frontend\/src\/services\/devicePairingService.js:L24",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-205",
+        "label": "sync_mode",
+        "form_id": "FORM-038",
+        "form_name": "Device Pairing Configuration Form",
+        "page": "ROUTE-024 (SyncView.vue) \/ sync \/ SECTION-186",
+        "logical_destination": "devices.sync_mode",
+        "mapping_type": "LOCAL_ONLY_PERSISTENCE",
+        "physical_destinations": [
+            "N\/A \u2014 IndexedDB (localDb) \/ localStorage"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 LOCAL_ONLY_PERSISTENCE"
+        ],
+        "evidence": "Frontend\/src\/services\/devicePairingService.js:L24",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-206",
+        "label": "pairing_token",
+        "form_id": "FORM-038",
+        "form_name": "Device Pairing Configuration Form",
+        "page": "ROUTE-024 (SyncView.vue) \/ sync \/ SECTION-186",
+        "logical_destination": "devices.pairing_token",
+        "mapping_type": "LOCAL_ONLY_PERSISTENCE",
+        "physical_destinations": [
+            "N\/A \u2014 IndexedDB (localDb) \/ ephemeral memory"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 LOCAL_ONLY_PERSISTENCE"
+        ],
+        "evidence": "Frontend\/src\/services\/devicePairingService.js:L27",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-207",
+        "label": "ip_address",
+        "form_id": "FORM-038",
+        "form_name": "Device Pairing Configuration Form",
+        "page": "ROUTE-024 (SyncView.vue) \/ sync \/ SECTION-186",
+        "logical_destination": "devices.ip_address",
+        "mapping_type": "LOCAL_ONLY_PERSISTENCE",
+        "physical_destinations": [
+            "N\/A \u2014 IndexedDB (localDb) \/ network stack"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 LOCAL_ONLY_PERSISTENCE"
+        ],
+        "evidence": "Frontend\/src\/services\/devicePairingService.js:L25",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-208",
+        "label": "port",
+        "form_id": "FORM-038",
+        "form_name": "Device Pairing Configuration Form",
+        "page": "ROUTE-024 (SyncView.vue) \/ sync \/ SECTION-186",
+        "logical_destination": "devices.port",
+        "mapping_type": "LOCAL_ONLY_PERSISTENCE",
+        "physical_destinations": [
+            "N\/A \u2014 IndexedDB (localDb) \/ network stack"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 LOCAL_ONLY_PERSISTENCE"
+        ],
+        "evidence": "Frontend\/src\/services\/devicePairingService.js:L26",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-209",
+        "label": "auth_secret",
+        "form_id": "FORM-038",
+        "form_name": "Device Pairing Configuration Form",
+        "page": "ROUTE-024 (SyncView.vue) \/ sync \/ SECTION-186",
+        "logical_destination": "devices.auth_secret",
+        "mapping_type": "LOCAL_ONLY_PERSISTENCE",
+        "physical_destinations": [
+            "N\/A \u2014 IndexedDB (localDb) \/ localStorage"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 LOCAL_ONLY_PERSISTENCE"
+        ],
+        "evidence": "Frontend\/src\/services\/devicePairingService.js:L24",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-210",
+        "label": "auto_reconnect",
+        "form_id": "FORM-038",
+        "form_name": "Device Pairing Configuration Form",
+        "page": "ROUTE-024 (SyncView.vue) \/ sync \/ SECTION-186",
+        "logical_destination": "devices.auto_reconnect",
+        "mapping_type": "LOCAL_ONLY_PERSISTENCE",
+        "physical_destinations": [
+            "N\/A \u2014 IndexedDB (localDb) \/ localStorage"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 LOCAL_ONLY_PERSISTENCE"
+        ],
+        "evidence": "Frontend\/src\/services\/devicePairingService.js:L24",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-211",
+        "label": "ssl_verify",
+        "form_id": "FORM-038",
+        "form_name": "Device Pairing Configuration Form",
+        "page": "ROUTE-024 (SyncView.vue) \/ sync \/ SECTION-186",
+        "logical_destination": "devices.ssl_verify",
+        "mapping_type": "LOCAL_ONLY_PERSISTENCE",
+        "physical_destinations": [
+            "N\/A \u2014 IndexedDB (localDb) \/ localStorage"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 LOCAL_ONLY_PERSISTENCE"
+        ],
+        "evidence": "Frontend\/src\/services\/devicePairingService.js:L24",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-212",
+        "label": "qr_expiry_seconds",
+        "form_id": "FORM-038",
+        "form_name": "Device Pairing Configuration Form",
+        "page": "ROUTE-024 (SyncView.vue) \/ sync \/ SECTION-186",
+        "logical_destination": "devices.qr_expiry",
+        "mapping_type": "LOCAL_ONLY_PERSISTENCE",
+        "physical_destinations": [
+            "N\/A \u2014 IndexedDB (localDb) \/ ephemeral timer"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 LOCAL_ONLY_PERSISTENCE"
+        ],
+        "evidence": "Frontend\/src\/services\/devicePairingService.js:L28",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-213",
+        "label": "offline_cache_mb",
+        "form_id": "FORM-038",
+        "form_name": "Device Pairing Configuration Form",
+        "page": "ROUTE-024 (SyncView.vue) \/ sync \/ SECTION-186",
+        "logical_destination": "devices.cache_limit_mb",
+        "mapping_type": "LOCAL_ONLY_PERSISTENCE",
+        "physical_destinations": [
+            "N\/A \u2014 IndexedDB (localDb) \/ quota manager"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 LOCAL_ONLY_PERSISTENCE"
+        ],
+        "evidence": "Frontend\/src\/services\/localDb.js:L1-L137",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    },
+    {
+        "field_id": "FIELD-214",
+        "label": "device_uuid",
+        "form_id": "FORM-038",
+        "form_name": "Device Pairing Configuration Form",
+        "page": "ROUTE-024 (SyncView.vue) \/ sync \/ SECTION-186",
+        "logical_destination": "devices.uuid",
+        "mapping_type": "LOCAL_ONLY_PERSISTENCE",
+        "physical_destinations": [
+            "N\/A \u2014 IndexedDB (localDb) \/ localStorage"
+        ],
+        "canonical_dbcols": [
+            "N\/A \u2014 LOCAL_ONLY_PERSISTENCE"
+        ],
+        "evidence": "Frontend\/src\/services\/devicePairingService.js:L20-L35",
+        "semantic_match": "NOT_APPLICABLE_NON_PERSISTED",
+        "gap_id": "N\/A",
+        "remediation": "N\/A"
+    }
+]

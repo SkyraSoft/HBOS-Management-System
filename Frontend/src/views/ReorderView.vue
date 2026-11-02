@@ -47,23 +47,48 @@
                      TABS
                 ================================================== -->
 
-                <nav class="reorder-tabs" aria-label="Reorder navigation">
+                <!-- =================================================
+                     TABS & PERIOD SELECTOR (SRT-GAP-014)
+                ================================================== -->
 
-                    <button class="reorder-tab active" type="button" data-tab="smart">
-                        Smart Reorder
-                    </button>
+                <nav class="reorder-tabs" aria-label="Reorder navigation" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
 
-                    <button class="reorder-tab" type="button" data-tab="global">
-                        Global View
-                    </button>
+                    <div style="display: flex; gap: 24px; flex-wrap: wrap;">
+                        <button class="reorder-tab" :class="{ active: activeTab === 'smart' }" type="button" @click="activeTab = 'smart'">
+                            Smart Reorder & Deficits ({{ summary.reorder_analytics?.total_requiring_reorder || 0 }})
+                        </button>
 
-                    <button class="reorder-tab" type="button" data-tab="bulk">
-                        Bulk Actions
-                    </button>
+                        <button class="reorder-tab" :class="{ active: activeTab === 'velocity' }" type="button" @click="activeTab = 'velocity'">
+                            Sales Velocity Rankings ({{ summary.sales_velocity?.products_count || 0 }})
+                        </button>
 
-                    <button class="reorder-tab" type="button" data-tab="approval">
-                        Approval Queue
-                    </button>
+                        <button class="reorder-tab" :class="{ active: activeTab === 'dead' }" type="button" @click="activeTab = 'dead'">
+                            Dead Stock & Frozen Capital ({{ summary.dead_stock?.dead_stock_count || 0 }})
+                        </button>
+                    </div>
+
+                    <!-- Velocity & Dead Stock Analysis Window Selector (SRT-GAP-014) -->
+                    <div class="period-selector" style="display: flex; align-items: center; gap: 8px;">
+                        <span style="font-size: 13px; color: #64748b; font-weight: 600;">Window:</span>
+                        <button 
+                            type="button" 
+                            v-for="d in [30, 60, 90]" 
+                            :key="d"
+                            @click="selectedDays = d"
+                            :style="{
+                                padding: '4px 10px',
+                                borderRadius: '6px',
+                                border: '1px solid ' + (selectedDays === d ? 'var(--primary, #2448b8)' : '#cbd0df'),
+                                background: selectedDays === d ? 'var(--primary, #2448b8)' : '#fff',
+                                color: selectedDays === d ? '#fff' : '#4f5260',
+                                fontSize: '12px',
+                                fontWeight: selectedDays === d ? '700' : '500',
+                                cursor: 'pointer'
+                            }"
+                        >
+                            {{ d }} Days
+                        </button>
+                    </div>
 
                 </nav>
 
@@ -74,147 +99,65 @@
 
                 <section class="kpi-grid">
 
-
-                    <!-- Card 1 -->
-
                     <article class="kpi-card">
-
                         <div class="kpi-icon blue">
                             <i class="bi bi-box"></i>
                         </div>
-
                         <div class="kpi-label">
                             Requiring Reorder
                         </div>
-
                         <div class="kpi-value">
-                            18
+                            {{ summary.reorder_analytics?.total_requiring_reorder || 0 }}
                         </div>
-
                     </article>
 
-
-                    <!-- Card 2 -->
-
                     <article class="kpi-card">
-
                         <div class="kpi-icon red">
                             <i class="bi bi-exclamation-triangle"></i>
                         </div>
-
                         <div class="kpi-label">
-                            Critical
+                            Critical (Out of Stock)
                         </div>
-
                         <div class="kpi-value">
-                            7
+                            {{ summary.reorder_analytics?.critical_count || 0 }}
                         </div>
-
                     </article>
 
-
-                    <!-- Card 3 -->
-
                     <article class="kpi-card">
-
                         <div class="kpi-icon orange">
-                            <i class="bi bi-eye"></i>
+                            <i class="bi bi-graph-down-arrow"></i>
                         </div>
-
                         <div class="kpi-label">
-                            Needs Review
+                            Total Deficit Units
                         </div>
-
                         <div class="kpi-value">
-                            5
+                            {{ formatQty(summary.reorder_analytics?.total_deficit_units || 0) }}
                         </div>
-
                     </article>
 
-
-                    <!-- Card 4 -->
-
-                    <article class="kpi-card">
-
+                    <article class="kpi-card" v-if="canViewCost">
                         <div class="kpi-icon money">
                             <i class="bi bi-cash-coin"></i>
                         </div>
-
                         <div class="kpi-label">
                             Estimated Reorder Value
                         </div>
-
                         <div class="kpi-value">
-                            PKR 145,000
+                            PKR {{ formatNumber(summary.reorder_analytics?.estimated_reorder_value || 0) }}
                         </div>
-
                     </article>
 
-                </section>
-
-
-                <!-- =================================================
-                     REORDER DISTRIBUTION
-                ================================================== -->
-
-                <section class="distribution-card">
-
-                    <h3 class="section-title">
-                        Reorder Distribution
-                    </h3>
-
-
-                    <div class="distribution-bar">
-
-                        <div class="distribution-segment critical"></div>
-
-                        <div class="distribution-segment needs-reorder"></div>
-
-                        <div class="distribution-segment monitor"></div>
-
-                        <div class="distribution-segment healthy"></div>
-
-                    </div>
-
-
-                    <div class="distribution-labels">
-
-                        <div class="distribution-label">
-
-                            <span class="legend-dot" style="background:#c61c1c"></span>
-
-                            Critical (15%)
-
+                    <article class="kpi-card" v-if="canViewCost">
+                        <div class="kpi-icon money" style="background: #fef2f2; color: #dc2626;">
+                            <i class="bi bi-snow"></i>
                         </div>
-
-
-                        <div class="distribution-label">
-
-                            <span class="legend-dot" style="background:#6d2400"></span>
-
-                            Needs Reorder (25%)
-
+                        <div class="kpi-label">
+                            Dead Stock Frozen Capital
                         </div>
-
-
-                        <div class="distribution-label">
-
-                            <span class="legend-dot" style="background:#f7a400"></span>
-
-                            Monitor (20%)
-
+                        <div class="kpi-value">
+                            PKR {{ formatNumber(summary.dead_stock?.total_locked_capital || 0) }}
                         </div>
-
-
-                        <div class="distribution-label">
-
-                            <span class="legend-dot" style="background:#13b77d"></span>
-
-                            Healthy (40%)
-
-                        </div>
-
-                    </div>
+                    </article>
 
                 </section>
 
@@ -227,47 +170,14 @@
 
                     <div class="filter-row">
 
-
-                        <!-- Search -->
-
-                        <div class="search-box">
-
+                        <div class="search-box" style="flex: 1;">
                             <i class="bi bi-search"></i>
-
-                            <input type="search" class="search-input" id="searchInput" placeholder="Search Name/SKU/Category...">
-
+                            <input type="search" class="search-input" v-model="searchQuery" placeholder="Search by Product Name, SKU, or Branch...">
                         </div>
 
-
-                        <!-- Priority -->
-
-                        <button class="filter-button" type="button">
-                            Priority Filter
-                            <i class="bi bi-chevron-down"></i>
-                        </button>
-
-
-                        <!-- Stock -->
-
-                        <button class="filter-button" type="button">
-                            Stock Status
-                            <i class="bi bi-chevron-down"></i>
-                        </button>
-
-
-                        <!-- Supplier -->
-
-                        <button class="filter-button" type="button">
-                            Supplier
-                            <i class="bi bi-chevron-down"></i>
-                        </button>
-
-
-                        <!-- Days -->
-
-                        <button class="filter-button" type="button">
-                            Days Remaining
-                            <i class="bi bi-chevron-down"></i>
+                        <button class="filter-button" type="button" @click="fetchStockIntelligence" :disabled="isLoading">
+                            <i class="bi bi-arrow-clockwise" :class="{ 'fa-spin': isLoading }"></i>
+                            {{ isLoading ? 'Refreshing...' : 'Refresh' }}
                         </button>
 
                     </div>
@@ -276,10 +186,10 @@
 
 
                 <!-- =================================================
-                     TABLE
+                     TAB 1: SMART REORDER & DEFICITS TABLE (SRT-GAP-014)
                 ================================================== -->
 
-                <section class="table-card">
+                <section class="table-card" v-if="activeTab === 'smart'">
 
                     <div class="table-wrapper">
 
@@ -288,150 +198,69 @@
                             <thead>
 
                                 <tr>
-
-                                    <th>
-                                        Product
-                                    </th>
-
-                                    <th>
-                                        Current<br>
-                                        Stock
-                                    </th>
-
-                                    <th>
-                                        Min<br>
-                                        Stock
-                                    </th>
-
-                                    <th>
-                                        Avg. Daily<br>
-                                        Sales
-                                    </th>
-
-                                    <th>
-                                        Days<br>
-                                        Rem.
-                                    </th>
-
-                                    <th>
-                                        Suggested<br>
-                                        Qty
-                                    </th>
-
-                                    <th>
-                                        Supplier
-                                    </th>
-
-                                    <th>
-                                        Priority
-                                    </th>
-
-                                    <th>
-                                        Action
-                                    </th>
-
+                                    <th>Product</th>
+                                    <th>Branch</th>
+                                    <th style="text-align: right;">Current Stock</th>
+                                    <th style="text-align: right;">Threshold / Min</th>
+                                    <th style="text-align: right;">Reorder Deficit</th>
+                                    <th>Explainable Formula Breakdown</th>
+                                    <th v-if="canViewCost" style="text-align: right;">Est. Reorder Cost</th>
+                                    <th style="text-align: center;">Priority</th>
+                                    <th style="text-align: center;">Action</th>
                                 </tr>
 
                             </thead>
 
+                            <tbody>
 
-                            <tbody id="productTable">
-
-
-                                <!-- Product 1 -->
-
-                                <tr>
+                                <tr v-for="item in filteredReorderItems" :key="item.inventory_id">
 
                                     <td class="product-name">
-                                        Surf Excel 1kg
+                                        <div style="font-weight: 600;">{{ item.product_name }}</div>
+                                        <small style="color: #64748b; font-size: 11px;">SKU: {{ item.sku }} | Unit: {{ item.unit }}</small>
                                     </td>
 
-                                    <td class="stock-danger">
-                                        12
+                                    <td>{{ item.branch_name }}</td>
+
+                                    <td style="text-align: right;" :class="item.is_out_of_stock ? 'stock-danger' : 'stock-warning'">
+                                        {{ formatQty(item.quantity_on_hand) }}
                                     </td>
 
-                                    <td>
-                                        15
-                                    </td>
+                                    <td style="text-align: right;">{{ formatQty(item.threshold) }}</td>
 
-                                    <td>
-                                        3.1/day
-                                    </td>
-
-                                    <td class="days-danger">
-                                        3.8
-                                    </td>
-
-                                    <td class="suggested-qty">
-                                        40
+                                    <td style="text-align: right; font-weight: 700; color: #dc2626;">
+                                        {{ formatQty(item.deficit) }}
                                     </td>
 
                                     <td>
-                                        ABC Distributor
-                                    </td>
-
-                                    <td>
-                                        <span class="priority high">
-                                            High
+                                        <span class="formula-chip" style="font-size: 11px; background: #f1f5f9; padding: 3px 6px; border-radius: 4px; font-family: monospace; color: #334155;">
+                                            {{ item.formula_explanation }}
                                         </span>
                                     </td>
 
-                                    <td>
-                                        <button class="view-button" type="button">
-                                            View
+                                    <td v-if="canViewCost" style="text-align: right; font-weight: 600;">
+                                        PKR {{ formatNumber(item.estimated_reorder_cost) }}
+                                    </td>
+
+                                    <td style="text-align: center;">
+                                        <span class="priority" :class="item.is_out_of_stock ? 'high' : 'medium'">
+                                            {{ item.is_out_of_stock ? 'Critical (Out of Stock)' : 'Needs Reorder' }}
+                                        </span>
+                                    </td>
+
+                                    <td style="text-align: center;">
+                                        <button class="view-button" type="button" @click="createPurchaseOrder" title="Create Purchase Order">
+                                            + Order
                                         </button>
                                     </td>
 
                                 </tr>
 
-
-                                <!-- Product 2 -->
-
-                                <tr>
-
-                                    <td class="product-name">
-                                        Lipton Yellow<br>
-                                        Label 200g
+                                <tr v-if="filteredReorderItems.length === 0">
+                                    <td :colspan="canViewCost ? 9 : 8" style="text-align: center; padding: 28px; color: #64748b;">
+                                        {{ isLoading ? 'Loading stock intelligence...' : 'No products requiring reorder in this view.' }}
                                     </td>
-
-                                    <td class="stock-warning">
-                                        24
-                                    </td>
-
-                                    <td>
-                                        30
-                                    </td>
-
-                                    <td>
-                                        4.5/day
-                                    </td>
-
-                                    <td class="days-warning">
-                                        5.3
-                                    </td>
-
-                                    <td class="suggested-qty">
-                                        60
-                                    </td>
-
-                                    <td>
-                                        Unilever Global
-                                    </td>
-
-                                    <td>
-                                        <span class="priority medium">
-                                            Med
-                                        </span>
-                                    </td>
-
-                                    <td>
-                                        <button class="view-button" type="button">
-                                            View
-                                        </button>
-                                    </td>
-
                                 </tr>
-
 
                             </tbody>
 
@@ -439,30 +268,150 @@
 
                     </div>
 
+                </section>
 
-                    <!-- Pagination -->
 
-                    <div class="pagination-area">
+                <!-- =================================================
+                     TAB 2: SALES VELOCITY RANKINGS TABLE (SRT-GAP-014)
+                ================================================== -->
 
-                        <button class="page-button" type="button" aria-label="Previous page">
-                            <i class="bi bi-chevron-left"></i>
-                        </button>
+                <section class="table-card" v-else-if="activeTab === 'velocity'">
 
-                        <button class="page-button active" type="button">
-                            1
-                        </button>
+                    <div class="table-wrapper">
 
-                        <button class="page-button" type="button">
-                            2
-                        </button>
+                        <table class="reorder-table">
 
-                        <button class="page-button" type="button">
-                            3
-                        </button>
+                            <thead>
 
-                        <button class="page-button" type="button" aria-label="Next page">
-                            <i class="bi bi-chevron-right"></i>
-                        </button>
+                                <tr>
+                                    <th style="width: 60px; text-align: center;">Rank</th>
+                                    <th>Product</th>
+                                    <th style="text-align: right;">Units Sold ({{ selectedDays }}d)</th>
+                                    <th style="text-align: right;">Daily Velocity</th>
+                                    <th style="text-align: right;">Transactions</th>
+                                    <th style="text-align: right;">Total Revenue</th>
+                                </tr>
+
+                            </thead>
+
+                            <tbody>
+
+                                <tr v-for="item in filteredVelocityItems" :key="item.product_id">
+
+                                    <td style="text-align: center; font-weight: 700;">
+                                        <span style="display: inline-block; width: 26px; height: 26px; line-height: 26px; border-radius: 50%; background: #e0e7ff; color: #4338ca; font-size: 12px;">
+                                            #{{ item.rank }}
+                                        </span>
+                                    </td>
+
+                                    <td class="product-name">
+                                        <div style="font-weight: 600;">{{ item.product_name }}</div>
+                                        <small style="color: #64748b; font-size: 11px;">SKU: {{ item.sku }} | Unit: {{ item.unit }}</small>
+                                    </td>
+
+                                    <td style="text-align: right; font-weight: 600;">
+                                        {{ formatQty(item.total_sold_quantity) }}
+                                    </td>
+
+                                    <td style="text-align: right; color: #059669; font-weight: 600;">
+                                        {{ item.daily_velocity }} / day
+                                    </td>
+
+                                    <td style="text-align: right;">
+                                        {{ item.transactions_count }}
+                                    </td>
+
+                                    <td style="text-align: right; font-weight: 700;">
+                                        PKR {{ formatNumber(item.total_revenue) }}
+                                    </td>
+
+                                </tr>
+
+                                <tr v-if="filteredVelocityItems.length === 0">
+                                    <td colspan="6" style="text-align: center; padding: 28px; color: #64748b;">
+                                        {{ isLoading ? 'Analyzing sales velocity...' : 'No sales recorded in the selected ' + selectedDays + '-day window.' }}
+                                    </td>
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     TAB 3: DEAD STOCK & FROZEN CAPITAL TABLE (SRT-GAP-014)
+                ================================================== -->
+
+                <section class="table-card" v-else-if="activeTab === 'dead'">
+
+                    <div class="table-wrapper">
+
+                        <table class="reorder-table">
+
+                            <thead>
+
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Branch</th>
+                                    <th style="text-align: right;">Quantity on Hand</th>
+                                    <th style="text-align: center;">Inactivity Window</th>
+                                    <th v-if="canViewCost" style="text-align: right;">Cost Price</th>
+                                    <th v-if="canViewCost" style="text-align: right;">Frozen Capital</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+
+                            </thead>
+
+                            <tbody>
+
+                                <tr v-for="item in filteredDeadStockItems" :key="item.inventory_id">
+
+                                    <td class="product-name">
+                                        <div style="font-weight: 600;">{{ item.product_name }}</div>
+                                        <small style="color: #64748b; font-size: 11px;">SKU: {{ item.sku }} | Unit: {{ item.unit }}</small>
+                                    </td>
+
+                                    <td>{{ item.branch_name }}</td>
+
+                                    <td style="text-align: right; font-weight: 600;">
+                                        {{ formatQty(item.quantity_on_hand) }}
+                                    </td>
+
+                                    <td style="text-align: center;">
+                                        <span style="background: #fee2e2; color: #b91c1c; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">
+                                            0 sales in {{ item.days_without_sale }} days
+                                        </span>
+                                    </td>
+
+                                    <td v-if="canViewCost" style="text-align: right;">
+                                        PKR {{ formatNumber(item.cost_price) }}
+                                    </td>
+
+                                    <td v-if="canViewCost" style="text-align: right; font-weight: 700; color: #b91c1c;">
+                                        PKR {{ formatNumber(item.locked_capital) }}
+                                    </td>
+
+                                    <td style="text-align: center;">
+                                        <button class="view-button" type="button" @click="createPurchaseOrder" title="Stock Transfer / Discount Action">
+                                            Action
+                                        </button>
+                                    </td>
+
+                                </tr>
+
+                                <tr v-if="filteredDeadStockItems.length === 0">
+                                    <td :colspan="canViewCost ? 7 : 5" style="text-align: center; padding: 28px; color: #64748b;">
+                                        {{ isLoading ? 'Checking inactive inventory...' : 'No dead stock detected in the selected ' + selectedDays + '-day window.' }}
+                                    </td>
+                                </tr>
+
+                            </tbody>
+
+                        </table>
 
                     </div>
 
@@ -476,9 +425,102 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
+import { useRouter } from 'vue-router';
+import api from '@/api.js';
+
+const router = useRouter();
+const activeTab = ref('smart'); // 'smart', 'velocity', 'dead'
+const selectedDays = ref(30); // 30, 60, 90
+const searchQuery = ref('');
+const isLoading = ref(false);
+const errorMsg = ref('');
+
+const summary = ref({
+    reorder_analytics: {
+        total_requiring_reorder: 0,
+        critical_count: 0,
+        total_deficit_units: 0,
+        estimated_reorder_value: 0,
+        items: []
+    },
+    sales_velocity: {
+        days: 30,
+        products_count: 0,
+        rankings: []
+    },
+    dead_stock: {
+        days: 30,
+        dead_stock_count: 0,
+        total_dead_quantity: 0,
+        total_locked_capital: 0,
+        items: []
+    }
+});
+
+const user = JSON.parse(localStorage.getItem('user') || '{}');
+const isCashier = user.role === 'Cashier' || (user.roles && user.roles.some(r => r.name === 'Cashier'));
+const canViewCost = !isCashier;
+
+const formatNumber = (val) => Number(val || 0).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const formatQty = (val) => Number(val || 0).toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 3 });
+
+const fetchStockIntelligence = async () => {
+    isLoading.value = true;
+    errorMsg.value = '';
+    try {
+        const res = await api.get(`/inventory?intelligence=1&days=${selectedDays.value}`);
+        summary.value = res.data;
+    } catch (e) {
+        console.error(e);
+        errorMsg.value = e.response?.data?.message || 'Failed to load stock intelligence data.';
+    } finally {
+        isLoading.value = false;
+    }
+};
+
+watch(selectedDays, () => {
+    fetchStockIntelligence();
+});
+
+const filteredReorderItems = computed(() => {
+    const items = summary.value?.reorder_analytics?.items || [];
+    if (!searchQuery.value.trim()) return items;
+    const q = searchQuery.value.toLowerCase().trim();
+    return items.filter(it => 
+        (it.product_name && it.product_name.toLowerCase().includes(q)) ||
+        (it.sku && it.sku.toLowerCase().includes(q)) ||
+        (it.branch_name && it.branch_name.toLowerCase().includes(q))
+    );
+});
+
+const filteredVelocityItems = computed(() => {
+    const items = summary.value?.sales_velocity?.rankings || [];
+    if (!searchQuery.value.trim()) return items;
+    const q = searchQuery.value.toLowerCase().trim();
+    return items.filter(it => 
+        (it.product_name && it.product_name.toLowerCase().includes(q)) ||
+        (it.sku && it.sku.toLowerCase().includes(q))
+    );
+});
+
+const filteredDeadStockItems = computed(() => {
+    const items = summary.value?.dead_stock?.items || [];
+    if (!searchQuery.value.trim()) return items;
+    const q = searchQuery.value.toLowerCase().trim();
+    return items.filter(it => 
+        (it.product_name && it.product_name.toLowerCase().includes(q)) ||
+        (it.sku && it.sku.toLowerCase().includes(q)) ||
+        (it.branch_name && it.branch_name.toLowerCase().includes(q))
+    );
+});
+
+const createPurchaseOrder = () => {
+    router.push('/purchase?new=true');
+};
 
 onMounted(() => {
+    fetchStockIntelligence();
 });
 </script>
 

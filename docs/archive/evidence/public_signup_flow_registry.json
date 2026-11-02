@@ -1,0 +1,105 @@
+{
+    "metadata": {
+        "program": "SkyraSoft HBOS Public Distribution & Multi-Tenant Platform Integrity Program",
+        "checkpoint": "CHECKPOINT 1 \u2014 ARCHITECTURE ANALYSIS & DESIGN",
+        "generated_at": "2026-10-02T19:35:34+00:00",
+        "status": "ANALYSIS_COMPLETE"
+    },
+    "target_business_model": {
+        "pricing": "FREE_OF_COST",
+        "distribution": "PUBLIC_DOWNLOAD_AND_MICROSOFT_STORE",
+        "authentication_type": "EMAIL_PASSWORD_SELF_SERVICE",
+        "social_auth_required": false,
+        "billing_required": false
+    },
+    "onboarding_minimal_payload": {
+        "name": {
+            "type": "string",
+            "required": true,
+            "max": 255
+        },
+        "email": {
+            "type": "string",
+            "required": true,
+            "format": "email",
+            "max": 255,
+            "normalized": "lowercase_trimmed"
+        },
+        "password": {
+            "type": "string",
+            "required": true,
+            "min": 8
+        },
+        "password_confirmation": {
+            "type": "string",
+            "required": true
+        },
+        "business_name": {
+            "type": "string",
+            "required": true,
+            "max": 255
+        },
+        "currency": {
+            "type": "string",
+            "required": false,
+            "default": "PKR"
+        }
+    },
+    "atomic_provisioning_sequence": [
+        {
+            "step": 1,
+            "name": "PAYLOAD_VALIDATION_AND_NORMALIZATION",
+            "action": "Validate input fields, confirm password, normalize email to lowercase, enforce rate limits"
+        },
+        {
+            "step": 2,
+            "name": "DATABASE_TRANSACTION_START",
+            "action": "Begin DB::beginTransaction() with strict rollback on any exception"
+        },
+        {
+            "step": 3,
+            "name": "BUSINESS_TENANT_CREATION",
+            "action": "Insert into businesses (name, currency, type, created_at)"
+        },
+        {
+            "step": 4,
+            "name": "PRIMARY_BRANCH_PROVISIONING",
+            "action": "Insert into branches (business_id, name: \"Main Branch\", code: \"MAIN\", is_primary: true, status: \"active\")"
+        },
+        {
+            "step": 5,
+            "name": "USER_IDENTITY_CREATION",
+            "action": "Insert into users (name, email, password: Hash::make, business_id, branch_id, role: \"Business Owner\", is_active: true)"
+        },
+        {
+            "step": 6,
+            "name": "MEMBERSHIP_PIVOT_SYNC",
+            "action": "Sync business_user (business_id, user_id) and branch_user (business_id, branch_id, user_id)"
+        },
+        {
+            "step": 7,
+            "name": "SPATIE_TEAM_ROLE_ASSIGNMENT",
+            "action": "setPermissionsTeamId(business.id), Role::firstOrCreate(\"Business Owner\", business_id), assignRole"
+        },
+        {
+            "step": 8,
+            "name": "DEFAULT_FINANCIAL_ACCOUNT_PROVISIONING",
+            "action": "Create default \"Main Cash\" financial account (type: \"cash\", business_id, branch_id, is_active: true)"
+        },
+        {
+            "step": 9,
+            "name": "DEFAULT_SETTINGS_INITIALIZATION",
+            "action": "Seed essential business settings (receipt format, invoice prefix, fiscal start)"
+        },
+        {
+            "step": 10,
+            "name": "DATABASE_TRANSACTION_COMMIT",
+            "action": "DB::commit()"
+        },
+        {
+            "step": 11,
+            "name": "SANCTUM_TOKEN_ISSUANCE",
+            "action": "Issue plainTextToken with active business context payload and return HTTP 201"
+        }
+    ]
+}

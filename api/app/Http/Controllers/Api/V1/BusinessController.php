@@ -114,10 +114,15 @@ class BusinessController extends Controller
 
         $validated = $request->validate([
             'name' => 'sometimes|required|string|max:255',
+            'legal_name' => 'nullable|string|max:255',
             'type' => 'nullable|string|max:255',
             'address' => 'nullable|string',
             'phone' => 'nullable|string|max:255',
             'email' => 'nullable|email|max:255',
+            'website' => 'nullable|string|max:255',
+            'country' => 'nullable|string|max:100',
+            'timezone' => 'nullable|string|max:100',
+            'tax_number' => 'nullable|string|max:100',
             'currency' => 'nullable|string|max:10',
         ]);
 

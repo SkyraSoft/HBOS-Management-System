@@ -1,0 +1,182 @@
+[
+  {
+    "route_name": "Dashboard",
+    "path": "/",
+    "owner": "FULL_ACCESS (Executive Consolidated + Branch View)",
+    "branch_manager": "SCOPED_BRANCH_ACCESS (Assigned Branch Only)",
+    "cashier": "HIDDEN (Redirects to /POS)",
+    "accountant": "SCOPED_BRANCH_ACCESS (Financial Summary Focus)",
+    "inventory_manager": "SCOPED_BRANCH_ACCESS (Stock & Reorder Focus)"
+  },
+  {
+    "route_name": "PosSale",
+    "path": "/POS",
+    "owner": "FULL_ACCESS",
+    "branch_manager": "FULL_ACCESS (Branch POS)",
+    "cashier": "FULL_ACCESS (Primary Landing)",
+    "accountant": "READ_ONLY",
+    "inventory_manager": "NOT_APPLICABLE"
+  },
+  {
+    "route_name": "Sales",
+    "path": "/sales",
+    "owner": "FULL_ACCESS",
+    "branch_manager": "SCOPED_BRANCH_ACCESS",
+    "cashier": "ACTION_LIMITED (Own Sales Only)",
+    "accountant": "READ_ONLY",
+    "inventory_manager": "NOT_APPLICABLE"
+  },
+  {
+    "route_name": "Inventry",
+    "path": "/inventory",
+    "owner": "FULL_ACCESS",
+    "branch_manager": "SCOPED_BRANCH_ACCESS",
+    "cashier": "READ_ONLY (Lookup Price/Stock)",
+    "accountant": "READ_ONLY",
+    "inventory_manager": "FULL_ACCESS (Primary Landing)"
+  },
+  {
+    "route_name": "Reorder",
+    "path": "/reorder",
+    "owner": "FULL_ACCESS",
+    "branch_manager": "SCOPED_BRANCH_ACCESS",
+    "cashier": "HIDDEN",
+    "accountant": "READ_ONLY",
+    "inventory_manager": "FULL_ACCESS"
+  },
+  {
+    "route_name": "ReorderDetail",
+    "path": "/reorderdetail",
+    "owner": "FULL_ACCESS",
+    "branch_manager": "SCOPED_BRANCH_ACCESS",
+    "cashier": "HIDDEN",
+    "accountant": "READ_ONLY",
+    "inventory_manager": "FULL_ACCESS"
+  },
+  {
+    "route_name": "Purchase",
+    "path": "/purchase",
+    "owner": "FULL_ACCESS",
+    "branch_manager": "SCOPED_BRANCH_ACCESS",
+    "cashier": "HIDDEN",
+    "accountant": "READ_ONLY",
+    "inventory_manager": "FULL_ACCESS"
+  },
+  {
+    "route_name": "Customer",
+    "path": "/customer",
+    "owner": "FULL_ACCESS",
+    "branch_manager": "SCOPED_BRANCH_ACCESS",
+    "cashier": "ACTION_LIMITED (Lookup & Create Only)",
+    "accountant": "FULL_ACCESS",
+    "inventory_manager": "NOT_APPLICABLE"
+  },
+  {
+    "route_name": "Profilecustomer",
+    "path": "/profilecustomer",
+    "owner": "FULL_ACCESS",
+    "branch_manager": "SCOPED_BRANCH_ACCESS",
+    "cashier": "ACTION_LIMITED (Lookup Ledger)",
+    "accountant": "FULL_ACCESS",
+    "inventory_manager": "NOT_APPLICABLE"
+  },
+  {
+    "route_name": "Khata",
+    "path": "/khata",
+    "owner": "FULL_ACCESS",
+    "branch_manager": "SCOPED_BRANCH_ACCESS",
+    "cashier": "HIDDEN",
+    "accountant": "FULL_ACCESS",
+    "inventory_manager": "NOT_APPLICABLE"
+  },
+  {
+    "route_name": "ReturnDebt",
+    "path": "/returndebt",
+    "owner": "FULL_ACCESS",
+    "branch_manager": "SCOPED_BRANCH_ACCESS",
+    "cashier": "HIDDEN",
+    "accountant": "FULL_ACCESS",
+    "inventory_manager": "NOT_APPLICABLE"
+  },
+  {
+    "route_name": "Supplier",
+    "path": "/supplier",
+    "owner": "FULL_ACCESS",
+    "branch_manager": "SCOPED_BRANCH_ACCESS",
+    "cashier": "HIDDEN",
+    "accountant": "FULL_ACCESS",
+    "inventory_manager": "READ_ONLY"
+  },
+  {
+    "route_name": "Supplierpayable",
+    "path": "/supplierpayable",
+    "owner": "FULL_ACCESS",
+    "branch_manager": "SCOPED_BRANCH_ACCESS",
+    "cashier": "HIDDEN",
+    "accountant": "FULL_ACCESS",
+    "inventory_manager": "HIDDEN"
+  },
+  {
+    "route_name": "SupplierPayment",
+    "path": "/supplierpayment",
+    "owner": "FULL_ACCESS",
+    "branch_manager": "HIDDEN",
+    "cashier": "HIDDEN",
+    "accountant": "FULL_ACCESS",
+    "inventory_manager": "HIDDEN"
+  },
+  {
+    "route_name": "Expenses",
+    "path": "/expenses",
+    "owner": "FULL_ACCESS",
+    "branch_manager": "SCOPED_BRANCH_ACCESS",
+    "cashier": "HIDDEN",
+    "accountant": "FULL_ACCESS",
+    "inventory_manager": "HIDDEN"
+  },
+  {
+    "route_name": "Employees",
+    "path": "/employees",
+    "owner": "FULL_ACCESS",
+    "branch_manager": "SCOPED_BRANCH_ACCESS (Branch Staff Only)",
+    "cashier": "HIDDEN",
+    "accountant": "READ_ONLY (Payroll)",
+    "inventory_manager": "HIDDEN"
+  },
+  {
+    "route_name": "Reports",
+    "path": "/reports",
+    "owner": "FULL_ACCESS (Executive & Consolidated)",
+    "branch_manager": "SCOPED_BRANCH_ACCESS (Branch Reports)",
+    "cashier": "HIDDEN",
+    "accountant": "FULL_ACCESS (Financial Statements)",
+    "inventory_manager": "ACTION_LIMITED (Stock Reports Only)"
+  },
+  {
+    "route_name": "Settings",
+    "path": "/settings",
+    "owner": "FULL_ACCESS (Business, Branches, Roles, Security, Receipts)",
+    "branch_manager": "ACTION_LIMITED (Branch Profile & Receipts)",
+    "cashier": "ACTION_LIMITED (Printer / Terminal Only)",
+    "accountant": "ACTION_LIMITED (Financial Accounts Setup)",
+    "inventory_manager": "HIDDEN"
+  },
+  {
+    "route_name": "Notifications",
+    "path": "/notifications",
+    "owner": "FULL_ACCESS",
+    "branch_manager": "FULL_ACCESS",
+    "cashier": "FULL_ACCESS",
+    "accountant": "FULL_ACCESS",
+    "inventory_manager": "FULL_ACCESS"
+  },
+  {
+    "route_name": "Support",
+    "path": "/support",
+    "owner": "FULL_ACCESS",
+    "branch_manager": "FULL_ACCESS",
+    "cashier": "FULL_ACCESS",
+    "accountant": "FULL_ACCESS",
+    "inventory_manager": "FULL_ACCESS"
+  }
+]

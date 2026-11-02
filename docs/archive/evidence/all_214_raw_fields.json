@@ -1,0 +1,2142 @@
+[
+    {
+        "id": "FIELD-001",
+        "label": "username",
+        "form_id": "FORM-001",
+        "form_name": "User Login Form",
+        "page": "ROUTE-030 (LoginView.vue) \/ Root \/ SECTION-005",
+        "db_col": "users.username",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "UserGovernanceController@store"
+    },
+    {
+        "id": "FIELD-002",
+        "label": "password",
+        "form_id": "FORM-001",
+        "form_name": "User Login Form",
+        "page": "ROUTE-030 (LoginView.vue) \/ Root \/ SECTION-005",
+        "db_col": "users.password",
+        "persist": "PERSISTED_TRANSFORMED",
+        "writers": "ProfileController@updatePassword"
+    },
+    {
+        "id": "FIELD-003",
+        "label": "remember_me",
+        "form_id": "FORM-001",
+        "form_name": "User Login Form",
+        "page": "ROUTE-030 (LoginView.vue) \/ Root \/ SECTION-005",
+        "db_col": "personal_access_tokens.expires_at",
+        "persist": "TRANSIENT_UI_ONLY",
+        "writers": "AuthController@login"
+    },
+    {
+        "id": "FIELD-004",
+        "label": "name",
+        "form_id": "FORM-002",
+        "form_name": "Business Owner Registration Form",
+        "page": "ROUTE-031 (RegisterView.vue) \/ Root \/ SECTION-006",
+        "db_col": "users.name",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "AuthController@register"
+    },
+    {
+        "id": "FIELD-005",
+        "label": "email",
+        "form_id": "FORM-002",
+        "form_name": "Business Owner Registration Form",
+        "page": "ROUTE-031 (RegisterView.vue) \/ Root \/ SECTION-006",
+        "db_col": "users.email",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "AuthController@register"
+    },
+    {
+        "id": "FIELD-006",
+        "label": "phone",
+        "form_id": "FORM-002",
+        "form_name": "Business Owner Registration Form",
+        "page": "ROUTE-031 (RegisterView.vue) \/ Root \/ SECTION-006",
+        "db_col": "users.phone",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "AuthController@register"
+    },
+    {
+        "id": "FIELD-007",
+        "label": "business_name",
+        "form_id": "FORM-002",
+        "form_name": "Business Owner Registration Form",
+        "page": "ROUTE-031 (RegisterView.vue) \/ Root \/ SECTION-006",
+        "db_col": "businesses.name",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "AuthController@register, ProfileController@update"
+    },
+    {
+        "id": "FIELD-008",
+        "label": "business_type",
+        "form_id": "FORM-002",
+        "form_name": "Business Owner Registration Form",
+        "page": "ROUTE-031 (RegisterView.vue) \/ Root \/ SECTION-006",
+        "db_col": "businesses.business_type",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "AuthController@register"
+    },
+    {
+        "id": "FIELD-009",
+        "label": "password",
+        "form_id": "FORM-002",
+        "form_name": "Business Owner Registration Form",
+        "page": "ROUTE-031 (RegisterView.vue) \/ Root \/ SECTION-006",
+        "db_col": "users.password",
+        "persist": "PERSISTED_TRANSFORMED",
+        "writers": "AuthController@register"
+    },
+    {
+        "id": "FIELD-010",
+        "label": "password_confirmation",
+        "form_id": "FORM-002",
+        "form_name": "Business Owner Registration Form",
+        "page": "ROUTE-031 (RegisterView.vue) \/ Root \/ SECTION-006",
+        "db_col": "N\/A",
+        "persist": "REQUEST_ONLY",
+        "writers": "None"
+    },
+    {
+        "id": "FIELD-011",
+        "label": "business_name",
+        "form_id": "FORM-003",
+        "form_name": "Business Setup Step 1",
+        "page": "ROUTE-004 (BusniessSetupView.vue) \/ Root \/ SECTION-007",
+        "db_col": "businesses.name",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "BusinessSetupController@storeStep1"
+    },
+    {
+        "id": "FIELD-012",
+        "label": "business_type",
+        "form_id": "FORM-003",
+        "form_name": "Business Setup Step 1",
+        "page": "ROUTE-004 (BusniessSetupView.vue) \/ Root \/ SECTION-007",
+        "db_col": "businesses.business_type",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "BusinessSetupController@storeStep1"
+    },
+    {
+        "id": "FIELD-013",
+        "label": "currency",
+        "form_id": "FORM-003",
+        "form_name": "Business Setup Step 1",
+        "page": "ROUTE-004 (BusniessSetupView.vue) \/ Root \/ SECTION-007",
+        "db_col": "businesses.currency",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "BusinessSetupController@storeStep1"
+    },
+    {
+        "id": "FIELD-014",
+        "label": "tax_number",
+        "form_id": "FORM-003",
+        "form_name": "Business Setup Step 1",
+        "page": "ROUTE-004 (BusniessSetupView.vue) \/ Root \/ SECTION-007",
+        "db_col": "businesses.tax_number",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "BusinessSetupController@storeStep1"
+    },
+    {
+        "id": "FIELD-015",
+        "label": "phone",
+        "form_id": "FORM-003",
+        "form_name": "Business Setup Step 1",
+        "page": "ROUTE-004 (BusniessSetupView.vue) \/ Root \/ SECTION-007",
+        "db_col": "businesses.phone",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "BusinessSetupController@storeStep1"
+    },
+    {
+        "id": "FIELD-016",
+        "label": "email",
+        "form_id": "FORM-003",
+        "form_name": "Business Setup Step 1",
+        "page": "ROUTE-004 (BusniessSetupView.vue) \/ Root \/ SECTION-007",
+        "db_col": "businesses.email",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "BusinessSetupController@storeStep1"
+    },
+    {
+        "id": "FIELD-017",
+        "label": "address",
+        "form_id": "FORM-003",
+        "form_name": "Business Setup Step 1",
+        "page": "ROUTE-004 (BusniessSetupView.vue) \/ Root \/ SECTION-007",
+        "db_col": "businesses.address",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "BusinessSetupController@storeStep1"
+    },
+    {
+        "id": "FIELD-018",
+        "label": "branch_name",
+        "form_id": "FORM-004",
+        "form_name": "Branch Setup Step 2",
+        "page": "ROUTE-005 (BusinessSetup1View.vue) \/ Root \/ SECTION-008",
+        "db_col": "branches.name",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "BusinessSetupController@storeStep2"
+    },
+    {
+        "id": "FIELD-019",
+        "label": "branch_code",
+        "form_id": "FORM-004",
+        "form_name": "Branch Setup Step 2",
+        "page": "ROUTE-005 (BusinessSetup1View.vue) \/ Root \/ SECTION-008",
+        "db_col": "branches.code",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "BusinessSetupController@storeStep2"
+    },
+    {
+        "id": "FIELD-020",
+        "label": "location",
+        "form_id": "FORM-004",
+        "form_name": "Branch Setup Step 2",
+        "page": "ROUTE-005 (BusinessSetup1View.vue) \/ Root \/ SECTION-008",
+        "db_col": "branches.location",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "BusinessSetupController@storeStep2"
+    },
+    {
+        "id": "FIELD-021",
+        "label": "pos_register_name",
+        "form_id": "FORM-004",
+        "form_name": "Branch Setup Step 2",
+        "page": "ROUTE-005 (BusinessSetup1View.vue) \/ Root \/ SECTION-008",
+        "db_col": "financial_accounts.name",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "BusinessSetupController@storeStep2"
+    },
+    {
+        "id": "FIELD-022",
+        "label": "business_logo",
+        "form_id": "FORM-005",
+        "form_name": "Business Branding & Profile Form",
+        "page": "ROUTE-003 (InformationView.vue) \/ Root \/ SECTION-009",
+        "db_col": "businesses.logo_url",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "ProfileController@updateLogo"
+    },
+    {
+        "id": "FIELD-023",
+        "label": "business_name",
+        "form_id": "FORM-005",
+        "form_name": "Business Branding & Profile Form",
+        "page": "ROUTE-003 (InformationView.vue) \/ Root \/ SECTION-009",
+        "db_col": "businesses.name",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "ProfileController@update"
+    },
+    {
+        "id": "FIELD-024",
+        "label": "business_type",
+        "form_id": "FORM-005",
+        "form_name": "Business Branding & Profile Form",
+        "page": "ROUTE-003 (InformationView.vue) \/ Root \/ SECTION-009",
+        "db_col": "businesses.business_type",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "ProfileController@update"
+    },
+    {
+        "id": "FIELD-025",
+        "label": "phone",
+        "form_id": "FORM-005",
+        "form_name": "Business Branding & Profile Form",
+        "page": "ROUTE-003 (InformationView.vue) \/ Root \/ SECTION-009",
+        "db_col": "businesses.phone",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "ProfileController@update"
+    },
+    {
+        "id": "FIELD-026",
+        "label": "street_address",
+        "form_id": "FORM-005",
+        "form_name": "Business Branding & Profile Form",
+        "page": "ROUTE-003 (InformationView.vue) \/ Root \/ SECTION-009",
+        "db_col": "businesses.address",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "ProfileController@update"
+    },
+    {
+        "id": "FIELD-027",
+        "label": "city",
+        "form_id": "FORM-005",
+        "form_name": "Business Branding & Profile Form",
+        "page": "ROUTE-003 (InformationView.vue) \/ Root \/ SECTION-009",
+        "db_col": "businesses.city",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "ProfileController@update"
+    },
+    {
+        "id": "FIELD-028",
+        "label": "currency",
+        "form_id": "FORM-006",
+        "form_name": "Business Preferences Form",
+        "page": "ROUTE-011 (PreferencesView.vue) \/ step-preferences \/ SECTION-010",
+        "db_col": "preferences.currency",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "PreferencesController@update"
+    },
+    {
+        "id": "FIELD-029",
+        "label": "timezone",
+        "form_id": "FORM-006",
+        "form_name": "Business Preferences Form",
+        "page": "ROUTE-011 (PreferencesView.vue) \/ step-preferences \/ SECTION-010",
+        "db_col": "preferences.timezone",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "PreferencesController@update"
+    },
+    {
+        "id": "FIELD-030",
+        "label": "date_format",
+        "form_id": "FORM-006",
+        "form_name": "Business Preferences Form",
+        "page": "ROUTE-011 (PreferencesView.vue) \/ step-preferences \/ SECTION-010",
+        "db_col": "preferences.date_format",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "PreferencesController@update"
+    },
+    {
+        "id": "FIELD-031",
+        "label": "tax_enabled",
+        "form_id": "FORM-006",
+        "form_name": "Business Preferences Form",
+        "page": "ROUTE-011 (PreferencesView.vue) \/ step-preferences \/ SECTION-010",
+        "db_col": "preferences.tax_enabled",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "PreferencesController@update"
+    },
+    {
+        "id": "FIELD-032",
+        "label": "tax_rate",
+        "form_id": "FORM-006",
+        "form_name": "Business Preferences Form",
+        "page": "ROUTE-011 (PreferencesView.vue) \/ step-preferences \/ SECTION-010",
+        "db_col": "preferences.tax_rate",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "PreferencesController@update"
+    },
+    {
+        "id": "FIELD-033",
+        "label": "receipt_footer",
+        "form_id": "FORM-006",
+        "form_name": "Business Preferences Form",
+        "page": "ROUTE-011 (PreferencesView.vue) \/ step-preferences \/ SECTION-010",
+        "db_col": "preferences.receipt_footer",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "PreferencesController@update"
+    },
+    {
+        "id": "FIELD-034",
+        "label": "name",
+        "form_id": "FORM-007",
+        "form_name": "Master Product Drawer Form",
+        "page": "ROUTE-006 (InventryView.vue) \/ products \/ SECTION-036",
+        "db_col": "products.name",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "ProductController@store, @update"
+    },
+    {
+        "id": "FIELD-035",
+        "label": "sku",
+        "form_id": "FORM-007",
+        "form_name": "Master Product Drawer Form",
+        "page": "ROUTE-006 (InventryView.vue) \/ products \/ SECTION-036",
+        "db_col": "products.sku",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "ProductController@store, @update"
+    },
+    {
+        "id": "FIELD-036",
+        "label": "barcode",
+        "form_id": "FORM-007",
+        "form_name": "Master Product Drawer Form",
+        "page": "ROUTE-006 (InventryView.vue) \/ products \/ SECTION-036",
+        "db_col": "products.barcode",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "ProductController@store, @update"
+    },
+    {
+        "id": "FIELD-037",
+        "label": "category_id",
+        "form_id": "FORM-007",
+        "form_name": "Master Product Drawer Form",
+        "page": "ROUTE-006 (InventryView.vue) \/ products \/ SECTION-036",
+        "db_col": "products.category_id",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "ProductController@store, @update"
+    },
+    {
+        "id": "FIELD-038",
+        "label": "subcategory_id",
+        "form_id": "FORM-007",
+        "form_name": "Master Product Drawer Form",
+        "page": "ROUTE-006 (InventryView.vue) \/ products \/ SECTION-036",
+        "db_col": "products.subcategory_id",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "ProductController@store, @update"
+    },
+    {
+        "id": "FIELD-039",
+        "label": "brand_id",
+        "form_id": "FORM-007",
+        "form_name": "Master Product Drawer Form",
+        "page": "ROUTE-006 (InventryView.vue) \/ products \/ SECTION-036",
+        "db_col": "products.brand_id",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "ProductController@store, @update"
+    },
+    {
+        "id": "FIELD-040",
+        "label": "cost_price",
+        "form_id": "FORM-007",
+        "form_name": "Master Product Drawer Form",
+        "page": "ROUTE-006 (InventryView.vue) \/ products \/ SECTION-036",
+        "db_col": "products.cost_price",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "ProductController@store, @update"
+    },
+    {
+        "id": "FIELD-041",
+        "label": "selling_price",
+        "form_id": "FORM-007",
+        "form_name": "Master Product Drawer Form",
+        "page": "ROUTE-006 (InventryView.vue) \/ products \/ SECTION-036",
+        "db_col": "products.selling_price",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "ProductController@store, @update"
+    },
+    {
+        "id": "FIELD-042",
+        "label": "wholesale_price",
+        "form_id": "FORM-007",
+        "form_name": "Master Product Drawer Form",
+        "page": "ROUTE-006 (InventryView.vue) \/ products \/ SECTION-036",
+        "db_col": "products.wholesale_price",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "ProductController@store, @update"
+    },
+    {
+        "id": "FIELD-043",
+        "label": "opening_stock",
+        "form_id": "FORM-007",
+        "form_name": "Master Product Drawer Form",
+        "page": "ROUTE-006 (InventryView.vue) \/ products \/ SECTION-036",
+        "db_col": "branch_inventory.stock",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "ProductController@store"
+    },
+    {
+        "id": "FIELD-044",
+        "label": "min_stock",
+        "form_id": "FORM-007",
+        "form_name": "Master Product Drawer Form",
+        "page": "ROUTE-006 (InventryView.vue) \/ products \/ SECTION-036",
+        "db_col": "products.min_stock",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "ProductController@store, @update"
+    },
+    {
+        "id": "FIELD-045",
+        "label": "unit",
+        "form_id": "FORM-007",
+        "form_name": "Master Product Drawer Form",
+        "page": "ROUTE-006 (InventryView.vue) \/ products \/ SECTION-036",
+        "db_col": "products.unit",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "ProductController@store, @update"
+    },
+    {
+        "id": "FIELD-046",
+        "label": "image",
+        "form_id": "FORM-007",
+        "form_name": "Master Product Drawer Form",
+        "page": "ROUTE-006 (InventryView.vue) \/ products \/ SECTION-036",
+        "db_col": "products.image_url",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "ProductController@store, @update"
+    },
+    {
+        "id": "FIELD-047",
+        "label": "description",
+        "form_id": "FORM-007",
+        "form_name": "Master Product Drawer Form",
+        "page": "ROUTE-006 (InventryView.vue) \/ products \/ SECTION-036",
+        "db_col": "products.description",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "ProductController@store, @update"
+    },
+    {
+        "id": "FIELD-048",
+        "label": "adjustment_type",
+        "form_id": "FORM-008",
+        "form_name": "Quick Stock Adjustment Form",
+        "page": "ROUTE-006 (InventryView.vue) \/ products \/ SECTION-037",
+        "db_col": "inventory_movements.type",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "InventoryController@adjust"
+    },
+    {
+        "id": "FIELD-049",
+        "label": "quantity",
+        "form_id": "FORM-008",
+        "form_name": "Quick Stock Adjustment Form",
+        "page": "ROUTE-006 (InventryView.vue) \/ products \/ SECTION-037",
+        "db_col": "inventory_movements.quantity",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "InventoryController@adjust"
+    },
+    {
+        "id": "FIELD-050",
+        "label": "reason",
+        "form_id": "FORM-008",
+        "form_name": "Quick Stock Adjustment Form",
+        "page": "ROUTE-006 (InventryView.vue) \/ products \/ SECTION-037",
+        "db_col": "inventory_movements.description",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "InventoryController@adjust"
+    },
+    {
+        "id": "FIELD-051",
+        "label": "unit_cost_override",
+        "form_id": "FORM-008",
+        "form_name": "Quick Stock Adjustment Form",
+        "page": "ROUTE-006 (InventryView.vue) \/ products \/ SECTION-037",
+        "db_col": "inventory_movements.unit_cost",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "InventoryController@adjust"
+    },
+    {
+        "id": "FIELD-052",
+        "label": "name",
+        "form_id": "FORM-009",
+        "form_name": "Master Category Form",
+        "page": "ROUTE-006 (InventryView.vue) \/ categories \/ SECTION-038",
+        "db_col": "categories.name",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "CategoryController@store, @update"
+    },
+    {
+        "id": "FIELD-053",
+        "label": "parent_id",
+        "form_id": "FORM-009",
+        "form_name": "Master Category Form",
+        "page": "ROUTE-006 (InventryView.vue) \/ categories \/ SECTION-038",
+        "db_col": "categories.parent_id",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "CategoryController@store, @update"
+    },
+    {
+        "id": "FIELD-054",
+        "label": "slug",
+        "form_id": "FORM-009",
+        "form_name": "Master Category Form",
+        "page": "ROUTE-006 (InventryView.vue) \/ categories \/ SECTION-038",
+        "db_col": "categories.slug",
+        "persist": "PERSISTED_TRANSFORMED",
+        "writers": "CategoryController@store, @update"
+    },
+    {
+        "id": "FIELD-055",
+        "label": "color_theme",
+        "form_id": "FORM-009",
+        "form_name": "Master Category Form",
+        "page": "ROUTE-006 (InventryView.vue) \/ categories \/ SECTION-038",
+        "db_col": "categories.color",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "CategoryController@store, @update"
+    },
+    {
+        "id": "FIELD-056",
+        "label": "status",
+        "form_id": "FORM-009",
+        "form_name": "Master Category Form",
+        "page": "ROUTE-006 (InventryView.vue) \/ categories \/ SECTION-038",
+        "db_col": "categories.is_active",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "CategoryController@store, @update"
+    },
+    {
+        "id": "FIELD-057",
+        "label": "name",
+        "form_id": "FORM-010",
+        "form_name": "Master Brand Form",
+        "page": "ROUTE-006 (InventryView.vue) \/ brands \/ SECTION-039",
+        "db_col": "brands.name",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "BrandController@store, @update"
+    },
+    {
+        "id": "FIELD-058",
+        "label": "company",
+        "form_id": "FORM-010",
+        "form_name": "Master Brand Form",
+        "page": "ROUTE-006 (InventryView.vue) \/ brands \/ SECTION-039",
+        "db_col": "brands.company",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "BrandController@store, @update"
+    },
+    {
+        "id": "FIELD-059",
+        "label": "logo_url",
+        "form_id": "FORM-010",
+        "form_name": "Master Brand Form",
+        "page": "ROUTE-006 (InventryView.vue) \/ brands \/ SECTION-039",
+        "db_col": "brands.logo_url",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "BrandController@store, @update"
+    },
+    {
+        "id": "FIELD-060",
+        "label": "description",
+        "form_id": "FORM-010",
+        "form_name": "Master Brand Form",
+        "page": "ROUTE-006 (InventryView.vue) \/ brands \/ SECTION-039",
+        "db_col": "brands.description",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "BrandController@store, @update"
+    },
+    {
+        "id": "FIELD-061",
+        "label": "customer_id",
+        "form_id": "FORM-011",
+        "form_name": "Point of Sale Checkout Form",
+        "page": "ROUTE-002 (PosSaleView.vue) \/ Root \/ SECTION-064",
+        "db_col": "sales.customer_id",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "SaleController@store"
+    },
+    {
+        "id": "FIELD-062",
+        "label": "payment_method",
+        "form_id": "FORM-011",
+        "form_name": "Point of Sale Checkout Form",
+        "page": "ROUTE-002 (PosSaleView.vue) \/ Root \/ SECTION-064",
+        "db_col": "sales.payment_method",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "SaleController@store"
+    },
+    {
+        "id": "FIELD-063",
+        "label": "tendered_amount",
+        "form_id": "FORM-011",
+        "form_name": "Point of Sale Checkout Form",
+        "page": "ROUTE-002 (PosSaleView.vue) \/ Root \/ SECTION-064",
+        "db_col": "sales.tendered_amount",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "SaleController@store"
+    },
+    {
+        "id": "FIELD-064",
+        "label": "discount_type",
+        "form_id": "FORM-011",
+        "form_name": "Point of Sale Checkout Form",
+        "page": "ROUTE-002 (PosSaleView.vue) \/ Root \/ SECTION-064",
+        "db_col": "sales.discount_type",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "SaleController@store"
+    },
+    {
+        "id": "FIELD-065",
+        "label": "discount_value",
+        "form_id": "FORM-011",
+        "form_name": "Point of Sale Checkout Form",
+        "page": "ROUTE-002 (PosSaleView.vue) \/ Root \/ SECTION-064",
+        "db_col": "sales.discount",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "SaleController@store"
+    },
+    {
+        "id": "FIELD-066",
+        "label": "tax_rate",
+        "form_id": "FORM-011",
+        "form_name": "Point of Sale Checkout Form",
+        "page": "ROUTE-002 (PosSaleView.vue) \/ Root \/ SECTION-064",
+        "db_col": "sales.tax_rate",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "SaleController@store"
+    },
+    {
+        "id": "FIELD-067",
+        "label": "card_auth_code",
+        "form_id": "FORM-011",
+        "form_name": "Point of Sale Checkout Form",
+        "page": "ROUTE-002 (PosSaleView.vue) \/ Root \/ SECTION-064",
+        "db_col": "NOT_PRESENT",
+        "persist": "REQUEST_ONLY",
+        "writers": "SaleController@store"
+    },
+    {
+        "id": "FIELD-068",
+        "label": "order_notes",
+        "form_id": "FORM-011",
+        "form_name": "Point of Sale Checkout Form",
+        "page": "ROUTE-002 (PosSaleView.vue) \/ Root \/ SECTION-064",
+        "db_col": "sales.notes",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "SaleController@store"
+    },
+    {
+        "id": "FIELD-069",
+        "label": "name",
+        "form_id": "FORM-012",
+        "form_name": "Quick Add Customer POS Form",
+        "page": "ROUTE-002 (PosSaleView.vue) \/ Root \/ SECTION-064",
+        "db_col": "customers.name",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "CustomerController@store"
+    },
+    {
+        "id": "FIELD-070",
+        "label": "phone",
+        "form_id": "FORM-012",
+        "form_name": "Quick Add Customer POS Form",
+        "page": "ROUTE-002 (PosSaleView.vue) \/ Root \/ SECTION-064",
+        "db_col": "customers.phone",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "CustomerController@store"
+    },
+    {
+        "id": "FIELD-071",
+        "label": "credit_limit",
+        "form_id": "FORM-012",
+        "form_name": "Quick Add Customer POS Form",
+        "page": "ROUTE-002 (PosSaleView.vue) \/ Root \/ SECTION-064",
+        "db_col": "customers.credit_limit",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "CustomerController@store"
+    },
+    {
+        "id": "FIELD-072",
+        "label": "return_quantities",
+        "form_id": "FORM-013",
+        "form_name": "Sales Return & Refund Form",
+        "page": "ROUTE-007 (SalesView.vue) \/ Root \/ SECTION-085",
+        "db_col": "sale_return_items.quantity",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "SaleReturnRefundController@settleRefund"
+    },
+    {
+        "id": "FIELD-073",
+        "label": "restock_condition",
+        "form_id": "FORM-013",
+        "form_name": "Sales Return & Refund Form",
+        "page": "ROUTE-007 (SalesView.vue) \/ Root \/ SECTION-085",
+        "db_col": "sale_returns.restock",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "SaleReturnRefundController@settleRefund"
+    },
+    {
+        "id": "FIELD-074",
+        "label": "refund_channel",
+        "form_id": "FORM-013",
+        "form_name": "Sales Return & Refund Form",
+        "page": "ROUTE-007 (SalesView.vue) \/ Root \/ SECTION-085",
+        "db_col": "sale_returns.refund_channel",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "SaleReturnRefundController@settleRefund"
+    },
+    {
+        "id": "FIELD-075",
+        "label": "refund_reason",
+        "form_id": "FORM-013",
+        "form_name": "Sales Return & Refund Form",
+        "page": "ROUTE-007 (SalesView.vue) \/ Root \/ SECTION-085",
+        "db_col": "sale_returns.reason",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "SaleReturnRefundController@settleRefund"
+    },
+    {
+        "id": "FIELD-076",
+        "label": "supplier_id",
+        "form_id": "FORM-014",
+        "form_name": "Purchase Order & GRN Form",
+        "page": "ROUTE-012 (PurchaseView.vue) \/ Root \/ SECTION-100",
+        "db_col": "purchases.supplier_id",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "PurchaseController@store"
+    },
+    {
+        "id": "FIELD-077",
+        "label": "bill_number",
+        "form_id": "FORM-014",
+        "form_name": "Purchase Order & GRN Form",
+        "page": "ROUTE-012 (PurchaseView.vue) \/ Root \/ SECTION-100",
+        "db_col": "purchases.bill_number",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "PurchaseController@store"
+    },
+    {
+        "id": "FIELD-078",
+        "label": "purchase_date",
+        "form_id": "FORM-014",
+        "form_name": "Purchase Order & GRN Form",
+        "page": "ROUTE-012 (PurchaseView.vue) \/ Root \/ SECTION-100",
+        "db_col": "purchases.purchase_date",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "PurchaseController@store"
+    },
+    {
+        "id": "FIELD-079",
+        "label": "destination_branch",
+        "form_id": "FORM-014",
+        "form_name": "Purchase Order & GRN Form",
+        "page": "ROUTE-012 (PurchaseView.vue) \/ Root \/ SECTION-100",
+        "db_col": "purchases.branch_id",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "PurchaseController@store"
+    },
+    {
+        "id": "FIELD-080",
+        "label": "shipping_charges",
+        "form_id": "FORM-014",
+        "form_name": "Purchase Order & GRN Form",
+        "page": "ROUTE-012 (PurchaseView.vue) \/ Root \/ SECTION-100",
+        "db_col": "purchases.shipping_charges",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "PurchaseController@store"
+    },
+    {
+        "id": "FIELD-081",
+        "label": "amount_paid_now",
+        "form_id": "FORM-014",
+        "form_name": "Purchase Order & GRN Form",
+        "page": "ROUTE-012 (PurchaseView.vue) \/ Root \/ SECTION-100",
+        "db_col": "purchases.paid_amount",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "PurchaseController@store"
+    },
+    {
+        "id": "FIELD-082",
+        "label": "payment_account_id",
+        "form_id": "FORM-014",
+        "form_name": "Purchase Order & GRN Form",
+        "page": "ROUTE-012 (PurchaseView.vue) \/ Root \/ SECTION-100",
+        "db_col": "account_movements.account_id",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "PurchaseController@store"
+    },
+    {
+        "id": "FIELD-083",
+        "label": "product_search",
+        "form_id": "FORM-015",
+        "form_name": "Purchase Line Item Form",
+        "page": "ROUTE-012 (PurchaseView.vue) \/ Root \/ SECTION-101",
+        "db_col": "purchase_items.product_id",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "PurchaseController@store"
+    },
+    {
+        "id": "FIELD-084",
+        "label": "quantity_received",
+        "form_id": "FORM-015",
+        "form_name": "Purchase Line Item Form",
+        "page": "ROUTE-012 (PurchaseView.vue) \/ Root \/ SECTION-101",
+        "db_col": "purchase_items.quantity",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "PurchaseController@store"
+    },
+    {
+        "id": "FIELD-085",
+        "label": "unit_purchase_cost",
+        "form_id": "FORM-015",
+        "form_name": "Purchase Line Item Form",
+        "page": "ROUTE-012 (PurchaseView.vue) \/ Root \/ SECTION-101",
+        "db_col": "purchase_items.unit_cost",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "PurchaseController@store"
+    },
+    {
+        "id": "FIELD-086",
+        "label": "line_discount",
+        "form_id": "FORM-015",
+        "form_name": "Purchase Line Item Form",
+        "page": "ROUTE-012 (PurchaseView.vue) \/ Root \/ SECTION-101",
+        "db_col": "purchase_items.discount",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "PurchaseController@store"
+    },
+    {
+        "id": "FIELD-087",
+        "label": "line_tax",
+        "form_id": "FORM-015",
+        "form_name": "Purchase Line Item Form",
+        "page": "ROUTE-012 (PurchaseView.vue) \/ Root \/ SECTION-101",
+        "db_col": "purchase_items.tax",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "PurchaseController@store"
+    },
+    {
+        "id": "FIELD-088",
+        "label": "name",
+        "form_id": "FORM-016",
+        "form_name": "Supplier Registration Form",
+        "page": "ROUTE-014 (SupplierView.vue) \/ Root \/ SECTION-105",
+        "db_col": "suppliers.name",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "SupplierController@store, @update"
+    },
+    {
+        "id": "FIELD-089",
+        "label": "contact_person",
+        "form_id": "FORM-016",
+        "form_name": "Supplier Registration Form",
+        "page": "ROUTE-014 (SupplierView.vue) \/ Root \/ SECTION-105",
+        "db_col": "suppliers.contact_person",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "SupplierController@store, @update"
+    },
+    {
+        "id": "FIELD-090",
+        "label": "phone",
+        "form_id": "FORM-016",
+        "form_name": "Supplier Registration Form",
+        "page": "ROUTE-014 (SupplierView.vue) \/ Root \/ SECTION-105",
+        "db_col": "suppliers.phone",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "SupplierController@store, @update"
+    },
+    {
+        "id": "FIELD-091",
+        "label": "email",
+        "form_id": "FORM-016",
+        "form_name": "Supplier Registration Form",
+        "page": "ROUTE-014 (SupplierView.vue) \/ Root \/ SECTION-105",
+        "db_col": "suppliers.email",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "SupplierController@store, @update"
+    },
+    {
+        "id": "FIELD-092",
+        "label": "address",
+        "form_id": "FORM-016",
+        "form_name": "Supplier Registration Form",
+        "page": "ROUTE-014 (SupplierView.vue) \/ Root \/ SECTION-105",
+        "db_col": "suppliers.address",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "SupplierController@store, @update"
+    },
+    {
+        "id": "FIELD-093",
+        "label": "ntn_number",
+        "form_id": "FORM-016",
+        "form_name": "Supplier Registration Form",
+        "page": "ROUTE-014 (SupplierView.vue) \/ Root \/ SECTION-105",
+        "db_col": "suppliers.ntn_number",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "SupplierController@store, @update"
+    },
+    {
+        "id": "FIELD-094",
+        "label": "opening_balance",
+        "form_id": "FORM-016",
+        "form_name": "Supplier Registration Form",
+        "page": "ROUTE-014 (SupplierView.vue) \/ Root \/ SECTION-105",
+        "db_col": "suppliers.balance",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "SupplierController@store"
+    },
+    {
+        "id": "FIELD-095",
+        "label": "supplier_id",
+        "form_id": "FORM-017",
+        "form_name": "Supplier Bill Settlement Form",
+        "page": "ROUTE-013 (SupplierpayableView.vue) \/ payables \/ SECTION-110",
+        "db_col": "supplier_payments.supplier_id",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "SupplierPaymentController@store"
+    },
+    {
+        "id": "FIELD-096",
+        "label": "payment_amount",
+        "form_id": "FORM-017",
+        "form_name": "Supplier Bill Settlement Form",
+        "page": "ROUTE-013 (SupplierpayableView.vue) \/ payables \/ SECTION-110",
+        "db_col": "supplier_payments.amount",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "SupplierPaymentController@store"
+    },
+    {
+        "id": "FIELD-097",
+        "label": "payment_date",
+        "form_id": "FORM-017",
+        "form_name": "Supplier Bill Settlement Form",
+        "page": "ROUTE-013 (SupplierpayableView.vue) \/ payables \/ SECTION-110",
+        "db_col": "supplier_payments.payment_date",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "SupplierPaymentController@store"
+    },
+    {
+        "id": "FIELD-098",
+        "label": "financial_account_id",
+        "form_id": "FORM-017",
+        "form_name": "Supplier Bill Settlement Form",
+        "page": "ROUTE-013 (SupplierpayableView.vue) \/ payables \/ SECTION-110",
+        "db_col": "account_movements.account_id",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "SupplierPaymentController@store"
+    },
+    {
+        "id": "FIELD-099",
+        "label": "reference_number",
+        "form_id": "FORM-017",
+        "form_name": "Supplier Bill Settlement Form",
+        "page": "ROUTE-013 (SupplierpayableView.vue) \/ payables \/ SECTION-110",
+        "db_col": "supplier_payments.reference",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "SupplierPaymentController@store"
+    },
+    {
+        "id": "FIELD-100",
+        "label": "notes",
+        "form_id": "FORM-017",
+        "form_name": "Supplier Bill Settlement Form",
+        "page": "ROUTE-013 (SupplierpayableView.vue) \/ payables \/ SECTION-110",
+        "db_col": "supplier_payments.notes",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "SupplierPaymentController@store"
+    },
+    {
+        "id": "FIELD-101",
+        "label": "name",
+        "form_id": "FORM-018",
+        "form_name": "Customer Master Creation Form",
+        "page": "ROUTE-015 (CustomerView.vue) \/ Root \/ SECTION-120",
+        "db_col": "customers.name",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "CustomerController@store, @update"
+    },
+    {
+        "id": "FIELD-102",
+        "label": "phone",
+        "form_id": "FORM-018",
+        "form_name": "Customer Master Creation Form",
+        "page": "ROUTE-015 (CustomerView.vue) \/ Root \/ SECTION-120",
+        "db_col": "customers.phone",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "CustomerController@store, @update"
+    },
+    {
+        "id": "FIELD-103",
+        "label": "secondary_phone",
+        "form_id": "FORM-018",
+        "form_name": "Customer Master Creation Form",
+        "page": "ROUTE-015 (CustomerView.vue) \/ Root \/ SECTION-120",
+        "db_col": "customers.secondary_phone",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "CustomerController@store, @update"
+    },
+    {
+        "id": "FIELD-104",
+        "label": "email",
+        "form_id": "FORM-018",
+        "form_name": "Customer Master Creation Form",
+        "page": "ROUTE-015 (CustomerView.vue) \/ Root \/ SECTION-120",
+        "db_col": "customers.email",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "CustomerController@store, @update"
+    },
+    {
+        "id": "FIELD-105",
+        "label": "address",
+        "form_id": "FORM-018",
+        "form_name": "Customer Master Creation Form",
+        "page": "ROUTE-015 (CustomerView.vue) \/ Root \/ SECTION-120",
+        "db_col": "customers.address",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "CustomerController@store, @update"
+    },
+    {
+        "id": "FIELD-106",
+        "label": "city",
+        "form_id": "FORM-018",
+        "form_name": "Customer Master Creation Form",
+        "page": "ROUTE-015 (CustomerView.vue) \/ Root \/ SECTION-120",
+        "db_col": "customers.city",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "CustomerController@store, @update"
+    },
+    {
+        "id": "FIELD-107",
+        "label": "credit_limit",
+        "form_id": "FORM-018",
+        "form_name": "Customer Master Creation Form",
+        "page": "ROUTE-015 (CustomerView.vue) \/ Root \/ SECTION-120",
+        "db_col": "customers.credit_limit",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "CustomerController@store, @update"
+    },
+    {
+        "id": "FIELD-108",
+        "label": "opening_balance",
+        "form_id": "FORM-018",
+        "form_name": "Customer Master Creation Form",
+        "page": "ROUTE-015 (CustomerView.vue) \/ Root \/ SECTION-120",
+        "db_col": "customers.current_balance",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "CustomerController@store"
+    },
+    {
+        "id": "FIELD-109",
+        "label": "customer_type",
+        "form_id": "FORM-018",
+        "form_name": "Customer Master Creation Form",
+        "page": "ROUTE-015 (CustomerView.vue) \/ Root \/ SECTION-120",
+        "db_col": "customers.customer_type",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "CustomerController@store, @update"
+    },
+    {
+        "id": "FIELD-110",
+        "label": "customer_id",
+        "form_id": "FORM-019",
+        "form_name": "Customer Payment Collection Form",
+        "page": "ROUTE-015 (CustomerView.vue) \/ Root \/ SECTION-125",
+        "db_col": "customer_payments.customer_id",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "CustomerPaymentController@store"
+    },
+    {
+        "id": "FIELD-111",
+        "label": "amount_received",
+        "form_id": "FORM-019",
+        "form_name": "Customer Payment Collection Form",
+        "page": "ROUTE-015 (CustomerView.vue) \/ Root \/ SECTION-125",
+        "db_col": "customer_payments.amount",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "CustomerPaymentController@store"
+    },
+    {
+        "id": "FIELD-112",
+        "label": "receiving_account_id",
+        "form_id": "FORM-019",
+        "form_name": "Customer Payment Collection Form",
+        "page": "ROUTE-015 (CustomerView.vue) \/ Root \/ SECTION-125",
+        "db_col": "account_movements.account_id",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "CustomerPaymentController@store"
+    },
+    {
+        "id": "FIELD-113",
+        "label": "payment_date",
+        "form_id": "FORM-019",
+        "form_name": "Customer Payment Collection Form",
+        "page": "ROUTE-015 (CustomerView.vue) \/ Root \/ SECTION-125",
+        "db_col": "customer_payments.payment_date",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "CustomerPaymentController@store"
+    },
+    {
+        "id": "FIELD-114",
+        "label": "receipt_number",
+        "form_id": "FORM-019",
+        "form_name": "Customer Payment Collection Form",
+        "page": "ROUTE-015 (CustomerView.vue) \/ Root \/ SECTION-125",
+        "db_col": "customer_payments.receipt_number",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "CustomerPaymentController@store"
+    },
+    {
+        "id": "FIELD-115",
+        "label": "notes",
+        "form_id": "FORM-019",
+        "form_name": "Customer Payment Collection Form",
+        "page": "ROUTE-015 (CustomerView.vue) \/ Root \/ SECTION-125",
+        "db_col": "customer_payments.notes",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "CustomerPaymentController@store"
+    },
+    {
+        "id": "FIELD-116",
+        "label": "customer_id",
+        "form_id": "FORM-020",
+        "form_name": "Khata Settlement Form",
+        "page": "ROUTE-018 (KhataView.vue) \/ Root \/ SECTION-130",
+        "db_col": "customer_payments.customer_id",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "KhataController@settle"
+    },
+    {
+        "id": "FIELD-117",
+        "label": "settle_amount",
+        "form_id": "FORM-020",
+        "form_name": "Khata Settlement Form",
+        "page": "ROUTE-018 (KhataView.vue) \/ Root \/ SECTION-130",
+        "db_col": "customer_payments.amount",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "KhataController@settle"
+    },
+    {
+        "id": "FIELD-118",
+        "label": "account_id",
+        "form_id": "FORM-020",
+        "form_name": "Khata Settlement Form",
+        "page": "ROUTE-018 (KhataView.vue) \/ Root \/ SECTION-130",
+        "db_col": "account_movements.account_id",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "KhataController@settle"
+    },
+    {
+        "id": "FIELD-119",
+        "label": "notes",
+        "form_id": "FORM-020",
+        "form_name": "Khata Settlement Form",
+        "page": "ROUTE-018 (KhataView.vue) \/ Root \/ SECTION-130",
+        "db_col": "customer_payments.notes",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "KhataController@settle"
+    },
+    {
+        "id": "FIELD-120",
+        "label": "account_party",
+        "form_id": "FORM-021",
+        "form_name": "Debt Return Form",
+        "page": "ROUTE-019 (ReturnDebtView.vue) \/ Root \/ SECTION-135",
+        "db_col": "account_movements.reference_id",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "KhataController@returnDebt"
+    },
+    {
+        "id": "FIELD-121",
+        "label": "return_amount",
+        "form_id": "FORM-021",
+        "form_name": "Debt Return Form",
+        "page": "ROUTE-019 (ReturnDebtView.vue) \/ Root \/ SECTION-135",
+        "db_col": "account_movements.amount",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "KhataController@returnDebt"
+    },
+    {
+        "id": "FIELD-122",
+        "label": "payment_method",
+        "form_id": "FORM-021",
+        "form_name": "Debt Return Form",
+        "page": "ROUTE-019 (ReturnDebtView.vue) \/ Root \/ SECTION-135",
+        "db_col": "account_movements.type",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "KhataController@returnDebt"
+    },
+    {
+        "id": "FIELD-123",
+        "label": "notes",
+        "form_id": "FORM-021",
+        "form_name": "Debt Return Form",
+        "page": "ROUTE-019 (ReturnDebtView.vue) \/ Root \/ SECTION-135",
+        "db_col": "account_movements.notes",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "KhataController@returnDebt"
+    },
+    {
+        "id": "FIELD-124",
+        "label": "description",
+        "form_id": "FORM-022",
+        "form_name": "Full-Page Expense Form",
+        "page": "ROUTE-016 (ExpensesView.vue) \/ add \/ SECTION-144",
+        "db_col": "expenses.title",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "ExpenseController@store"
+    },
+    {
+        "id": "FIELD-125",
+        "label": "category",
+        "form_id": "FORM-022",
+        "form_name": "Full-Page Expense Form",
+        "page": "ROUTE-016 (ExpensesView.vue) \/ add \/ SECTION-144",
+        "db_col": "expenses.category_id",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "ExpenseController@store"
+    },
+    {
+        "id": "FIELD-126",
+        "label": "amount",
+        "form_id": "FORM-022",
+        "form_name": "Full-Page Expense Form",
+        "page": "ROUTE-016 (ExpensesView.vue) \/ add \/ SECTION-144",
+        "db_col": "expenses.amount",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "ExpenseController@store"
+    },
+    {
+        "id": "FIELD-127",
+        "label": "date",
+        "form_id": "FORM-022",
+        "form_name": "Full-Page Expense Form",
+        "page": "ROUTE-016 (ExpensesView.vue) \/ add \/ SECTION-144",
+        "db_col": "expenses.date",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "ExpenseController@store"
+    },
+    {
+        "id": "FIELD-128",
+        "label": "method",
+        "form_id": "FORM-022",
+        "form_name": "Full-Page Expense Form",
+        "page": "ROUTE-016 (ExpensesView.vue) \/ add \/ SECTION-144",
+        "db_col": "expenses.payment_method",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "ExpenseController@store"
+    },
+    {
+        "id": "FIELD-129",
+        "label": "reference",
+        "form_id": "FORM-022",
+        "form_name": "Full-Page Expense Form",
+        "page": "ROUTE-016 (ExpensesView.vue) \/ add \/ SECTION-144",
+        "db_col": "expenses.reference",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "ExpenseController@store"
+    },
+    {
+        "id": "FIELD-130",
+        "label": "branch",
+        "form_id": "FORM-022",
+        "form_name": "Full-Page Expense Form",
+        "page": "ROUTE-016 (ExpensesView.vue) \/ add \/ SECTION-144",
+        "db_col": "expenses.branch_id",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "ExpenseController@store"
+    },
+    {
+        "id": "FIELD-131",
+        "label": "receipt_image",
+        "form_id": "FORM-022",
+        "form_name": "Full-Page Expense Form",
+        "page": "ROUTE-016 (ExpensesView.vue) \/ add \/ SECTION-144",
+        "db_col": "expenses.receipt_url",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "ExpenseController@store"
+    },
+    {
+        "id": "FIELD-132",
+        "label": "notes",
+        "form_id": "FORM-022",
+        "form_name": "Full-Page Expense Form",
+        "page": "ROUTE-016 (ExpensesView.vue) \/ add \/ SECTION-144",
+        "db_col": "expenses.notes",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "ExpenseController@store"
+    },
+    {
+        "id": "FIELD-133",
+        "label": "description",
+        "form_id": "FORM-023",
+        "form_name": "Quick Expense Popup Form",
+        "page": "ROUTE-016 (ExpensesView.vue) \/ overview \/ SECTION-143",
+        "db_col": "expenses.title",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "ExpenseController@store"
+    },
+    {
+        "id": "FIELD-134",
+        "label": "category",
+        "form_id": "FORM-023",
+        "form_name": "Quick Expense Popup Form",
+        "page": "ROUTE-016 (ExpensesView.vue) \/ overview \/ SECTION-143",
+        "db_col": "expenses.category_id",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "ExpenseController@store"
+    },
+    {
+        "id": "FIELD-135",
+        "label": "amount",
+        "form_id": "FORM-023",
+        "form_name": "Quick Expense Popup Form",
+        "page": "ROUTE-016 (ExpensesView.vue) \/ overview \/ SECTION-143",
+        "db_col": "expenses.amount",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "ExpenseController@store"
+    },
+    {
+        "id": "FIELD-136",
+        "label": "financial_account_id",
+        "form_id": "FORM-023",
+        "form_name": "Quick Expense Popup Form",
+        "page": "ROUTE-016 (ExpensesView.vue) \/ overview \/ SECTION-143",
+        "db_col": "account_movements.account_id",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "ExpenseController@store"
+    },
+    {
+        "id": "FIELD-137",
+        "label": "date",
+        "form_id": "FORM-023",
+        "form_name": "Quick Expense Popup Form",
+        "page": "ROUTE-016 (ExpensesView.vue) \/ overview \/ SECTION-143",
+        "db_col": "expenses.date",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "ExpenseController@store"
+    },
+    {
+        "id": "FIELD-138",
+        "label": "notes",
+        "form_id": "FORM-023",
+        "form_name": "Quick Expense Popup Form",
+        "page": "ROUTE-016 (ExpensesView.vue) \/ overview \/ SECTION-143",
+        "db_col": "expenses.notes",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "ExpenseController@store"
+    },
+    {
+        "id": "FIELD-139",
+        "label": "category_name",
+        "form_id": "FORM-024",
+        "form_name": "Expense Category Form",
+        "page": "ROUTE-016 (ExpensesView.vue) \/ categories \/ SECTION-145",
+        "db_col": "expense_categories.name",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "ExpenseCategoryController@store, @update"
+    },
+    {
+        "id": "FIELD-140",
+        "label": "monthly_budget",
+        "form_id": "FORM-024",
+        "form_name": "Expense Category Form",
+        "page": "ROUTE-016 (ExpensesView.vue) \/ categories \/ SECTION-145",
+        "db_col": "expense_categories.monthly_budget",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "ExpenseCategoryController@store, @update"
+    },
+    {
+        "id": "FIELD-141",
+        "label": "description",
+        "form_id": "FORM-024",
+        "form_name": "Expense Category Form",
+        "page": "ROUTE-016 (ExpensesView.vue) \/ categories \/ SECTION-145",
+        "db_col": "expense_categories.description",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "ExpenseCategoryController@store, @update"
+    },
+    {
+        "id": "FIELD-142",
+        "label": "title",
+        "form_id": "FORM-025",
+        "form_name": "Recurring Expense Form",
+        "page": "ROUTE-016 (ExpensesView.vue) \/ overview \/ SECTION-146",
+        "db_col": "recurring_expenses.title",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "RecurringExpenseController@store"
+    },
+    {
+        "id": "FIELD-143",
+        "label": "category_id",
+        "form_id": "FORM-025",
+        "form_name": "Recurring Expense Form",
+        "page": "ROUTE-016 (ExpensesView.vue) \/ overview \/ SECTION-146",
+        "db_col": "recurring_expenses.category_id",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "RecurringExpenseController@store"
+    },
+    {
+        "id": "FIELD-144",
+        "label": "amount",
+        "form_id": "FORM-025",
+        "form_name": "Recurring Expense Form",
+        "page": "ROUTE-016 (ExpensesView.vue) \/ overview \/ SECTION-146",
+        "db_col": "recurring_expenses.amount",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "RecurringExpenseController@store"
+    },
+    {
+        "id": "FIELD-145",
+        "label": "frequency",
+        "form_id": "FORM-025",
+        "form_name": "Recurring Expense Form",
+        "page": "ROUTE-016 (ExpensesView.vue) \/ overview \/ SECTION-146",
+        "db_col": "recurring_expenses.frequency",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "RecurringExpenseController@store"
+    },
+    {
+        "id": "FIELD-146",
+        "label": "start_date",
+        "form_id": "FORM-025",
+        "form_name": "Recurring Expense Form",
+        "page": "ROUTE-016 (ExpensesView.vue) \/ overview \/ SECTION-146",
+        "db_col": "recurring_expenses.start_date",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "RecurringExpenseController@store"
+    },
+    {
+        "id": "FIELD-147",
+        "label": "name",
+        "form_id": "FORM-026",
+        "form_name": "Employee & HR Form",
+        "page": "ROUTE-020 (EmployeesView.vue) \/ Root \/ SECTION-150",
+        "db_col": "employees.name",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "EmployeeController@store, @update"
+    },
+    {
+        "id": "FIELD-148",
+        "label": "role",
+        "form_id": "FORM-026",
+        "form_name": "Employee & HR Form",
+        "page": "ROUTE-020 (EmployeesView.vue) \/ Root \/ SECTION-150",
+        "db_col": "employees.role",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "EmployeeController@store, @update"
+    },
+    {
+        "id": "FIELD-149",
+        "label": "phone",
+        "form_id": "FORM-026",
+        "form_name": "Employee & HR Form",
+        "page": "ROUTE-020 (EmployeesView.vue) \/ Root \/ SECTION-150",
+        "db_col": "employees.phone",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "EmployeeController@store, @update"
+    },
+    {
+        "id": "FIELD-150",
+        "label": "salary_amount",
+        "form_id": "FORM-026",
+        "form_name": "Employee & HR Form",
+        "page": "ROUTE-020 (EmployeesView.vue) \/ Root \/ SECTION-150",
+        "db_col": "employees.salary_amount",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "EmployeeController@store, @update"
+    },
+    {
+        "id": "FIELD-151",
+        "label": "payment_cycle",
+        "form_id": "FORM-026",
+        "form_name": "Employee & HR Form",
+        "page": "ROUTE-020 (EmployeesView.vue) \/ Root \/ SECTION-150",
+        "db_col": "employees.payment_cycle",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "EmployeeController@store, @update"
+    },
+    {
+        "id": "FIELD-152",
+        "label": "next_payment_date",
+        "form_id": "FORM-026",
+        "form_name": "Employee & HR Form",
+        "page": "ROUTE-020 (EmployeesView.vue) \/ Root \/ SECTION-150",
+        "db_col": "employees.next_payment_date",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "EmployeeController@store, @update"
+    },
+    {
+        "id": "FIELD-153",
+        "label": "name",
+        "form_id": "FORM-027",
+        "form_name": "User & Staff Governance Form",
+        "page": "ROUTE-021 (UsersView.vue) \/ users \/ SECTION-173",
+        "db_col": "users.name",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "UserGovernanceController@store, @update"
+    },
+    {
+        "id": "FIELD-154",
+        "label": "username",
+        "form_id": "FORM-027",
+        "form_name": "User & Staff Governance Form",
+        "page": "ROUTE-021 (UsersView.vue) \/ users \/ SECTION-173",
+        "db_col": "users.username",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "UserGovernanceController@store, @update"
+    },
+    {
+        "id": "FIELD-155",
+        "label": "email",
+        "form_id": "FORM-027",
+        "form_name": "User & Staff Governance Form",
+        "page": "ROUTE-021 (UsersView.vue) \/ users \/ SECTION-173",
+        "db_col": "users.email",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "UserGovernanceController@store, @update"
+    },
+    {
+        "id": "FIELD-156",
+        "label": "password",
+        "form_id": "FORM-027",
+        "form_name": "User & Staff Governance Form",
+        "page": "ROUTE-021 (UsersView.vue) \/ users \/ SECTION-173",
+        "db_col": "users.password",
+        "persist": "PERSISTED_TRANSFORMED",
+        "writers": "UserGovernanceController@store, @update"
+    },
+    {
+        "id": "FIELD-157",
+        "label": "branch_id",
+        "form_id": "FORM-027",
+        "form_name": "User & Staff Governance Form",
+        "page": "ROUTE-021 (UsersView.vue) \/ users \/ SECTION-173",
+        "db_col": "users.branch_id",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "UserGovernanceController@store, @update"
+    },
+    {
+        "id": "FIELD-158",
+        "label": "role",
+        "form_id": "FORM-027",
+        "form_name": "User & Staff Governance Form",
+        "page": "ROUTE-021 (UsersView.vue) \/ users \/ SECTION-173",
+        "db_col": "model_has_roles.role_id",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "UserGovernanceController@store, @update"
+    },
+    {
+        "id": "FIELD-159",
+        "label": "permissions",
+        "form_id": "FORM-027",
+        "form_name": "User & Staff Governance Form",
+        "page": "ROUTE-021 (UsersView.vue) \/ users \/ SECTION-173",
+        "db_col": "model_has_permissions.permission_id",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "UserGovernanceController@store, @update"
+    },
+    {
+        "id": "FIELD-160",
+        "label": "current_password",
+        "form_id": "FORM-028",
+        "form_name": "Password Change Form",
+        "page": "ROUTE-022 (SecurityView.vue) \/ security \/ SECTION-178",
+        "db_col": "N\/A",
+        "persist": "REQUEST_ONLY",
+        "writers": "None"
+    },
+    {
+        "id": "FIELD-161",
+        "label": "new_password",
+        "form_id": "FORM-028",
+        "form_name": "Password Change Form",
+        "page": "ROUTE-022 (SecurityView.vue) \/ security \/ SECTION-178",
+        "db_col": "users.password",
+        "persist": "PERSISTED_TRANSFORMED",
+        "writers": "ProfileController@updatePassword"
+    },
+    {
+        "id": "FIELD-162",
+        "label": "new_password_confirmation",
+        "form_id": "FORM-028",
+        "form_name": "Password Change Form",
+        "page": "ROUTE-022 (SecurityView.vue) \/ security \/ SECTION-178",
+        "db_col": "N\/A",
+        "persist": "REQUEST_ONLY",
+        "writers": "None"
+    },
+    {
+        "id": "FIELD-163",
+        "label": "business_name",
+        "form_id": "FORM-029",
+        "form_name": "Receipt & Invoice Template Form",
+        "page": "ROUTE-022 (ReceiptsView.vue) \/ receipts \/ SECTION-176",
+        "db_col": "preferences.receipt_header_name",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "ReceiptSettingsController@update"
+    },
+    {
+        "id": "FIELD-164",
+        "label": "tagline",
+        "form_id": "FORM-029",
+        "form_name": "Receipt & Invoice Template Form",
+        "page": "ROUTE-022 (ReceiptsView.vue) \/ receipts \/ SECTION-176",
+        "db_col": "preferences.receipt_tagline",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "ReceiptSettingsController@update"
+    },
+    {
+        "id": "FIELD-165",
+        "label": "header_line_1",
+        "form_id": "FORM-029",
+        "form_name": "Receipt & Invoice Template Form",
+        "page": "ROUTE-022 (ReceiptsView.vue) \/ receipts \/ SECTION-176",
+        "db_col": "preferences.receipt_header_line_1",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "ReceiptSettingsController@update"
+    },
+    {
+        "id": "FIELD-166",
+        "label": "header_line_2",
+        "form_id": "FORM-029",
+        "form_name": "Receipt & Invoice Template Form",
+        "page": "ROUTE-022 (ReceiptsView.vue) \/ receipts \/ SECTION-176",
+        "db_col": "preferences.receipt_header_line_2",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "ReceiptSettingsController@update"
+    },
+    {
+        "id": "FIELD-167",
+        "label": "footer_text",
+        "form_id": "FORM-029",
+        "form_name": "Receipt & Invoice Template Form",
+        "page": "ROUTE-022 (ReceiptsView.vue) \/ receipts \/ SECTION-176",
+        "db_col": "preferences.receipt_footer_text",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "ReceiptSettingsController@update"
+    },
+    {
+        "id": "FIELD-168",
+        "label": "paper_size",
+        "form_id": "FORM-029",
+        "form_name": "Receipt & Invoice Template Form",
+        "page": "ROUTE-022 (ReceiptsView.vue) \/ receipts \/ SECTION-176",
+        "db_col": "preferences.paper_size",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "ReceiptSettingsController@update"
+    },
+    {
+        "id": "FIELD-169",
+        "label": "show_barcode",
+        "form_id": "FORM-029",
+        "form_name": "Receipt & Invoice Template Form",
+        "page": "ROUTE-022 (ReceiptsView.vue) \/ receipts \/ SECTION-176",
+        "db_col": "preferences.show_barcode",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "ReceiptSettingsController@update"
+    },
+    {
+        "id": "FIELD-170",
+        "label": "show_cashier",
+        "form_id": "FORM-029",
+        "form_name": "Receipt & Invoice Template Form",
+        "page": "ROUTE-022 (ReceiptsView.vue) \/ receipts \/ SECTION-176",
+        "db_col": "preferences.show_cashier",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "ReceiptSettingsController@update"
+    },
+    {
+        "id": "FIELD-171",
+        "label": "account_name",
+        "form_id": "FORM-030",
+        "form_name": "Financial Account Form",
+        "page": "ROUTE-023 (AccountsView.vue) \/ Root \/ SECTION-180",
+        "db_col": "financial_accounts.name",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "FinancialAccountController@store"
+    },
+    {
+        "id": "FIELD-172",
+        "label": "type",
+        "form_id": "FORM-030",
+        "form_name": "Financial Account Form",
+        "page": "ROUTE-023 (AccountsView.vue) \/ Root \/ SECTION-180",
+        "db_col": "financial_accounts.type",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "FinancialAccountController@store"
+    },
+    {
+        "id": "FIELD-173",
+        "label": "branch_id",
+        "form_id": "FORM-030",
+        "form_name": "Financial Account Form",
+        "page": "ROUTE-023 (AccountsView.vue) \/ Root \/ SECTION-180",
+        "db_col": "financial_accounts.branch_id",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "FinancialAccountController@store"
+    },
+    {
+        "id": "FIELD-174",
+        "label": "opening_balance",
+        "form_id": "FORM-030",
+        "form_name": "Financial Account Form",
+        "page": "ROUTE-023 (AccountsView.vue) \/ Root \/ SECTION-180",
+        "db_col": "financial_accounts.current_balance",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "FinancialAccountController@store"
+    },
+    {
+        "id": "FIELD-175",
+        "label": "account_number",
+        "form_id": "FORM-030",
+        "form_name": "Financial Account Form",
+        "page": "ROUTE-023 (AccountsView.vue) \/ Root \/ SECTION-180",
+        "db_col": "financial_accounts.account_number",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "FinancialAccountController@store"
+    },
+    {
+        "id": "FIELD-176",
+        "label": "account_id",
+        "form_id": "FORM-031",
+        "form_name": "Capital Inflow Form",
+        "page": "ROUTE-023 (AccountsView.vue) \/ Root \/ SECTION-181",
+        "db_col": "account_movements.account_id",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "FinancialAccountController@capitalIn"
+    },
+    {
+        "id": "FIELD-177",
+        "label": "amount",
+        "form_id": "FORM-031",
+        "form_name": "Capital Inflow Form",
+        "page": "ROUTE-023 (AccountsView.vue) \/ Root \/ SECTION-181",
+        "db_col": "account_movements.amount",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "FinancialAccountController@capitalIn"
+    },
+    {
+        "id": "FIELD-178",
+        "label": "reference",
+        "form_id": "FORM-031",
+        "form_name": "Capital Inflow Form",
+        "page": "ROUTE-023 (AccountsView.vue) \/ Root \/ SECTION-181",
+        "db_col": "account_movements.reference",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "FinancialAccountController@capitalIn"
+    },
+    {
+        "id": "FIELD-179",
+        "label": "notes",
+        "form_id": "FORM-031",
+        "form_name": "Capital Inflow Form",
+        "page": "ROUTE-023 (AccountsView.vue) \/ Root \/ SECTION-181",
+        "db_col": "account_movements.notes",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "FinancialAccountController@capitalIn"
+    },
+    {
+        "id": "FIELD-180",
+        "label": "account_id",
+        "form_id": "FORM-032",
+        "form_name": "Capital Outflow Form",
+        "page": "ROUTE-023 (AccountsView.vue) \/ Root \/ SECTION-182",
+        "db_col": "account_movements.account_id",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "FinancialAccountController@capitalOut"
+    },
+    {
+        "id": "FIELD-181",
+        "label": "amount",
+        "form_id": "FORM-032",
+        "form_name": "Capital Outflow Form",
+        "page": "ROUTE-023 (AccountsView.vue) \/ Root \/ SECTION-182",
+        "db_col": "account_movements.amount",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "FinancialAccountController@capitalOut"
+    },
+    {
+        "id": "FIELD-182",
+        "label": "reason",
+        "form_id": "FORM-032",
+        "form_name": "Capital Outflow Form",
+        "page": "ROUTE-023 (AccountsView.vue) \/ Root \/ SECTION-182",
+        "db_col": "account_movements.reason",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "FinancialAccountController@capitalOut"
+    },
+    {
+        "id": "FIELD-183",
+        "label": "notes",
+        "form_id": "FORM-032",
+        "form_name": "Capital Outflow Form",
+        "page": "ROUTE-023 (AccountsView.vue) \/ Root \/ SECTION-182",
+        "db_col": "account_movements.notes",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "FinancialAccountController@capitalOut"
+    },
+    {
+        "id": "FIELD-184",
+        "label": "from_account_id",
+        "form_id": "FORM-033",
+        "form_name": "Inter-Account Transfer Form",
+        "page": "ROUTE-023 (AccountsView.vue) \/ Root \/ SECTION-183",
+        "db_col": "account_transfers.from_account_id",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "AccountTransferController@store"
+    },
+    {
+        "id": "FIELD-185",
+        "label": "to_account_id",
+        "form_id": "FORM-033",
+        "form_name": "Inter-Account Transfer Form",
+        "page": "ROUTE-023 (AccountsView.vue) \/ Root \/ SECTION-183",
+        "db_col": "account_transfers.to_account_id",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "AccountTransferController@store"
+    },
+    {
+        "id": "FIELD-186",
+        "label": "amount",
+        "form_id": "FORM-033",
+        "form_name": "Inter-Account Transfer Form",
+        "page": "ROUTE-023 (AccountsView.vue) \/ Root \/ SECTION-183",
+        "db_col": "account_transfers.amount",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "AccountTransferController@store"
+    },
+    {
+        "id": "FIELD-187",
+        "label": "transfer_date",
+        "form_id": "FORM-033",
+        "form_name": "Inter-Account Transfer Form",
+        "page": "ROUTE-023 (AccountsView.vue) \/ Root \/ SECTION-183",
+        "db_col": "account_transfers.transfer_date",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "AccountTransferController@store"
+    },
+    {
+        "id": "FIELD-188",
+        "label": "reference",
+        "form_id": "FORM-033",
+        "form_name": "Inter-Account Transfer Form",
+        "page": "ROUTE-023 (AccountsView.vue) \/ Root \/ SECTION-183",
+        "db_col": "account_transfers.reference",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "AccountTransferController@store"
+    },
+    {
+        "id": "FIELD-189",
+        "label": "payment_account",
+        "form_id": "FORM-034",
+        "form_name": "Notification Pay Expense Form",
+        "page": "ActionModalFactory.vue (MODAL-025)",
+        "db_col": "expenses.financial_account_id",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "NeedsAttentionController@payExpense"
+    },
+    {
+        "id": "FIELD-190",
+        "label": "notes",
+        "form_id": "FORM-034",
+        "form_name": "Notification Pay Expense Form",
+        "page": "ActionModalFactory.vue (MODAL-025)",
+        "db_col": "expenses.notes",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "NeedsAttentionController@payExpense"
+    },
+    {
+        "id": "FIELD-191",
+        "label": "salary_account",
+        "form_id": "FORM-035",
+        "form_name": "Notification Pay Salary Form",
+        "page": "ActionModalFactory.vue (MODAL-025)",
+        "db_col": "account_movements.account_id",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "NeedsAttentionController@paySalary"
+    },
+    {
+        "id": "FIELD-192",
+        "label": "notes",
+        "form_id": "FORM-035",
+        "form_name": "Notification Pay Salary Form",
+        "page": "ActionModalFactory.vue (MODAL-025)",
+        "db_col": "account_movements.notes",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "NeedsAttentionController@paySalary"
+    },
+    {
+        "id": "FIELD-193",
+        "label": "supplier_id",
+        "form_id": "FORM-036",
+        "form_name": "Smart Reorder Submission Form",
+        "page": "ROUTE-025 (ReorderDetailView.vue) \/ review \/ SECTION-030",
+        "db_col": "purchases.supplier_id",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "ReorderController@createPO"
+    },
+    {
+        "id": "FIELD-194",
+        "label": "reorder_quantity",
+        "form_id": "FORM-036",
+        "form_name": "Smart Reorder Submission Form",
+        "page": "ROUTE-025 (ReorderDetailView.vue) \/ review \/ SECTION-030",
+        "db_col": "purchase_items.quantity",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "ReorderController@createPO"
+    },
+    {
+        "id": "FIELD-195",
+        "label": "delivery_date",
+        "form_id": "FORM-036",
+        "form_name": "Smart Reorder Submission Form",
+        "page": "ROUTE-025 (ReorderDetailView.vue) \/ review \/ SECTION-030",
+        "db_col": "purchases.expected_delivery_date",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "ReorderController@createPO"
+    },
+    {
+        "id": "FIELD-196",
+        "label": "approval_notes",
+        "form_id": "FORM-036",
+        "form_name": "Smart Reorder Submission Form",
+        "page": "ROUTE-025 (ReorderDetailView.vue) \/ review \/ SECTION-030",
+        "db_col": "purchases.notes",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "ReorderController@createPO"
+    },
+    {
+        "id": "FIELD-197",
+        "label": "name",
+        "form_id": "FORM-037",
+        "form_name": "Standalone Product Edit Form",
+        "page": "ROUTE-009 (ProductEditView.vue) \/ Root \/ SECTION-036",
+        "db_col": "products.name",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "ProductController@update"
+    },
+    {
+        "id": "FIELD-198",
+        "label": "category",
+        "form_id": "FORM-037",
+        "form_name": "Standalone Product Edit Form",
+        "page": "ROUTE-009 (ProductEditView.vue) \/ Root \/ SECTION-036",
+        "db_col": "products.category_id",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "ProductController@update"
+    },
+    {
+        "id": "FIELD-199",
+        "label": "cost",
+        "form_id": "FORM-037",
+        "form_name": "Standalone Product Edit Form",
+        "page": "ROUTE-009 (ProductEditView.vue) \/ Root \/ SECTION-036",
+        "db_col": "products.cost_price",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "ProductController@update"
+    },
+    {
+        "id": "FIELD-200",
+        "label": "price",
+        "form_id": "FORM-037",
+        "form_name": "Standalone Product Edit Form",
+        "page": "ROUTE-009 (ProductEditView.vue) \/ Root \/ SECTION-036",
+        "db_col": "products.selling_price",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "ProductController@update"
+    },
+    {
+        "id": "FIELD-201",
+        "label": "stock",
+        "form_id": "FORM-037",
+        "form_name": "Standalone Product Edit Form",
+        "page": "ROUTE-009 (ProductEditView.vue) \/ Root \/ SECTION-036",
+        "db_col": "branch_inventory.stock",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "ProductController@update"
+    },
+    {
+        "id": "FIELD-202",
+        "label": "device_name",
+        "form_id": "FORM-038",
+        "form_name": "Device Pairing Configuration Form",
+        "page": "ROUTE-024 (SyncView.vue) \/ sync \/ SECTION-186",
+        "db_col": "devices.name",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "DevicePairingController@register"
+    },
+    {
+        "id": "FIELD-203",
+        "label": "terminal_type",
+        "form_id": "FORM-038",
+        "form_name": "Device Pairing Configuration Form",
+        "page": "ROUTE-024 (SyncView.vue) \/ sync \/ SECTION-186",
+        "db_col": "devices.terminal_type",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "DevicePairingController@register"
+    },
+    {
+        "id": "FIELD-204",
+        "label": "assigned_branch",
+        "form_id": "FORM-038",
+        "form_name": "Device Pairing Configuration Form",
+        "page": "ROUTE-024 (SyncView.vue) \/ sync \/ SECTION-186",
+        "db_col": "devices.branch_id",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "DevicePairingController@register"
+    },
+    {
+        "id": "FIELD-205",
+        "label": "sync_mode",
+        "form_id": "FORM-038",
+        "form_name": "Device Pairing Configuration Form",
+        "page": "ROUTE-024 (SyncView.vue) \/ sync \/ SECTION-186",
+        "db_col": "devices.sync_mode",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "DevicePairingController@register"
+    },
+    {
+        "id": "FIELD-206",
+        "label": "pairing_token",
+        "form_id": "FORM-038",
+        "form_name": "Device Pairing Configuration Form",
+        "page": "ROUTE-024 (SyncView.vue) \/ sync \/ SECTION-186",
+        "db_col": "devices.pairing_token",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "DevicePairingController@generateToken"
+    },
+    {
+        "id": "FIELD-207",
+        "label": "ip_address",
+        "form_id": "FORM-038",
+        "form_name": "Device Pairing Configuration Form",
+        "page": "ROUTE-024 (SyncView.vue) \/ sync \/ SECTION-186",
+        "db_col": "devices.ip_address",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "DevicePairingController@register"
+    },
+    {
+        "id": "FIELD-208",
+        "label": "port",
+        "form_id": "FORM-038",
+        "form_name": "Device Pairing Configuration Form",
+        "page": "ROUTE-024 (SyncView.vue) \/ sync \/ SECTION-186",
+        "db_col": "devices.port",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "DevicePairingController@register"
+    },
+    {
+        "id": "FIELD-209",
+        "label": "auth_secret",
+        "form_id": "FORM-038",
+        "form_name": "Device Pairing Configuration Form",
+        "page": "ROUTE-024 (SyncView.vue) \/ sync \/ SECTION-186",
+        "db_col": "devices.auth_secret",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "DevicePairingController@register"
+    },
+    {
+        "id": "FIELD-210",
+        "label": "auto_reconnect",
+        "form_id": "FORM-038",
+        "form_name": "Device Pairing Configuration Form",
+        "page": "ROUTE-024 (SyncView.vue) \/ sync \/ SECTION-186",
+        "db_col": "devices.auto_reconnect",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "DevicePairingController@register"
+    },
+    {
+        "id": "FIELD-211",
+        "label": "ssl_verify",
+        "form_id": "FORM-038",
+        "form_name": "Device Pairing Configuration Form",
+        "page": "ROUTE-024 (SyncView.vue) \/ sync \/ SECTION-186",
+        "db_col": "devices.ssl_verify",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "DevicePairingController@register"
+    },
+    {
+        "id": "FIELD-212",
+        "label": "qr_expiry_seconds",
+        "form_id": "FORM-038",
+        "form_name": "Device Pairing Configuration Form",
+        "page": "ROUTE-024 (SyncView.vue) \/ sync \/ SECTION-186",
+        "db_col": "devices.qr_expiry",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "DevicePairingController@generateToken"
+    },
+    {
+        "id": "FIELD-213",
+        "label": "offline_cache_mb",
+        "form_id": "FORM-038",
+        "form_name": "Device Pairing Configuration Form",
+        "page": "ROUTE-024 (SyncView.vue) \/ sync \/ SECTION-186",
+        "db_col": "devices.cache_limit_mb",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "DevicePairingController@register"
+    },
+    {
+        "id": "FIELD-214",
+        "label": "device_uuid",
+        "form_id": "FORM-038",
+        "form_name": "Device Pairing Configuration Form",
+        "page": "ROUTE-024 (SyncView.vue) \/ sync \/ SECTION-186",
+        "db_col": "devices.uuid",
+        "persist": "PERSISTED_DIRECTLY",
+        "writers": "DevicePairingController@register"
+    }
+]

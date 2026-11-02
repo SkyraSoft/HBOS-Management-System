@@ -26,10 +26,14 @@ class InventoryMovement extends Model
         'description',
     ];
 
+    protected $attributes = [
+        'balance' => '0.000',
+    ];
+
     protected $casts = [
-        'quantity' => 'integer',
-        'unit_cost' => 'float',
-        'balance' => 'integer',
+        'quantity' => 'decimal:3',
+        'unit_cost' => 'decimal:2',
+        'balance' => 'decimal:3',
     ];
 
     public function business()

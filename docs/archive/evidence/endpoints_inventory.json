@@ -1,0 +1,1178 @@
+[
+    {
+        "id": "API-001",
+        "method": "GET",
+        "uri": "\/",
+        "controller_action": "Closure \/ WebHandler@invoke",
+        "service": "N\/A",
+        "model": "N\/A"
+    },
+    {
+        "id": "API-002",
+        "method": "GET",
+        "uri": "api\/v1\/account-transfers",
+        "controller_action": "AccountTransferController@index",
+        "service": "AccountMovementService",
+        "model": "AccountTransfer"
+    },
+    {
+        "id": "API-003",
+        "method": "POST",
+        "uri": "api\/v1\/account-transfers",
+        "controller_action": "AccountTransferController@store",
+        "service": "AccountMovementService",
+        "model": "AccountTransfer"
+    },
+    {
+        "id": "API-004",
+        "method": "GET",
+        "uri": "api\/v1\/audit-logs",
+        "controller_action": "AuditLogController@index",
+        "service": "AuditService",
+        "model": "ActivityLog"
+    },
+    {
+        "id": "API-005",
+        "method": "GET",
+        "uri": "api\/v1\/audit-logs\/{id}",
+        "controller_action": "AuditLogController@show",
+        "service": "AuditService",
+        "model": "ActivityLog"
+    },
+    {
+        "id": "API-006",
+        "method": "POST",
+        "uri": "api\/v1\/auth\/login",
+        "controller_action": "AuthController@login",
+        "service": "UserGovernanceService",
+        "model": "User"
+    },
+    {
+        "id": "API-007",
+        "method": "POST",
+        "uri": "api\/v1\/auth\/logout",
+        "controller_action": "AuthController@logout",
+        "service": "UserGovernanceService",
+        "model": "User"
+    },
+    {
+        "id": "API-008",
+        "method": "GET",
+        "uri": "api\/v1\/auth\/me",
+        "controller_action": "AuthController@me",
+        "service": "UserGovernanceService",
+        "model": "User"
+    },
+    {
+        "id": "API-009",
+        "method": "POST",
+        "uri": "api\/v1\/auth\/register",
+        "controller_action": "AuthController@register",
+        "service": "UserGovernanceService",
+        "model": "User"
+    },
+    {
+        "id": "API-010",
+        "method": "GET",
+        "uri": "api\/v1\/branches",
+        "controller_action": "BranchController@index",
+        "service": "UserGovernanceService",
+        "model": "Branch"
+    },
+    {
+        "id": "API-011",
+        "method": "POST",
+        "uri": "api\/v1\/branches",
+        "controller_action": "BranchController@store",
+        "service": "UserGovernanceService",
+        "model": "Branch"
+    },
+    {
+        "id": "API-012",
+        "method": "GET",
+        "uri": "api\/v1\/branches\/{branch}",
+        "controller_action": "BranchController@show",
+        "service": "UserGovernanceService",
+        "model": "Branch"
+    },
+    {
+        "id": "API-013",
+        "method": "PUT",
+        "uri": "api\/v1\/branches\/{branch}",
+        "controller_action": "BranchController@update",
+        "service": "UserGovernanceService",
+        "model": "Branch"
+    },
+    {
+        "id": "API-014",
+        "method": "PATCH",
+        "uri": "api\/v1\/branches\/{branch}",
+        "controller_action": "BranchController@update",
+        "service": "UserGovernanceService",
+        "model": "Branch"
+    },
+    {
+        "id": "API-015",
+        "method": "DELETE",
+        "uri": "api\/v1\/branches\/{branch}",
+        "controller_action": "BranchController@destroy",
+        "service": "UserGovernanceService",
+        "model": "Branch"
+    },
+    {
+        "id": "API-016",
+        "method": "GET",
+        "uri": "api\/v1\/brands",
+        "controller_action": "BrandController@index",
+        "service": "InventoryService",
+        "model": "Brand"
+    },
+    {
+        "id": "API-017",
+        "method": "POST",
+        "uri": "api\/v1\/brands",
+        "controller_action": "BrandController@store",
+        "service": "InventoryService",
+        "model": "Brand"
+    },
+    {
+        "id": "API-018",
+        "method": "GET",
+        "uri": "api\/v1\/brands\/{brand}",
+        "controller_action": "BrandController@show",
+        "service": "InventoryService",
+        "model": "Brand"
+    },
+    {
+        "id": "API-019",
+        "method": "PUT",
+        "uri": "api\/v1\/brands\/{brand}",
+        "controller_action": "BrandController@update",
+        "service": "InventoryService",
+        "model": "Brand"
+    },
+    {
+        "id": "API-020",
+        "method": "PATCH",
+        "uri": "api\/v1\/brands\/{brand}",
+        "controller_action": "BrandController@update",
+        "service": "InventoryService",
+        "model": "Brand"
+    },
+    {
+        "id": "API-021",
+        "method": "DELETE",
+        "uri": "api\/v1\/brands\/{brand}",
+        "controller_action": "BrandController@destroy",
+        "service": "InventoryService",
+        "model": "Brand"
+    },
+    {
+        "id": "API-022",
+        "method": "GET",
+        "uri": "api\/v1\/businesses",
+        "controller_action": "BusinessController@index",
+        "service": "UserGovernanceService",
+        "model": "Business"
+    },
+    {
+        "id": "API-023",
+        "method": "POST",
+        "uri": "api\/v1\/businesses",
+        "controller_action": "BusinessController@store",
+        "service": "UserGovernanceService",
+        "model": "Business"
+    },
+    {
+        "id": "API-024",
+        "method": "GET",
+        "uri": "api\/v1\/businesses\/{business}",
+        "controller_action": "BusinessController@show",
+        "service": "UserGovernanceService",
+        "model": "Business"
+    },
+    {
+        "id": "API-025",
+        "method": "PUT",
+        "uri": "api\/v1\/businesses\/{business}",
+        "controller_action": "BusinessController@update",
+        "service": "UserGovernanceService",
+        "model": "Business"
+    },
+    {
+        "id": "API-026",
+        "method": "PATCH",
+        "uri": "api\/v1\/businesses\/{business}",
+        "controller_action": "BusinessController@update",
+        "service": "UserGovernanceService",
+        "model": "Business"
+    },
+    {
+        "id": "API-027",
+        "method": "DELETE",
+        "uri": "api\/v1\/businesses\/{business}",
+        "controller_action": "BusinessController@destroy",
+        "service": "UserGovernanceService",
+        "model": "Business"
+    },
+    {
+        "id": "API-028",
+        "method": "GET",
+        "uri": "api\/v1\/categories",
+        "controller_action": "CategoryController@index",
+        "service": "InventoryService",
+        "model": "Category"
+    },
+    {
+        "id": "API-029",
+        "method": "POST",
+        "uri": "api\/v1\/categories",
+        "controller_action": "CategoryController@store",
+        "service": "InventoryService",
+        "model": "Category"
+    },
+    {
+        "id": "API-030",
+        "method": "GET",
+        "uri": "api\/v1\/categories\/{category}",
+        "controller_action": "CategoryController@show",
+        "service": "InventoryService",
+        "model": "Category"
+    },
+    {
+        "id": "API-031",
+        "method": "PUT",
+        "uri": "api\/v1\/categories\/{category}",
+        "controller_action": "CategoryController@update",
+        "service": "InventoryService",
+        "model": "Category"
+    },
+    {
+        "id": "API-032",
+        "method": "PATCH",
+        "uri": "api\/v1\/categories\/{category}",
+        "controller_action": "CategoryController@update",
+        "service": "InventoryService",
+        "model": "Category"
+    },
+    {
+        "id": "API-033",
+        "method": "DELETE",
+        "uri": "api\/v1\/categories\/{category}",
+        "controller_action": "CategoryController@destroy",
+        "service": "InventoryService",
+        "model": "Category"
+    },
+    {
+        "id": "API-034",
+        "method": "POST",
+        "uri": "api\/v1\/customer-payments\/{payment}\/reverse",
+        "controller_action": "CustomerPaymentController@reverse",
+        "service": "CustomerPaymentService",
+        "model": "CustomerPayment"
+    },
+    {
+        "id": "API-035",
+        "method": "GET",
+        "uri": "api\/v1\/customers",
+        "controller_action": "CustomerController@index",
+        "service": "CustomerAccountService",
+        "model": "Customer"
+    },
+    {
+        "id": "API-036",
+        "method": "POST",
+        "uri": "api\/v1\/customers",
+        "controller_action": "CustomerController@store",
+        "service": "CustomerAccountService",
+        "model": "Customer"
+    },
+    {
+        "id": "API-037",
+        "method": "GET",
+        "uri": "api\/v1\/customers\/{customer}",
+        "controller_action": "CustomerController@show",
+        "service": "CustomerAccountService",
+        "model": "Customer"
+    },
+    {
+        "id": "API-038",
+        "method": "PUT",
+        "uri": "api\/v1\/customers\/{customer}",
+        "controller_action": "CustomerController@update",
+        "service": "CustomerAccountService",
+        "model": "Customer"
+    },
+    {
+        "id": "API-039",
+        "method": "PATCH",
+        "uri": "api\/v1\/customers\/{customer}",
+        "controller_action": "CustomerController@update",
+        "service": "CustomerAccountService",
+        "model": "Customer"
+    },
+    {
+        "id": "API-040",
+        "method": "DELETE",
+        "uri": "api\/v1\/customers\/{customer}",
+        "controller_action": "CustomerController@destroy",
+        "service": "CustomerAccountService",
+        "model": "Customer"
+    },
+    {
+        "id": "API-041",
+        "method": "GET",
+        "uri": "api\/v1\/customers\/{customer}\/ledger",
+        "controller_action": "CustomerController@ledger",
+        "service": "CustomerAccountService",
+        "model": "Customer"
+    },
+    {
+        "id": "API-042",
+        "method": "GET",
+        "uri": "api\/v1\/customers\/{customer}\/payments",
+        "controller_action": "CustomerPaymentController@index",
+        "service": "CustomerPaymentService",
+        "model": "CustomerPayment"
+    },
+    {
+        "id": "API-043",
+        "method": "POST",
+        "uri": "api\/v1\/customers\/{customer}\/payments",
+        "controller_action": "CustomerPaymentController@store",
+        "service": "CustomerPaymentService",
+        "model": "CustomerPayment"
+    },
+    {
+        "id": "API-044",
+        "method": "GET",
+        "uri": "api\/v1\/dashboard",
+        "controller_action": "DashboardController@index",
+        "service": "DashboardService",
+        "model": "Multiple"
+    },
+    {
+        "id": "API-045",
+        "method": "GET",
+        "uri": "api\/v1\/dashboard\/stats",
+        "controller_action": "DashboardController@stats",
+        "service": "DashboardService",
+        "model": "Multiple"
+    },
+    {
+        "id": "API-046",
+        "method": "GET",
+        "uri": "api\/v1\/expense-categories",
+        "controller_action": "ExpenseCategoryController@index",
+        "service": "InventoryService",
+        "model": "Category"
+    },
+    {
+        "id": "API-047",
+        "method": "POST",
+        "uri": "api\/v1\/expense-categories",
+        "controller_action": "ExpenseCategoryController@store",
+        "service": "InventoryService",
+        "model": "Category"
+    },
+    {
+        "id": "API-048",
+        "method": "GET",
+        "uri": "api\/v1\/expense-categories\/{expense_category}",
+        "controller_action": "ExpenseCategoryController@show",
+        "service": "InventoryService",
+        "model": "Category"
+    },
+    {
+        "id": "API-049",
+        "method": "PUT",
+        "uri": "api\/v1\/expense-categories\/{expense_category}",
+        "controller_action": "ExpenseCategoryController@update",
+        "service": "InventoryService",
+        "model": "Category"
+    },
+    {
+        "id": "API-050",
+        "method": "PATCH",
+        "uri": "api\/v1\/expense-categories\/{expense_category}",
+        "controller_action": "ExpenseCategoryController@update",
+        "service": "InventoryService",
+        "model": "Category"
+    },
+    {
+        "id": "API-051",
+        "method": "DELETE",
+        "uri": "api\/v1\/expense-categories\/{expense_category}",
+        "controller_action": "ExpenseCategoryController@destroy",
+        "service": "InventoryService",
+        "model": "Category"
+    },
+    {
+        "id": "API-052",
+        "method": "GET",
+        "uri": "api\/v1\/expenses",
+        "controller_action": "ExpenseController@index",
+        "service": "ExpenseService",
+        "model": "Expense"
+    },
+    {
+        "id": "API-053",
+        "method": "POST",
+        "uri": "api\/v1\/expenses",
+        "controller_action": "ExpenseController@store",
+        "service": "ExpenseService",
+        "model": "Expense"
+    },
+    {
+        "id": "API-054",
+        "method": "GET",
+        "uri": "api\/v1\/expenses\/{expense}",
+        "controller_action": "ExpenseController@show",
+        "service": "ExpenseService",
+        "model": "Expense"
+    },
+    {
+        "id": "API-055",
+        "method": "PUT",
+        "uri": "api\/v1\/expenses\/{expense}",
+        "controller_action": "ExpenseController@update",
+        "service": "ExpenseService",
+        "model": "Expense"
+    },
+    {
+        "id": "API-056",
+        "method": "PATCH",
+        "uri": "api\/v1\/expenses\/{expense}",
+        "controller_action": "ExpenseController@update",
+        "service": "ExpenseService",
+        "model": "Expense"
+    },
+    {
+        "id": "API-057",
+        "method": "DELETE",
+        "uri": "api\/v1\/expenses\/{expense}",
+        "controller_action": "ExpenseController@destroy",
+        "service": "ExpenseService",
+        "model": "Expense"
+    },
+    {
+        "id": "API-058",
+        "method": "POST",
+        "uri": "api\/v1\/expenses\/{expense}\/void",
+        "controller_action": "ExpenseController@void",
+        "service": "ExpenseService",
+        "model": "Expense"
+    },
+    {
+        "id": "API-059",
+        "method": "GET",
+        "uri": "api\/v1\/financial-accounts",
+        "controller_action": "FinancialAccountController@index",
+        "service": "FinancialAccountService \/ AccountMovementService",
+        "model": "FinancialAccount \/ AccountMovement"
+    },
+    {
+        "id": "API-060",
+        "method": "POST",
+        "uri": "api\/v1\/financial-accounts",
+        "controller_action": "FinancialAccountController@store",
+        "service": "FinancialAccountService \/ AccountMovementService",
+        "model": "FinancialAccount \/ AccountMovement"
+    },
+    {
+        "id": "API-061",
+        "method": "POST",
+        "uri": "api\/v1\/financial-accounts\/{account}\/capital-in",
+        "controller_action": "FinancialAccountController@capitalIn",
+        "service": "FinancialAccountService \/ AccountMovementService",
+        "model": "FinancialAccount \/ AccountMovement"
+    },
+    {
+        "id": "API-062",
+        "method": "POST",
+        "uri": "api\/v1\/financial-accounts\/{account}\/capital-out",
+        "controller_action": "FinancialAccountController@capitalOut",
+        "service": "FinancialAccountService \/ AccountMovementService",
+        "model": "FinancialAccount \/ AccountMovement"
+    },
+    {
+        "id": "API-063",
+        "method": "GET",
+        "uri": "api\/v1\/financial-accounts\/{account}\/movements",
+        "controller_action": "FinancialAccountController@movements",
+        "service": "FinancialAccountService \/ AccountMovementService",
+        "model": "FinancialAccount \/ AccountMovement"
+    },
+    {
+        "id": "API-064",
+        "method": "GET",
+        "uri": "api\/v1\/financial-accounts\/{financial_account}",
+        "controller_action": "FinancialAccountController@show",
+        "service": "FinancialAccountService \/ AccountMovementService",
+        "model": "FinancialAccount \/ AccountMovement"
+    },
+    {
+        "id": "API-065",
+        "method": "PUT",
+        "uri": "api\/v1\/financial-accounts\/{financial_account}",
+        "controller_action": "FinancialAccountController@update",
+        "service": "FinancialAccountService \/ AccountMovementService",
+        "model": "FinancialAccount \/ AccountMovement"
+    },
+    {
+        "id": "API-066",
+        "method": "PATCH",
+        "uri": "api\/v1\/financial-accounts\/{financial_account}",
+        "controller_action": "FinancialAccountController@update",
+        "service": "FinancialAccountService \/ AccountMovementService",
+        "model": "FinancialAccount \/ AccountMovement"
+    },
+    {
+        "id": "API-067",
+        "method": "DELETE",
+        "uri": "api\/v1\/financial-accounts\/{financial_account}",
+        "controller_action": "FinancialAccountController@destroy",
+        "service": "FinancialAccountService \/ AccountMovementService",
+        "model": "FinancialAccount \/ AccountMovement"
+    },
+    {
+        "id": "API-068",
+        "method": "GET",
+        "uri": "api\/v1\/health",
+        "controller_action": "Closure \/ WebHandler@invoke",
+        "service": "N\/A",
+        "model": "N\/A"
+    },
+    {
+        "id": "API-069",
+        "method": "GET",
+        "uri": "api\/v1\/inventory",
+        "controller_action": "InventoryController@index",
+        "service": "InventoryService \/ InventoryMovementService",
+        "model": "BranchInventory \/ InventoryMovement"
+    },
+    {
+        "id": "API-070",
+        "method": "POST",
+        "uri": "api\/v1\/inventory\/adjustments",
+        "controller_action": "InventoryController@adjust",
+        "service": "InventoryService \/ InventoryMovementService",
+        "model": "BranchInventory \/ InventoryMovement"
+    },
+    {
+        "id": "API-071",
+        "method": "GET",
+        "uri": "api\/v1\/inventory\/movements",
+        "controller_action": "InventoryController@movements",
+        "service": "InventoryService \/ InventoryMovementService",
+        "model": "BranchInventory \/ InventoryMovement"
+    },
+    {
+        "id": "API-072",
+        "method": "POST",
+        "uri": "api\/v1\/inventory\/transfers",
+        "controller_action": "InventoryController@transfer",
+        "service": "InventoryService \/ InventoryMovementService",
+        "model": "BranchInventory \/ InventoryMovement"
+    },
+    {
+        "id": "API-073",
+        "method": "GET",
+        "uri": "api\/v1\/khata",
+        "controller_action": "KhataController@index",
+        "service": "CustomerAccountService",
+        "model": "KhataTransaction"
+    },
+    {
+        "id": "API-074",
+        "method": "POST",
+        "uri": "api\/v1\/khata",
+        "controller_action": "KhataController@store",
+        "service": "CustomerAccountService",
+        "model": "KhataTransaction"
+    },
+    {
+        "id": "API-075",
+        "method": "DELETE",
+        "uri": "api\/v1\/khata\/{khatum}",
+        "controller_action": "KhataController@destroy",
+        "service": "CustomerAccountService",
+        "model": "KhataTransaction"
+    },
+    {
+        "id": "API-076",
+        "method": "GET",
+        "uri": "api\/v1\/notifications",
+        "controller_action": "NotificationController@index",
+        "service": "NeedsAttentionService",
+        "model": "Notification"
+    },
+    {
+        "id": "API-077",
+        "method": "PUT",
+        "uri": "api\/v1\/notifications\/mark-all-read",
+        "controller_action": "NotificationController@markAllAsRead",
+        "service": "NeedsAttentionService",
+        "model": "Notification"
+    },
+    {
+        "id": "API-078",
+        "method": "DELETE",
+        "uri": "api\/v1\/notifications\/{id}",
+        "controller_action": "NotificationController@destroy",
+        "service": "NeedsAttentionService",
+        "model": "Notification"
+    },
+    {
+        "id": "API-079",
+        "method": "PUT",
+        "uri": "api\/v1\/notifications\/{id}\/mark-read",
+        "controller_action": "NotificationController@markAsRead",
+        "service": "NeedsAttentionService",
+        "model": "Notification"
+    },
+    {
+        "id": "API-080",
+        "method": "GET",
+        "uri": "api\/v1\/products",
+        "controller_action": "ProductController@index",
+        "service": "InventoryService",
+        "model": "Product"
+    },
+    {
+        "id": "API-081",
+        "method": "POST",
+        "uri": "api\/v1\/products",
+        "controller_action": "ProductController@store",
+        "service": "InventoryService",
+        "model": "Product"
+    },
+    {
+        "id": "API-082",
+        "method": "GET",
+        "uri": "api\/v1\/products\/{product}",
+        "controller_action": "ProductController@show",
+        "service": "InventoryService",
+        "model": "Product"
+    },
+    {
+        "id": "API-083",
+        "method": "PUT",
+        "uri": "api\/v1\/products\/{product}",
+        "controller_action": "ProductController@update",
+        "service": "InventoryService",
+        "model": "Product"
+    },
+    {
+        "id": "API-084",
+        "method": "PATCH",
+        "uri": "api\/v1\/products\/{product}",
+        "controller_action": "ProductController@update",
+        "service": "InventoryService",
+        "model": "Product"
+    },
+    {
+        "id": "API-085",
+        "method": "DELETE",
+        "uri": "api\/v1\/products\/{product}",
+        "controller_action": "ProductController@destroy",
+        "service": "InventoryService",
+        "model": "Product"
+    },
+    {
+        "id": "API-086",
+        "method": "GET",
+        "uri": "api\/v1\/profile",
+        "controller_action": "ProfileController@show",
+        "service": "UserGovernanceService",
+        "model": "User"
+    },
+    {
+        "id": "API-087",
+        "method": "PUT",
+        "uri": "api\/v1\/profile",
+        "controller_action": "ProfileController@update",
+        "service": "UserGovernanceService",
+        "model": "User"
+    },
+    {
+        "id": "API-088",
+        "method": "PUT",
+        "uri": "api\/v1\/profile\/password",
+        "controller_action": "ProfileController@updatePassword",
+        "service": "UserGovernanceService",
+        "model": "User"
+    },
+    {
+        "id": "API-089",
+        "method": "GET",
+        "uri": "api\/v1\/purchases",
+        "controller_action": "PurchaseController@index",
+        "service": "PurchaseService",
+        "model": "Purchase"
+    },
+    {
+        "id": "API-090",
+        "method": "POST",
+        "uri": "api\/v1\/purchases",
+        "controller_action": "PurchaseController@store",
+        "service": "PurchaseService",
+        "model": "Purchase"
+    },
+    {
+        "id": "API-091",
+        "method": "POST",
+        "uri": "api\/v1\/purchases\/{id}\/cancel",
+        "controller_action": "PurchaseController@cancel",
+        "service": "PurchaseService",
+        "model": "Purchase"
+    },
+    {
+        "id": "API-092",
+        "method": "GET",
+        "uri": "api\/v1\/purchases\/{purchase}",
+        "controller_action": "PurchaseController@show",
+        "service": "PurchaseService",
+        "model": "Purchase"
+    },
+    {
+        "id": "API-093",
+        "method": "PUT",
+        "uri": "api\/v1\/purchases\/{purchase}",
+        "controller_action": "PurchaseController@update",
+        "service": "PurchaseService",
+        "model": "Purchase"
+    },
+    {
+        "id": "API-094",
+        "method": "PATCH",
+        "uri": "api\/v1\/purchases\/{purchase}",
+        "controller_action": "PurchaseController@update",
+        "service": "PurchaseService",
+        "model": "Purchase"
+    },
+    {
+        "id": "API-095",
+        "method": "DELETE",
+        "uri": "api\/v1\/purchases\/{purchase}",
+        "controller_action": "PurchaseController@destroy",
+        "service": "PurchaseService",
+        "model": "Purchase"
+    },
+    {
+        "id": "API-096",
+        "method": "GET",
+        "uri": "api\/v1\/recurring-expenses",
+        "controller_action": "RecurringExpenseController@index",
+        "service": "ExpenseService",
+        "model": "RecurringExpense"
+    },
+    {
+        "id": "API-097",
+        "method": "POST",
+        "uri": "api\/v1\/recurring-expenses",
+        "controller_action": "RecurringExpenseController@store",
+        "service": "ExpenseService",
+        "model": "RecurringExpense"
+    },
+    {
+        "id": "API-098",
+        "method": "GET",
+        "uri": "api\/v1\/recurring-expenses\/{recurring_expense}",
+        "controller_action": "RecurringExpenseController@show",
+        "service": "ExpenseService",
+        "model": "RecurringExpense"
+    },
+    {
+        "id": "API-099",
+        "method": "PUT",
+        "uri": "api\/v1\/recurring-expenses\/{recurring_expense}",
+        "controller_action": "RecurringExpenseController@update",
+        "service": "ExpenseService",
+        "model": "RecurringExpense"
+    },
+    {
+        "id": "API-100",
+        "method": "PATCH",
+        "uri": "api\/v1\/recurring-expenses\/{recurring_expense}",
+        "controller_action": "RecurringExpenseController@update",
+        "service": "ExpenseService",
+        "model": "RecurringExpense"
+    },
+    {
+        "id": "API-101",
+        "method": "DELETE",
+        "uri": "api\/v1\/recurring-expenses\/{recurring_expense}",
+        "controller_action": "RecurringExpenseController@destroy",
+        "service": "ExpenseService",
+        "model": "RecurringExpense"
+    },
+    {
+        "id": "API-102",
+        "method": "GET",
+        "uri": "api\/v1\/reports\/branches",
+        "controller_action": "ReportController@branches",
+        "service": "ReportService",
+        "model": "Multiple"
+    },
+    {
+        "id": "API-103",
+        "method": "GET",
+        "uri": "api\/v1\/reports\/customers",
+        "controller_action": "ReportController@customers",
+        "service": "ReportService",
+        "model": "Multiple"
+    },
+    {
+        "id": "API-104",
+        "method": "GET",
+        "uri": "api\/v1\/reports\/expenses",
+        "controller_action": "ReportController@expenses",
+        "service": "ReportService",
+        "model": "Multiple"
+    },
+    {
+        "id": "API-105",
+        "method": "GET",
+        "uri": "api\/v1\/reports\/financial-accounts",
+        "controller_action": "ReportController@financialAccounts",
+        "service": "ReportService",
+        "model": "Multiple"
+    },
+    {
+        "id": "API-106",
+        "method": "GET",
+        "uri": "api\/v1\/reports\/inventory",
+        "controller_action": "ReportController@inventory",
+        "service": "ReportService",
+        "model": "Multiple"
+    },
+    {
+        "id": "API-107",
+        "method": "GET",
+        "uri": "api\/v1\/reports\/sales",
+        "controller_action": "ReportController@sales",
+        "service": "ReportService",
+        "model": "Multiple"
+    },
+    {
+        "id": "API-108",
+        "method": "GET",
+        "uri": "api\/v1\/reports\/suppliers",
+        "controller_action": "ReportController@suppliers",
+        "service": "ReportService",
+        "model": "Multiple"
+    },
+    {
+        "id": "API-109",
+        "method": "POST",
+        "uri": "api\/v1\/sale-returns\/{saleReturn}\/reverse-refund",
+        "controller_action": "SaleReturnRefundController@reverseRefund",
+        "service": "SaleService",
+        "model": "SaleReturn"
+    },
+    {
+        "id": "API-110",
+        "method": "POST",
+        "uri": "api\/v1\/sale-returns\/{saleReturn}\/settle-refund",
+        "controller_action": "SaleReturnRefundController@settleRefund",
+        "service": "SaleService",
+        "model": "SaleReturn"
+    },
+    {
+        "id": "API-111",
+        "method": "GET",
+        "uri": "api\/v1\/sales",
+        "controller_action": "SaleController@index",
+        "service": "SaleService",
+        "model": "Sale"
+    },
+    {
+        "id": "API-112",
+        "method": "POST",
+        "uri": "api\/v1\/sales",
+        "controller_action": "SaleController@store",
+        "service": "SaleService",
+        "model": "Sale"
+    },
+    {
+        "id": "API-113",
+        "method": "GET",
+        "uri": "api\/v1\/sales\/{sale}",
+        "controller_action": "SaleController@show",
+        "service": "SaleService",
+        "model": "Sale"
+    },
+    {
+        "id": "API-114",
+        "method": "PUT",
+        "uri": "api\/v1\/sales\/{sale}",
+        "controller_action": "SaleController@update",
+        "service": "SaleService",
+        "model": "Sale"
+    },
+    {
+        "id": "API-115",
+        "method": "PATCH",
+        "uri": "api\/v1\/sales\/{sale}",
+        "controller_action": "SaleController@update",
+        "service": "SaleService",
+        "model": "Sale"
+    },
+    {
+        "id": "API-116",
+        "method": "DELETE",
+        "uri": "api\/v1\/sales\/{sale}",
+        "controller_action": "SaleController@destroy",
+        "service": "SaleService",
+        "model": "Sale"
+    },
+    {
+        "id": "API-117",
+        "method": "POST",
+        "uri": "api\/v1\/sales\/{sale}\/cancel",
+        "controller_action": "SaleController@cancel",
+        "service": "SaleService",
+        "model": "Sale"
+    },
+    {
+        "id": "API-118",
+        "method": "POST",
+        "uri": "api\/v1\/sales\/{sale}\/returns",
+        "controller_action": "SaleController@returns",
+        "service": "SaleService",
+        "model": "Sale"
+    },
+    {
+        "id": "API-119",
+        "method": "GET",
+        "uri": "api\/v1\/sales\/{sale}\/returns",
+        "controller_action": "SaleController@listReturns",
+        "service": "SaleService",
+        "model": "Sale"
+    },
+    {
+        "id": "API-120",
+        "method": "GET",
+        "uri": "api\/v1\/settings",
+        "controller_action": "SettingController@index",
+        "service": "SettingController",
+        "model": "Setting"
+    },
+    {
+        "id": "API-121",
+        "method": "POST",
+        "uri": "api\/v1\/settings",
+        "controller_action": "SettingController@store",
+        "service": "SettingController",
+        "model": "Setting"
+    },
+    {
+        "id": "API-122",
+        "method": "GET",
+        "uri": "api\/v1\/settings\/{key}",
+        "controller_action": "SettingController@show",
+        "service": "SettingController",
+        "model": "Setting"
+    },
+    {
+        "id": "API-123",
+        "method": "DELETE",
+        "uri": "api\/v1\/settings\/{key}",
+        "controller_action": "SettingController@destroy",
+        "service": "SettingController",
+        "model": "Setting"
+    },
+    {
+        "id": "API-124",
+        "method": "GET",
+        "uri": "api\/v1\/subcategories",
+        "controller_action": "SubcategoryController@index",
+        "service": "InventoryService",
+        "model": "Subcategory"
+    },
+    {
+        "id": "API-125",
+        "method": "POST",
+        "uri": "api\/v1\/subcategories",
+        "controller_action": "SubcategoryController@store",
+        "service": "InventoryService",
+        "model": "Subcategory"
+    },
+    {
+        "id": "API-126",
+        "method": "GET",
+        "uri": "api\/v1\/subcategories\/{subcategory}",
+        "controller_action": "SubcategoryController@show",
+        "service": "InventoryService",
+        "model": "Subcategory"
+    },
+    {
+        "id": "API-127",
+        "method": "PUT",
+        "uri": "api\/v1\/subcategories\/{subcategory}",
+        "controller_action": "SubcategoryController@update",
+        "service": "InventoryService",
+        "model": "Subcategory"
+    },
+    {
+        "id": "API-128",
+        "method": "PATCH",
+        "uri": "api\/v1\/subcategories\/{subcategory}",
+        "controller_action": "SubcategoryController@update",
+        "service": "InventoryService",
+        "model": "Subcategory"
+    },
+    {
+        "id": "API-129",
+        "method": "DELETE",
+        "uri": "api\/v1\/subcategories\/{subcategory}",
+        "controller_action": "SubcategoryController@destroy",
+        "service": "InventoryService",
+        "model": "Subcategory"
+    },
+    {
+        "id": "API-130",
+        "method": "GET",
+        "uri": "api\/v1\/suppliers",
+        "controller_action": "SupplierController@index",
+        "service": "SupplierBalanceService",
+        "model": "Supplier"
+    },
+    {
+        "id": "API-131",
+        "method": "POST",
+        "uri": "api\/v1\/suppliers",
+        "controller_action": "SupplierController@store",
+        "service": "SupplierBalanceService",
+        "model": "Supplier"
+    },
+    {
+        "id": "API-132",
+        "method": "GET",
+        "uri": "api\/v1\/suppliers\/{supplier}",
+        "controller_action": "SupplierController@show",
+        "service": "SupplierBalanceService",
+        "model": "Supplier"
+    },
+    {
+        "id": "API-133",
+        "method": "PUT",
+        "uri": "api\/v1\/suppliers\/{supplier}",
+        "controller_action": "SupplierController@update",
+        "service": "SupplierBalanceService",
+        "model": "Supplier"
+    },
+    {
+        "id": "API-134",
+        "method": "PATCH",
+        "uri": "api\/v1\/suppliers\/{supplier}",
+        "controller_action": "SupplierController@update",
+        "service": "SupplierBalanceService",
+        "model": "Supplier"
+    },
+    {
+        "id": "API-135",
+        "method": "DELETE",
+        "uri": "api\/v1\/suppliers\/{supplier}",
+        "controller_action": "SupplierController@destroy",
+        "service": "SupplierBalanceService",
+        "model": "Supplier"
+    },
+    {
+        "id": "API-136",
+        "method": "GET",
+        "uri": "api\/v1\/suppliers\/{supplier}\/payments",
+        "controller_action": "SupplierPaymentController@index",
+        "service": "SupplierBalanceService",
+        "model": "SupplierPayment"
+    },
+    {
+        "id": "API-137",
+        "method": "POST",
+        "uri": "api\/v1\/suppliers\/{supplier}\/payments",
+        "controller_action": "SupplierPaymentController@store",
+        "service": "SupplierBalanceService",
+        "model": "SupplierPayment"
+    },
+    {
+        "id": "API-138",
+        "method": "POST",
+        "uri": "api\/v1\/sync\/bulk-transactions",
+        "controller_action": "SyncController@bulkIngest",
+        "service": "BulkSyncService",
+        "model": "Multiple"
+    },
+    {
+        "id": "API-139",
+        "method": "GET",
+        "uri": "api\/v1\/sync\/catalog-delta",
+        "controller_action": "SyncController@catalogDelta",
+        "service": "BulkSyncService",
+        "model": "Multiple"
+    },
+    {
+        "id": "API-140",
+        "method": "GET",
+        "uri": "api\/v1\/sync\/status",
+        "controller_action": "SyncController@status",
+        "service": "BulkSyncService",
+        "model": "Multiple"
+    },
+    {
+        "id": "API-141",
+        "method": "GET",
+        "uri": "api\/v1\/users",
+        "controller_action": "UserGovernanceController@index",
+        "service": "UserGovernanceService",
+        "model": "User"
+    },
+    {
+        "id": "API-142",
+        "method": "POST",
+        "uri": "api\/v1\/users",
+        "controller_action": "UserGovernanceController@store",
+        "service": "UserGovernanceService",
+        "model": "User"
+    },
+    {
+        "id": "API-143",
+        "method": "GET",
+        "uri": "api\/v1\/users\/{id}",
+        "controller_action": "UserGovernanceController@show",
+        "service": "UserGovernanceService",
+        "model": "User"
+    },
+    {
+        "id": "API-144",
+        "method": "PUT",
+        "uri": "api\/v1\/users\/{id}",
+        "controller_action": "UserGovernanceController@update",
+        "service": "UserGovernanceService",
+        "model": "User"
+    },
+    {
+        "id": "API-145",
+        "method": "POST",
+        "uri": "api\/v1\/users\/{id}\/status",
+        "controller_action": "UserGovernanceController@toggleStatus",
+        "service": "UserGovernanceService",
+        "model": "User"
+    },
+    {
+        "id": "API-146",
+        "method": "GET",
+        "uri": "download.html",
+        "controller_action": "Closure \/ WebHandler@invoke",
+        "service": "N\/A",
+        "model": "N\/A"
+    },
+    {
+        "id": "API-147",
+        "method": "GET",
+        "uri": "downloads\/{filename}",
+        "controller_action": "Closure \/ WebHandler@invoke",
+        "service": "N\/A",
+        "model": "N\/A"
+    }
+]

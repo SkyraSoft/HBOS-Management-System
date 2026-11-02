@@ -1,0 +1,200 @@
+{
+    "CONC-001": {
+        "mutation": "MUTATION-015 (Post POS Sale)",
+        "entity": "ENTITY-009 (Sale)",
+        "resource": "BranchInventory stock & CashLedger",
+        "scenario": "Two cashiers sell last inventory unit concurrently",
+        "lock": "PESSIMISTIC_LOCK",
+        "tx": "YES",
+        "idempotency": "CLIENT_UUID_DEDUP",
+        "gap": "N/A",
+        "assessment": "CERTIFIED_SAFE_BY_IMPLEMENTATION"
+    },
+    "CONC-002": {
+        "mutation": "MUTATION-016 (Post Split Sale)",
+        "entity": "ENTITY-009 (Sale)",
+        "resource": "Stock, Cash, Bank, Customer Balance",
+        "scenario": "Split sale post during customer credit payment",
+        "lock": "PESSIMISTIC_LOCK",
+        "tx": "YES",
+        "idempotency": "CLIENT_UUID_DEDUP",
+        "gap": "N/A",
+        "assessment": "CERTIFIED_SAFE_BY_IMPLEMENTATION"
+    },
+    "CONC-003": {
+        "mutation": "MUTATION-017 (Process Sale Return)",
+        "entity": "ENTITY-011 (SaleReturn)",
+        "resource": "Returnable quantity limit & Cash refund",
+        "scenario": "Double-click return submit resulting in duplicate refund",
+        "lock": "ATOMIC_DATABASE_OPERATION",
+        "tx": "YES",
+        "idempotency": "STATE_TRANSITION_GUARD",
+        "gap": "P6-GAP-007",
+        "assessment": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "CONC-004": {
+        "mutation": "MUTATION-019 (Cancel Completed Sale)",
+        "entity": "ENTITY-009 (Sale)",
+        "resource": "Sale status, Stock restock, Cash ledger reversal",
+        "scenario": "Concurrent void requests on same invoice",
+        "lock": "ATOMIC_CONDITIONAL_UPDATE",
+        "tx": "YES",
+        "idempotency": "STATE_TRANSITION_GUARD",
+        "gap": "N/A",
+        "assessment": "CERTIFIED_SAFE_BY_IMPLEMENTATION"
+    },
+    "CONC-005": {
+        "mutation": "MUTATION-023 (Confirm Purchase GRN)",
+        "entity": "ENTITY-012 (Purchase)",
+        "resource": "BranchInventory stock & Supplier Payable",
+        "scenario": "Concurrent GRN confirmations on same PO",
+        "lock": "TRANSACTION_ONLY",
+        "tx": "YES",
+        "idempotency": "STATE_TRANSITION_GUARD",
+        "gap": "P6-GAP-006",
+        "assessment": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "CONC-006": {
+        "mutation": "MUTATION-025 (Cancel Purchase Order)",
+        "entity": "ENTITY-012 (Purchase)",
+        "resource": "PO status & Stock deductions",
+        "scenario": "Cancel purchase after goods sold concurrently",
+        "lock": "STATE_TRANSITION_GUARD",
+        "tx": "YES",
+        "idempotency": "STATE_TRANSITION_GUARD",
+        "gap": "N/A",
+        "assessment": "CERTIFIED_SAFE_BY_IMPLEMENTATION"
+    },
+    "CONC-007": {
+        "mutation": "MUTATION-029 (Record Supplier Payment)",
+        "entity": "ENTITY-017 (SupplierPayment)",
+        "resource": "Supplier payable balance & Financial account",
+        "scenario": "Duplicate payment clicks overpaying vendor",
+        "lock": "PESSIMISTIC_LOCK",
+        "tx": "YES",
+        "idempotency": "CLIENT_UUID_DEDUP",
+        "gap": "N/A",
+        "assessment": "CERTIFIED_SAFE_BY_IMPLEMENTATION"
+    },
+    "CONC-008": {
+        "mutation": "MUTATION-030 (Reverse Supplier Payment)",
+        "entity": "ENTITY-017 (SupplierPayment)",
+        "resource": "Supplier debt & Cash balance",
+        "scenario": "Concurrent reversal requests on same payment voucher",
+        "lock": "ATOMIC_CONDITIONAL_UPDATE",
+        "tx": "YES",
+        "idempotency": "STATE_TRANSITION_GUARD",
+        "gap": "N/A",
+        "assessment": "CERTIFIED_SAFE_BY_IMPLEMENTATION"
+    },
+    "CONC-009": {
+        "mutation": "MUTATION-033 (Collect Customer Payment)",
+        "entity": "ENTITY-016 (CustomerPayment)",
+        "resource": "Customer khata balance & Cash drawer",
+        "scenario": "Concurrent payment collection and credit sale posting",
+        "lock": "PESSIMISTIC_LOCK",
+        "tx": "YES",
+        "idempotency": "CLIENT_UUID_DEDUP",
+        "gap": "N/A",
+        "assessment": "CERTIFIED_SAFE_BY_IMPLEMENTATION"
+    },
+    "CONC-010": {
+        "mutation": "MUTATION-034 (Reverse Customer Payment)",
+        "entity": "ENTITY-016 (CustomerPayment)",
+        "resource": "Customer debt & Financial account",
+        "scenario": "Duplicate payment reversal requests",
+        "lock": "ATOMIC_CONDITIONAL_UPDATE",
+        "tx": "YES",
+        "idempotency": "STATE_TRANSITION_GUARD",
+        "gap": "N/A",
+        "assessment": "CERTIFIED_SAFE_BY_IMPLEMENTATION"
+    },
+    "CONC-011": {
+        "mutation": "MUTATION-036 (Post Operational Expense)",
+        "entity": "ENTITY-018 (Expense)",
+        "resource": "Financial account petty cash balance",
+        "scenario": "Simultaneous expense posts exhausting cash drawer",
+        "lock": "PESSIMISTIC_LOCK",
+        "tx": "YES",
+        "idempotency": "CLIENT_UUID_DEDUP",
+        "gap": "N/A",
+        "assessment": "CERTIFIED_SAFE_BY_IMPLEMENTATION"
+    },
+    "CONC-012": {
+        "mutation": "MUTATION-037 (Void Operational Expense)",
+        "entity": "ENTITY-018 (Expense)",
+        "resource": "Expense status & Restored cash balance",
+        "scenario": "Duplicate void calls restoring cash twice",
+        "lock": "ATOMIC_CONDITIONAL_UPDATE",
+        "tx": "YES",
+        "idempotency": "STATE_TRANSITION_GUARD",
+        "gap": "N/A",
+        "assessment": "CERTIFIED_SAFE_BY_IMPLEMENTATION"
+    },
+    "CONC-013": {
+        "mutation": "MUTATION-054 (Inter-Account Transfer)",
+        "entity": "ENTITY-025 (AccountTransfer)",
+        "resource": "Source and Destination Financial Accounts",
+        "scenario": "Concurrent transfers resulting in deadlock or overdraft",
+        "lock": "PESSIMISTIC_LOCK",
+        "tx": "YES",
+        "idempotency": "CLIENT_UUID_DEDUP",
+        "gap": "N/A",
+        "assessment": "CERTIFIED_SAFE_BY_IMPLEMENTATION"
+    },
+    "CONC-014": {
+        "mutation": "MUTATION-009 (Adjust Inventory Stock)",
+        "entity": "ENTITY-008 (InventoryMovement)",
+        "resource": "BranchInventory stock count",
+        "scenario": "Simultaneous stock count corrections on same SKU",
+        "lock": "PESSIMISTIC_LOCK",
+        "tx": "YES",
+        "idempotency": "UNIQUE_CONSTRAINT_GUARD",
+        "gap": "N/A",
+        "assessment": "CERTIFIED_SAFE_BY_IMPLEMENTATION"
+    },
+    "CONC-015": {
+        "mutation": "MUTATION-010 (Transfer Branch Stock)",
+        "entity": "ENTITY-008 (InventoryMovement)",
+        "resource": "Source and Target Branch Inventories",
+        "scenario": "Concurrent transfer requests exceeding source stock",
+        "lock": "PESSIMISTIC_LOCK",
+        "tx": "YES",
+        "idempotency": "CLIENT_UUID_DEDUP",
+        "gap": "N/A",
+        "assessment": "CERTIFIED_SAFE_BY_IMPLEMENTATION"
+    },
+    "CONC-016": {
+        "mutation": "MUTATION-052 (Capital Inflow Injection)",
+        "entity": "ENTITY-024 (FinancialAccount)",
+        "resource": "Account balance & Capital Ledger",
+        "scenario": "Duplicate submit of capital investment",
+        "lock": "PESSIMISTIC_LOCK",
+        "tx": "YES",
+        "idempotency": "CLIENT_UUID_DEDUP",
+        "gap": "N/A",
+        "assessment": "CERTIFIED_SAFE_BY_IMPLEMENTATION"
+    },
+    "CONC-017": {
+        "mutation": "MUTATION-053 (Capital Outflow Drawing)",
+        "entity": "ENTITY-024 (FinancialAccount)",
+        "resource": "Account balance & Drawing Ledger",
+        "scenario": "Concurrent drawings exceeding available balance",
+        "lock": "PESSIMISTIC_LOCK",
+        "tx": "YES",
+        "idempotency": "CLIENT_UUID_DEDUP",
+        "gap": "N/A",
+        "assessment": "CERTIFIED_SAFE_BY_IMPLEMENTATION"
+    },
+    "CONC-018": {
+        "mutation": "MUTATION-070 (Bulk Sync Ingest Replay)",
+        "entity": "ENTITY-036 (DevicePairing)",
+        "resource": "Customer balances & Inventory movements",
+        "scenario": "Sync retry queue replaying offline transactions out of order",
+        "lock": "ATOMIC_DATABASE_OPERATION",
+        "tx": "YES",
+        "idempotency": "CLIENT_UUID_DEDUP",
+        "gap": "P6-GAP-010",
+        "assessment": "CERTIFIED_WITH_KNOWN_GAP"
+    }
+}

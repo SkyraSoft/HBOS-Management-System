@@ -1,0 +1,122 @@
+{
+  "program": "SkyraSoft HBOS Retail Platform & Workforce Integrity Program",
+  "checkpoint": "2.2 Business Profile Schema & Management",
+  "registry_version": "1.0.0",
+  "date": "2026-10-03",
+  "profile_fields_classification": [
+    {
+      "field": "name",
+      "display_name": "Trading / Display Name",
+      "storage_type": "physical_column",
+      "table": "businesses",
+      "required": true,
+      "access_level": "OWNER_ONLY"
+    },
+    {
+      "field": "legal_name",
+      "display_name": "Registered Legal Entity Name",
+      "storage_type": "physical_column",
+      "table": "businesses",
+      "required": false,
+      "access_level": "OWNER_ONLY"
+    },
+    {
+      "field": "business_type",
+      "display_name": "Industry / Business Category",
+      "storage_type": "physical_column",
+      "table": "businesses",
+      "required": false,
+      "access_level": "OWNER_ONLY"
+    },
+    {
+      "field": "phone",
+      "display_name": "Business Official Phone",
+      "storage_type": "physical_column",
+      "table": "businesses",
+      "required": false,
+      "access_level": "OWNER_OR_MANAGER"
+    },
+    {
+      "field": "email",
+      "display_name": "Business Public Email",
+      "storage_type": "physical_column",
+      "table": "businesses",
+      "required": false,
+      "access_level": "OWNER_OR_MANAGER"
+    },
+    {
+      "field": "website",
+      "display_name": "Official Website URL",
+      "storage_type": "physical_column",
+      "table": "businesses",
+      "required": false,
+      "access_level": "OWNER_OR_MANAGER"
+    },
+    {
+      "field": "address",
+      "display_name": "Physical Head Office Address",
+      "storage_type": "physical_column",
+      "table": "businesses",
+      "required": false,
+      "access_level": "OWNER_OR_MANAGER"
+    },
+    {
+      "field": "city",
+      "display_name": "City / Municipality",
+      "storage_type": "physical_column",
+      "table": "businesses",
+      "required": false,
+      "access_level": "OWNER_OR_MANAGER"
+    },
+    {
+      "field": "country",
+      "display_name": "Country",
+      "storage_type": "physical_column",
+      "table": "businesses",
+      "required": false,
+      "access_level": "OWNER_ONLY"
+    },
+    {
+      "field": "currency",
+      "display_name": "Operating Currency Code",
+      "storage_type": "physical_column",
+      "table": "businesses",
+      "required": true,
+      "access_level": "OWNER_ONLY"
+    },
+    {
+      "field": "timezone",
+      "display_name": "Operational Timezone",
+      "storage_type": "physical_column",
+      "table": "businesses",
+      "required": false,
+      "access_level": "OWNER_ONLY"
+    },
+    {
+      "field": "tax_number",
+      "display_name": "Tax / NTN / VAT Registration Identifier",
+      "storage_type": "physical_column",
+      "table": "businesses",
+      "required": false,
+      "access_level": "OWNER_ONLY"
+    },
+    {
+      "field": "logo",
+      "display_name": "Brand Logo Asset URL",
+      "storage_type": "physical_column",
+      "table": "businesses",
+      "required": false,
+      "access_level": "OWNER_ONLY"
+    }
+  ],
+  "profile_separation_principle": {
+    "business_profile_scope": "Represents the organization entity: legal entity name, tax identifiers, head office location, accounting currency, operational timezone",
+    "personal_account_scope": "Represents human user credentials: login email, password, personal mobile number, personal avatar",
+    "security_boundary": "Business Profile cannot be mutated to alter user passwords or login emails. High-impact business attributes require explicit Business Owner authorization in backend"
+  },
+  "existing_tenant_migration_policy": {
+    "new_columns_nullable": true,
+    "fabricated_defaults_count": 0,
+    "backward_compatibility": "Existing businesses retain original values; missing attributes evaluate to null without fatal errors"
+  }
+}

@@ -1,0 +1,129 @@
+{
+  "program": "SkyraSoft HBOS Retail Platform & Workforce Integrity Program",
+  "prompt": "Prompt 2 of 5",
+  "change_manifest_version": "1.0.0",
+  "date": "2026-10-03",
+  "unmapped_changes": 0,
+  "production_files_changed": [
+    {
+      "file": "api/database/migrations/2026_10_03_000001_hbos_retail_workforce_foundation.php",
+      "type": "database_migration",
+      "mapped_gaps": ["RETAIL-GAP-002", "RETAIL-GAP-003", "RETAIL-GAP-004", "RETAIL-GAP-005"],
+      "description": "Non-destructive schema migration adding business onboarding and profile fields, employee/invitation fields, and business-scoped branch code uniqueness"
+    },
+    {
+      "file": "api/app/Models/Business.php",
+      "type": "backend_model",
+      "mapped_gaps": ["RETAIL-GAP-002", "RETAIL-GAP-003"],
+      "description": "Added onboarding_status, onboarding_step, onboarding_completed_at, legal_name, website, country, timezone, tax_number fillable attributes and casts"
+    },
+    {
+      "file": "api/app/Models/User.php",
+      "type": "backend_model",
+      "mapped_gaps": ["RETAIL-GAP-005", "RETAIL-GAP-006"],
+      "description": "Added employee_code, job_title, hire_date, salary_amount, payment_cycle, next_payment_date, invitation_token, invitation_expires_at, invitation_sent_at, with invitation_token hidden"
+    },
+    {
+      "file": "api/app/Models/Sale.php",
+      "type": "backend_model",
+      "mapped_gaps": ["RETAIL-GAP-012"],
+      "description": "Added getCreatedByAttribute accessor providing canonical actor attribution parity for sales transactions"
+    },
+    {
+      "file": "api/app/Models/ActivityLog.php",
+      "type": "backend_model",
+      "mapped_gaps": ["RETAIL-GAP-012", "RETAIL-GAP-013"],
+      "description": "Added getUserIdAttribute accessor providing backward-compatible causer attribution resolution"
+    },
+    {
+      "file": "api/database/seeders/RolesAndPermissionsSeeder.php",
+      "type": "database_seeder",
+      "mapped_gaps": ["RETAIL-GAP-007", "RETAIL-GAP-014"],
+      "description": "Configured 5 canonical tenant roles: Business Owner (30), Branch Manager (23), Salesperson (8), Accountant (13), Inventory Manager (15). Excluded Platform Super Admin"
+    },
+    {
+      "file": "api/app/Http/Controllers/Api/V1/OnboardingController.php",
+      "type": "backend_controller",
+      "mapped_gaps": ["RETAIL-GAP-002", "RETAIL-GAP-003", "RETAIL-GAP-004"],
+      "description": "Implemented resumable 5-step onboarding controller managing Steps 2, 3, 4, 5, defaults initialization, and status reporting"
+    },
+    {
+      "file": "api/app/Http/Controllers/Api/V1/BranchController.php",
+      "type": "backend_controller",
+      "mapped_gaps": ["RETAIL-GAP-004"],
+      "description": "Implemented business-scoped branch code uniqueness validation, automatic creating owner membership attachment, and primary branch deactivation guards"
+    },
+    {
+      "file": "api/app/Http/Controllers/Api/V1/BusinessController.php",
+      "type": "backend_controller",
+      "mapped_gaps": ["RETAIL-GAP-003"],
+      "description": "Updated validation rules and persistence for legal_name, website, country, timezone, and tax_number profile attributes"
+    },
+    {
+      "file": "api/app/Http/Controllers/Api/V1/AuthController.php",
+      "type": "backend_controller",
+      "mapped_gaps": ["RETAIL-GAP-001", "RETAIL-GAP-005"],
+      "description": "Persisted owner phone on signup, initialized onboarding state defaults, and added acceptInvitation endpoint for single-use invitation token setup"
+    },
+    {
+      "file": "api/app/Http/Controllers/Api/V1/UserGovernanceController.php",
+      "type": "backend_controller",
+      "mapped_gaps": ["RETAIL-GAP-005", "RETAIL-GAP-006"],
+      "description": "Exposed generated invitation token on employee creation, validated employee profile fields, and enforced token revocation on deactivation"
+    },
+    {
+      "file": "api/app/Http/Controllers/Api/V1/SaleController.php",
+      "type": "backend_controller",
+      "mapped_gaps": ["RETAIL-GAP-012", "RETAIL-GAP-013"],
+      "description": "Added material mutation audit logging on sale creation with actor causer attribution, branch scoping, and role-at-action context"
+    },
+    {
+      "file": "api/app/Services/UserGovernanceService.php",
+      "type": "backend_service",
+      "mapped_gaps": ["RETAIL-GAP-005", "RETAIL-GAP-006", "RETAIL-GAP-007", "RETAIL-GAP-014"],
+      "description": "Supported 5 canonical tenant roles, prevented privilege escalation to Business Owner/Platform Admin, and implemented cryptographically secure invitation token generation"
+    },
+    {
+      "file": "api/routes/api.php",
+      "type": "backend_routes",
+      "mapped_gaps": ["RETAIL-GAP-002", "RETAIL-GAP-005"],
+      "description": "Registered /onboarding/status, /onboarding/step, and /auth/accept-invitation routes"
+    },
+    {
+      "file": "Frontend/src/views/RegisterView.vue",
+      "type": "frontend_view",
+      "mapped_gaps": ["RETAIL-GAP-001", "RETAIL-GAP-002"],
+      "description": "Fixed hidden error messages, restored .create-btn styling, handled duplicate email/network failures, and redirected successful registration to /businesssetup1 onboarding"
+    },
+    {
+      "file": "Frontend/src/views/BusinessSetup1View.vue",
+      "type": "frontend_view",
+      "mapped_gaps": ["RETAIL-GAP-002", "RETAIL-GAP-003"],
+      "description": "Bound business identity form fields to API Step 2 and routed forward to PreferencesView (Step 3/4)"
+    },
+    {
+      "file": "Frontend/src/views/PreferencesView.vue",
+      "type": "frontend_view",
+      "mapped_gaps": ["RETAIL-GAP-002", "RETAIL-GAP-003", "RETAIL-GAP-004"],
+      "description": "Bound primary branch and business defaults to API Step 3 & 4 and routed to CompleteReviewView (Step 5)"
+    },
+    {
+      "file": "Frontend/src/views/CompleteReviewView.vue",
+      "type": "frontend_view",
+      "mapped_gaps": ["RETAIL-GAP-002"],
+      "description": "Connected final review submission to API Step 5 completing onboarding and transitioning into dashboard"
+    },
+    {
+      "file": "Frontend/src/views/EmployeesView.vue",
+      "type": "frontend_view",
+      "mapped_gaps": ["RETAIL-GAP-005", "RETAIL-GAP-006", "RETAIL-GAP-007"],
+      "description": "Reconciled employee interface to canonical /api/v1/users governance API, supporting 5 roles, branches, invitation modal, and non-destructive deactivation"
+    },
+    {
+      "file": "Frontend/src/views/Settings/UsersView.vue",
+      "type": "frontend_view",
+      "mapped_gaps": ["RETAIL-GAP-006", "RETAIL-GAP-007"],
+      "description": "Updated user management role selectors and badge styles to include Accountant and Inventory Manager roles"
+    }
+  ]
+}

@@ -5,8 +5,13 @@
       <div class="settings-active-panel">
         <transition name="fade-fast" mode="out-in">
           <div :key="activeTab">
+            <!-- 0. BRANCHES (MULTI-STORE ONLY) -->
+            <div v-if="activeTab === 'branches' && navigationStore.isMultiBranch" class="settings-view-card">
+              <BranchesView />
+            </div>
+
             <!-- 1. USERS ONLY -->
-            <div v-if="activeTab === 'users'" class="settings-view-card">
+            <div v-else-if="activeTab === 'users'" class="settings-view-card">
               <UsersView />
             </div>
 
@@ -39,18 +44,23 @@
 <script setup>
 import { ref, watch, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
+import { useNavigationStore } from '../stores/navigation';
 import UsersView from './Settings/UsersView.vue';
+import BranchesView from './Settings/BranchesView.vue';
 import RolesView from './Settings/RolesView.vue';
 import ReceiptsView from './Settings/ReceiptsView.vue';
 import SecurityView from './Settings/SecurityView.vue';
 import SyncView from './Settings/SyncView.vue';
 
 const route = useRoute();
+const navigationStore = useNavigationStore();
 
 const activeTab = ref(route.query.tab || 'users');
 
 watch(() => route.query.tab, (newTab) => {
-  if (newTab) {
+  if (newTab === 'branches' && !navigationStore.isMultiBranch) {
+    activeTab.value = 'users';
+  } else if (newTab) {
     activeTab.value = newTab;
   } else {
     activeTab.value = 'users';
@@ -58,7 +68,9 @@ watch(() => route.query.tab, (newTab) => {
 }, { immediate: true });
 
 onMounted(() => {
-  if (route.query.tab) {
+  if (route.query.tab === 'branches' && !navigationStore.isMultiBranch) {
+    activeTab.value = 'users';
+  } else if (route.query.tab) {
     activeTab.value = route.query.tab;
   }
 });

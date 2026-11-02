@@ -1,0 +1,161 @@
+{
+    "PRODUCT_BRANCH_STOCK": {
+        "balance_name": "Branch Product Quantity On Hand",
+        "stored_column": "DBCOL-130 (branch_inventories.quantity_on_hand)",
+        "authority": "LEDGER_AUTHORITY (inventory_movements)",
+        "reconstruction_inputs": [
+            "inventory_movements.quantity_change"
+        ],
+        "equation": "quantity_on_hand = SUM(inventory_movements.quantity_change)",
+        "sign_convention": "Positive for inbound (purchases, returns, adjustments up, transfers in); Negative for outbound (sales, adjustments down, transfers out)",
+        "opening_state": "Initial stock movement of type=\"opening_stock\"",
+        "mutation_sources": [
+            "MUTATION-029",
+            "MUTATION-039",
+            "MUTATION-018",
+            "MUTATION-020"
+        ],
+        "reversal_sources": [
+            "MUTATION-030",
+            "MUTATION-032",
+            "MUTATION-040"
+        ],
+        "can_reconstruct": "FULLY_RECONSTRUCTABLE",
+        "known_drift_paths": [
+            "Purchase cancellation after goods sold forcing negative quantity",
+            "Direct stock master edits bypassing movement records"
+        ],
+        "related_gaps": [
+            "P1-GAP-002",
+            "P2-GAP-004",
+            "P3-GAP-009",
+            "P4-GAP-009"
+        ],
+        "evidence": "api/app/Services/InventoryService.php:64"
+    },
+    "CUSTOMER_RECEIVABLE_AR": {
+        "balance_name": "Customer Khata Outstanding Balance",
+        "stored_column": "DBCOL-209 (customers.balance)",
+        "authority": "LEDGER_AUTHORITY (khata_transactions)",
+        "reconstruction_inputs": [
+            "opening_balance",
+            "khata_transactions.amount by type"
+        ],
+        "equation": "customer_balance = opening_balance + SUM(debit_amount) - SUM(credit_amount)",
+        "sign_convention": "Debit (+ owed by customer); Credit (- payment/refund received)",
+        "opening_state": "customers.opening_balance (may lack opening khata_transaction row)",
+        "mutation_sources": [
+            "MUTATION-029 (credit sale)",
+            "MUTATION-031 (payment receipt)"
+        ],
+        "reversal_sources": [
+            "MUTATION-030 (return store credit)",
+            "MUTATION-032 (sale void)",
+            "MUTATION-034 (payment reversal)"
+        ],
+        "can_reconstruct": "RECONSTRUCTABLE_WITH_LIMITATIONS",
+        "known_drift_paths": [
+            "Editing customer_id on posted sale bypasses Khata compensation",
+            "Opening balance entered without event row"
+        ],
+        "related_gaps": [
+            "P1-GAP-003",
+            "P3-GAP-002",
+            "P4-GAP-002"
+        ],
+        "evidence": "api/app/Services/CustomerAccountService.php:52"
+    },
+    "SUPPLIER_PAYABLE_AP": {
+        "balance_name": "Supplier Accounts Payable Balance",
+        "stored_column": "DBCOL-250 (suppliers.balance)",
+        "authority": "HYBRID_TRANSACTIONAL_AUTHORITY (purchases & supplier_payments)",
+        "reconstruction_inputs": [
+            "opening_balance",
+            "purchases.due_amount",
+            "supplier_payments.amount"
+        ],
+        "equation": "supplier_balance = opening_balance + SUM(purchases.due_amount) - SUM(supplier_payments.amount)",
+        "sign_convention": "Liability (+ owed to supplier); Payment (- disbursed to supplier)",
+        "opening_state": "suppliers.opening_balance",
+        "mutation_sources": [
+            "MUTATION-039 (credit purchase)",
+            "MUTATION-041 (supplier payment)"
+        ],
+        "reversal_sources": [
+            "MUTATION-040 (purchase cancel)"
+        ],
+        "can_reconstruct": "RECONSTRUCTABLE_WITH_LIMITATIONS",
+        "known_drift_paths": [
+            "Supplier payment lacks automated reversal endpoint",
+            "Purchase cancellation when stock consumed"
+        ],
+        "related_gaps": [
+            "P1-GAP-008",
+            "P3-GAP-007",
+            "P4-GAP-007"
+        ],
+        "evidence": "api/app/Services/SupplierBalanceService.php:44"
+    },
+    "FINANCIAL_ACCOUNT_BANKING": {
+        "balance_name": "Financial Account Perpetual Balance",
+        "stored_column": "DBCOL-332 (financial_accounts.balance)",
+        "authority": "LEDGER_AUTHORITY (account_movements)",
+        "reconstruction_inputs": [
+            "opening_balance",
+            "account_movements.credit_amount",
+            "account_movements.debit_amount"
+        ],
+        "equation": "account_balance = opening_balance + SUM(credit_amount) - SUM(debit_amount)",
+        "sign_convention": "Credit (+ inflow/deposit); Debit (- outflow/withdrawal)",
+        "opening_state": "financial_accounts.opening_balance",
+        "mutation_sources": [
+            "MUTATION-058",
+            "MUTATION-059",
+            "MUTATION-060",
+            "MUTATION-061",
+            "MUTATION-063",
+            "MUTATION-064"
+        ],
+        "reversal_sources": [
+            "MUTATION-062 (void movement)"
+        ],
+        "can_reconstruct": "RECONSTRUCTABLE_WITH_LIMITATIONS",
+        "known_drift_paths": [
+            "Unallocated expenses entered with null financial_account_id",
+            "Bank-paid sale cancellation missing reverse movement"
+        ],
+        "related_gaps": [
+            "P1-GAP-012",
+            "P3-GAP-010",
+            "P3-GAP-013",
+            "P4-GAP-003"
+        ],
+        "evidence": "api/app/Services/AccountMovementService.php:38"
+    },
+    "CASH_LEDGER_DRAWER": {
+        "balance_name": "Cash Ledger Running Balance",
+        "stored_column": "DBCOL-373 (cash_ledgers.balance)",
+        "authority": "LEDGER_AUTHORITY (cash_ledgers)",
+        "reconstruction_inputs": [
+            "cash_ledgers.amount by type",
+            "cash_ledgers.balance"
+        ],
+        "equation": "cash_balance = opening_balance + SUM(inflow_amount) - SUM(outflow_amount)",
+        "sign_convention": "Inflow (+ cash received); Outflow (- cash disbursed)",
+        "opening_state": "Initial cash ledger entry",
+        "mutation_sources": [
+            "MUTATION-065 (cash sale inflow)",
+            "MUTATION-067 (cash expense/drop outflow)"
+        ],
+        "reversal_sources": [
+            "MUTATION-030 (cash return refund)",
+            "MUTATION-032 (cash void outflow)"
+        ],
+        "can_reconstruct": "FULLY_RECONSTRUCTABLE",
+        "known_drift_paths": [
+            "Manual cash adjustments recorded in notes"
+        ],
+        "related_gaps": [],
+        "evidence": "api/app/Services/CashLedgerService.php:42"
+    }
+}

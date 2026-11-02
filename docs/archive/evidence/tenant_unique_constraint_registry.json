@@ -1,0 +1,112 @@
+{
+    "metadata": {
+        "audit_scope": "All database unique constraints vs multi-tenant isolation",
+        "generated_at": "2026-10-02T19:35:34+00:00"
+    },
+    "constraints": [
+        {
+            "table": "users",
+            "column": "email",
+            "constraint_name": "users_email_unique",
+            "scope": "GLOBAL",
+            "appropriateness": "APPROPRIATE",
+            "notes": "A user account is a global identity that can belong to multiple businesses via business_user pivot table."
+        },
+        {
+            "table": "products",
+            "column": "sku",
+            "constraint_name": "products_business_id_sku_unique",
+            "scope": "TENANT_SCOPED",
+            "appropriateness": "APPROPRIATE",
+            "notes": "Composite unique (business_id, sku) allows different businesses to use identical SKU codes without collision."
+        },
+        {
+            "table": "products",
+            "column": "barcode",
+            "constraint_name": "products_business_id_barcode_unique",
+            "scope": "TENANT_SCOPED",
+            "appropriateness": "APPROPRIATE",
+            "notes": "Composite unique (business_id, barcode) allows tenant-scoped barcode uniqueness."
+        },
+        {
+            "table": "sales",
+            "column": "invoice_number",
+            "constraint_name": "sales_business_invoice_number_unique",
+            "scope": "TENANT_SCOPED",
+            "appropriateness": "APPROPRIATE",
+            "notes": "Migration 2026_09_18_000002 safely dropped global unique and created composite (business_id, invoice_number)."
+        },
+        {
+            "table": "sales",
+            "column": "idempotency_key",
+            "constraint_name": "sales_business_idempotency_unique",
+            "scope": "TENANT_SCOPED",
+            "appropriateness": "APPROPRIATE",
+            "notes": "Composite unique (business_id, idempotency_key)."
+        },
+        {
+            "table": "purchases",
+            "column": "po_number",
+            "constraint_name": "purchases_business_po_number_unique",
+            "scope": "TENANT_SCOPED",
+            "appropriateness": "APPROPRIATE",
+            "notes": "Migration 2026_09_16_000000 replaced global unique with composite (business_id, po_number)."
+        },
+        {
+            "table": "suppliers",
+            "column": "code",
+            "constraint_name": "suppliers_business_code_unique",
+            "scope": "TENANT_SCOPED",
+            "appropriateness": "APPROPRIATE",
+            "notes": "Composite unique (business_id, code)."
+        },
+        {
+            "table": "sale_returns",
+            "column": "return_number",
+            "constraint_name": "sale_returns_business_id_return_number_unique",
+            "scope": "TENANT_SCOPED",
+            "appropriateness": "APPROPRIATE",
+            "notes": "Composite unique (business_id, return_number)."
+        },
+        {
+            "table": "supplier_returns",
+            "column": "return_number",
+            "constraint_name": "supplier_returns_business_id_return_number_unique",
+            "scope": "TENANT_SCOPED",
+            "appropriateness": "APPROPRIATE",
+            "notes": "Composite unique (business_id, return_number)."
+        },
+        {
+            "table": "customer_payments",
+            "column": "payment_number",
+            "constraint_name": "cp_business_payment_num_unique",
+            "scope": "TENANT_SCOPED",
+            "appropriateness": "APPROPRIATE",
+            "notes": "Composite unique (business_id, payment_number)."
+        },
+        {
+            "table": "settings",
+            "column": "key",
+            "constraint_name": "settings_business_id_key_unique",
+            "scope": "TENANT_SCOPED",
+            "appropriateness": "APPROPRIATE",
+            "notes": "Composite unique (business_id, key)."
+        },
+        {
+            "table": "business_user",
+            "column": "business_id, user_id",
+            "constraint_name": "business_user_business_id_user_id_unique",
+            "scope": "TENANT_SCOPED",
+            "appropriateness": "APPROPRIATE",
+            "notes": "Prevents duplicate membership records for the same user in a business."
+        },
+        {
+            "table": "branch_user",
+            "column": "business_id, branch_id, user_id",
+            "constraint_name": "branch_user_unique",
+            "scope": "BRANCH_SCOPED",
+            "appropriateness": "APPROPRIATE",
+            "notes": "Prevents duplicate branch assignments."
+        }
+    ]
+}

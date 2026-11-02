@@ -1,0 +1,2142 @@
+[
+    {
+        "field_id": "FIELD-001",
+        "label": "username",
+        "forward_db": "users.username",
+        "reverse_dbcol": "N\/A \u2014 REQUEST_ONLY",
+        "matched": "NO",
+        "forward_writer": "FORM-001 (User Login Form)",
+        "reverse_writer": "User login identifier passed in authentication request",
+        "status": "RECONCILED_REQUEST_ONLY"
+    },
+    {
+        "field_id": "FIELD-002",
+        "label": "password",
+        "forward_db": "users.password",
+        "reverse_dbcol": "N\/A \u2014 REQUEST_ONLY",
+        "matched": "NO",
+        "forward_writer": "FORM-001 (User Login Form)",
+        "reverse_writer": "User login password passed in authentication request",
+        "status": "RECONCILED_REQUEST_ONLY"
+    },
+    {
+        "field_id": "FIELD-003",
+        "label": "remember_me",
+        "forward_db": "personal_access_tokens.expires_at",
+        "reverse_dbcol": "N\/A \u2014 TRANSIENT_UI_ONLY",
+        "matched": "NO",
+        "forward_writer": "FORM-001 (User Login Form)",
+        "reverse_writer": "Remember-me session checkbox stored in localStorage \/ client session",
+        "status": "RECONCILED_TRANSIENT_UI_ONLY"
+    },
+    {
+        "field_id": "FIELD-004",
+        "label": "name",
+        "forward_db": "users.name",
+        "reverse_dbcol": "N\/A \u2014 REQUEST_ONLY",
+        "matched": "NO",
+        "forward_writer": "FORM-002 (Business Owner Registration Form)",
+        "reverse_writer": "Password confirmation match validation check in User Registration",
+        "status": "RECONCILED_REQUEST_ONLY"
+    },
+    {
+        "field_id": "FIELD-005",
+        "label": "email",
+        "forward_db": "users.email",
+        "reverse_dbcol": "DBCOL-015",
+        "matched": "YES",
+        "forward_writer": "FORM-002 (Business Owner Registration Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/AuthController.php:L68 \u2014 validated email \u2014 api\/database\/migrations\/2014_10_12_000000_create_users_table.php:L19 \u2014 string(\"email\")->unique()",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-006",
+        "label": "phone",
+        "forward_db": "users.phone",
+        "reverse_dbcol": "N\/A \u2014 NON_PERSISTED_EXPECTED",
+        "matched": "NO",
+        "forward_writer": "FORM-002 (Business Owner Registration Form)",
+        "reverse_writer": "Owner registration mobile phone captured in RegisterView.vue (FORM-002) but users table has no phone column; discarded by AuthController@register.",
+        "status": "UNPERSISTED_FIELD_GAP (P1-FIELD-GAP-001)"
+    },
+    {
+        "field_id": "FIELD-007",
+        "label": "business_name",
+        "forward_db": "businesses.name",
+        "reverse_dbcol": "DBCOL-002",
+        "matched": "YES",
+        "forward_writer": "FORM-002 (Business Owner Registration Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/AuthController.php:L85 \u2014 Business::create() \u2014 api\/database\/migrations\/2026_08_24_051340_create_businesses_table.php:L18 \u2014 string(\"name\")",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-008",
+        "label": "business_type",
+        "forward_db": "businesses.business_type",
+        "reverse_dbcol": "DBCOL-003",
+        "matched": "YES",
+        "forward_writer": "FORM-002 (Business Owner Registration Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/AuthController.php:L86, api\/app\/Models\/Business.php:L15 \u2014 Business industry type stored in physical column type",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-009",
+        "label": "password",
+        "forward_db": "users.password",
+        "reverse_dbcol": "DBCOL-020",
+        "matched": "YES",
+        "forward_writer": "FORM-002 (Business Owner Registration Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/AuthController.php:L41 \u2014 Hash::make()",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-010",
+        "label": "password_confirmation",
+        "forward_db": "N\/A",
+        "reverse_dbcol": "N\/A \u2014 REQUEST_ONLY",
+        "matched": "NO",
+        "forward_writer": "FORM-002 (Business Owner Registration Form)",
+        "reverse_writer": "Password confirmation match validation check in Owner Registration",
+        "status": "RECONCILED_REQUEST_ONLY"
+    },
+    {
+        "field_id": "FIELD-011",
+        "label": "business_name",
+        "forward_db": "businesses.name",
+        "reverse_dbcol": "DBCOL-002",
+        "matched": "YES",
+        "forward_writer": "FORM-003 (Business Setup Step 1)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/BusinessSetupController.php:L30-L45 \u2014 storeStep1() \u2014 api\/database\/migrations\/2026_08_24_051340_create_businesses_table.php:L18 \u2014 string(\"name\")",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-012",
+        "label": "business_type",
+        "forward_db": "businesses.business_type",
+        "reverse_dbcol": "DBCOL-003",
+        "matched": "YES",
+        "forward_writer": "FORM-003 (Business Setup Step 1)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/AuthController.php:L86, api\/app\/Models\/Business.php:L15 \u2014 Business industry type stored in physical column type",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-013",
+        "label": "currency",
+        "forward_db": "businesses.currency",
+        "reverse_dbcol": "DBCOL-008",
+        "matched": "YES",
+        "forward_writer": "FORM-003 (Business Setup Step 1)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/BusinessSetupController.php:L38 \u2014 currency lock \u2014 api\/database\/migrations\/2026_08_24_051340_create_businesses_table.php:L20 \u2014 string(\"currency\",3)->default(\"PKR\")",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-014",
+        "label": "tax_number",
+        "forward_db": "businesses.tax_number",
+        "reverse_dbcol": "N\/A \u2014 NON_PERSISTED_EXPECTED",
+        "matched": "NO",
+        "forward_writer": "FORM-003 (Business Setup Step 1)",
+        "reverse_writer": "Tax NTN number captured in BusinessSetupView.vue (FORM-003) but absent from businesses table schema and discarded by BusinessController@store.",
+        "status": "UNPERSISTED_FIELD_GAP (P1-FIELD-GAP-004)"
+    },
+    {
+        "field_id": "FIELD-015",
+        "label": "phone",
+        "forward_db": "businesses.phone",
+        "reverse_dbcol": "DBCOL-005",
+        "matched": "YES",
+        "forward_writer": "FORM-003 (Business Setup Step 1)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/BusinessSetupController.php:L42 \u2014 phone \u2014 api\/database\/migrations\/2026_08_24_051340_create_businesses_table.php:L22 \u2014 string(\"phone\")->nullable()",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-016",
+        "label": "email",
+        "forward_db": "businesses.email",
+        "reverse_dbcol": "DBCOL-006",
+        "matched": "YES",
+        "forward_writer": "FORM-003 (Business Setup Step 1)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/BusinessSetupController.php:L44 \u2014 email \u2014 api\/database\/migrations\/2026_08_24_051340_create_businesses_table.php:L23 \u2014 string(\"email\")->nullable()",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-017",
+        "label": "address",
+        "forward_db": "businesses.address",
+        "reverse_dbcol": "DBCOL-004",
+        "matched": "YES",
+        "forward_writer": "FORM-003 (Business Setup Step 1)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/BusinessSetupController.php:L46 \u2014 address \u2014 api\/database\/migrations\/2026_08_24_051340_create_businesses_table.php:L24 \u2014 text(\"address\")->nullable()",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-018",
+        "label": "branch_name",
+        "forward_db": "branches.name",
+        "reverse_dbcol": "DBCOL-031",
+        "matched": "YES",
+        "forward_writer": "FORM-004 (Branch Setup Step 2)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/BusinessSetupController.php:L60-L75 \u2014 storeStep2() \u2014 api\/database\/migrations\/2026_08_24_051341_create_branches_table.php:L18 \u2014 string(\"name\")",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-019",
+        "label": "branch_code",
+        "forward_db": "branches.code",
+        "reverse_dbcol": "DBCOL-032",
+        "matched": "YES",
+        "forward_writer": "FORM-004 (Branch Setup Step 2)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/BusinessSetupController.php:L65 \u2014 branch code \u2014 api\/database\/migrations\/2026_08_24_051341_create_branches_table.php:L19 \u2014 string(\"code\")->unique()",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-020",
+        "label": "location",
+        "forward_db": "branches.location",
+        "reverse_dbcol": "DBCOL-034",
+        "matched": "YES",
+        "forward_writer": "FORM-004 (Branch Setup Step 2)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/BranchController.php:L45, api\/app\/Models\/Branch.php:L21 \u2014 Physical branch street location stored in physical column address",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-021",
+        "label": "pos_register_name",
+        "forward_db": "financial_accounts.name",
+        "reverse_dbcol": "DBCOL-327",
+        "matched": "YES",
+        "forward_writer": "FORM-004 (Branch Setup Step 2)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/BusinessSetupController.php:L72 \u2014 creates cash register \u2014 api\/database\/migrations\/2026_09_16_000000_create_financial_accounts_table.php:L18 \u2014 string(\"name\")",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-022",
+        "label": "business_logo",
+        "forward_db": "businesses.logo_url",
+        "reverse_dbcol": "DBCOL-007",
+        "matched": "YES",
+        "forward_writer": "FORM-005 (Business Branding & Profile Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/BusinessController.php:L48, api\/app\/Models\/Business.php:L19 \u2014 Business logo storage path stored in physical column logo",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-023",
+        "label": "business_name",
+        "forward_db": "businesses.name",
+        "reverse_dbcol": "DBCOL-002",
+        "matched": "YES",
+        "forward_writer": "FORM-005 (Business Branding & Profile Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/ProfileController.php:L20-L32 \u2014 update() \u2014 api\/database\/migrations\/2026_08_24_051340_create_businesses_table.php:L18 \u2014 string(\"name\")",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-024",
+        "label": "business_type",
+        "forward_db": "businesses.business_type",
+        "reverse_dbcol": "DBCOL-003",
+        "matched": "YES",
+        "forward_writer": "FORM-005 (Business Branding & Profile Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/AuthController.php:L86, api\/app\/Models\/Business.php:L15 \u2014 Business industry type stored in physical column type",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-025",
+        "label": "phone",
+        "forward_db": "businesses.phone",
+        "reverse_dbcol": "DBCOL-005",
+        "matched": "YES",
+        "forward_writer": "FORM-005 (Business Branding & Profile Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/ProfileController.php:L26 \u2014 phone \u2014 api\/database\/migrations\/2026_08_24_051340_create_businesses_table.php:L22 \u2014 string(\"phone\")",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-026",
+        "label": "street_address",
+        "forward_db": "businesses.address",
+        "reverse_dbcol": "DBCOL-004",
+        "matched": "YES",
+        "forward_writer": "FORM-005 (Business Branding & Profile Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/ProfileController.php:L27 \u2014 address \u2014 api\/database\/migrations\/2026_08_24_051340_create_businesses_table.php:L24 \u2014 text(\"address\")",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-027",
+        "label": "city",
+        "forward_db": "businesses.city",
+        "reverse_dbcol": "N\/A \u2014 NON_PERSISTED_EXPECTED",
+        "matched": "NO",
+        "forward_writer": "FORM-005 (Business Branding & Profile Form)",
+        "reverse_writer": "Business city captured in InformationView.vue (FORM-005) but absent from businesses table schema (present on branches table only).",
+        "status": "UNPERSISTED_FIELD_GAP (P1-FIELD-GAP-026)"
+    },
+    {
+        "field_id": "FIELD-028",
+        "label": "currency",
+        "forward_db": "preferences.currency",
+        "reverse_dbcol": "DBCOL-382, DBCOL-383",
+        "matched": "YES",
+        "forward_writer": "FORM-006 (Business Preferences Form)",
+        "reverse_writer": "SettingController.php:L35 \u2014 currency_symbol key allowlist",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-029",
+        "label": "timezone",
+        "forward_db": "preferences.timezone",
+        "reverse_dbcol": "DBCOL-382, DBCOL-383",
+        "matched": "YES",
+        "forward_writer": "FORM-006 (Business Preferences Form)",
+        "reverse_writer": "SettingController.php:L20-L40 \u2014 timezone configuration key",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-030",
+        "label": "date_format",
+        "forward_db": "preferences.date_format",
+        "reverse_dbcol": "DBCOL-382, DBCOL-383",
+        "matched": "YES",
+        "forward_writer": "FORM-006 (Business Preferences Form)",
+        "reverse_writer": "SettingController.php:L20-L40 \u2014 date_format mask configuration key",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-031",
+        "label": "tax_enabled",
+        "forward_db": "preferences.tax_enabled",
+        "reverse_dbcol": "DBCOL-382, DBCOL-383",
+        "matched": "YES",
+        "forward_writer": "FORM-006 (Business Preferences Form)",
+        "reverse_writer": "SettingController.php:L26 \u2014 show_tax_number key allowlist",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-032",
+        "label": "tax_rate",
+        "forward_db": "preferences.tax_rate",
+        "reverse_dbcol": "DBCOL-382, DBCOL-383",
+        "matched": "YES",
+        "forward_writer": "FORM-006 (Business Preferences Form)",
+        "reverse_writer": "SettingController.php:L27 \u2014 tax_number key allowlist",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-033",
+        "label": "receipt_footer",
+        "forward_db": "preferences.receipt_footer",
+        "reverse_dbcol": "DBCOL-382, DBCOL-383",
+        "matched": "YES",
+        "forward_writer": "FORM-006 (Business Preferences Form)",
+        "reverse_writer": "SettingController.php:L24 \u2014 receipt_footer key allowlist",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-034",
+        "label": "name",
+        "forward_db": "products.name",
+        "reverse_dbcol": "DBCOL-107",
+        "matched": "YES",
+        "forward_writer": "FORM-007 (Master Product Drawer Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/ProductController.php:L40-L65 \u2014 store(), update() \u2014 api\/database\/migrations\/2026_08_24_051344_create_products_table.php:L18 \u2014 string(\"name\")",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-035",
+        "label": "sku",
+        "forward_db": "products.sku",
+        "reverse_dbcol": "DBCOL-108",
+        "matched": "YES",
+        "forward_writer": "FORM-007 (Master Product Drawer Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/ProductController.php:L45 \u2014 sku \u2014 api\/database\/migrations\/2026_08_24_051344_create_products_table.php:L19 \u2014 string(\"sku\")->unique()",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-036",
+        "label": "barcode",
+        "forward_db": "products.barcode",
+        "reverse_dbcol": "DBCOL-109",
+        "matched": "YES",
+        "forward_writer": "FORM-007 (Master Product Drawer Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/ProductController.php:L48 \u2014 barcode \u2014 api\/database\/migrations\/2026_08_24_051344_create_products_table.php:L20 \u2014 string(\"barcode\")->nullable()->unique()",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-037",
+        "label": "category_id",
+        "forward_db": "products.category_id",
+        "reverse_dbcol": "DBCOL-106",
+        "matched": "YES",
+        "forward_writer": "FORM-007 (Master Product Drawer Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/ProductController.php:L50 \u2014 category_id \u2014 api\/database\/migrations\/2026_08_24_051344_create_products_table.php:L21 \u2014 foreignId(\"category_id\")->constrained()",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-038",
+        "label": "subcategory_id",
+        "forward_db": "products.subcategory_id",
+        "reverse_dbcol": "DBCOL-125",
+        "matched": "YES",
+        "forward_writer": "FORM-007 (Master Product Drawer Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/ProductController.php:L52 \u2014 subcategory_id \u2014 api\/database\/migrations\/2026_08_24_051344_create_products_table.php:L22 \u2014 foreignId(\"subcategory_id\")->nullable()->constrained()",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-039",
+        "label": "brand_id",
+        "forward_db": "products.brand_id",
+        "reverse_dbcol": "DBCOL-124",
+        "matched": "YES",
+        "forward_writer": "FORM-007 (Master Product Drawer Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/ProductController.php:L54 \u2014 brand_id \u2014 api\/database\/migrations\/2026_08_24_051344_create_products_table.php:L23 \u2014 foreignId(\"brand_id\")->nullable()->constrained()",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-040",
+        "label": "cost_price",
+        "forward_db": "products.cost_price",
+        "reverse_dbcol": "DBCOL-110",
+        "matched": "YES",
+        "forward_writer": "FORM-007 (Master Product Drawer Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/ProductController.php:L56 \u2014 cost_price \u2014 api\/database\/migrations\/2026_08_24_051344_create_products_table.php:L24 \u2014 decimal(\"cost_price\",12,2)->default(0)",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-041",
+        "label": "selling_price",
+        "forward_db": "products.selling_price",
+        "reverse_dbcol": "DBCOL-111",
+        "matched": "YES",
+        "forward_writer": "FORM-007 (Master Product Drawer Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/ProductController.php:L58 \u2014 selling_price \u2014 api\/database\/migrations\/2026_08_24_051344_create_products_table.php:L25 \u2014 decimal(\"selling_price\",12,2)->default(0)",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-042",
+        "label": "wholesale_price",
+        "forward_db": "products.wholesale_price",
+        "reverse_dbcol": "N\/A \u2014 NON_PERSISTED_EXPECTED",
+        "matched": "NO",
+        "forward_writer": "FORM-007 (Master Product Drawer Form)",
+        "reverse_writer": "Wholesale price captured in ProductView.vue (FORM-009) but absent from products table schema and ignored by POS checkout.",
+        "status": "UNPERSISTED_FIELD_GAP (P1-FIELD-GAP-002)"
+    },
+    {
+        "field_id": "FIELD-043",
+        "label": "opening_stock",
+        "forward_db": "branch_inventory.stock",
+        "reverse_dbcol": "DBCOL-130",
+        "matched": "YES",
+        "forward_writer": "FORM-007 (Master Product Drawer Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/ProductController.php:L95, api\/app\/Models\/BranchInventory.php:L18 \u2014 Branch physical on-hand stock quantity stored in quantity_on_hand",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-044",
+        "label": "min_stock",
+        "forward_db": "products.min_stock",
+        "reverse_dbcol": "DBCOL-113",
+        "matched": "YES",
+        "forward_writer": "FORM-007 (Master Product Drawer Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/ProductController.php:L62 \u2014 min_stock \u2014 api\/database\/migrations\/2026_08_24_051344_create_products_table.php:L27 \u2014 integer(\"min_stock\")->default(5)",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-045",
+        "label": "unit",
+        "forward_db": "products.unit",
+        "reverse_dbcol": "DBCOL-115",
+        "matched": "YES",
+        "forward_writer": "FORM-007 (Master Product Drawer Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/ProductController.php:L63 \u2014 unit \u2014 api\/database\/migrations\/2026_08_24_051344_create_products_table.php:L28 \u2014 string(\"unit\")->default(\"Piece\")",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-046",
+        "label": "image",
+        "forward_db": "products.image_url",
+        "reverse_dbcol": "DBCOL-117",
+        "matched": "YES",
+        "forward_writer": "FORM-007 (Master Product Drawer Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/ProductController.php:L65, api\/app\/Models\/Product.php:L24 \u2014 Product picture asset path stored in physical column image",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-047",
+        "label": "description",
+        "forward_db": "products.description",
+        "reverse_dbcol": "DBCOL-116",
+        "matched": "YES",
+        "forward_writer": "FORM-007 (Master Product Drawer Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/ProductController.php:L66 \u2014 description \u2014 api\/database\/migrations\/2026_08_24_051344_create_products_table.php:L30 \u2014 text(\"description\")->nullable()",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-048",
+        "label": "adjustment_type",
+        "forward_db": "inventory_movements.type",
+        "reverse_dbcol": "DBCOL-139",
+        "matched": "YES",
+        "forward_writer": "FORM-008 (Quick Stock Adjustment Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/InventoryController.php:L75-L95 \u2014 adjust() \u2014 api\/database\/migrations\/2026_09_15_000000_create_branch_inventories_and_update_movements_table.php:L25 \u2014 string(\"type\")",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-049",
+        "label": "quantity",
+        "forward_db": "inventory_movements.quantity",
+        "reverse_dbcol": "DBCOL-143",
+        "matched": "YES",
+        "forward_writer": "FORM-008 (Quick Stock Adjustment Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/InventoryController.php:L80 \u2014 quantity \u2014 api\/database\/migrations\/2026_09_15_000000_create_branch_inventories_and_update_movements_table.php:L26 \u2014 integer(\"quantity\")",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-050",
+        "label": "reason",
+        "forward_db": "inventory_movements.description",
+        "reverse_dbcol": "DBCOL-146",
+        "matched": "YES",
+        "forward_writer": "FORM-008 (Quick Stock Adjustment Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/InventoryController.php:L80, api\/app\/Models\/InventoryMovement.php:L25 \u2014 Inventory movement textual narrative stored in physical column notes",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-051",
+        "label": "unit_cost_override",
+        "forward_db": "inventory_movements.unit_cost",
+        "reverse_dbcol": "DBCOL-144",
+        "matched": "YES",
+        "forward_writer": "FORM-008 (Quick Stock Adjustment Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/InventoryController.php:L88 \u2014 saves unit_cost to movement \u2014 api\/database\/migrations\/2026_09_15_000000_create_branch_inventories_and_update_movements_table.php:L27 \u2014 decimal(\"unit_cost\",12,2)->nullable()",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-052",
+        "label": "name",
+        "forward_db": "categories.name",
+        "reverse_dbcol": "DBCOL-088",
+        "matched": "YES",
+        "forward_writer": "FORM-009 (Master Category Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/CategoryController.php:L30-L50 \u2014 store(), update() \u2014 api\/database\/migrations\/2026_08_24_051343_create_categories_table.php:L18 \u2014 string(\"name\")",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-053",
+        "label": "parent_id",
+        "forward_db": "categories.parent_id",
+        "reverse_dbcol": "DBCOL-094",
+        "matched": "YES",
+        "forward_writer": "FORM-009 (Master Category Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/SubcategoryController.php:L35, api\/app\/Models\/Subcategory.php:L16 \u2014 Subcategory parent category relation stored in subcategories.category_id",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-054",
+        "label": "slug",
+        "forward_db": "categories.slug",
+        "reverse_dbcol": "N\/A \u2014 NON_PERSISTED_EXPECTED",
+        "matched": "NO",
+        "forward_writer": "FORM-009 (Master Category Form)",
+        "reverse_writer": "Category URL slug captured in Category modal but categories schema only contains name and description.",
+        "status": "UNPERSISTED_FIELD_GAP (P1-FIELD-GAP-005)"
+    },
+    {
+        "field_id": "FIELD-055",
+        "label": "color_theme",
+        "forward_db": "categories.color",
+        "reverse_dbcol": "N\/A \u2014 NON_PERSISTED_EXPECTED",
+        "matched": "NO",
+        "forward_writer": "FORM-009 (Master Category Form)",
+        "reverse_writer": "Category color theme picker captured in CategoriesView.vue but categories schema has no color column.",
+        "status": "UNPERSISTED_FIELD_GAP (P1-FIELD-GAP-006)"
+    },
+    {
+        "field_id": "FIELD-056",
+        "label": "status",
+        "forward_db": "categories.is_active",
+        "reverse_dbcol": "N\/A \u2014 NON_PERSISTED_EXPECTED",
+        "matched": "NO",
+        "forward_writer": "FORM-009 (Master Category Form)",
+        "reverse_writer": "Category active status toggle captured in CategoriesView.vue but categories schema has no is_active column.",
+        "status": "UNPERSISTED_FIELD_GAP (P1-FIELD-GAP-007)"
+    },
+    {
+        "field_id": "FIELD-057",
+        "label": "name",
+        "forward_db": "brands.name",
+        "reverse_dbcol": "DBCOL-100",
+        "matched": "YES",
+        "forward_writer": "FORM-010 (Master Brand Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/BrandController.php:L30-L50 \u2014 store(), update() \u2014 api\/database\/migrations\/2026_08_24_051344_create_brands_table.php:L18 \u2014 string(\"name\")",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-058",
+        "label": "company",
+        "forward_db": "brands.company",
+        "reverse_dbcol": "N\/A \u2014 NON_PERSISTED_EXPECTED",
+        "matched": "NO",
+        "forward_writer": "FORM-010 (Master Brand Form)",
+        "reverse_writer": "Brand parent company name captured in Brand modal but brands schema only contains name and image.",
+        "status": "UNPERSISTED_FIELD_GAP (P1-FIELD-GAP-008)"
+    },
+    {
+        "field_id": "FIELD-059",
+        "label": "logo_url",
+        "forward_db": "brands.logo_url",
+        "reverse_dbcol": "DBCOL-101",
+        "matched": "YES",
+        "forward_writer": "FORM-010 (Master Brand Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/BrandController.php:L40, api\/app\/Models\/Brand.php:L18 \u2014 Brand logo image path stored in physical column image",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-060",
+        "label": "description",
+        "forward_db": "brands.description",
+        "reverse_dbcol": "N\/A \u2014 NON_PERSISTED_EXPECTED",
+        "matched": "NO",
+        "forward_writer": "FORM-010 (Master Brand Form)",
+        "reverse_writer": "Brand description captured in Brand modal but brands schema only contains name and image.",
+        "status": "UNPERSISTED_FIELD_GAP (P1-FIELD-GAP-009)"
+    },
+    {
+        "field_id": "FIELD-061",
+        "label": "customer_id",
+        "forward_db": "sales.customer_id",
+        "reverse_dbcol": "DBCOL-153",
+        "matched": "YES",
+        "forward_writer": "FORM-011 (Point of Sale Checkout Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/SaleController.php:L40-L70 \u2014 store() \u2014 api\/database\/migrations\/2026_08_24_051345_create_sales_table.php:L19 \u2014 foreignId(\"customer_id\")->constrained()",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-062",
+        "label": "payment_method",
+        "forward_db": "sales.payment_method",
+        "reverse_dbcol": "DBCOL-164",
+        "matched": "YES",
+        "forward_writer": "FORM-011 (Point of Sale Checkout Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/SaleController.php:L45 \u2014 payment_method \u2014 api\/database\/migrations\/2026_08_24_051345_create_sales_table.php:L26 \u2014 string(\"payment_method\")->default(\"cash\")",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-063",
+        "label": "tendered_amount",
+        "forward_db": "sales.tendered_amount",
+        "reverse_dbcol": "DBCOL-160",
+        "matched": "YES",
+        "forward_writer": "FORM-011 (Point of Sale Checkout Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/SaleController.php:L115, api\/app\/Models\/Sale.php:L28 \u2014 Customer tendered cash stored as transaction paid_amount",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-064",
+        "label": "discount_type",
+        "forward_db": "sales.discount_type",
+        "reverse_dbcol": "N\/A \u2014 NON_PERSISTED_EXPECTED",
+        "matched": "NO",
+        "forward_writer": "FORM-011 (Point of Sale Checkout Form)",
+        "reverse_writer": "POS discount type toggle (fixed\/percentage) is transient; only net computed discount amount is stored in sales.discount.",
+        "status": "UNPERSISTED_FIELD_GAP (P1-FIELD-GAP-010)"
+    },
+    {
+        "field_id": "FIELD-065",
+        "label": "discount_value",
+        "forward_db": "sales.discount",
+        "reverse_dbcol": "DBCOL-157",
+        "matched": "YES",
+        "forward_writer": "FORM-011 (Point of Sale Checkout Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/SaleController.php:L52 \u2014 discount \u2014 api\/database\/migrations\/2026_08_24_051345_create_sales_table.php:L22 \u2014 decimal(\"discount\",12,2)->default(0)",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-066",
+        "label": "tax_rate",
+        "forward_db": "sales.tax_rate",
+        "reverse_dbcol": "N\/A \u2014 NON_PERSISTED_EXPECTED",
+        "matched": "NO",
+        "forward_writer": "FORM-011 (Point of Sale Checkout Form)",
+        "reverse_writer": "POS tax rate selector is transient; only net calculated tax amount is stored in sales.tax.",
+        "status": "UNPERSISTED_FIELD_GAP (P1-FIELD-GAP-011)"
+    },
+    {
+        "field_id": "FIELD-067",
+        "label": "card_auth_code",
+        "forward_db": "NOT_PRESENT",
+        "reverse_dbcol": "N\/A \u2014 TRANSIENT_UI_ONLY",
+        "matched": "NO",
+        "forward_writer": "FORM-011 (Point of Sale Checkout Form)",
+        "reverse_writer": "POS live interactive product search query",
+        "status": "RECONCILED_TRANSIENT_UI_ONLY"
+    },
+    {
+        "field_id": "FIELD-068",
+        "label": "order_notes",
+        "forward_db": "sales.notes",
+        "reverse_dbcol": "DBCOL-165",
+        "matched": "YES",
+        "forward_writer": "FORM-011 (Point of Sale Checkout Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/SaleController.php:L55 \u2014 notes \u2014 api\/database\/migrations\/2026_08_24_051345_create_sales_table.php:L30 \u2014 text(\"notes\")->nullable()",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-069",
+        "label": "name",
+        "forward_db": "customers.name",
+        "reverse_dbcol": "DBCOL-204",
+        "matched": "YES",
+        "forward_writer": "FORM-012 (Quick Add Customer POS Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/CustomerController.php:L30-L50 \u2014 store() \u2014 api\/database\/migrations\/2026_08_24_051346_create_customers_table.php:L18 \u2014 string(\"name\")",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-070",
+        "label": "phone",
+        "forward_db": "customers.phone",
+        "reverse_dbcol": "DBCOL-205",
+        "matched": "YES",
+        "forward_writer": "FORM-012 (Quick Add Customer POS Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/CustomerController.php:L35 \u2014 phone \u2014 api\/database\/migrations\/2026_08_24_051346_create_customers_table.php:L19 \u2014 string(\"phone\")",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-071",
+        "label": "credit_limit",
+        "forward_db": "customers.credit_limit",
+        "reverse_dbcol": "N\/A \u2014 NON_PERSISTED_EXPECTED",
+        "matched": "NO",
+        "forward_writer": "FORM-012 (Quick Add Customer POS Form)",
+        "reverse_writer": "Customer credit limit threshold captured in Customer modal but absent from customers table schema.",
+        "status": "UNPERSISTED_FIELD_GAP (P1-FIELD-GAP-020)"
+    },
+    {
+        "field_id": "FIELD-072",
+        "label": "return_quantities",
+        "forward_db": "sale_return_items.quantity",
+        "reverse_dbcol": "DBCOL-197",
+        "matched": "YES",
+        "forward_writer": "FORM-013 (Sales Return & Refund Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/SaleReturnRefundController.php:L35-L60 \u2014 settleRefund() \u2014 api\/database\/migrations\/2026_09_18_000000_create_sale_return_items_table.php:L18 \u2014 integer(\"quantity\")",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-073",
+        "label": "restock_condition",
+        "forward_db": "sale_returns.restock",
+        "reverse_dbcol": "N\/A \u2014 NON_PERSISTED_EXPECTED",
+        "matched": "NO",
+        "forward_writer": "FORM-013 (Sales Return & Refund Form)",
+        "reverse_writer": "Sale return restock physical condition toggle is transient; only reason string is stored in sale_returns.reason.",
+        "status": "UNPERSISTED_FIELD_GAP (P1-FIELD-GAP-012)"
+    },
+    {
+        "field_id": "FIELD-074",
+        "label": "refund_channel",
+        "forward_db": "sale_returns.refund_channel",
+        "reverse_dbcol": "N\/A \u2014 NON_PERSISTED_EXPECTED",
+        "matched": "NO",
+        "forward_writer": "FORM-013 (Sales Return & Refund Form)",
+        "reverse_writer": "Sale return refund disbursement channel toggle is transient; only refund_amount is stored in sale_returns.",
+        "status": "UNPERSISTED_FIELD_GAP (P1-FIELD-GAP-013)"
+    },
+    {
+        "field_id": "FIELD-075",
+        "label": "refund_reason",
+        "forward_db": "sale_returns.reason",
+        "reverse_dbcol": "DBCOL-189",
+        "matched": "YES",
+        "forward_writer": "FORM-013 (Sales Return & Refund Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/SaleReturnRefundController.php:L48 \u2014 reason \u2014 api\/database\/migrations\/2026_09_18_000000_create_sale_returns_table.php:L24 \u2014 string(\"reason\")->nullable()",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-076",
+        "label": "supplier_id",
+        "forward_db": "purchases.supplier_id",
+        "reverse_dbcol": "DBCOL-256",
+        "matched": "YES",
+        "forward_writer": "FORM-014 (Purchase Order & GRN Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/PurchaseController.php:L35-L60 \u2014 store() \u2014 api\/database\/migrations\/2026_08_24_051347_create_purchases_table.php:L18 \u2014 foreignId(\"supplier_id\")->constrained()",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-077",
+        "label": "bill_number",
+        "forward_db": "purchases.bill_number",
+        "reverse_dbcol": "DBCOL-258",
+        "matched": "YES",
+        "forward_writer": "FORM-014 (Purchase Order & GRN Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/PurchaseController.php:L40, api\/app\/Models\/Purchase.php:L20 \u2014 Supplier invoice\/bill identifier stored in physical column po_number",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-078",
+        "label": "purchase_date",
+        "forward_db": "purchases.purchase_date",
+        "reverse_dbcol": "DBCOL-259",
+        "matched": "YES",
+        "forward_writer": "FORM-014 (Purchase Order & GRN Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/PurchaseController.php:L42, api\/app\/Models\/Purchase.php:L21 \u2014 Purchase transaction execution date stored in physical column date",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-079",
+        "label": "destination_branch",
+        "forward_db": "purchases.branch_id",
+        "reverse_dbcol": "DBCOL-255",
+        "matched": "YES",
+        "forward_writer": "FORM-014 (Purchase Order & GRN Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/PurchaseController.php:L45 \u2014 branch_id \u2014 api\/database\/migrations\/2026_08_24_051347_create_purchases_table.php:L21 \u2014 foreignId(\"branch_id\")->constrained()",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-080",
+        "label": "shipping_charges",
+        "forward_db": "purchases.shipping_charges",
+        "reverse_dbcol": "N\/A \u2014 NON_PERSISTED_EXPECTED",
+        "matched": "NO",
+        "forward_writer": "FORM-014 (Purchase Order & GRN Form)",
+        "reverse_writer": "Purchase shipping charges captured in Purchase form but collapsed directly into purchases.total without dedicated line item column.",
+        "status": "UNPERSISTED_FIELD_GAP (P1-FIELD-GAP-014)"
+    },
+    {
+        "field_id": "FIELD-081",
+        "label": "amount_paid_now",
+        "forward_db": "purchases.paid_amount",
+        "reverse_dbcol": "N\/A \u2014 NON_PERSISTED_EXPECTED",
+        "matched": "NO",
+        "forward_writer": "FORM-014 (Purchase Order & GRN Form)",
+        "reverse_writer": "POS discount type (fixed vs percentage) toggle is transient; only net computed discount amount is stored in sales.discount.",
+        "status": "UNPERSISTED_FIELD_GAP (P1-FIELD-GAP-010)"
+    },
+    {
+        "field_id": "FIELD-082",
+        "label": "payment_account_id",
+        "forward_db": "account_movements.account_id",
+        "reverse_dbcol": "N\/A \u2014 NON_PERSISTED_EXPECTED",
+        "matched": "NO",
+        "forward_writer": "FORM-014 (Purchase Order & GRN Form)",
+        "reverse_writer": "POS tax rate percentage selector is transient; only net calculated tax amount is stored in sales.tax.",
+        "status": "UNPERSISTED_FIELD_GAP (P1-FIELD-GAP-011)"
+    },
+    {
+        "field_id": "FIELD-083",
+        "label": "product_search",
+        "forward_db": "purchase_items.product_id",
+        "reverse_dbcol": "DBCOL-273",
+        "matched": "YES",
+        "forward_writer": "FORM-015 (Purchase Line Item Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/PurchaseController.php:L65 \u2014 validates product_id \u2014 api\/database\/migrations\/2026_08_24_051343_create_purchase_items_table.php:L18 \u2014 foreignId(\"product_id\")->constrained()",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-084",
+        "label": "quantity_received",
+        "forward_db": "purchase_items.quantity",
+        "reverse_dbcol": "N\/A \u2014 TRANSIENT_UI_ONLY",
+        "matched": "NO",
+        "forward_writer": "FORM-015 (Purchase Line Item Form)",
+        "reverse_writer": "POS computed change due return calculation",
+        "status": "RECONCILED_TRANSIENT_UI_ONLY"
+    },
+    {
+        "field_id": "FIELD-085",
+        "label": "unit_purchase_cost",
+        "forward_db": "purchase_items.unit_cost",
+        "reverse_dbcol": "DBCOL-275",
+        "matched": "YES",
+        "forward_writer": "FORM-015 (Purchase Line Item Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/PurchaseController.php:L70 \u2014 unit_cost \u2014 api\/database\/migrations\/2026_08_24_051343_create_purchase_items_table.php:L20 \u2014 decimal(\"unit_cost\",12,2)",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-086",
+        "label": "line_discount",
+        "forward_db": "purchase_items.discount",
+        "reverse_dbcol": "N\/A \u2014 NON_PERSISTED_EXPECTED",
+        "matched": "NO",
+        "forward_writer": "FORM-015 (Purchase Line Item Form)",
+        "reverse_writer": "Purchase line item discount captured in UI but collapsed into purchase_items.total without dedicated column.",
+        "status": "UNPERSISTED_FIELD_GAP (P1-FIELD-GAP-015)"
+    },
+    {
+        "field_id": "FIELD-087",
+        "label": "line_tax",
+        "forward_db": "purchase_items.tax",
+        "reverse_dbcol": "N\/A \u2014 NON_PERSISTED_EXPECTED",
+        "matched": "NO",
+        "forward_writer": "FORM-015 (Purchase Line Item Form)",
+        "reverse_writer": "Sale return restock physical condition toggle is transient; only reason string is stored in sale_returns.reason.",
+        "status": "UNPERSISTED_FIELD_GAP (P1-FIELD-GAP-012)"
+    },
+    {
+        "field_id": "FIELD-088",
+        "label": "name",
+        "forward_db": "suppliers.name",
+        "reverse_dbcol": "N\/A \u2014 NON_PERSISTED_EXPECTED",
+        "matched": "NO",
+        "forward_writer": "FORM-016 (Supplier Registration Form)",
+        "reverse_writer": "Sale return refund disbursement channel toggle is transient; only refund_amount is stored in sale_returns.",
+        "status": "UNPERSISTED_FIELD_GAP (P1-FIELD-GAP-013)"
+    },
+    {
+        "field_id": "FIELD-089",
+        "label": "contact_person",
+        "forward_db": "suppliers.contact_person",
+        "reverse_dbcol": "DBCOL-245",
+        "matched": "YES",
+        "forward_writer": "FORM-016 (Supplier Registration Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/SupplierController.php:L35 \u2014 contact_person \u2014 api\/database\/migrations\/2026_08_24_051348_create_suppliers_table.php:L19 \u2014 string(\"contact_person\")->nullable()",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-090",
+        "label": "phone",
+        "forward_db": "suppliers.phone",
+        "reverse_dbcol": "DBCOL-246",
+        "matched": "YES",
+        "forward_writer": "FORM-016 (Supplier Registration Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/SupplierController.php:L38 \u2014 phone \u2014 api\/database\/migrations\/2026_08_24_051348_create_suppliers_table.php:L20 \u2014 string(\"phone\")",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-091",
+        "label": "email",
+        "forward_db": "suppliers.email",
+        "reverse_dbcol": "DBCOL-247",
+        "matched": "YES",
+        "forward_writer": "FORM-016 (Supplier Registration Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/SupplierController.php:L40 \u2014 email \u2014 api\/database\/migrations\/2026_08_24_051348_create_suppliers_table.php:L21 \u2014 string(\"email\")->nullable()",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-092",
+        "label": "address",
+        "forward_db": "suppliers.address",
+        "reverse_dbcol": "DBCOL-248",
+        "matched": "YES",
+        "forward_writer": "FORM-016 (Supplier Registration Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/SupplierController.php:L42 \u2014 address \u2014 api\/database\/migrations\/2026_08_24_051348_create_suppliers_table.php:L22 \u2014 text(\"address\")->nullable()",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-093",
+        "label": "ntn_number",
+        "forward_db": "suppliers.ntn_number",
+        "reverse_dbcol": "N\/A \u2014 NON_PERSISTED_EXPECTED",
+        "matched": "NO",
+        "forward_writer": "FORM-016 (Supplier Registration Form)",
+        "reverse_writer": "Supplier NTN tax registration number captured in Supplier form but absent from suppliers schema.",
+        "status": "UNPERSISTED_FIELD_GAP (P1-FIELD-GAP-017)"
+    },
+    {
+        "field_id": "FIELD-094",
+        "label": "opening_balance",
+        "forward_db": "suppliers.balance",
+        "reverse_dbcol": "DBCOL-250",
+        "matched": "YES",
+        "forward_writer": "FORM-016 (Supplier Registration Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/SupplierController.php:L46 \u2014 sets suppliers.balance \u2014 api\/database\/migrations\/2026_08_24_051348_create_suppliers_table.php:L24 \u2014 decimal(\"balance\",12,2)->default(0)",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-095",
+        "label": "supplier_id",
+        "forward_db": "supplier_payments.supplier_id",
+        "reverse_dbcol": "DBCOL-282",
+        "matched": "YES",
+        "forward_writer": "FORM-017 (Supplier Bill Settlement Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/SupplierPaymentController.php:L30-L55 \u2014 store() \u2014 api\/database\/migrations\/2026_09_17_000000_create_supplier_payments_table.php:L18 \u2014 foreignId(\"supplier_id\")->constrained()",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-096",
+        "label": "payment_amount",
+        "forward_db": "supplier_payments.amount",
+        "reverse_dbcol": "DBCOL-285",
+        "matched": "YES",
+        "forward_writer": "FORM-017 (Supplier Bill Settlement Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/SupplierPaymentController.php:L35 \u2014 amount \u2014 api\/database\/migrations\/2026_09_17_000000_create_supplier_payments_table.php:L19 \u2014 decimal(\"amount\",12,2)",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-097",
+        "label": "payment_date",
+        "forward_db": "supplier_payments.payment_date",
+        "reverse_dbcol": "DBCOL-286",
+        "matched": "YES",
+        "forward_writer": "FORM-017 (Supplier Bill Settlement Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/SupplierPaymentController.php:L45, api\/app\/Models\/SupplierPayment.php:L19 \u2014 Supplier payment disbursement date stored in physical column date",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-098",
+        "label": "financial_account_id",
+        "forward_db": "account_movements.account_id",
+        "reverse_dbcol": "DBCOL-341",
+        "matched": "YES",
+        "forward_writer": "FORM-017 (Supplier Bill Settlement Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/SupplierPaymentController.php:L40 \u2014 financial_account_id \u2014 api\/database\/migrations\/2026_09_16_000001_create_account_movements_table.php:L18 \u2014 foreignId(\"account_id\")",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-099",
+        "label": "reference_number",
+        "forward_db": "supplier_payments.reference",
+        "reverse_dbcol": "N\/A \u2014 NON_PERSISTED_EXPECTED",
+        "matched": "NO",
+        "forward_writer": "FORM-017 (Supplier Bill Settlement Form)",
+        "reverse_writer": "Purchase shipping charges captured in Purchase form but collapsed directly into purchases.total without dedicated line item column.",
+        "status": "UNPERSISTED_FIELD_GAP (P1-FIELD-GAP-014)"
+    },
+    {
+        "field_id": "FIELD-100",
+        "label": "notes",
+        "forward_db": "supplier_payments.notes",
+        "reverse_dbcol": "DBCOL-288",
+        "matched": "YES",
+        "forward_writer": "FORM-017 (Supplier Bill Settlement Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/SupplierPaymentController.php:L45 \u2014 notes \u2014 api\/database\/migrations\/2026_09_17_000000_create_supplier_payments_table.php:L22 \u2014 text(\"notes\")->nullable()",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-101",
+        "label": "name",
+        "forward_db": "customers.name",
+        "reverse_dbcol": "DBCOL-204",
+        "matched": "YES",
+        "forward_writer": "FORM-018 (Customer Master Creation Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/CustomerController.php:L30-L50 \u2014 store(), update() \u2014 api\/database\/migrations\/2026_08_24_051346_create_customers_table.php:L18 \u2014 string(\"name\")",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-102",
+        "label": "phone",
+        "forward_db": "customers.phone",
+        "reverse_dbcol": "DBCOL-205",
+        "matched": "YES",
+        "forward_writer": "FORM-018 (Customer Master Creation Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/CustomerController.php:L35 \u2014 phone \u2014 api\/database\/migrations\/2026_08_24_051346_create_customers_table.php:L19 \u2014 string(\"phone\")",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-103",
+        "label": "secondary_phone",
+        "forward_db": "customers.secondary_phone",
+        "reverse_dbcol": "N\/A \u2014 NON_PERSISTED_EXPECTED",
+        "matched": "NO",
+        "forward_writer": "FORM-018 (Customer Master Creation Form)",
+        "reverse_writer": "Purchase line item discount captured in UI but collapsed into purchase_items.total without dedicated column.",
+        "status": "UNPERSISTED_FIELD_GAP (P1-FIELD-GAP-015)"
+    },
+    {
+        "field_id": "FIELD-104",
+        "label": "email",
+        "forward_db": "customers.email",
+        "reverse_dbcol": "N\/A \u2014 NON_PERSISTED_EXPECTED",
+        "matched": "NO",
+        "forward_writer": "FORM-018 (Customer Master Creation Form)",
+        "reverse_writer": "Purchase line item tax captured in UI but collapsed into purchase_items.total without dedicated column.",
+        "status": "UNPERSISTED_FIELD_GAP (P1-FIELD-GAP-016)"
+    },
+    {
+        "field_id": "FIELD-105",
+        "label": "address",
+        "forward_db": "customers.address",
+        "reverse_dbcol": "DBCOL-207",
+        "matched": "YES",
+        "forward_writer": "FORM-018 (Customer Master Creation Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/CustomerController.php:L42 \u2014 address \u2014 api\/database\/migrations\/2026_08_24_051346_create_customers_table.php:L22 \u2014 text(\"address\")->nullable()",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-106",
+        "label": "city",
+        "forward_db": "customers.city",
+        "reverse_dbcol": "N\/A \u2014 NON_PERSISTED_EXPECTED",
+        "matched": "NO",
+        "forward_writer": "FORM-018 (Customer Master Creation Form)",
+        "reverse_writer": "Customer city captured in Customer form but absent from customers schema.",
+        "status": "UNPERSISTED_FIELD_GAP (P1-FIELD-GAP-019)"
+    },
+    {
+        "field_id": "FIELD-107",
+        "label": "credit_limit",
+        "forward_db": "customers.credit_limit",
+        "reverse_dbcol": "N\/A \u2014 NON_PERSISTED_EXPECTED",
+        "matched": "NO",
+        "forward_writer": "FORM-018 (Customer Master Creation Form)",
+        "reverse_writer": "Customer credit limit threshold captured in Customer form but absent from customers schema.",
+        "status": "UNPERSISTED_FIELD_GAP (P1-FIELD-GAP-020)"
+    },
+    {
+        "field_id": "FIELD-108",
+        "label": "opening_balance",
+        "forward_db": "customers.current_balance",
+        "reverse_dbcol": "DBCOL-208",
+        "matched": "YES",
+        "forward_writer": "FORM-018 (Customer Master Creation Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/CustomerController.php:L45, api\/app\/Models\/Customer.php:L20 \u2014 Customer opening balance on creation stored in opening_balance",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-109",
+        "label": "customer_type",
+        "forward_db": "customers.customer_type",
+        "reverse_dbcol": "N\/A \u2014 NON_PERSISTED_EXPECTED",
+        "matched": "NO",
+        "forward_writer": "FORM-018 (Customer Master Creation Form)",
+        "reverse_writer": "Customer category\/tier classification captured in Customer form but absent from customers schema.",
+        "status": "UNPERSISTED_FIELD_GAP (P1-FIELD-GAP-021)"
+    },
+    {
+        "field_id": "FIELD-110",
+        "label": "customer_id",
+        "forward_db": "customer_payments.customer_id",
+        "reverse_dbcol": "N\/A \u2014 NON_PERSISTED_EXPECTED",
+        "matched": "NO",
+        "forward_writer": "FORM-019 (Customer Payment Collection Form)",
+        "reverse_writer": "Supplier NTN tax registration number captured in Supplier form but absent from suppliers schema.",
+        "status": "UNPERSISTED_FIELD_GAP (P1-FIELD-GAP-017)"
+    },
+    {
+        "field_id": "FIELD-111",
+        "label": "amount_received",
+        "forward_db": "customer_payments.amount",
+        "reverse_dbcol": "DBCOL-230",
+        "matched": "YES",
+        "forward_writer": "FORM-019 (Customer Payment Collection Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/CustomerPaymentController.php:L35 \u2014 amount \u2014 api\/database\/migrations\/2026_09_19_000001_create_customer_payments_table.php:L19 \u2014 decimal(\"amount\",12,2)",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-112",
+        "label": "receiving_account_id",
+        "forward_db": "account_movements.account_id",
+        "reverse_dbcol": "DBCOL-341",
+        "matched": "YES",
+        "forward_writer": "FORM-019 (Customer Payment Collection Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/CustomerPaymentController.php:L38 \u2014 financial_account_id \u2014 api\/database\/migrations\/2026_09_16_000001_create_account_movements_table.php:L18 \u2014 foreignId(\"account_id\")",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-113",
+        "label": "payment_date",
+        "forward_db": "customer_payments.payment_date",
+        "reverse_dbcol": "DBCOL-232",
+        "matched": "YES",
+        "forward_writer": "FORM-019 (Customer Payment Collection Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/CustomerPaymentController.php:L40, api\/app\/Models\/CustomerPayment.php:L19 \u2014 Customer khata payment collection date stored in physical column date",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-114",
+        "label": "receipt_number",
+        "forward_db": "customer_payments.receipt_number",
+        "reverse_dbcol": "DBCOL-229",
+        "matched": "YES",
+        "forward_writer": "FORM-019 (Customer Payment Collection Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/CustomerPaymentController.php:L38, api\/app\/Models\/CustomerPayment.php:L17 \u2014 Customer payment receipt voucher sequence stored in payment_number",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-115",
+        "label": "notes",
+        "forward_db": "customer_payments.notes",
+        "reverse_dbcol": "DBCOL-233",
+        "matched": "YES",
+        "forward_writer": "FORM-019 (Customer Payment Collection Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/CustomerPaymentController.php:L45 \u2014 notes \u2014 api\/database\/migrations\/2026_09_19_000001_create_customer_payments_table.php:L22 \u2014 text(\"notes\")->nullable()",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-116",
+        "label": "customer_id",
+        "forward_db": "customer_payments.customer_id",
+        "reverse_dbcol": "DBCOL-226",
+        "matched": "YES",
+        "forward_writer": "FORM-020 (Khata Settlement Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/KhataController.php:L40-L65 \u2014 settle() \u2014 api\/database\/migrations\/2026_09_19_000001_create_customer_payments_table.php:L18 \u2014 foreignId(\"customer_id\")",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-117",
+        "label": "settle_amount",
+        "forward_db": "customer_payments.amount",
+        "reverse_dbcol": "DBCOL-230",
+        "matched": "YES",
+        "forward_writer": "FORM-020 (Khata Settlement Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/KhataController.php:L45 \u2014 amount \u2014 api\/database\/migrations\/2026_09_19_000001_create_customer_payments_table.php:L19 \u2014 decimal(\"amount\",12,2)",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-118",
+        "label": "account_id",
+        "forward_db": "account_movements.account_id",
+        "reverse_dbcol": "DBCOL-341",
+        "matched": "YES",
+        "forward_writer": "FORM-020 (Khata Settlement Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/KhataController.php:L48 \u2014 account_id \u2014 api\/database\/migrations\/2026_09_16_000001_create_account_movements_table.php:L18 \u2014 foreignId(\"account_id\")",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-119",
+        "label": "notes",
+        "forward_db": "customer_payments.notes",
+        "reverse_dbcol": "DBCOL-233",
+        "matched": "YES",
+        "forward_writer": "FORM-020 (Khata Settlement Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/KhataController.php:L50 \u2014 notes \u2014 api\/database\/migrations\/2026_09_19_000001_create_customer_payments_table.php:L22 \u2014 text(\"notes\")->nullable()",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-120",
+        "label": "account_party",
+        "forward_db": "account_movements.reference_id",
+        "reverse_dbcol": "N\/A \u2014 NON_PERSISTED_EXPECTED",
+        "matched": "NO",
+        "forward_writer": "FORM-021 (Debt Return Form)",
+        "reverse_writer": "Customer secondary phone captured in Customer form but absent from customers schema.",
+        "status": "UNPERSISTED_FIELD_GAP (P1-FIELD-GAP-018)"
+    },
+    {
+        "field_id": "FIELD-121",
+        "label": "return_amount",
+        "forward_db": "account_movements.amount",
+        "reverse_dbcol": "N\/A \u2014 NON_PERSISTED_EXPECTED",
+        "matched": "NO",
+        "forward_writer": "FORM-021 (Debt Return Form)",
+        "reverse_writer": "Customer city captured in Customer form but absent from customers schema.",
+        "status": "UNPERSISTED_FIELD_GAP (P1-FIELD-GAP-019)"
+    },
+    {
+        "field_id": "FIELD-122",
+        "label": "payment_method",
+        "forward_db": "account_movements.type",
+        "reverse_dbcol": "DBCOL-342",
+        "matched": "YES",
+        "forward_writer": "FORM-021 (Debt Return Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/KhataController.php:L78 \u2014 method \u2014 api\/database\/migrations\/2026_09_16_000001_create_account_movements_table.php:L19 \u2014 string(\"type\")",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-123",
+        "label": "notes",
+        "forward_db": "account_movements.notes",
+        "reverse_dbcol": "DBCOL-348",
+        "matched": "YES",
+        "forward_writer": "FORM-021 (Debt Return Form)",
+        "reverse_writer": "api\/app\/Services\/AccountMovementService.php:L48, api\/app\/Models\/AccountMovement.php:L24 \u2014 Movement narrative notes stored in description",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-124",
+        "label": "description",
+        "forward_db": "expenses.title",
+        "reverse_dbcol": "N\/A \u2014 NON_PERSISTED_EXPECTED",
+        "matched": "NO",
+        "forward_writer": "FORM-022 (Full-Page Expense Form)",
+        "reverse_writer": "Customer credit limit threshold captured in Customer form but absent from customers schema.",
+        "status": "UNPERSISTED_FIELD_GAP (P1-FIELD-GAP-020)"
+    },
+    {
+        "field_id": "FIELD-125",
+        "label": "category",
+        "forward_db": "expenses.category_id",
+        "reverse_dbcol": "N\/A \u2014 NON_PERSISTED_EXPECTED",
+        "matched": "NO",
+        "forward_writer": "FORM-022 (Full-Page Expense Form)",
+        "reverse_writer": "Customer category\/tier classification captured in Customer form but absent from customers schema.",
+        "status": "UNPERSISTED_FIELD_GAP (P1-FIELD-GAP-021)"
+    },
+    {
+        "field_id": "FIELD-126",
+        "label": "amount",
+        "forward_db": "expenses.amount",
+        "reverse_dbcol": "DBCOL-299",
+        "matched": "YES",
+        "forward_writer": "FORM-022 (Full-Page Expense Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/ExpenseController.php:L42 \u2014 amount \u2014 api\/database\/migrations\/2026_08_24_051349_create_expenses_table.php:L20 \u2014 decimal(\"amount\",12,2)",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-127",
+        "label": "date",
+        "forward_db": "expenses.date",
+        "reverse_dbcol": "DBCOL-305",
+        "matched": "YES",
+        "forward_writer": "FORM-022 (Full-Page Expense Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/ExpenseController.php:L45 \u2014 date \u2014 api\/database\/migrations\/2026_08_24_051349_create_expenses_table.php:L21 \u2014 date(\"date\")",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-128",
+        "label": "method",
+        "forward_db": "expenses.payment_method",
+        "reverse_dbcol": "N\/A \u2014 REQUEST_ONLY",
+        "matched": "NO",
+        "forward_writer": "FORM-022 (Full-Page Expense Form)",
+        "reverse_writer": "Expense payment method selector used to route transaction into financial accounts",
+        "status": "RECONCILED_REQUEST_ONLY"
+    },
+    {
+        "field_id": "FIELD-129",
+        "label": "reference",
+        "forward_db": "expenses.reference",
+        "reverse_dbcol": "DBCOL-306",
+        "matched": "YES",
+        "forward_writer": "FORM-022 (Full-Page Expense Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/ExpenseController.php:L35 \u2014 Expense voucher reference stored in description",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-130",
+        "label": "branch",
+        "forward_db": "expenses.branch_id",
+        "reverse_dbcol": "N\/A \u2014 NON_PERSISTED_EXPECTED",
+        "matched": "NO",
+        "forward_writer": "FORM-022 (Full-Page Expense Form)",
+        "reverse_writer": "Expense receipt image upload captured in UI but absent from expenses table schema.",
+        "status": "UNPERSISTED_FIELD_GAP (P1-FIELD-GAP-027)"
+    },
+    {
+        "field_id": "FIELD-131",
+        "label": "receipt_image",
+        "forward_db": "expenses.receipt_url",
+        "reverse_dbcol": "N\/A \u2014 NON_PERSISTED_EXPECTED",
+        "matched": "NO",
+        "forward_writer": "FORM-022 (Full-Page Expense Form)",
+        "reverse_writer": "Expense receipt image upload captured in UI but absent from expenses table schema.",
+        "status": "UNPERSISTED_FIELD_GAP (P1-FIELD-GAP-027)"
+    },
+    {
+        "field_id": "FIELD-132",
+        "label": "notes",
+        "forward_db": "expenses.notes",
+        "reverse_dbcol": "DBCOL-306",
+        "matched": "YES",
+        "forward_writer": "FORM-022 (Full-Page Expense Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/ExpenseController.php:L35, api\/app\/Models\/Expense.php:L18 \u2014 Expense notes recorded within physical column description",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-133",
+        "label": "description",
+        "forward_db": "expenses.title",
+        "reverse_dbcol": "DBCOL-306",
+        "matched": "YES",
+        "forward_writer": "FORM-023 (Quick Expense Popup Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/ExpenseController.php:L35, api\/app\/Models\/Expense.php:L18 \u2014 Expense description\/title stored in physical column description",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-134",
+        "label": "category",
+        "forward_db": "expenses.category_id",
+        "reverse_dbcol": "DBCOL-296",
+        "matched": "YES",
+        "forward_writer": "FORM-023 (Quick Expense Popup Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/ExpenseController.php:L40 \u2014 category_id \u2014 api\/database\/migrations\/2026_08_24_051349_create_expenses_table.php:L19 \u2014 foreignId(\"category_id\")",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-135",
+        "label": "amount",
+        "forward_db": "expenses.amount",
+        "reverse_dbcol": "DBCOL-299",
+        "matched": "YES",
+        "forward_writer": "FORM-023 (Quick Expense Popup Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/ExpenseController.php:L42 \u2014 amount \u2014 api\/database\/migrations\/2026_08_24_051349_create_expenses_table.php:L20 \u2014 decimal(\"amount\",12,2)",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-136",
+        "label": "financial_account_id",
+        "forward_db": "account_movements.account_id",
+        "reverse_dbcol": "DBCOL-341",
+        "matched": "YES",
+        "forward_writer": "FORM-023 (Quick Expense Popup Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/ExpenseController.php:L44 \u2014 financial_account_id \u2014 api\/database\/migrations\/2026_09_16_000001_create_account_movements_table.php:L18 \u2014 foreignId(\"account_id\")",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-137",
+        "label": "date",
+        "forward_db": "expenses.date",
+        "reverse_dbcol": "DBCOL-305",
+        "matched": "YES",
+        "forward_writer": "FORM-023 (Quick Expense Popup Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/ExpenseController.php:L45 \u2014 date \u2014 api\/database\/migrations\/2026_08_24_051349_create_expenses_table.php:L21 \u2014 date(\"date\")",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-138",
+        "label": "notes",
+        "forward_db": "expenses.notes",
+        "reverse_dbcol": "N\/A \u2014 REQUEST_ONLY",
+        "matched": "NO",
+        "forward_writer": "FORM-023 (Quick Expense Popup Form)",
+        "reverse_writer": "Expense payment method selector used to route transaction into financial accounts",
+        "status": "RECONCILED_REQUEST_ONLY"
+    },
+    {
+        "field_id": "FIELD-139",
+        "label": "category_name",
+        "forward_db": "expense_categories.name",
+        "reverse_dbcol": "DBCOL-312",
+        "matched": "YES",
+        "forward_writer": "FORM-024 (Expense Category Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/ExpenseCategoryController.php:L30-L50 \u2014 store(), update() \u2014 api\/database\/migrations\/2026_08_24_051348_create_expense_categories_table.php:L18 \u2014 string(\"name\")",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-140",
+        "label": "monthly_budget",
+        "forward_db": "expense_categories.monthly_budget",
+        "reverse_dbcol": "N\/A \u2014 NON_PERSISTED_EXPECTED",
+        "matched": "NO",
+        "forward_writer": "FORM-024 (Expense Category Form)",
+        "reverse_writer": "Expense category monthly budget captured in Expense Category form but absent from expense_categories schema.",
+        "status": "UNPERSISTED_FIELD_GAP (P1-FIELD-GAP-022)"
+    },
+    {
+        "field_id": "FIELD-141",
+        "label": "description",
+        "forward_db": "expense_categories.description",
+        "reverse_dbcol": "N\/A \u2014 NON_PERSISTED_EXPECTED",
+        "matched": "NO",
+        "forward_writer": "FORM-024 (Expense Category Form)",
+        "reverse_writer": "Expense category description captured in Expense Category form but absent from expense_categories schema.",
+        "status": "UNPERSISTED_FIELD_GAP (P1-FIELD-GAP-023)"
+    },
+    {
+        "field_id": "FIELD-142",
+        "label": "title",
+        "forward_db": "recurring_expenses.title",
+        "reverse_dbcol": "DBCOL-321",
+        "matched": "YES",
+        "forward_writer": "FORM-025 (Recurring Expense Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/RecurringExpenseController.php:L30, api\/app\/Models\/RecurringExpense.php:L18 \u2014 Recurring schedule title stored in physical column description",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-143",
+        "label": "category_id",
+        "forward_db": "recurring_expenses.category_id",
+        "reverse_dbcol": "DBCOL-317",
+        "matched": "YES",
+        "forward_writer": "FORM-025 (Recurring Expense Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/RecurringExpenseController.php:L32, api\/app\/Models\/RecurringExpense.php:L17 \u2014 Recurring expense category stored as string in recurring_expenses.category",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-144",
+        "label": "amount",
+        "forward_db": "recurring_expenses.amount",
+        "reverse_dbcol": "N\/A \u2014 NON_PERSISTED_EXPECTED",
+        "matched": "NO",
+        "forward_writer": "FORM-025 (Recurring Expense Form)",
+        "reverse_writer": "Expense category monthly budget captured in Expense Category form but absent from expense_categories schema.",
+        "status": "UNPERSISTED_FIELD_GAP (P1-FIELD-GAP-022)"
+    },
+    {
+        "field_id": "FIELD-145",
+        "label": "frequency",
+        "forward_db": "recurring_expenses.frequency",
+        "reverse_dbcol": "N\/A \u2014 NON_PERSISTED_EXPECTED",
+        "matched": "NO",
+        "forward_writer": "FORM-025 (Recurring Expense Form)",
+        "reverse_writer": "Expense category description captured in Expense Category form but absent from expense_categories schema.",
+        "status": "UNPERSISTED_FIELD_GAP (P1-FIELD-GAP-023)"
+    },
+    {
+        "field_id": "FIELD-146",
+        "label": "start_date",
+        "forward_db": "recurring_expenses.start_date",
+        "reverse_dbcol": "DBCOL-320",
+        "matched": "YES",
+        "forward_writer": "FORM-025 (Recurring Expense Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/RecurringExpenseController.php:L34, api\/app\/Models\/RecurringExpense.php:L21 \u2014 Schedule initial start date stored as initial next_due_date",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-147",
+        "label": "name",
+        "forward_db": "employees.name",
+        "reverse_dbcol": "N\/A \u2014 NON_PERSISTED_EXPECTED",
+        "matched": "NO",
+        "forward_writer": "FORM-026 (Employee & HR Form)",
+        "reverse_writer": "Staff employee legal full name captured in EmployeesView.vue (FORM-026) but employees table was dropped in migration 2026_09_13_104137 and no backend EmployeeController or API route exists.",
+        "status": "UNPERSISTED_FIELD_GAP (P1-FIELD-GAP-003)"
+    },
+    {
+        "field_id": "FIELD-148",
+        "label": "role",
+        "forward_db": "employees.role",
+        "reverse_dbcol": "N\/A \u2014 NON_PERSISTED_EXPECTED",
+        "matched": "NO",
+        "forward_writer": "FORM-026 (Employee & HR Form)",
+        "reverse_writer": "Staff role designation captured in EmployeesView.vue (FORM-026) but employees table was dropped and no backend EmployeeController exists.",
+        "status": "UNPERSISTED_FIELD_GAP (P1-FIELD-GAP-003)"
+    },
+    {
+        "field_id": "FIELD-149",
+        "label": "phone",
+        "forward_db": "employees.phone",
+        "reverse_dbcol": "N\/A \u2014 NON_PERSISTED_EXPECTED",
+        "matched": "NO",
+        "forward_writer": "FORM-026 (Employee & HR Form)",
+        "reverse_writer": "Staff personal contact phone captured in EmployeesView.vue (FORM-026) but employees table was dropped and no backend EmployeeController exists.",
+        "status": "UNPERSISTED_FIELD_GAP (P1-FIELD-GAP-003)"
+    },
+    {
+        "field_id": "FIELD-150",
+        "label": "salary_amount",
+        "forward_db": "employees.salary_amount",
+        "reverse_dbcol": "N\/A \u2014 NON_PERSISTED_EXPECTED",
+        "matched": "NO",
+        "forward_writer": "FORM-026 (Employee & HR Form)",
+        "reverse_writer": "Staff base salary amount captured in EmployeesView.vue (FORM-026) but employees table was dropped and no backend EmployeeController exists.",
+        "status": "UNPERSISTED_FIELD_GAP (P1-FIELD-GAP-003)"
+    },
+    {
+        "field_id": "FIELD-151",
+        "label": "payment_cycle",
+        "forward_db": "employees.payment_cycle",
+        "reverse_dbcol": "N\/A \u2014 NON_PERSISTED_EXPECTED",
+        "matched": "NO",
+        "forward_writer": "FORM-026 (Employee & HR Form)",
+        "reverse_writer": "Staff wage payment cycle captured in EmployeesView.vue (FORM-026) but employees table was dropped and no backend EmployeeController exists.",
+        "status": "UNPERSISTED_FIELD_GAP (P1-FIELD-GAP-003)"
+    },
+    {
+        "field_id": "FIELD-152",
+        "label": "next_payment_date",
+        "forward_db": "employees.next_payment_date",
+        "reverse_dbcol": "N\/A \u2014 NON_PERSISTED_EXPECTED",
+        "matched": "NO",
+        "forward_writer": "FORM-026 (Employee & HR Form)",
+        "reverse_writer": "Staff scheduled next pay date captured in EmployeesView.vue (FORM-026) but employees table was dropped and no backend EmployeeController exists.",
+        "status": "UNPERSISTED_FIELD_GAP (P1-FIELD-GAP-003)"
+    },
+    {
+        "field_id": "FIELD-153",
+        "label": "name",
+        "forward_db": "users.name",
+        "reverse_dbcol": "DBCOL-014",
+        "matched": "YES",
+        "forward_writer": "FORM-027 (User & Staff Governance Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/UserGovernanceController.php:L30-L55 \u2014 store(), update() \u2014 api\/database\/migrations\/2014_10_12_000000_create_users_table.php:L17 \u2014 string(\"name\")",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-154",
+        "label": "username",
+        "forward_db": "users.username",
+        "reverse_dbcol": "N\/A \u2014 NON_PERSISTED_EXPECTED",
+        "matched": "NO",
+        "forward_writer": "FORM-027 (User & Staff Governance Form)",
+        "reverse_writer": "User username field captured in User governance form but authentication and user identity uses email directly; username is not stored.",
+        "status": "UNPERSISTED_FIELD_GAP (P1-FIELD-GAP-024)"
+    },
+    {
+        "field_id": "FIELD-155",
+        "label": "email",
+        "forward_db": "users.email",
+        "reverse_dbcol": "DBCOL-015",
+        "matched": "YES",
+        "forward_writer": "FORM-027 (User & Staff Governance Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/UserGovernanceController.php:L38 \u2014 email \u2014 api\/database\/migrations\/2014_10_12_000000_create_users_table.php:L19 \u2014 string(\"email\")->nullable()",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-156",
+        "label": "password",
+        "forward_db": "users.password",
+        "reverse_dbcol": "DBCOL-020",
+        "matched": "YES",
+        "forward_writer": "FORM-027 (User & Staff Governance Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/UserGovernanceController.php:L65 \u2014 Hash::make()",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-157",
+        "label": "branch_id",
+        "forward_db": "users.branch_id",
+        "reverse_dbcol": "DBCOL-013",
+        "matched": "YES",
+        "forward_writer": "FORM-027 (User & Staff Governance Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/UserGovernanceController.php:L46 \u2014 branch_id \u2014 api\/database\/migrations\/2026_08_24_051340_create_users_table.php:L21 \u2014 foreignId(\"branch_id\")->constrained()",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-158",
+        "label": "role",
+        "forward_db": "model_has_roles.role_id",
+        "reverse_dbcol": "DBCOL-080",
+        "matched": "YES",
+        "forward_writer": "FORM-027 (User & Staff Governance Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/UserGovernanceController.php:L50 \u2014 syncRoles() \u2014 api\/database\/migrations\/2026_08_24_000000_create_permission_tables.php:L35",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-159",
+        "label": "permissions",
+        "forward_db": "model_has_permissions.permission_id",
+        "reverse_dbcol": "DBCOL-076",
+        "matched": "YES",
+        "forward_writer": "FORM-027 (User & Staff Governance Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/UserGovernanceController.php:L55 \u2014 syncPermissions() \u2014 api\/database\/migrations\/2026_08_24_000000_create_permission_tables.php:L40",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-160",
+        "label": "current_password",
+        "forward_db": "N\/A",
+        "reverse_dbcol": "N\/A \u2014 REQUEST_ONLY",
+        "matched": "NO",
+        "forward_writer": "FORM-028 (Password Change Form)",
+        "reverse_writer": "User profile current password verification input",
+        "status": "RECONCILED_REQUEST_ONLY"
+    },
+    {
+        "field_id": "FIELD-161",
+        "label": "new_password",
+        "forward_db": "users.password",
+        "reverse_dbcol": "DBCOL-020",
+        "matched": "YES",
+        "forward_writer": "FORM-028 (Password Change Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/ProfileController.php:L45 \u2014 Hash::make()",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-162",
+        "label": "new_password_confirmation",
+        "forward_db": "N\/A",
+        "reverse_dbcol": "N\/A \u2014 REQUEST_ONLY",
+        "matched": "NO",
+        "forward_writer": "FORM-028 (Password Change Form)",
+        "reverse_writer": "User profile new password confirmation match input",
+        "status": "RECONCILED_REQUEST_ONLY"
+    },
+    {
+        "field_id": "FIELD-163",
+        "label": "business_name",
+        "forward_db": "preferences.receipt_header_name",
+        "reverse_dbcol": "DBCOL-382, DBCOL-383",
+        "matched": "YES",
+        "forward_writer": "FORM-029 (Receipt & Invoice Template Form)",
+        "reverse_writer": "SettingController.php:L23 \u2014 receipt_header key allowlist",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-164",
+        "label": "tagline",
+        "forward_db": "preferences.receipt_tagline",
+        "reverse_dbcol": "DBCOL-382, DBCOL-383",
+        "matched": "YES",
+        "forward_writer": "FORM-029 (Receipt & Invoice Template Form)",
+        "reverse_writer": "SettingController.php:L36 \u2014 business_tagline key allowlist",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-165",
+        "label": "header_line_1",
+        "forward_db": "preferences.receipt_header_line_1",
+        "reverse_dbcol": "DBCOL-382, DBCOL-383",
+        "matched": "YES",
+        "forward_writer": "FORM-029 (Receipt & Invoice Template Form)",
+        "reverse_writer": "SettingController.php:L23 \u2014 receipt_header address line 1 allowlist",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-166",
+        "label": "header_line_2",
+        "forward_db": "preferences.receipt_header_line_2",
+        "reverse_dbcol": "DBCOL-382, DBCOL-383",
+        "matched": "YES",
+        "forward_writer": "FORM-029 (Receipt & Invoice Template Form)",
+        "reverse_writer": "SettingController.php:L23 \u2014 receipt_header address line 2 allowlist",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-167",
+        "label": "footer_text",
+        "forward_db": "preferences.receipt_footer_text",
+        "reverse_dbcol": "DBCOL-382, DBCOL-383",
+        "matched": "YES",
+        "forward_writer": "FORM-029 (Receipt & Invoice Template Form)",
+        "reverse_writer": "SettingController.php:L29 \u2014 invoice_footer_note key allowlist",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-168",
+        "label": "paper_size",
+        "forward_db": "preferences.paper_size",
+        "reverse_dbcol": "DBCOL-382, DBCOL-383",
+        "matched": "YES",
+        "forward_writer": "FORM-029 (Receipt & Invoice Template Form)",
+        "reverse_writer": "SettingController.php:L25 \u2014 receipt_printer_size key allowlist",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-169",
+        "label": "show_barcode",
+        "forward_db": "preferences.show_barcode",
+        "reverse_dbcol": "DBCOL-382, DBCOL-383",
+        "matched": "YES",
+        "forward_writer": "FORM-029 (Receipt & Invoice Template Form)",
+        "reverse_writer": "SettingController.php:L31 \u2014 receipt_settings JSON object key",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-170",
+        "label": "show_cashier",
+        "forward_db": "preferences.show_cashier",
+        "reverse_dbcol": "DBCOL-382, DBCOL-383",
+        "matched": "YES",
+        "forward_writer": "FORM-029 (Receipt & Invoice Template Form)",
+        "reverse_writer": "SettingController.php:L31 \u2014 receipt_settings JSON object key",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-171",
+        "label": "account_name",
+        "forward_db": "financial_accounts.name",
+        "reverse_dbcol": "DBCOL-327",
+        "matched": "YES",
+        "forward_writer": "FORM-030 (Financial Account Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/FinancialAccountController.php:L30-L50 \u2014 store() \u2014 api\/database\/migrations\/2026_09_18_000004_create_financial_accounts_table.php:L18 \u2014 string(\"name\")",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-172",
+        "label": "type",
+        "forward_db": "financial_accounts.type",
+        "reverse_dbcol": "DBCOL-328",
+        "matched": "YES",
+        "forward_writer": "FORM-030 (Financial Account Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/FinancialAccountController.php:L35 \u2014 type \u2014 api\/database\/migrations\/2026_09_18_000004_create_financial_accounts_table.php:L19 \u2014 string(\"type\")->default(\"Cash\")",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-173",
+        "label": "branch_id",
+        "forward_db": "financial_accounts.branch_id",
+        "reverse_dbcol": "DBCOL-326",
+        "matched": "YES",
+        "forward_writer": "FORM-030 (Financial Account Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/FinancialAccountController.php:L38 \u2014 branch_id \u2014 api\/database\/migrations\/2026_09_18_000004_create_financial_accounts_table.php:L20 \u2014 foreignId(\"branch_id\")->constrained()",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-174",
+        "label": "opening_balance",
+        "forward_db": "financial_accounts.current_balance",
+        "reverse_dbcol": "DBCOL-332",
+        "matched": "YES",
+        "forward_writer": "FORM-030 (Financial Account Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/FinancialAccountController.php:L40, api\/app\/Models\/FinancialAccount.php:L20 \u2014 Current ledger balance stored in physical column balance",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-175",
+        "label": "account_number",
+        "forward_db": "financial_accounts.account_number",
+        "reverse_dbcol": "DBCOL-329",
+        "matched": "YES",
+        "forward_writer": "FORM-030 (Financial Account Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/FinancialAccountController.php:L46 \u2014 account_number \u2014 api\/database\/migrations\/2026_09_18_000004_create_financial_accounts_table.php:L22 \u2014 string(\"account_number\")->nullable()",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-176",
+        "label": "account_id",
+        "forward_db": "account_movements.account_id",
+        "reverse_dbcol": "DBCOL-341",
+        "matched": "YES",
+        "forward_writer": "FORM-031 (Capital Inflow Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/FinancialAccountController.php:L65-L85 \u2014 capitalIn() \u2014 api\/database\/migrations\/2026_09_18_000005_create_account_movements_table.php:L18 \u2014 foreignId(\"account_id\")->constrained()",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-177",
+        "label": "amount",
+        "forward_db": "account_movements.amount",
+        "reverse_dbcol": "DBCOL-346",
+        "matched": "YES",
+        "forward_writer": "FORM-031 (Capital Inflow Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/FinancialAccountController.php:L70 \u2014 amount \u2014 api\/database\/migrations\/2026_09_18_000005_create_account_movements_table.php:L19 \u2014 decimal(\"amount\",12,2)",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-178",
+        "label": "reference",
+        "forward_db": "account_movements.reference",
+        "reverse_dbcol": "DBCOL-345",
+        "matched": "YES",
+        "forward_writer": "FORM-031 (Capital Inflow Form)",
+        "reverse_writer": "api\/app\/Services\/AccountMovementService.php:L45, api\/app\/Models\/AccountMovement.php:L22 \u2014 External bank \/ deposit reference stored in reference_id",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-179",
+        "label": "notes",
+        "forward_db": "account_movements.notes",
+        "reverse_dbcol": "DBCOL-348",
+        "matched": "YES",
+        "forward_writer": "FORM-031 (Capital Inflow Form)",
+        "reverse_writer": "api\/app\/Services\/AccountMovementService.php:L48, api\/app\/Models\/AccountMovement.php:L24 \u2014 Movement narrative notes stored in description",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-180",
+        "label": "account_id",
+        "forward_db": "account_movements.account_id",
+        "reverse_dbcol": "DBCOL-341",
+        "matched": "YES",
+        "forward_writer": "FORM-032 (Capital Outflow Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/FinancialAccountController.php:L90-L110 \u2014 capitalOut() \u2014 api\/database\/migrations\/2026_09_18_000005_create_account_movements_table.php:L18 \u2014 foreignId(\"account_id\")->constrained()",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-181",
+        "label": "amount",
+        "forward_db": "account_movements.amount",
+        "reverse_dbcol": "DBCOL-346",
+        "matched": "YES",
+        "forward_writer": "FORM-032 (Capital Outflow Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/FinancialAccountController.php:L95 \u2014 amount \u2014 api\/database\/migrations\/2026_09_18_000005_create_account_movements_table.php:L19 \u2014 decimal(\"amount\",12,2)",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-182",
+        "label": "reason",
+        "forward_db": "account_movements.reason",
+        "reverse_dbcol": "DBCOL-348",
+        "matched": "YES",
+        "forward_writer": "FORM-032 (Capital Outflow Form)",
+        "reverse_writer": "api\/app\/Services\/AccountMovementService.php:L48, api\/app\/Models\/AccountMovement.php:L24 \u2014 Capital movement reason stored in description",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-183",
+        "label": "notes",
+        "forward_db": "account_movements.notes",
+        "reverse_dbcol": "DBCOL-348",
+        "matched": "YES",
+        "forward_writer": "FORM-032 (Capital Outflow Form)",
+        "reverse_writer": "api\/app\/Services\/AccountMovementService.php:L48, api\/app\/Models\/AccountMovement.php:L24 \u2014 Movement narrative notes stored in description",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-184",
+        "label": "from_account_id",
+        "forward_db": "account_transfers.from_account_id",
+        "reverse_dbcol": "DBCOL-359",
+        "matched": "YES",
+        "forward_writer": "FORM-033 (Inter-Account Transfer Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/AccountTransferController.php:L35, api\/app\/Models\/AccountTransfer.php:L18 \u2014 Source debit account stored in source_account_id",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-185",
+        "label": "to_account_id",
+        "forward_db": "account_transfers.to_account_id",
+        "reverse_dbcol": "DBCOL-360",
+        "matched": "YES",
+        "forward_writer": "FORM-033 (Inter-Account Transfer Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/AccountTransferController.php:L36, api\/app\/Models\/AccountTransfer.php:L19 \u2014 Destination credit account stored in destination_account_id",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-186",
+        "label": "amount",
+        "forward_db": "account_transfers.amount",
+        "reverse_dbcol": "DBCOL-361",
+        "matched": "YES",
+        "forward_writer": "FORM-033 (Inter-Account Transfer Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/AccountTransferController.php:L38 \u2014 amount \u2014 api\/database\/migrations\/2026_09_18_000006_create_account_transfers_table.php:L20 \u2014 decimal(\"amount\",12,2)",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-187",
+        "label": "transfer_date",
+        "forward_db": "account_transfers.transfer_date",
+        "reverse_dbcol": "DBCOL-362",
+        "matched": "YES",
+        "forward_writer": "FORM-033 (Inter-Account Transfer Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/AccountTransferController.php:L38, api\/app\/Models\/AccountTransfer.php:L21 \u2014 Transfer execution date stored in physical column date",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-188",
+        "label": "reference",
+        "forward_db": "account_transfers.reference",
+        "reverse_dbcol": "DBCOL-363",
+        "matched": "YES",
+        "forward_writer": "FORM-033 (Inter-Account Transfer Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/AccountTransferController.php:L40, api\/app\/Models\/AccountTransfer.php:L23 \u2014 Transfer reference narrative stored in notes",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-189",
+        "label": "payment_account",
+        "forward_db": "expenses.financial_account_id",
+        "reverse_dbcol": "DBCOL-297",
+        "matched": "YES",
+        "forward_writer": "FORM-034 (Notification Pay Expense Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/NeedsAttentionController.php:L45-L70 \u2014 payExpense() \u2014 api\/database\/migrations\/2026_08_24_051349_create_expenses_table.php:L22 \u2014 foreignId(\"financial_account_id\")->nullable()",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-190",
+        "label": "notes",
+        "forward_db": "expenses.notes",
+        "reverse_dbcol": "DBCOL-306",
+        "matched": "YES",
+        "forward_writer": "FORM-034 (Notification Pay Expense Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/ExpenseController.php:L35, api\/app\/Models\/Expense.php:L18 \u2014 Expense notes recorded within physical column description",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-191",
+        "label": "salary_account",
+        "forward_db": "account_movements.account_id",
+        "reverse_dbcol": "DBCOL-341",
+        "matched": "YES",
+        "forward_writer": "FORM-035 (Notification Pay Salary Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/NeedsAttentionController.php:L75-L100 \u2014 paySalary() \u2014 api\/database\/migrations\/2026_09_18_000005_create_account_movements_table.php:L18 \u2014 foreignId(\"account_id\")->constrained()",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-192",
+        "label": "notes",
+        "forward_db": "account_movements.notes",
+        "reverse_dbcol": "DBCOL-348",
+        "matched": "YES",
+        "forward_writer": "FORM-035 (Notification Pay Salary Form)",
+        "reverse_writer": "api\/app\/Services\/AccountMovementService.php:L48, api\/app\/Models\/AccountMovement.php:L24 \u2014 Movement narrative notes stored in description",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-193",
+        "label": "supplier_id",
+        "forward_db": "purchases.supplier_id",
+        "reverse_dbcol": "DBCOL-256",
+        "matched": "YES",
+        "forward_writer": "FORM-036 (Smart Reorder Submission Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/ReorderController.php:L35-L65 \u2014 createPO() \u2014 api\/database\/migrations\/2026_08_24_051342_create_purchases_table.php:L18 \u2014 foreignId(\"supplier_id\")->constrained()",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-194",
+        "label": "reorder_quantity",
+        "forward_db": "purchase_items.quantity",
+        "reverse_dbcol": "DBCOL-274",
+        "matched": "YES",
+        "forward_writer": "FORM-036 (Smart Reorder Submission Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/ReorderController.php:L42 \u2014 quantity \u2014 api\/database\/migrations\/2026_08_24_051343_create_purchase_items_table.php:L19 \u2014 integer(\"quantity\")",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-195",
+        "label": "delivery_date",
+        "forward_db": "purchases.expected_delivery_date",
+        "reverse_dbcol": "N\/A \u2014 NON_PERSISTED_EXPECTED",
+        "matched": "NO",
+        "forward_writer": "FORM-036 (Smart Reorder Submission Form)",
+        "reverse_writer": "Purchase order expected delivery date captured in ReorderDetailView.vue (FORM-036) but purchases table schema has no expected_delivery_date column.",
+        "status": "UNPERSISTED_FIELD_GAP (P1-FIELD-GAP-025)"
+    },
+    {
+        "field_id": "FIELD-196",
+        "label": "approval_notes",
+        "forward_db": "purchases.notes",
+        "reverse_dbcol": "DBCOL-265",
+        "matched": "YES",
+        "forward_writer": "FORM-036 (Smart Reorder Submission Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/ReorderController.php:L52 \u2014 notes \u2014 api\/database\/migrations\/2026_08_24_051342_create_purchases_table.php:L25 \u2014 text(\"notes\")->nullable()",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-197",
+        "label": "name",
+        "forward_db": "products.name",
+        "reverse_dbcol": "DBCOL-107",
+        "matched": "YES",
+        "forward_writer": "FORM-037 (Standalone Product Edit Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/ProductController.php:L80-L110 \u2014 update() \u2014 api\/database\/migrations\/2026_08_24_051341_create_products_table.php:L18 \u2014 string(\"name\")",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-198",
+        "label": "category",
+        "forward_db": "products.category_id",
+        "reverse_dbcol": "DBCOL-106",
+        "matched": "YES",
+        "forward_writer": "FORM-037 (Standalone Product Edit Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/ProductController.php:L85 \u2014 category_id \u2014 api\/database\/migrations\/2026_08_24_051341_create_products_table.php:L19 \u2014 foreignId(\"category_id\")->constrained()",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-199",
+        "label": "cost",
+        "forward_db": "products.cost_price",
+        "reverse_dbcol": "DBCOL-110",
+        "matched": "YES",
+        "forward_writer": "FORM-037 (Standalone Product Edit Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/ProductController.php:L88 \u2014 cost_price \u2014 api\/database\/migrations\/2026_08_24_051341_create_products_table.php:L20 \u2014 decimal(\"cost_price\",12,2)",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-200",
+        "label": "price",
+        "forward_db": "products.selling_price",
+        "reverse_dbcol": "DBCOL-111",
+        "matched": "YES",
+        "forward_writer": "FORM-037 (Standalone Product Edit Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/ProductController.php:L92 \u2014 selling_price \u2014 api\/database\/migrations\/2026_08_24_051341_create_products_table.php:L21 \u2014 decimal(\"selling_price\",12,2)",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-201",
+        "label": "stock",
+        "forward_db": "branch_inventory.stock",
+        "reverse_dbcol": "DBCOL-130",
+        "matched": "YES",
+        "forward_writer": "FORM-037 (Standalone Product Edit Form)",
+        "reverse_writer": "api\/app\/Http\/Controllers\/Api\/V1\/ProductController.php:L95, api\/app\/Models\/BranchInventory.php:L18 \u2014 Branch physical on-hand stock quantity stored in quantity_on_hand",
+        "status": "EXACT_MATCH"
+    },
+    {
+        "field_id": "FIELD-202",
+        "label": "device_name",
+        "forward_db": "devices.name",
+        "reverse_dbcol": "N\/A \u2014 LOCAL_ONLY_PERSISTENCE",
+        "matched": "NO",
+        "forward_writer": "FORM-038 (Device Pairing Configuration Form)",
+        "reverse_writer": "Frontend\/src\/services\/devicePairingService.js:L24",
+        "status": "RECONCILED_LOCAL_ONLY_PERSISTENCE"
+    },
+    {
+        "field_id": "FIELD-203",
+        "label": "terminal_type",
+        "forward_db": "devices.terminal_type",
+        "reverse_dbcol": "N\/A \u2014 LOCAL_ONLY_PERSISTENCE",
+        "matched": "NO",
+        "forward_writer": "FORM-038 (Device Pairing Configuration Form)",
+        "reverse_writer": "Frontend\/src\/services\/devicePairingService.js:L24",
+        "status": "RECONCILED_LOCAL_ONLY_PERSISTENCE"
+    },
+    {
+        "field_id": "FIELD-204",
+        "label": "assigned_branch",
+        "forward_db": "devices.branch_id",
+        "reverse_dbcol": "N\/A \u2014 LOCAL_ONLY_PERSISTENCE",
+        "matched": "NO",
+        "forward_writer": "FORM-038 (Device Pairing Configuration Form)",
+        "reverse_writer": "Frontend\/src\/services\/devicePairingService.js:L24",
+        "status": "RECONCILED_LOCAL_ONLY_PERSISTENCE"
+    },
+    {
+        "field_id": "FIELD-205",
+        "label": "sync_mode",
+        "forward_db": "devices.sync_mode",
+        "reverse_dbcol": "N\/A \u2014 LOCAL_ONLY_PERSISTENCE",
+        "matched": "NO",
+        "forward_writer": "FORM-038 (Device Pairing Configuration Form)",
+        "reverse_writer": "Frontend\/src\/services\/devicePairingService.js:L24",
+        "status": "RECONCILED_LOCAL_ONLY_PERSISTENCE"
+    },
+    {
+        "field_id": "FIELD-206",
+        "label": "pairing_token",
+        "forward_db": "devices.pairing_token",
+        "reverse_dbcol": "N\/A \u2014 LOCAL_ONLY_PERSISTENCE",
+        "matched": "NO",
+        "forward_writer": "FORM-038 (Device Pairing Configuration Form)",
+        "reverse_writer": "Frontend\/src\/services\/devicePairingService.js:L27",
+        "status": "RECONCILED_LOCAL_ONLY_PERSISTENCE"
+    },
+    {
+        "field_id": "FIELD-207",
+        "label": "ip_address",
+        "forward_db": "devices.ip_address",
+        "reverse_dbcol": "N\/A \u2014 LOCAL_ONLY_PERSISTENCE",
+        "matched": "NO",
+        "forward_writer": "FORM-038 (Device Pairing Configuration Form)",
+        "reverse_writer": "Frontend\/src\/services\/devicePairingService.js:L25",
+        "status": "RECONCILED_LOCAL_ONLY_PERSISTENCE"
+    },
+    {
+        "field_id": "FIELD-208",
+        "label": "port",
+        "forward_db": "devices.port",
+        "reverse_dbcol": "N\/A \u2014 LOCAL_ONLY_PERSISTENCE",
+        "matched": "NO",
+        "forward_writer": "FORM-038 (Device Pairing Configuration Form)",
+        "reverse_writer": "Frontend\/src\/services\/devicePairingService.js:L26",
+        "status": "RECONCILED_LOCAL_ONLY_PERSISTENCE"
+    },
+    {
+        "field_id": "FIELD-209",
+        "label": "auth_secret",
+        "forward_db": "devices.auth_secret",
+        "reverse_dbcol": "N\/A \u2014 LOCAL_ONLY_PERSISTENCE",
+        "matched": "NO",
+        "forward_writer": "FORM-038 (Device Pairing Configuration Form)",
+        "reverse_writer": "Frontend\/src\/services\/devicePairingService.js:L24",
+        "status": "RECONCILED_LOCAL_ONLY_PERSISTENCE"
+    },
+    {
+        "field_id": "FIELD-210",
+        "label": "auto_reconnect",
+        "forward_db": "devices.auto_reconnect",
+        "reverse_dbcol": "N\/A \u2014 LOCAL_ONLY_PERSISTENCE",
+        "matched": "NO",
+        "forward_writer": "FORM-038 (Device Pairing Configuration Form)",
+        "reverse_writer": "Frontend\/src\/services\/devicePairingService.js:L24",
+        "status": "RECONCILED_LOCAL_ONLY_PERSISTENCE"
+    },
+    {
+        "field_id": "FIELD-211",
+        "label": "ssl_verify",
+        "forward_db": "devices.ssl_verify",
+        "reverse_dbcol": "N\/A \u2014 LOCAL_ONLY_PERSISTENCE",
+        "matched": "NO",
+        "forward_writer": "FORM-038 (Device Pairing Configuration Form)",
+        "reverse_writer": "Frontend\/src\/services\/devicePairingService.js:L24",
+        "status": "RECONCILED_LOCAL_ONLY_PERSISTENCE"
+    },
+    {
+        "field_id": "FIELD-212",
+        "label": "qr_expiry_seconds",
+        "forward_db": "devices.qr_expiry",
+        "reverse_dbcol": "N\/A \u2014 LOCAL_ONLY_PERSISTENCE",
+        "matched": "NO",
+        "forward_writer": "FORM-038 (Device Pairing Configuration Form)",
+        "reverse_writer": "Frontend\/src\/services\/devicePairingService.js:L28",
+        "status": "RECONCILED_LOCAL_ONLY_PERSISTENCE"
+    },
+    {
+        "field_id": "FIELD-213",
+        "label": "offline_cache_mb",
+        "forward_db": "devices.cache_limit_mb",
+        "reverse_dbcol": "N\/A \u2014 LOCAL_ONLY_PERSISTENCE",
+        "matched": "NO",
+        "forward_writer": "FORM-038 (Device Pairing Configuration Form)",
+        "reverse_writer": "Frontend\/src\/services\/localDb.js:L1-L137",
+        "status": "RECONCILED_LOCAL_ONLY_PERSISTENCE"
+    },
+    {
+        "field_id": "FIELD-214",
+        "label": "device_uuid",
+        "forward_db": "devices.uuid",
+        "reverse_dbcol": "N\/A \u2014 LOCAL_ONLY_PERSISTENCE",
+        "matched": "NO",
+        "forward_writer": "FORM-038 (Device Pairing Configuration Form)",
+        "reverse_writer": "Frontend\/src\/services\/devicePairingService.js:L20-L35",
+        "status": "RECONCILED_LOCAL_ONLY_PERSISTENCE"
+    }
+]

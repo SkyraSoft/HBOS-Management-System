@@ -1,0 +1,886 @@
+{
+    "models_audit": {
+        "AccountMovement": {
+            "has_business_rel": true,
+            "has_branch_rel": true,
+            "has_global_scope": false,
+            "has_business_fillable": true,
+            "has_branch_fillable": true
+        },
+        "AccountTransfer": {
+            "has_business_rel": true,
+            "has_branch_rel": false,
+            "has_global_scope": false,
+            "has_business_fillable": true,
+            "has_branch_fillable": false
+        },
+        "ActivityLog": {
+            "has_business_rel": true,
+            "has_branch_rel": true,
+            "has_global_scope": true,
+            "has_business_fillable": true,
+            "has_branch_fillable": true
+        },
+        "Branch": {
+            "has_business_rel": true,
+            "has_branch_rel": false,
+            "has_global_scope": false,
+            "has_business_fillable": true,
+            "has_branch_fillable": false
+        },
+        "BranchInventory": {
+            "has_business_rel": true,
+            "has_branch_rel": true,
+            "has_global_scope": false,
+            "has_business_fillable": true,
+            "has_branch_fillable": true
+        },
+        "Brand": {
+            "has_business_rel": true,
+            "has_branch_rel": false,
+            "has_global_scope": false,
+            "has_business_fillable": true,
+            "has_branch_fillable": false
+        },
+        "Business": {
+            "has_business_rel": false,
+            "has_branch_rel": false,
+            "has_global_scope": false,
+            "has_business_fillable": false,
+            "has_branch_fillable": false
+        },
+        "CashLedger": {
+            "has_business_rel": false,
+            "has_branch_rel": false,
+            "has_global_scope": false,
+            "has_business_fillable": true,
+            "has_branch_fillable": true
+        },
+        "Category": {
+            "has_business_rel": false,
+            "has_branch_rel": false,
+            "has_global_scope": false,
+            "has_business_fillable": true,
+            "has_branch_fillable": false
+        },
+        "Customer": {
+            "has_business_rel": false,
+            "has_branch_rel": false,
+            "has_global_scope": false,
+            "has_business_fillable": true,
+            "has_branch_fillable": false
+        },
+        "CustomerPayment": {
+            "has_business_rel": true,
+            "has_branch_rel": true,
+            "has_global_scope": false,
+            "has_business_fillable": true,
+            "has_branch_fillable": true
+        },
+        "Employee": {
+            "has_business_rel": true,
+            "has_branch_rel": false,
+            "has_global_scope": false,
+            "has_business_fillable": true,
+            "has_branch_fillable": false
+        },
+        "Expense": {
+            "has_business_rel": true,
+            "has_branch_rel": true,
+            "has_global_scope": false,
+            "has_business_fillable": true,
+            "has_branch_fillable": true
+        },
+        "ExpenseCategory": {
+            "has_business_rel": true,
+            "has_branch_rel": false,
+            "has_global_scope": false,
+            "has_business_fillable": true,
+            "has_branch_fillable": false
+        },
+        "FinancialAccount": {
+            "has_business_rel": true,
+            "has_branch_rel": true,
+            "has_global_scope": true,
+            "has_business_fillable": true,
+            "has_branch_fillable": true
+        },
+        "InventoryMovement": {
+            "has_business_rel": true,
+            "has_branch_rel": true,
+            "has_global_scope": false,
+            "has_business_fillable": true,
+            "has_branch_fillable": true
+        },
+        "KhataTransaction": {
+            "has_business_rel": false,
+            "has_branch_rel": false,
+            "has_global_scope": false,
+            "has_business_fillable": true,
+            "has_branch_fillable": false
+        },
+        "Product": {
+            "has_business_rel": false,
+            "has_branch_rel": false,
+            "has_global_scope": false,
+            "has_business_fillable": true,
+            "has_branch_fillable": false
+        },
+        "Purchase": {
+            "has_business_rel": false,
+            "has_branch_rel": true,
+            "has_global_scope": false,
+            "has_business_fillable": true,
+            "has_branch_fillable": true
+        },
+        "PurchaseItem": {
+            "has_business_rel": false,
+            "has_branch_rel": false,
+            "has_global_scope": false,
+            "has_business_fillable": false,
+            "has_branch_fillable": false
+        },
+        "RecurringExpense": {
+            "has_business_rel": false,
+            "has_branch_rel": false,
+            "has_global_scope": false,
+            "has_business_fillable": true,
+            "has_branch_fillable": false
+        },
+        "Sale": {
+            "has_business_rel": true,
+            "has_branch_rel": true,
+            "has_global_scope": false,
+            "has_business_fillable": true,
+            "has_branch_fillable": true
+        },
+        "SaleItem": {
+            "has_business_rel": false,
+            "has_branch_rel": false,
+            "has_global_scope": false,
+            "has_business_fillable": false,
+            "has_branch_fillable": false
+        },
+        "SalePayment": {
+            "has_business_rel": true,
+            "has_branch_rel": false,
+            "has_global_scope": false,
+            "has_business_fillable": true,
+            "has_branch_fillable": false
+        },
+        "SaleReturn": {
+            "has_business_rel": true,
+            "has_branch_rel": true,
+            "has_global_scope": false,
+            "has_business_fillable": true,
+            "has_branch_fillable": true
+        },
+        "SaleReturnItem": {
+            "has_business_rel": false,
+            "has_branch_rel": false,
+            "has_global_scope": false,
+            "has_business_fillable": false,
+            "has_branch_fillable": false
+        },
+        "Setting": {
+            "has_business_rel": false,
+            "has_branch_rel": false,
+            "has_global_scope": false,
+            "has_business_fillable": true,
+            "has_branch_fillable": false
+        },
+        "Subcategory": {
+            "has_business_rel": true,
+            "has_branch_rel": false,
+            "has_global_scope": false,
+            "has_business_fillable": true,
+            "has_branch_fillable": false
+        },
+        "Supplier": {
+            "has_business_rel": false,
+            "has_branch_rel": false,
+            "has_global_scope": false,
+            "has_business_fillable": true,
+            "has_branch_fillable": false
+        },
+        "SupplierPayment": {
+            "has_business_rel": false,
+            "has_branch_rel": false,
+            "has_global_scope": false,
+            "has_business_fillable": true,
+            "has_branch_fillable": false
+        },
+        "SupplierReturn": {
+            "has_business_rel": true,
+            "has_branch_rel": true,
+            "has_global_scope": false,
+            "has_business_fillable": true,
+            "has_branch_fillable": true
+        },
+        "SupplierReturnItem": {
+            "has_business_rel": false,
+            "has_branch_rel": false,
+            "has_global_scope": false,
+            "has_business_fillable": false,
+            "has_branch_fillable": false
+        },
+        "User": {
+            "has_business_rel": true,
+            "has_branch_rel": true,
+            "has_global_scope": false,
+            "has_business_fillable": true,
+            "has_branch_fillable": true
+        }
+    },
+    "tables_summary": {
+        "businesses": {
+            "columns": {
+                "name": "string",
+                "type": "string",
+                "address": "string",
+                "phone": "string",
+                "email": "string",
+                "logo": "string",
+                "currency": "string"
+            },
+            "uniques": [],
+            "foreigns": []
+        },
+        "users": {
+            "columns": {
+                "business_id": "foreignId",
+                "name": "string",
+                "email": "string",
+                "role": "string",
+                "is_active": "boolean",
+                "last_login_at": "timestamp",
+                "email_verified_at": "timestamp",
+                "password": "string",
+                "token": "string",
+                "created_at": "timestamp",
+                "id": "string",
+                "user_id": "foreignId",
+                "ip_address": "string",
+                "user_agent": "text",
+                "payload": "longText",
+                "last_activity": "integer",
+                "code": "string",
+                "phone": "string",
+                "address": "string",
+                "city": "string",
+                "is_primary": "boolean",
+                "status": "string",
+                "branch_id": "foreignId",
+                "salary": "decimal",
+                "salary_amount": "decimal",
+                "payment_cycle": "string",
+                "next_payment_date": "date"
+            },
+            "uniques": [
+                "email"
+            ],
+            "foreigns": []
+        },
+        "cache": {
+            "columns": {
+                "key": "string",
+                "value": "mediumText",
+                "expiration": "integer",
+                "owner": "string"
+            },
+            "uniques": [],
+            "foreigns": []
+        },
+        "jobs": {
+            "columns": {
+                "queue": "text",
+                "payload": "longText",
+                "attempts": "unsignedTinyInteger",
+                "reserved_at": "unsignedInteger",
+                "available_at": "unsignedInteger",
+                "created_at": "integer",
+                "id": "string",
+                "name": "string",
+                "total_jobs": "integer",
+                "pending_jobs": "integer",
+                "failed_jobs": "integer",
+                "failed_job_ids": "longText",
+                "options": "mediumText",
+                "cancelled_at": "integer",
+                "finished_at": "integer",
+                "uuid": "string",
+                "connection": "text",
+                "exception": "longText",
+                "failed_at": "timestamp"
+            },
+            "uniques": [
+                "uuid"
+            ],
+            "foreigns": []
+        },
+        "personal_access_tokens": {
+            "columns": {
+                "tokenable": "morphs",
+                "name": "text",
+                "token": "string",
+                "abilities": "text",
+                "last_used_at": "timestamp",
+                "expires_at": "timestamp"
+            },
+            "uniques": [],
+            "foreigns": []
+        },
+        "categories": {
+            "columns": {
+                "business_id": "foreignId",
+                "name": "string",
+                "description": "text"
+            },
+            "uniques": [],
+            "foreigns": []
+        },
+        "products": {
+            "columns": {
+                "business_id": "foreignId",
+                "category_id": "foreignId",
+                "name": "string",
+                "sku": "string",
+                "barcode": "string",
+                "cost_price": "decimal",
+                "selling_price": "decimal",
+                "stock": "integer",
+                "min_stock": "integer",
+                "unit": "string",
+                "description": "text",
+                "image": "string",
+                "is_active": "boolean",
+                "brand_id": "foreignId",
+                "subcategory_id": "foreignId",
+                "has_variations": "boolean",
+                "attributes": "json",
+                "variations": "json",
+                "expected_sell_date": "date",
+                "products_business_id_sku_unique": "dropUnique",
+                "products_business_id_barcode_unique": "dropUnique",
+                "wholesale_price": "decimal"
+            },
+            "uniques": [],
+            "foreigns": []
+        },
+        "sales": {
+            "columns": {
+                "business_id": "foreignId",
+                "user_id": "foreignId",
+                "customer_id": "unsignedBigInteger",
+                "invoice_number": "string",
+                "date": "date",
+                "subtotal": "decimal",
+                "discount": "decimal",
+                "tax": "decimal",
+                "total": "decimal",
+                "payment_method": "string",
+                "notes": "text",
+                "paid_amount": "decimal",
+                "due_amount": "decimal",
+                "status": "string",
+                "cancelled_at": "timestamp",
+                "cancelled_by": "foreignId",
+                "cancellation_reason": "text",
+                "cost_price": "decimal",
+                "returned_quantity": "integer",
+                "branch_id": "foreignId",
+                "sale_id": "foreignId",
+                "return_number": "string",
+                "refund_amount": "decimal",
+                "reason": "text",
+                "sale_return_id": "foreignId",
+                "sale_item_id": "foreignId",
+                "product_id": "foreignId",
+                "quantity": "integer",
+                "unit_price": "decimal",
+                "idempotency_key": "string",
+                "sales_business_idempotency_unique": "dropUnique",
+                "sales_invoice_number_unique": "dropUnique",
+                "sales_business_invoice_number_unique": "dropUnique"
+            },
+            "uniques": [
+                "invoice_number",
+                "business_id,return_number",
+                "invoice_number,sales_invoice_number_unique"
+            ],
+            "foreigns": []
+        },
+        "purchases": {
+            "columns": {
+                "business_id": "foreignId",
+                "supplier_id": "unsignedBigInteger",
+                "user_id": "foreignId",
+                "po_number": "string",
+                "date": "date",
+                "subtotal": "decimal",
+                "total": "decimal",
+                "status": "string",
+                "notes": "text",
+                "paid_amount": "decimal",
+                "due_amount": "decimal",
+                "cancelled_at": "timestamp",
+                "cancelled_by": "foreignId",
+                "cancellation_reason": "text",
+                "purchases_po_number_unique": "dropUnique",
+                "suppliers_business_code_unique": "dropUnique",
+                "purchases_business_po_number_unique": "dropUnique",
+                "freight_amount": "decimal",
+                "landed_cost_allocated": "boolean"
+            },
+            "uniques": [
+                "po_number",
+                "po_number,purchases_po_number_unique"
+            ],
+            "foreigns": []
+        },
+        "sale_items": {
+            "columns": {
+                "sale_id": "foreignId",
+                "product_id": "foreignId",
+                "quantity": "integer",
+                "unit_price": "decimal",
+                "discount": "decimal",
+                "total": "decimal",
+                "cost_price": "decimal",
+                "barcode": "string",
+                "sku": "string",
+                "product_name": "string",
+                "unit_cost": "decimal"
+            },
+            "uniques": [],
+            "foreigns": []
+        },
+        "purchase_items": {
+            "columns": {
+                "purchase_id": "foreignId",
+                "product_id": "foreignId",
+                "quantity": "integer",
+                "unit_cost": "decimal",
+                "total": "decimal"
+            },
+            "uniques": [],
+            "foreigns": []
+        },
+        "customers": {
+            "columns": {
+                "business_id": "foreignId",
+                "name": "string",
+                "phone": "string",
+                "email": "string",
+                "address": "text",
+                "balance": "decimal",
+                "opening_balance": "decimal",
+                "secondary_phone": "string"
+            },
+            "uniques": [],
+            "foreigns": []
+        },
+        "khata_transactions": {
+            "columns": {
+                "business_id": "foreignId",
+                "customer_id": "foreignId",
+                "type": "enum",
+                "amount": "decimal",
+                "date": "date",
+                "notes": "text"
+            },
+            "uniques": [],
+            "foreigns": []
+        },
+        "suppliers": {
+            "columns": {
+                "business_id": "foreignId",
+                "name": "string",
+                "contact_person": "string",
+                "phone": "string",
+                "email": "string",
+                "address": "text",
+                "balance": "decimal",
+                "code": "string",
+                "opening_balance": "decimal",
+                "purchase_id": "foreignId"
+            },
+            "uniques": [],
+            "foreigns": []
+        },
+        "supplier_payments": {
+            "columns": {
+                "business_id": "foreignId",
+                "supplier_id": "foreignId",
+                "amount": "decimal",
+                "date": "date",
+                "payment_method": "string",
+                "notes": "text",
+                "idempotency_key": "string",
+                "sp_business_idempotency_unique": "dropUnique"
+            },
+            "uniques": [],
+            "foreigns": []
+        },
+        "expenses": {
+            "columns": {
+                "business_id": "foreignId",
+                "category": "string",
+                "amount": "decimal",
+                "date": "date",
+                "description": "text",
+                "user_id": "foreignId",
+                "category_id": "foreignId",
+                "financial_account_id": "foreignId",
+                "status": "enum",
+                "idempotency_key": "string",
+                "voided_at": "timestamp",
+                "voided_by": "foreignId",
+                "void_reason": "string",
+                "expenses_biz_idem_unique": "dropUnique"
+            },
+            "uniques": [],
+            "foreigns": []
+        },
+        "recurring_expenses": {
+            "columns": {
+                "business_id": "foreignId",
+                "category": "string",
+                "amount": "decimal",
+                "frequency": "string",
+                "next_due_date": "date",
+                "description": "text"
+            },
+            "uniques": [],
+            "foreigns": []
+        },
+        "settings": {
+            "columns": {
+                "business_id": "foreignId",
+                "key": "string",
+                "value": "text",
+                "type": "string"
+            },
+            "uniques": [
+                "business_id,key"
+            ],
+            "foreigns": []
+        },
+        "brands": {
+            "columns": {
+                "business_id": "foreignId",
+                "name": "string",
+                "image": "string"
+            },
+            "uniques": [],
+            "foreigns": []
+        },
+        "subcategories": {
+            "columns": {
+                "business_id": "foreignId",
+                "category_id": "foreignId",
+                "name": "string"
+            },
+            "uniques": [],
+            "foreigns": []
+        },
+        "expense_categories": {
+            "columns": {
+                "business_id": "foreignId",
+                "name": "string",
+                "monthly_budget": "decimal"
+            },
+            "uniques": [],
+            "foreigns": []
+        },
+        "notifications": {
+            "columns": {
+                "id": "uuid",
+                "type": "string",
+                "notifiable": "morphs",
+                "data": "text",
+                "read_at": "timestamp"
+            },
+            "uniques": [],
+            "foreigns": []
+        },
+        "employees": {
+            "columns": {
+                "business_id": "foreignId",
+                "name": "string",
+                "role": "string",
+                "phone": "string",
+                "salary_amount": "decimal",
+                "payment_cycle": "string",
+                "next_payment_date": "date",
+                "is_active": "boolean"
+            },
+            "uniques": [],
+            "foreigns": []
+        },
+        "activity_log": {
+            "columns": {
+                "log_name": "string",
+                "description": "text",
+                "subject": "nullableMorphs",
+                "event": "string",
+                "causer": "nullableMorphs",
+                "attribute_changes": "json",
+                "properties": "json",
+                "business_id": "foreignId",
+                "branch_id": "foreignId"
+            },
+            "uniques": [],
+            "foreigns": []
+        },
+        "business_user": {
+            "columns": {
+                "business_id": "foreignId",
+                "user_id": "foreignId"
+            },
+            "uniques": [
+                "business_id,user_id"
+            ],
+            "foreigns": []
+        },
+        "branches": {
+            "columns": {
+                "business_id": "foreignId",
+                "name": "string",
+                "code": "string",
+                "phone": "string",
+                "address": "string",
+                "city": "string",
+                "is_primary": "boolean",
+                "status": "string",
+                "branch_id": "foreignId",
+                "email": "string",
+                "role": "string",
+                "salary": "decimal"
+            },
+            "uniques": [],
+            "foreigns": []
+        },
+        "inventory_movements": {
+            "columns": {
+                "business_id": "foreignId",
+                "branch_id": "foreignId",
+                "product_id": "foreignId",
+                "type": "string",
+                "reference": "morphs",
+                "quantity": "integer",
+                "balance": "integer",
+                "notes": "text",
+                "amount": "decimal",
+                "quantity_on_hand": "integer",
+                "minimum_stock": "integer",
+                "reorder_level": "integer",
+                "unit_cost": "decimal",
+                "performed_by": "foreignId",
+                "reference_type": "string",
+                "reference_id": "unsignedBigInteger",
+                "transfer_status": "string"
+            },
+            "uniques": [],
+            "foreigns": []
+        },
+        "branch_user": {
+            "columns": {
+                "business_id": "foreignId",
+                "branch_id": "foreignId",
+                "user_id": "foreignId"
+            },
+            "uniques": [
+                "business_id,branch_id,user_id"
+            ],
+            "foreigns": []
+        },
+        "branch_inventories": {
+            "columns": {
+                "business_id": "foreignId",
+                "branch_id": "foreignId",
+                "product_id": "foreignId",
+                "quantity_on_hand": "integer",
+                "minimum_stock": "integer",
+                "reorder_level": "integer",
+                "unit_cost": "decimal",
+                "performed_by": "foreignId",
+                "reference_type": "string",
+                "reference_id": "unsignedBigInteger",
+                "balance": "integer"
+            },
+            "uniques": [],
+            "foreigns": []
+        },
+        "sale_returns": {
+            "columns": {
+                "paid_amount": "decimal",
+                "due_amount": "decimal",
+                "status": "string",
+                "cancelled_at": "timestamp",
+                "cancelled_by": "foreignId",
+                "cancellation_reason": "text",
+                "cost_price": "decimal",
+                "returned_quantity": "integer",
+                "business_id": "foreignId",
+                "branch_id": "foreignId",
+                "sale_id": "foreignId",
+                "user_id": "foreignId",
+                "return_number": "string",
+                "refund_amount": "decimal",
+                "reason": "text",
+                "sale_return_id": "foreignId",
+                "sale_item_id": "foreignId",
+                "product_id": "foreignId",
+                "quantity": "integer",
+                "unit_price": "decimal",
+                "idempotency_key": "string",
+                "sale_returns_business_idempotency_unique": "dropUnique"
+            },
+            "uniques": [
+                "business_id,return_number"
+            ],
+            "foreigns": []
+        },
+        "customer_payments": {
+            "columns": {
+                "business_id": "foreignId",
+                "branch_id": "foreignId",
+                "customer_id": "foreignId",
+                "sale_id": "foreignId",
+                "user_id": "foreignId",
+                "payment_number": "string",
+                "amount": "decimal",
+                "payment_method": "string",
+                "date": "date",
+                "notes": "text",
+                "idempotency_key": "string",
+                "status": "string",
+                "reversed_at": "timestamp",
+                "reversed_by": "foreignId",
+                "reversal_reason": "text"
+            },
+            "uniques": [],
+            "foreigns": []
+        },
+        "financial_accounts": {
+            "columns": {
+                "business_id": "foreignId",
+                "branch_id": "foreignId",
+                "name": "string",
+                "type": "enum",
+                "account_number": "string",
+                "bank_name": "string",
+                "opening_balance": "decimal",
+                "balance": "decimal",
+                "is_default": "boolean",
+                "status": "enum"
+            },
+            "uniques": [],
+            "foreigns": []
+        },
+        "account_movements": {
+            "columns": {
+                "business_id": "foreignId",
+                "branch_id": "foreignId",
+                "account_id": "foreignId",
+                "type": "enum",
+                "movement_category": "enum",
+                "reference_type": "string",
+                "reference_id": "unsignedBigInteger",
+                "amount": "decimal",
+                "date": "date",
+                "description": "text",
+                "user_id": "foreignId",
+                "idempotency_key": "string",
+                "status": "enum",
+                "reversed_at": "timestamp",
+                "reversed_by": "foreignId",
+                "reversal_reason": "string"
+            },
+            "uniques": [],
+            "foreigns": []
+        },
+        "account_transfers": {
+            "columns": {
+                "business_id": "foreignId",
+                "source_account_id": "foreignId",
+                "destination_account_id": "foreignId",
+                "amount": "decimal",
+                "date": "date",
+                "notes": "text",
+                "user_id": "foreignId",
+                "idempotency_key": "string",
+                "status": "enum"
+            },
+            "uniques": [],
+            "foreigns": []
+        },
+        "sale_payments": {
+            "columns": {
+                "business_id": "unsignedBigInteger",
+                "sale_id": "unsignedBigInteger",
+                "payment_method": "string",
+                "amount": "decimal",
+                "financial_account_id": "unsignedBigInteger",
+                "reference_number": "string"
+            },
+            "uniques": [],
+            "foreigns": []
+        },
+        "sale_return_items": {
+            "columns": {
+                "is_restockable": "boolean",
+                "return_reason": "string"
+            },
+            "uniques": [],
+            "foreigns": []
+        },
+        "supplier_returns": {
+            "columns": {
+                "business_id": "unsignedBigInteger",
+                "branch_id": "unsignedBigInteger",
+                "supplier_id": "unsignedBigInteger",
+                "purchase_id": "unsignedBigInteger",
+                "return_number": "string",
+                "total_amount": "decimal",
+                "status": "string",
+                "reason": "string",
+                "created_by": "unsignedBigInteger",
+                "supplier_return_id": "unsignedBigInteger",
+                "product_id": "unsignedBigInteger",
+                "quantity": "integer",
+                "unit_cost": "decimal",
+                "total": "decimal"
+            },
+            "uniques": [
+                "business_id,return_number"
+            ],
+            "foreigns": []
+        }
+    },
+    "controllers_audit": {
+        "Controller": {
+            "uses_auth_business": false,
+            "uses_request_business": false,
+            "has_branch_logic": false,
+            "methods": []
+        }
+    },
+    "auth_controller_analysis": {
+        "has_register_method": false,
+        "has_login_method": false,
+        "has_logout_method": false,
+        "has_user_profile": false,
+        "has_password_reset": false
+    },
+    "user_controller_analysis": {
+        "has_store_method": false,
+        "creates_internal_user_only": false
+    },
+    "dexie_usage_files": [
+        "\/src\/services\/localDb.js"
+    ],
+    "auth_store_content": "import { defineStore } from 'pinia';\r\nimport api from '..\/api';\r\n\r\nexport const useAuthStore = defineStore('auth', {\r\n    state: () => ({\r\n        user: JSON.parse(localStorage.getItem('hbos_user')) || null,\r\n        token: localStorage.getItem('hbos_token') || null,\r\n        activeBusinessId: localStorage.getItem('hbos_business_id') || null,\r\n    }),\r\n    \r\n    getters: {\r\n        isAuthenticated: (state) => !!state.token,\r\n    },\r\n    \r\n    actions: {\r\n        async login(credentials) {\r\n            try {\r\n                const response = await api.post('\/auth\/login', credentials);\r\n                const businessId = response.data.business?.id || response.data.user?.business_id || null;\r\n                this.setAuthData(response.data.user, response.data.access_token || response.data.token, businessId);\r\n                return true;\r\n            } catch (error) {\r\n                console.error('Login failed:', error);\r\n                throw error;\r\n            }\r\n        },\r\n        \r\n        async register(userData) {\r\n            try {\r\n                const response = await api.post('\/auth\/register', userData);\r\n                const businessId = response.data.business?.id || response.data.user?.business_id || null;\r\n                this.setAuthData(response.data.user, response.data.access_token || response.data.token, businessId);\r\n                return true;\r\n            } catch (error) {\r\n                console.error('Registration failed:', error);\r\n                throw error;\r\n            }\r\n        },\r\n        \r\n        async logout() {\r\n            try {\r\n                await api.post('\/auth\/logout');\r\n            } catch (error) {\r\n                console.error('Logout failed:', error);\r\n            } finally {\r\n                this.clearAuthData();\r\n            }\r\n        },\r\n        \r\n        setActiveBusinessId(businessId) {\r\n            this.activeBusinessId = businessId;\r\n            if (businessId) {\r\n                localStorage.setItem('hbos_business_id', String(businessId));\r\n            } else {\r\n                localStorage.removeItem('hbos_business_id');\r\n            }\r\n        },\r\n\r\n        setAuthData(user, token, businessId = null) {\r\n            this.user = user;\r\n            this.token = token;\r\n            const resolvedBizId = businessId || user?.business_id || null;\r\n            this.activeBusinessId = resolvedBizId;\r\n            localStorage.setItem('hbos_user', JSON.stringify(user));\r\n            localStorage.setItem('hbos_token', token);\r\n            if (resolvedBizId) {\r\n                localStorage.setItem('hbos_business_id', String(resolvedBizId));\r\n            }\r\n        },\r\n        \r\n        clearAuthData() {\r\n            this.user = null;\r\n            this.token = null;\r\n            this.activeBusinessId = null;\r\n            localStorage.removeItem('hbos_user');\r\n            localStorage.removeItem('hbos_token');\r\n            localStorage.removeItem('hbos_business_id');\r\n        }\r\n    }\r\n});\r\n",
+    "http_clients": []
+}

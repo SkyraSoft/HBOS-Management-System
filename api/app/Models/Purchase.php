@@ -20,6 +20,8 @@ class Purchase extends Model
         'date',
         'subtotal',
         'total',
+        'freight_amount',
+        'landed_cost_allocated',
         'paid_amount',
         'due_amount',
         'status',
@@ -32,6 +34,8 @@ class Purchase extends Model
     protected $casts = [
         'subtotal' => 'decimal:2',
         'total' => 'decimal:2',
+        'freight_amount' => 'decimal:2',
+        'landed_cost_allocated' => 'boolean',
         'paid_amount' => 'decimal:2',
         'due_amount' => 'decimal:2',
         'cancelled_at' => 'datetime',

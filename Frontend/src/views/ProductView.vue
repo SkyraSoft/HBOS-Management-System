@@ -59,11 +59,12 @@
                   <tr>
                     <th>Product</th>
                     <th>Brand</th>
-                            <th>Category</th>
-                            <th>Subcategory</th>
+                    <th>Category</th>
+                    <th>Subcategory</th>
                     <th>SKU</th>
-                    <th>Purchase</th>
+                    <th v-if="canViewCost">Purchase</th>
                     <th>Selling</th>
+                    <th>Wholesale</th>
                     <th>Stock</th>
                     <th>Status</th>
                     <th class="text-end">Action</th>
@@ -77,7 +78,15 @@
                             <div v-else style="width: 40px; height: 40px; border-radius: 6px; background: #e9efff; color: #2447c6; display: flex; align-items: center; justify-content: center;"><i class="bi bi-image"></i></div>
                           <div>
                             <div class="pv-product-name">{{ product.name }}</div>
-                            <div class="pv-product-sku">Product ID #{{ product.id }}</div>
+                            <div class="pv-product-sku">
+                              Product ID #{{ product.id }}
+                              <span v-if="product.alternateBarcodes && product.alternateBarcodes.length > 0" class="badge bg-secondary-subtle text-secondary ms-1" style="font-size: 10px;">
+                                +{{ product.alternateBarcodes.length }} barcodes
+                              </span>
+                              <span v-if="product.allowFractional" class="badge bg-info-subtle text-info ms-1" style="font-size: 10px;">
+                                Loose
+                              </span>
+                            </div>
                           </div>
                         </div>
                       </td>
@@ -85,8 +94,9 @@
                     <td>{{ product.category || '—' }}</td>
                     <td>{{ product.subcategory || '—' }}</td>
                     <td>{{ product.sku || '—' }}</td>
-                    <td style="font-weight:500;">PKR {{ formatNumber(product.cost) }}</td>
+                    <td v-if="canViewCost" style="font-weight:500;">PKR {{ formatNumber(product.cost) }}</td>
                     <td style="font-weight:500;">PKR {{ formatNumber(product.price) }}</td>
+                    <td style="font-weight:500;">{{ product.wholesalePrice ? 'PKR ' + formatNumber(product.wholesalePrice) : '—' }}</td>
                     <td>
                       <span class="pv-stock-val">{{ formatNumber(product.stock) }}</span>
                       <span class="pv-stock-unit"> {{ product.unit }}</span>
@@ -194,22 +204,29 @@
               <div class="pv-form-card">
                 <div class="pv-section-heading"><i class="bi bi-cash-stack"></i> Pricing</div>
                 <div class="row g-4">
-                  <div class="col-md-6">
+                  <div class="col-md-4" v-if="canViewCost">
                     <label class="pv-label">Purchase Price (PKR) *</label>
                     <div class="pv-input-group">
                       <span class="pv-input-prefix">Rs</span>
                       <input type="number" class="pv-input" v-model.number="form.cost" min="0" step="0.01">
                     </div>
                   </div>
-                  <div class="col-md-6">
+                  <div :class="canViewCost ? 'col-md-4' : 'col-md-6'">
                     <label class="pv-label">Selling Price (PKR) *</label>
                     <div class="pv-input-group">
                       <span class="pv-input-prefix">Rs</span>
                       <input type="number" class="pv-input" v-model.number="form.price" min="0" step="0.01">
                     </div>
                   </div>
+                  <div :class="canViewCost ? 'col-md-4' : 'col-md-6'">
+                    <label class="pv-label">Wholesale Price (PKR) <span class="text-muted">(Optional)</span></label>
+                    <div class="pv-input-group">
+                      <span class="pv-input-prefix">Rs</span>
+                      <input type="number" class="pv-input" v-model.number="form.wholesalePrice" min="0" step="0.01" placeholder="Tier rate">
+                    </div>
+                  </div>
                 </div>
-                <div class="pv-price-result">
+                <div class="pv-price-result" v-if="canViewCost">
                   <div class="pv-price-item">
                     <div class="pv-price-label">Profit Per Unit</div>
                     <div class="pv-price-value">Rs {{ profitPerUnit.toFixed(2) }}</div>
@@ -238,16 +255,61 @@
                   </div>
                   <div class="col-md-6">
                     <label class="pv-label">Initial Stock</label>
-                    <input type="number" class="pv-input" v-model.number="form.stock" min="0">
+                    <input type="number" step="0.001" class="pv-input" v-model.number="form.stock" min="0">
                   </div>
                   <div class="col-md-6">
                     <label class="pv-label">Minimum Stock Level</label>
-                    <input type="number" class="pv-input" v-model.number="form.minStock" min="0">
+                    <input type="number" step="0.001" class="pv-input" v-model.number="form.minStock" min="0">
                   </div>
                   <div class="col-md-6">
                     <label class="pv-label">Maximum Stock Level</label>
-                    <input type="number" class="pv-input" v-model.number="form.maxStock" min="0">
+                    <input type="number" step="0.001" class="pv-input" v-model.number="form.maxStock" min="0">
                   </div>
+                  <div class="col-md-6">
+                    <label class="pv-label">Product Status</label>
+                    <select class="pv-select" v-model="form.active" id="productStatusAdd">
+                      <option :value="true">Active</option>
+                      <option :value="false">Inactive</option>
+                    </select>
+                  </div>
+
+                  <!-- LOOSE / FRACTIONAL SALES (SRT-GAP-012) -->
+                  <div class="col-12 mt-3 p-3 bg-light rounded-3 border">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                      <div class="fw-bold small text-dark"><i class="bi bi-pie-chart me-1"></i> Fractional / Loose Item Sales</div>
+                      <div class="form-check form-switch m-0">
+                        <input class="form-check-input" type="checkbox" id="allowFractionalAdd" v-model="form.allowFractional">
+                        <label class="form-check-label small fw-semibold" for="allowFractionalAdd">Allow Fractional Quantities (e.g. 0.5 kg)</label>
+                      </div>
+                    </div>
+                    <div v-if="form.allowFractional" class="row g-2 mt-1">
+                      <div class="col-md-6">
+                        <label class="pv-label small">Fractional Sale Unit</label>
+                        <input type="text" class="pv-input" v-model="form.saleUnit" placeholder="e.g. kg, meter, liter, gm" />
+                      </div>
+                      <div class="col-md-6">
+                        <label class="pv-label small">Conversion Factor</label>
+                        <input type="number" step="0.001" class="pv-input" v-model.number="form.conversionFactor" placeholder="1.000" />
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- ALTERNATE BARCODES (SRT-GAP-012) -->
+                  <div class="col-12 mt-3 p-3 bg-light rounded-3 border">
+                    <div class="fw-bold small text-dark mb-2"><i class="bi bi-upc-scan me-1"></i> Alternate Barcodes</div>
+                    <div class="d-flex gap-2 mb-2">
+                      <input type="text" class="pv-input" v-model="form.newAlternateBarcode" placeholder="Enter alternate barcode..." @keydown.enter.prevent="addAlternateBarcode(form)" />
+                      <button type="button" class="btn btn-sm btn-outline-primary px-3 text-nowrap" @click="addAlternateBarcode(form)">+ Add Barcode</button>
+                    </div>
+                    <div v-if="form.alternateBarcodes && form.alternateBarcodes.length > 0" class="d-flex flex-wrap gap-1">
+                      <span v-for="(bc, bIdx) in form.alternateBarcodes" :key="bIdx" class="badge bg-white text-dark border d-flex align-items-center gap-1 px-2 py-1">
+                        <code>{{ bc }}</code>
+                        <i class="bi bi-x text-danger" style="cursor: pointer;" @click="removeAlternateBarcode(form, bIdx)"></i>
+                      </span>
+                    </div>
+                    <div v-else class="text-muted small" style="font-size: 11px;">No alternate barcodes added. Product primary SKU/barcode will be indexed automatically.</div>
+                  </div>
+                </div>
                 </div>
               </div>
 
@@ -511,11 +573,11 @@
                     <div class="pv-detail-stat-lbl">Selling Price</div>
                   </div>
                 </div>
-                <div class="pv-detail-stat-box">
+                <div class="pv-detail-stat-box" v-if="canViewCost">
                   <div class="pv-detail-stat-icon pv-icon-orange"><i class="bi bi-graph-up"></i></div>
                   <div>
                     <div class="pv-detail-stat-val">
-                      {{ selectedProduct.price > 0 ? (((selectedProduct.price - selectedProduct.cost) / selectedProduct.price) * 100).toFixed(1) : '0.0' }}%
+                      {{ selectedProduct.price > 0 && selectedProduct.cost ? (((selectedProduct.price - selectedProduct.cost) / selectedProduct.price) * 100).toFixed(1) : '0.0' }}%
                     </div>
                     <div class="pv-detail-stat-lbl">Profit Margin</div>
                   </div>
@@ -535,6 +597,18 @@
                     <tr><td class="pv-dt-label">Subcategory</td><td class="pv-dt-val">{{ selectedProduct.subcategory || '—' }}</td></tr>
                     <tr><td class="pv-dt-label">SKU</td><td class="pv-dt-val"><code class="pv-code">{{ selectedProduct.sku || '—' }}</code></td></tr>
                     <tr><td class="pv-dt-label">Unit of Measure</td><td class="pv-dt-val">{{ selectedProduct.unit }}</td></tr>
+                    <tr v-if="selectedProduct.allowFractional">
+                      <td class="pv-dt-label">Fractional Sales</td>
+                      <td class="pv-dt-val"><span class="badge bg-info text-white">Loose (Unit: {{ selectedProduct.saleUnit || selectedProduct.unit }})</span></td>
+                    </tr>
+                    <tr v-if="selectedProduct.alternateBarcodes && selectedProduct.alternateBarcodes.length > 0">
+                      <td class="pv-dt-label">Alternate Barcodes</td>
+                      <td class="pv-dt-val">
+                        <span v-for="(b, bi) in selectedProduct.alternateBarcodes" :key="bi" class="badge bg-light text-dark border me-1">
+                          {{ b }}
+                        </span>
+                      </td>
+                    </tr>
                     <tr><td class="pv-dt-label">Status</td><td class="pv-dt-val"><span class="pv-badge" :class="statusClass(selectedProduct)">{{ statusLabel(selectedProduct) }}</span></td></tr>
                     <tr>
                       <td class="pv-dt-label">Description</td>
@@ -554,7 +628,7 @@
                 <div class="pv-detail-card-title"><i class="bi bi-cash-stack"></i> Pricing</div>
                 <table class="pv-detail-table">
                   <tbody>
-                    <tr>
+                    <tr v-if="canViewCost">
                       <td class="pv-dt-label">Purchase Price</td>
                       <td class="pv-dt-val pv-dt-price">PKR {{ formatNumber(selectedProduct.cost) }}</td>
                     </tr>
@@ -562,16 +636,20 @@
                       <td class="pv-dt-label">Selling Price</td>
                       <td class="pv-dt-val pv-dt-price">PKR {{ formatNumber(selectedProduct.price) }}</td>
                     </tr>
-                    <tr>
+                    <tr v-if="selectedProduct.wholesalePrice">
+                      <td class="pv-dt-label">Wholesale Price</td>
+                      <td class="pv-dt-val pv-dt-price">PKR {{ formatNumber(selectedProduct.wholesalePrice) }}</td>
+                    </tr>
+                    <tr v-if="canViewCost">
                       <td class="pv-dt-label">Profit Per Unit</td>
                       <td class="pv-dt-val pv-text-success pv-dt-price">
                         PKR {{ formatNumber(selectedProduct.price - selectedProduct.cost) }}
                       </td>
                     </tr>
-                    <tr>
+                    <tr v-if="canViewCost">
                       <td class="pv-dt-label">Profit Margin</td>
                       <td class="pv-dt-val pv-text-success pv-dt-price">
-                        {{ selectedProduct.price > 0 ? (((selectedProduct.price - selectedProduct.cost) / selectedProduct.price) * 100).toFixed(2) : '0.00' }}%
+                        {{ selectedProduct.price > 0 && selectedProduct.cost ? (((selectedProduct.price - selectedProduct.cost) / selectedProduct.price) * 100).toFixed(2) : '0.00' }}%
                       </td>
                     </tr>
                   </tbody>
@@ -717,22 +795,29 @@
               <div class="pv-form-card">
                 <div class="pv-section-heading"><i class="bi bi-cash-stack"></i> Pricing</div>
                 <div class="row g-4">
-                  <div class="col-md-6">
+                  <div class="col-md-4" v-if="canViewCost">
                     <label class="pv-label">Purchase Price (PKR) *</label>
                     <div class="pv-input-group">
                       <span class="pv-input-prefix">Rs</span>
                       <input type="number" class="pv-input" v-model.number="editForm.cost" min="0" step="0.01">
                     </div>
                   </div>
-                  <div class="col-md-6">
+                  <div :class="canViewCost ? 'col-md-4' : 'col-md-6'">
                     <label class="pv-label">Selling Price (PKR) *</label>
                     <div class="pv-input-group">
                       <span class="pv-input-prefix">Rs</span>
                       <input type="number" class="pv-input" v-model.number="editForm.price" min="0" step="0.01">
                     </div>
                   </div>
+                  <div :class="canViewCost ? 'col-md-4' : 'col-md-6'">
+                    <label class="pv-label">Wholesale Price (PKR) <span class="text-muted">(Optional)</span></label>
+                    <div class="pv-input-group">
+                      <span class="pv-input-prefix">Rs</span>
+                      <input type="number" class="pv-input" v-model.number="editForm.wholesalePrice" min="0" step="0.01" placeholder="Tier rate">
+                    </div>
+                  </div>
                 </div>
-                <div class="pv-price-result">
+                <div class="pv-price-result" v-if="canViewCost">
                   <div class="pv-price-item">
                     <div class="pv-price-label">Profit Per Unit</div>
                     <div class="pv-price-value">Rs {{ editProfitPerUnit.toFixed(2) }}</div>
@@ -761,15 +846,59 @@
                   </div>
                   <div class="col-md-4">
                     <label class="pv-label">Current Stock</label>
-                    <input type="number" class="pv-input" v-model.number="editForm.stock" min="0">
+                    <input type="number" step="0.001" class="pv-input" v-model.number="editForm.stock" min="0">
                   </div>
                   <div class="col-md-4">
                     <label class="pv-label">Minimum Stock Level</label>
-                    <input type="number" class="pv-input" v-model.number="editForm.minStock" min="0">
+                    <input type="number" step="0.001" class="pv-input" v-model.number="editForm.minStock" min="0">
                   </div>
                   <div class="col-md-4">
                     <label class="pv-label">Maximum Stock Level</label>
-                    <input type="number" class="pv-input" v-model.number="editForm.maxStock" min="0">
+                    <input type="number" step="0.001" class="pv-input" v-model.number="editForm.maxStock" min="0">
+                  </div>
+                  <div class="col-md-4">
+                    <label class="pv-label">Product Status</label>
+                    <select class="pv-select" v-model="editForm.active" id="productStatusEdit">
+                      <option :value="true">Active</option>
+                      <option :value="false">Inactive</option>
+                    </select>
+                  </div>
+
+                  <!-- LOOSE / FRACTIONAL SALES (SRT-GAP-012) -->
+                  <div class="col-12 mt-3 p-3 bg-light rounded-3 border">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                      <div class="fw-bold small text-dark"><i class="bi bi-pie-chart me-1"></i> Fractional / Loose Item Sales</div>
+                      <div class="form-check form-switch m-0">
+                        <input class="form-check-input" type="checkbox" id="allowFractionalEdit" v-model="editForm.allowFractional">
+                        <label class="form-check-label small fw-semibold" for="allowFractionalEdit">Allow Fractional Quantities (e.g. 0.5 kg)</label>
+                      </div>
+                    </div>
+                    <div v-if="editForm.allowFractional" class="row g-2 mt-1">
+                      <div class="col-md-6">
+                        <label class="pv-label small">Fractional Sale Unit</label>
+                        <input type="text" class="pv-input" v-model="editForm.saleUnit" placeholder="e.g. kg, meter, liter, gm" />
+                      </div>
+                      <div class="col-md-6">
+                        <label class="pv-label small">Conversion Factor</label>
+                        <input type="number" step="0.001" class="pv-input" v-model.number="editForm.conversionFactor" placeholder="1.000" />
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- ALTERNATE BARCODES (SRT-GAP-012) -->
+                  <div class="col-12 mt-3 p-3 bg-light rounded-3 border">
+                    <div class="fw-bold small text-dark mb-2"><i class="bi bi-upc-scan me-1"></i> Alternate Barcodes</div>
+                    <div class="d-flex gap-2 mb-2">
+                      <input type="text" class="pv-input" v-model="editForm.newAlternateBarcode" placeholder="Enter alternate barcode..." @keydown.enter.prevent="addAlternateBarcode(editForm)" />
+                      <button type="button" class="btn btn-sm btn-outline-primary px-3 text-nowrap" @click="addAlternateBarcode(editForm)">+ Add Barcode</button>
+                    </div>
+                    <div v-if="editForm.alternateBarcodes && editForm.alternateBarcodes.length > 0" class="d-flex flex-wrap gap-1">
+                      <span v-for="(bc, bIdx) in editForm.alternateBarcodes" :key="bIdx" class="badge bg-white text-dark border d-flex align-items-center gap-1 px-2 py-1">
+                        <code>{{ bc }}</code>
+                        <i class="bi bi-x text-danger" style="cursor: pointer;" @click="removeAlternateBarcode(editForm, bIdx)"></i>
+                      </span>
+                    </div>
+                    <div v-else class="text-muted small" style="font-size: 11px;">No alternate barcodes added. Product primary SKU/barcode will be indexed automatically.</div>
                   </div>
                   <div class="col-12 mt-3">
                     <label class="pv-label">Update Product Image (Optional)</label>
@@ -1585,11 +1714,21 @@ const emit = defineEmits(['success', 'close'])
 import { ref, computed, reactive, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useRetailStore } from '@/stores/retail.js'
+import { useAuthStore } from '@/stores/auth.js'
 import api from '@/api'
 
 const router = useRouter()
 const route = useRoute()
 const store = useRetailStore()
+const authStore = useAuthStore()
+
+const canViewCost = computed(() => {
+  const user = authStore.user;
+  if (!user) return false;
+  if (user.role === 'Business Owner' || user.roles?.some(r => r.name === 'Business Owner')) return true;
+  if (authStore.can?.('view product costs')) return true;
+  return false;
+})
 
 const products = computed(() => store.products || [])
 const categories = computed(() => store.categories || [])
@@ -2267,6 +2406,12 @@ const defaultForm = () => ({
   description: '',
   cost: 0,
   price: 0,
+  wholesalePrice: null,
+  allowFractional: false,
+  saleUnit: '',
+  conversionFactor: 1.0,
+  alternateBarcodes: [],
+  newAlternateBarcode: '',
   unit: 'Piece (pc)',
   stock: 0,
   minStock: 10,
@@ -2284,7 +2429,8 @@ const form = reactive(defaultForm())
 // Edit Product Form
 const editForm = reactive({
   name: '', category: '', subcategory: '', brand: '', sku: '', description: '',
-  cost: 0, price: 0, unit: 'Piece (pc)',
+  cost: 0, price: 0, wholesalePrice: null, allowFractional: false, saleUnit: '', conversionFactor: 1.0,
+  alternateBarcodes: [], newAlternateBarcode: '', unit: 'Piece (pc)',
   stock: 0, minStock: 10, maxStock: 100, active: true,
   imageName: '', imageFile: null, imagePreview: '',
   hasVariations: false, attributes: [], variations: []
@@ -2302,7 +2448,9 @@ const filteredProducts = computed(() => {
   return store.products.filter(p =>
     p.name?.toLowerCase().includes(q) ||
     p.sku?.toLowerCase().includes(q) ||
-    p.category?.toLowerCase().includes(q)
+    p.category?.toLowerCase().includes(q) ||
+    p.barcode?.toLowerCase().includes(q) ||
+    (Array.isArray(p.alternateBarcodes) && p.alternateBarcodes.some(b => String(b).toLowerCase().includes(q)))
   )
 })
 
@@ -2334,6 +2482,22 @@ const editProfitMargin = computed(() =>
   editForm.price > 0 ? (editProfitPerUnit.value / editForm.price) * 100 : 0
 )
 
+const addAlternateBarcode = (targetForm) => {
+  const bc = (targetForm.newAlternateBarcode || '').trim();
+  if (!bc) return;
+  if (!targetForm.alternateBarcodes) targetForm.alternateBarcodes = [];
+  if (!targetForm.alternateBarcodes.includes(bc)) {
+    targetForm.alternateBarcodes.push(bc);
+  }
+  targetForm.newAlternateBarcode = '';
+};
+
+const removeAlternateBarcode = (targetForm, index) => {
+  if (targetForm.alternateBarcodes) {
+    targetForm.alternateBarcodes.splice(index, 1);
+  }
+};
+
 // ======= METHODS =======
 function showPage(page, productId = null) {
   if (productId !== null) selectedProductId.value = productId
@@ -2349,6 +2513,12 @@ function showPage(page, productId = null) {
       editForm.description = p.description || ''
       editForm.cost = p.cost || p.cost || 0
       editForm.price = p.price || p.price || 0
+      editForm.wholesalePrice = p.wholesalePrice !== undefined ? p.wholesalePrice : null
+      editForm.allowFractional = Boolean(p.allowFractional)
+      editForm.saleUnit = p.saleUnit || ''
+      editForm.conversionFactor = p.conversionFactor || 1.0
+      editForm.alternateBarcodes = Array.isArray(p.alternateBarcodes) ? [...p.alternateBarcodes] : []
+      editForm.newAlternateBarcode = ''
       editForm.unit = p.unit || 'Piece (pc)'
       editForm.stock = p.stock || 0
       editForm.minStock = p.minStock ?? p.min ?? 10
@@ -2530,6 +2700,11 @@ async function saveProduct() {
     description: form.description,
     cost: form.cost,
     price: form.price,
+    wholesalePrice: form.wholesalePrice,
+    allowFractional: form.allowFractional,
+    saleUnit: form.saleUnit,
+    conversionFactor: form.conversionFactor,
+    alternateBarcodes: form.alternateBarcodes,
     stock: form.stock,
     minStock: form.minStock,
     maxStock: form.maxStock,
@@ -2568,6 +2743,11 @@ async function saveEdit() {
     description: editForm.description,
     cost: editForm.cost,
     price: editForm.price,
+    wholesalePrice: editForm.wholesalePrice,
+    allowFractional: editForm.allowFractional,
+    saleUnit: editForm.saleUnit,
+    conversionFactor: editForm.conversionFactor,
+    alternateBarcodes: editForm.alternateBarcodes,
     stock: editForm.stock,
     minStock: editForm.minStock,
     maxStock: editForm.maxStock,

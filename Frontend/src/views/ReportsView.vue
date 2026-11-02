@@ -13,8 +13,8 @@
       </div>
 
       <div class="d-flex align-items-center gap-2 flex-wrap">
-        <!-- Branch Filter (Owner only) -->
-        <div v-if="isOwner && branches.length > 0" class="me-2">
+        <!-- Branch Filter (Owner only in Multi-Branch) -->
+        <div v-if="isOwner && branches.length > 1" class="me-2">
           <select class="form-select form-select-sm rounded-3 fw-semibold shadow-sm" v-model="selectedBranchId" @change="fetchActiveReport">
             <option value="all">All Branches</option>
             <option v-for="b in branches" :key="b.id" :value="b.id">{{ b.name }}</option>
@@ -72,9 +72,14 @@
           <i class="bi bi-wallet2 me-1"></i> Financial Accounts
         </button>
       </li>
-      <li v-if="isOwner" class="nav-item">
+      <li v-if="isOwner && branches.length > 1" class="nav-item">
         <button :class="['nav-link', 'fw-semibold', activeTab === 'branches' ? 'active' : '']" @click="changeTab('branches')" type="button">
           <i class="bi bi-building me-1"></i> Branch Comparison
+        </button>
+      </li>
+      <li v-if="isOwner" class="nav-item">
+        <button :class="['nav-link', 'fw-semibold', activeTab === 'profitability' ? 'active' : '']" @click="changeTab('profitability')" type="button" id="tab-profitability">
+          <i class="bi bi-cash-coin me-1"></i> Net Profit Statement
         </button>
       </li>
     </ul>
@@ -126,7 +131,7 @@
                 <tr>
                   <th>Invoice #</th>
                   <th>Date</th>
-                  <th>Branch</th>
+                  <th v-if="branches.length > 1">Branch</th>
                   <th>Customer</th>
                   <th class="text-end">Paid Amount</th>
                   <th class="text-end">Due Amount</th>
@@ -138,7 +143,7 @@
                 <tr v-for="s in reportData?.sales || []" :key="s.id">
                   <td class="fw-bold text-dark">{{ s.invoice_number }}</td>
                   <td class="text-muted">{{ s.date }}</td>
-                  <td>{{ s.branch_name }}</td>
+                  <td v-if="branches.length > 1">{{ s.branch_name }}</td>
                   <td>{{ s.customer_name }}</td>
                   <td class="text-end">PKR {{ Number(s.paid_amount).toLocaleString() }}</td>
                   <td class="text-end text-danger">PKR {{ Number(s.due_amount).toLocaleString() }}</td>
@@ -181,7 +186,7 @@
         </div>
 
         <div class="card border-0 shadow-sm rounded-4 p-4">
-          <h6 class="fw-bold mb-3 text-dark">Branch Inventory Stock Ledger</h6>
+          <h6 class="fw-bold mb-3 text-dark">{{ branches.length > 1 ? 'Branch Inventory Stock Ledger' : 'Inventory Stock Ledger' }}</h6>
           <div class="table-responsive">
             <table class="table table-hover align-middle mb-0 small">
               <thead class="table-light">
@@ -189,7 +194,7 @@
                   <th>Product Name</th>
                   <th>SKU</th>
                   <th>Category</th>
-                  <th>Branch</th>
+                  <th v-if="branches.length > 1">Branch</th>
                   <th class="text-center">Stock On Hand</th>
                   <th class="text-center">Min Stock</th>
                   <th class="text-end">Current Cost</th>
@@ -201,7 +206,7 @@
                   <td class="fw-bold text-dark">{{ inv.product_name }}</td>
                   <td class="text-muted">{{ inv.sku }}</td>
                   <td>{{ inv.category }}</td>
-                  <td>{{ inv.branch_name }}</td>
+                  <td v-if="branches.length > 1">{{ inv.branch_name }}</td>
                   <td class="text-center">
                     <span :class="'badge bg-' + (inv.quantity_on_hand <= inv.minimum_stock ? 'danger' : 'success') + '-subtle text-' + (inv.quantity_on_hand <= inv.minimum_stock ? 'danger' : 'success')">
                       {{ inv.quantity_on_hand }}
@@ -293,7 +298,7 @@
                   <th>Date</th>
                   <th>Category</th>
                   <th>Description</th>
-                  <th>Branch</th>
+                  <th v-if="branches.length > 1">Branch</th>
                   <th>Account</th>
                   <th class="text-end">Amount</th>
                   <th class="text-center">Status</th>
@@ -305,7 +310,7 @@
                   <td class="text-muted">{{ e.date }}</td>
                   <td><span class="badge bg-info-subtle text-info">{{ e.category }}</span></td>
                   <td>{{ e.description || 'N/A' }}</td>
-                  <td>{{ e.branch_name }}</td>
+                  <td v-if="branches.length > 1">{{ e.branch_name }}</td>
                   <td>{{ e.account_name }}</td>
                   <td class="text-end fw-bold text-danger">PKR {{ Number(e.amount).toLocaleString() }}</td>
                   <td class="text-center"><span class="badge bg-success-subtle text-success">{{ e.status }}</span></td>
@@ -326,7 +331,7 @@
                 <tr>
                   <th>Account Name</th>
                   <th>Type</th>
-                  <th>Branch</th>
+                  <th v-if="branches.length > 1">Branch</th>
                   <th class="text-end">Current Balance</th>
                   <th class="text-end">Period Inflows</th>
                   <th class="text-end">Period Outflows</th>
@@ -337,7 +342,7 @@
                 <tr v-for="acc in reportData?.accounts || []" :key="acc.id">
                   <td class="fw-bold text-dark">{{ acc.name }}</td>
                   <td><span class="badge bg-secondary-subtle text-dark">{{ acc.type }}</span></td>
-                  <td>{{ acc.branch_name }}</td>
+                  <td v-if="branches.length > 1">{{ acc.branch_name }}</td>
                   <td class="text-end fw-bold text-dark">PKR {{ Number(acc.current_balance).toLocaleString() }}</td>
                   <td class="text-end text-success">PKR {{ Number(acc.period_inflows).toLocaleString() }}</td>
                   <td class="text-end text-danger">PKR {{ Number(acc.period_outflows).toLocaleString() }}</td>
@@ -349,10 +354,50 @@
         </div>
       </div>
 
-      <!-- 7. BRANCHES REPORT -->
+      <!-- 7. BRANCHES REPORT (SRT-GAP-022: Multi-Branch Comparative Performance Matrix) -->
       <div v-if="activeTab === 'branches' && isOwner">
+        <!-- Top Branch Comparison KPI Cards -->
+        <div class="row g-4 mb-4" v-if="reportData?.branches">
+          <div v-for="b in reportData.branches" :key="'card-' + b.branch_id" class="col-md-4 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white h-100">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="fw-bold text-dark fs-6">{{ b.branch_name }}</span>
+                <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill">
+                  {{ b.transaction_count }} txns
+                </span>
+              </div>
+              <div class="mb-2">
+                <small class="text-secondary fw-semibold">Net Commercial Sales</small>
+                <div class="fs-5 fw-bold text-success">PKR {{ Number(b.net_sales || 0).toLocaleString() }}</div>
+              </div>
+              <div class="d-flex justify-content-between text-muted small py-1 border-top">
+                <span>Gross Profit:</span>
+                <span class="fw-semibold text-dark">{{ b.gross_profit !== null ? 'PKR ' + Number(b.gross_profit).toLocaleString() : 'N/A' }}</span>
+              </div>
+              <div class="d-flex justify-content-between text-muted small py-1">
+                <span>Expenses:</span>
+                <span class="fw-semibold text-danger">PKR {{ Number(b.posted_expenses || 0).toLocaleString() }}</span>
+              </div>
+              <div class="d-flex justify-content-between text-muted small py-1 border-top pt-2">
+                <span>Cash Drawer:</span>
+                <span class="fw-bold text-primary">PKR {{ Number(b.cash_balance || 0).toLocaleString() }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Comparative Performance Matrix -->
         <div class="card border-0 shadow-sm rounded-4 p-4">
-          <h6 class="fw-bold mb-3 text-dark">Cross-Branch Comparative Audit</h6>
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+              <h5 class="fw-bold mb-1 text-dark">Side-by-Side Multi-Branch Performance Matrix</h5>
+              <p class="text-muted small mb-0">Cross-store KPI drilldown across commercial sales, margin, operating overhead, and cash balances.</p>
+            </div>
+            <button class="btn btn-sm btn-outline-secondary" @click="triggerCsvExport">
+              <i class="bi bi-download me-1"></i> Export Matrix CSV
+            </button>
+          </div>
+
           <div class="table-responsive">
             <table class="table table-hover align-middle mb-0 small">
               <thead class="table-light">
@@ -360,19 +405,34 @@
                   <th>Branch Name</th>
                   <th class="text-end">Net Sales</th>
                   <th class="text-center">Transactions</th>
+                  <th class="text-end">Avg Basket</th>
                   <th class="text-end">Gross Profit</th>
                   <th class="text-end">Posted Expenses</th>
-                  <th class="text-end">Cash Drawer Balance</th>
+                  <th class="text-end">Expense Ratio %</th>
+                  <th class="text-end">Cash Drawer</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="b in reportData?.branches || []" :key="b.branch_id">
-                  <td class="fw-bold text-dark">{{ b.branch_name }}</td>
-                  <td class="text-end fw-bold text-success">PKR {{ Number(b.net_sales).toLocaleString() }}</td>
-                  <td class="text-center"><span class="badge bg-primary-subtle text-primary">{{ b.transaction_count }}</span></td>
-                  <td class="text-end">{{ b.gross_profit !== null ? 'PKR ' + Number(b.gross_profit).toLocaleString() : 'Partial' }}</td>
-                  <td class="text-end text-danger">PKR {{ Number(b.posted_expenses).toLocaleString() }}</td>
-                  <td class="text-end fw-bold text-dark">PKR {{ Number(b.cash_balance).toLocaleString() }}</td>
+                  <td class="fw-bold text-dark">
+                    <i class="bi bi-shop me-1 text-primary"></i>
+                    {{ b.branch_name }}
+                  </td>
+                  <td class="text-end fw-bold text-success">PKR {{ Number(b.net_sales || 0).toLocaleString() }}</td>
+                  <td class="text-center"><span class="badge bg-primary-subtle text-primary">{{ b.transaction_count || 0 }}</span></td>
+                  <td class="text-end text-muted">
+                    PKR {{ Number(b.transaction_count > 0 ? (b.net_sales / b.transaction_count) : 0).toLocaleString(undefined, { maximumFractionDigits: 0 }) }}
+                  </td>
+                  <td class="text-end fw-semibold text-dark">
+                    {{ b.gross_profit !== null ? 'PKR ' + Number(b.gross_profit).toLocaleString() : 'N/A' }}
+                  </td>
+                  <td class="text-end text-danger">PKR {{ Number(b.posted_expenses || 0).toLocaleString() }}</td>
+                  <td class="text-end">
+                    <span :class="['badge rounded-pill', (b.net_sales > 0 && (b.posted_expenses / b.net_sales) > 0.4) ? 'bg-warning-subtle text-warning-emphasis' : 'bg-light text-secondary border']">
+                      {{ b.net_sales > 0 ? ((b.posted_expenses / b.net_sales) * 100).toFixed(1) + '%' : '0.0%' }}
+                    </span>
+                  </td>
+                  <td class="text-end fw-bold text-primary">PKR {{ Number(b.cash_balance || 0).toLocaleString() }}</td>
                 </tr>
               </tbody>
             </table>
@@ -380,6 +440,122 @@
         </div>
       </div>
 
+      <!-- 8. SMALL-RETAIL CONSOLIDATED NET PROFIT STATEMENT (REQ-0027, SRT-GAP-019) -->
+      <div v-if="activeTab === 'profitability'">
+        <!-- Top Metrics Cards -->
+        <div class="row g-4 mb-4" v-if="reportData">
+          <div class="col-md-3">
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
+              <span class="text-secondary small fw-semibold">Net Commercial Sales</span>
+              <div class="fs-4 fw-bold text-primary mt-1">PKR {{ Number(reportData.net_sales || 0).toLocaleString(undefined, { minimumFractionDigits: 2 }) }}</div>
+              <span class="text-muted small mt-1">Invoice Sales - Returns</span>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
+              <span class="text-secondary small fw-semibold">Net COGS (Cost of Goods)</span>
+              <div class="fs-4 fw-bold text-dark mt-1">PKR {{ Number(reportData.net_cogs || 0).toLocaleString(undefined, { minimumFractionDigits: 2 }) }}</div>
+              <span class="text-muted small mt-1">Historical Snapshot Cost</span>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
+              <span class="text-secondary small fw-semibold">Operating Expenses</span>
+              <div class="fs-4 fw-bold text-danger mt-1">PKR {{ Number(reportData.operating_expenses || 0).toLocaleString(undefined, { minimumFractionDigits: 2 }) }}</div>
+              <span class="text-muted small mt-1">Posted Store Overhead</span>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="card border-0 shadow-sm rounded-4 p-3" :class="Number(reportData.net_profit || 0) >= 0 ? 'bg-success-subtle text-success-emphasis' : 'bg-danger-subtle text-danger-emphasis'">
+              <span class="small fw-semibold">Operational Net Profit</span>
+              <div class="fs-3 fw-bold mt-1">PKR {{ Number(reportData.net_profit || 0).toLocaleString(undefined, { minimumFractionDigits: 2 }) }}</div>
+              <span class="small fw-semibold mt-1">Net Margin: {{ reportData.net_margin_percent }}%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Detailed Step-Down Statement Card -->
+        <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4" v-if="reportData">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="fw-bold mb-0">Consolidated Operational Profit &amp; Loss Breakdown</h5>
+            <span class="badge bg-secondary-subtle text-secondary small">{{ reportData.accounting_basis }}</span>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>Financial Component</th>
+                  <th>Calculation Derivation</th>
+                  <th class="text-end">Amount (PKR)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="fw-semibold">Gross Goods Sales</td>
+                  <td class="text-secondary small">Sum of completed sale items before discounts (SUM subtotal)</td>
+                  <td class="text-end fw-bold text-dark">{{ Number(reportData.gross_goods_sales || 0).toLocaleString(undefined, { minimumFractionDigits: 2 }) }}</td>
+                </tr>
+                <tr>
+                  <td class="fw-semibold text-danger">Less: Order Discounts</td>
+                  <td class="text-secondary small">Direct point-of-sale customer reductions</td>
+                  <td class="text-end text-danger">- {{ Number(reportData.discounts || 0).toLocaleString(undefined, { minimumFractionDigits: 2 }) }}</td>
+                </tr>
+                <tr>
+                  <td class="fw-semibold text-muted">Add: Invoiced Tax / Surcharges</td>
+                  <td class="text-secondary small">Customer-billed operational invoice charge</td>
+                  <td class="text-end text-muted">+ {{ Number(reportData.tax || 0).toLocaleString(undefined, { minimumFractionDigits: 2 }) }}</td>
+                </tr>
+                <tr class="table-light fw-bold">
+                  <td>Commercial Invoiced Sales</td>
+                  <td class="text-secondary small">Total amount invoiced to customers</td>
+                  <td class="text-end">{{ Number(reportData.commercial_invoice_sales || 0).toLocaleString(undefined, { minimumFractionDigits: 2 }) }}</td>
+                </tr>
+                <tr>
+                  <td class="fw-semibold text-danger">Less: Economic Returns</td>
+                  <td class="text-secondary small">Customer refunds processed and settled in period</td>
+                  <td class="text-end text-danger">- {{ Number(reportData.economic_returns || 0).toLocaleString(undefined, { minimumFractionDigits: 2 }) }}</td>
+                </tr>
+                <tr class="table-primary fw-bold">
+                  <td class="text-primary">Net Commercial Sales (Profit Revenue Basis)</td>
+                  <td class="small text-primary">Commercial Invoiced Sales - Economic Returns</td>
+                  <td class="text-end text-primary">{{ Number(reportData.net_sales || 0).toLocaleString(undefined, { minimumFractionDigits: 2 }) }}</td>
+                </tr>
+                <tr>
+                  <td class="fw-semibold">Gross Cost of Goods Sold (COGS)</td>
+                  <td class="text-secondary small">Sum of sold quantity × historical cost price snapshot</td>
+                  <td class="text-end text-dark">{{ Number(reportData.gross_cogs || 0).toLocaleString(undefined, { minimumFractionDigits: 2 }) }}</td>
+                </tr>
+                <tr>
+                  <td class="fw-semibold text-success">Less: Restockable Returned Goods Cost</td>
+                  <td class="text-secondary small">Cost of returned items accepted back into active stock</td>
+                  <td class="text-end text-success">- {{ Number(reportData.returned_cogs || 0).toLocaleString(undefined, { minimumFractionDigits: 2 }) }}</td>
+                </tr>
+                <tr class="table-light fw-bold">
+                  <td>Net Cost of Goods Sold</td>
+                  <td class="text-secondary small">Gross COGS - Restockable Returned Cost (Damaged items remain in net cost)</td>
+                  <td class="text-end">{{ Number(reportData.net_cogs || 0).toLocaleString(undefined, { minimumFractionDigits: 2 }) }}</td>
+                </tr>
+                <tr class="table-info fw-bold">
+                  <td class="text-info-emphasis">Gross Profit</td>
+                  <td class="small text-info-emphasis">Net Commercial Sales - Net COGS (Gross Margin: {{ reportData.gross_margin_percent }}%)</td>
+                  <td class="text-end text-info-emphasis">{{ Number(reportData.gross_profit || 0).toLocaleString(undefined, { minimumFractionDigits: 2 }) }}</td>
+                </tr>
+                <tr>
+                  <td class="fw-semibold text-danger">Less: Operating Expenses</td>
+                  <td class="text-secondary small">Store operational overhead (Posted expenses, excluding transfers/capital)</td>
+                  <td class="text-end text-danger">- {{ Number(reportData.operating_expenses || 0).toLocaleString(undefined, { minimumFractionDigits: 2 }) }}</td>
+                </tr>
+                <tr class="table-success fw-bold fs-6 border-top border-2">
+                  <td class="text-success">Operational Net Profit</td>
+                  <td class="small text-success">Gross Profit - Operating Expenses (Net Commercial Margin: {{ reportData.net_margin_percent }}%)</td>
+                  <td class="text-end text-success">PKR {{ Number(reportData.net_profit || 0).toLocaleString(undefined, { minimumFractionDigits: 2 }) }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
     </div>
 
   </div>
@@ -405,7 +581,7 @@ const datePreset = ref('this_month')
 const userRole = computed(() => authStore.userRole || 'Business Owner')
 const isOwner = computed(() => userRole.value === 'Business Owner')
 
-const isDateSensitiveTab = computed(() => ['sales', 'expenses', 'accounts', 'branches'].includes(activeTab.value))
+const isDateSensitiveTab = computed(() => ['sales', 'expenses', 'accounts', 'branches', 'profitability'].includes(activeTab.value))
 
 const changeTab = (tab) => {
   activeTab.value = tab
@@ -415,7 +591,7 @@ const changeTab = (tab) => {
 
 const fetchBranches = async () => {
   try {
-    const res = await api.get('/settings/branches')
+    const res = await api.get('/branches')
     branches.value = res.data?.data || res.data || []
   } catch (e) {
     console.warn('Could not load branches:', e)

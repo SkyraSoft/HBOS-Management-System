@@ -1,0 +1,58 @@
+[
+  {
+    "stage": "CREATION",
+    "actor": "Business Super Owner",
+    "description": "Owner defines branch name, code, address, city, phone, email, and receipt overrides.",
+    "automatic_actions": [
+      "Generate unique branch_id scoped to business_id",
+      "Assign default cash account (e.g., Cash - Branch Code)",
+      "Initialize branch inventory records for existing catalog with 0 balance",
+      "Attach creating owner to branch_user pivot"
+    ],
+    "invariants": "Branch code must be unique within the business tenant."
+  },
+  {
+    "stage": "MANAGER_ASSIGNMENT",
+    "actor": "Business Super Owner",
+    "description": "Owner designates an active employee as Branch Manager.",
+    "automatic_actions": [
+      "Update branch manager_id attribute",
+      "Sync manager into branch_user pivot",
+      "Assign Branch Manager role in Spatie team scope",
+      "Log governance audit event"
+    ],
+    "invariants": "Manager must belong to the same business tenant."
+  },
+  {
+    "stage": "STAFF_ASSIGNMENT",
+    "actor": "Business Super Owner or Branch Manager",
+    "description": "Cashiers, accountants, and inventory staff are attached to the branch.",
+    "automatic_actions": [
+      "Insert into branch_user pivot",
+      "Enable POS terminal session binding for assigned cashiers",
+      "Log membership audit event"
+    ],
+    "invariants": "Staff can only perform POS checkouts in branches they are actively assigned to."
+  },
+  {
+    "stage": "OPERATIONS_ACTIVE",
+    "actor": "Branch Staff",
+    "description": "Branch operates POS sales, purchases, stock movements, and cash register sessions.",
+    "automatic_actions": [
+      "All transactions tag branch_id and authenticated user_id",
+      "Stock deductions update branch_inventories ledger"
+    ],
+    "invariants": "Zero shared login credentials; individual employee authentication enforced."
+  },
+  {
+    "stage": "DEACTIVATION_ARCHIVAL",
+    "actor": "Business Super Owner",
+    "description": "Owner sets branch status to 'inactive'.",
+    "automatic_actions": [
+      "Block new POS sales, purchases, and transfers targeting this branch",
+      "Preserve all historical ledgers, sales, and audit trails",
+      "Log governance deactivation audit event"
+    ],
+    "invariants": "Cannot delete branch if transactional history or non-zero inventory balance exists."
+  }
+]

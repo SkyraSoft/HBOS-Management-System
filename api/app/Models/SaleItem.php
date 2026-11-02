@@ -12,19 +12,24 @@ class SaleItem extends Model
     protected $fillable = [
         'sale_id',
         'product_id',
+        'barcode',
+        'sku',
+        'product_name',
         'quantity',
         'unit_price',
         'cost_price',
+        'unit_cost',
         'discount',
         'total',
         'returned_quantity',
     ];
 
     protected $casts = [
-        'quantity' => 'integer',
-        'returned_quantity' => 'integer',
+        'quantity' => 'decimal:3',
+        'returned_quantity' => 'decimal:3',
         'unit_price' => 'decimal:2',
         'cost_price' => 'decimal:2',
+        'unit_cost' => 'decimal:2',
         'discount' => 'decimal:2',
         'total' => 'decimal:2',
     ];

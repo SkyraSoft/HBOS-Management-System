@@ -1,0 +1,65 @@
+{
+    "PRODUCT_PARITY": {
+        "entity": "ENTITY-006 (Product)",
+        "create_surface": "FORM-007 (InventryView.vue Add Product Drawer)",
+        "edit_surface": "FORM-007 (InventryView.vue Edit Product Drawer) & FORM-037 (ProductEditView.vue)",
+        "fields_parity": "PARITY_CORRECT_WITH_KNOWN_GAP",
+        "controls_parity": "PARITY_CORRECT",
+        "assessment": "PARITY_CORRECT_WITH_KNOWN_GAP",
+        "parity_gap": "FORM-037 standalone edit page is legacy alternative to primary FORM-007 drawer."
+    },
+    "CATEGORY_PARITY": {
+        "entity": "ENTITY-004 (Category)",
+        "create_surface": "FORM-009 (InventryView.vue Add Category Modal)",
+        "edit_surface": "FORM-009 (InventryView.vue Edit Category Modal)",
+        "fields_parity": "PARITY_CORRECT",
+        "controls_parity": "PARITY_CORRECT",
+        "assessment": "PARITY_CORRECT",
+        "parity_gap": "None. Create and edit share the exact same modal component and state schema."
+    },
+    "BRAND_PARITY": {
+        "entity": "ENTITY-005 (Brand)",
+        "create_surface": "FORM-010 (InventryView.vue Add Brand Modal)",
+        "edit_surface": "FORM-010 (InventryView.vue Edit Brand Modal)",
+        "fields_parity": "PARITY_CORRECT",
+        "controls_parity": "PARITY_CORRECT",
+        "assessment": "PARITY_CORRECT",
+        "parity_gap": "None. Shared modal component."
+    },
+    "CUSTOMER_PARITY": {
+        "entity": "ENTITY-015 (Customer)",
+        "create_surface": "FORM-018 (CustomerView.vue Add Customer Modal)",
+        "edit_surface": "FORM-018 (CustomerView.vue Edit Customer Modal)",
+        "fields_parity": "INCONSISTENT_CONTROL",
+        "controls_parity": "PARITY_CORRECT",
+        "assessment": "INTENTIONAL_DIFFERENCE",
+        "parity_gap": "Opening balance field is visible on create but hidden on edit to intentionally protect historical ledger integrity (documented in P5-GAP-009)."
+    },
+    "SUPPLIER_PARITY": {
+        "entity": "ENTITY-014 (Supplier)",
+        "create_surface": "FORM-016 (SupplierView.vue Add Supplier Modal)",
+        "edit_surface": "FORM-016 (SupplierView.vue Edit Supplier Modal)",
+        "fields_parity": "PARITY_CORRECT",
+        "controls_parity": "PARITY_CORRECT",
+        "assessment": "PARITY_CORRECT",
+        "parity_gap": "None. Shared modal component."
+    },
+    "USER_PARITY": {
+        "entity": "ENTITY-001 (User)",
+        "create_surface": "FORM-027 (UsersView.vue Add User Modal)",
+        "edit_surface": "FORM-027 (UsersView.vue Edit User Modal)",
+        "fields_parity": "INTENTIONAL_DIFFERENCE",
+        "controls_parity": "PARITY_CORRECT",
+        "assessment": "INTENTIONAL_DIFFERENCE",
+        "parity_gap": "Password is mandatory on create, but optional on edit (only updated if provided)."
+    },
+    "EXPENSE_PARITY": {
+        "entity": "ENTITY-018 (Expense)",
+        "create_surface": "FORM-022 (ExpensesView.vue Add Tab) & FORM-023 (Quick Popup)",
+        "edit_surface": "FORM-022 (ExpensesView.vue Edit Tab)",
+        "fields_parity": "PARITY_CORRECT",
+        "controls_parity": "PARITY_CORRECT",
+        "assessment": "PARITY_CORRECT",
+        "parity_gap": "Shared form structure with edit pre-population."
+    }
+}

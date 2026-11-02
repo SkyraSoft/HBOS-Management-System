@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Services\ReportService;
 use App\Services\DashboardService;
+use App\Services\StockIntelligenceService;
 use App\Models\Branch;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -14,11 +15,16 @@ class ReportController extends Controller
 {
     protected ReportService $reportService;
     protected DashboardService $dashboardService;
+    protected StockIntelligenceService $stockIntelligenceService;
 
-    public function __construct(ReportService $reportService, DashboardService $dashboardService)
-    {
+    public function __construct(
+        ReportService $reportService,
+        DashboardService $dashboardService,
+        StockIntelligenceService $stockIntelligenceService
+    ) {
         $this->reportService = $reportService;
         $this->dashboardService = $dashboardService;
+        $this->stockIntelligenceService = $stockIntelligenceService;
     }
 
     protected function getActiveBusinessId(Request $request): int
@@ -35,7 +41,12 @@ class ReportController extends Controller
         $user = $request->user();
         $isOwner = $user->hasRole('Business Owner');
         $isManager = $user->hasRole('Branch Manager');
-        $isSalesperson = $user->hasRole('Salesperson');
+        $isSalesperson = $user->hasRole('Salesperson') || $user->hasRole('Cashier');
+
+        // If user has no specific role assigned in current team context, default to Owner
+        if (!$isOwner && !$isManager && !$isSalesperson) {
+            $isOwner = true;
+        }
 
         if ($isSalesperson && !$isOwner) {
             abort(403, 'Salespersons are not authorized to view executive reports.');
@@ -86,7 +97,22 @@ class ReportController extends Controller
         $branchId = $this->resolveBranchScope($request, $businessId);
         $format = $request->query('export') ?? $request->query('format');
 
-        return $this->reportService->getInventoryReport($businessId, $branchId, $format);
+        $result = $this->reportService->getInventoryReport($businessId, $branchId, $format);
+
+        if ($format && strtolower($format) === 'csv') {
+            return $result;
+        }
+
+        if ($request->has('intelligence') || $request->has('reorder') || $request->has('velocity') || $request->has('days')) {
+            $days = (int) $request->input('days', 30);
+            $intelligence = $this->stockIntelligenceService->getStockIntelligenceSummary($businessId, $branchId, $days);
+            if (is_array($result)) {
+                $result['intelligence'] = $intelligence;
+                return response()->json($result);
+            }
+        }
+
+        return $result;
     }
 
     public function customers(Request $request)
@@ -151,5 +177,21 @@ class ReportController extends Controller
         $format = $request->query('export') ?? $request->query('format');
 
         return $this->reportService->getBranchReport($businessId, $dateRange['from'], $dateRange['to'], $format);
+    }
+
+    public function profitability(Request $request)
+    {
+        $businessId = $this->getActiveBusinessId($request);
+        $branchId = $this->resolveBranchScope($request, $businessId);
+        $dateRange = $this->dashboardService->resolveDateRange($request->all());
+        $format = $request->query('export') ?? $request->query('format');
+
+        $result = $this->reportService->getProfitabilityReport($businessId, $branchId, $dateRange['from'], $dateRange['to'], $format);
+
+        if ($format && strtolower($format) === 'csv') {
+            return $result;
+        }
+
+        return response()->json($result);
     }
 }

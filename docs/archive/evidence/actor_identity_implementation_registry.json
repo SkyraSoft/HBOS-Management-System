@@ -1,0 +1,62 @@
+{
+  "program": "SkyraSoft HBOS Retail Platform & Workforce Integrity Program",
+  "checkpoint": "2.4 Actor Identity & Audit Attribution Foundation",
+  "registry_version": "1.0.0",
+  "date": "2026-10-03",
+  "canonical_attribution_context": [
+    "Business ID (tenant boundary)",
+    "Branch ID (operational outlet)",
+    "Causer ID / User ID (authenticated human actor)",
+    "Role at Action (persisted in audit snapshot properties)",
+    "Timestamp (created_at UTC)",
+    "Entity Subject Type & Key",
+    "Action / Event Name",
+    "Sanitized Metadata Properties"
+  ],
+  "material_mutations_matrix": [
+    { "mutation": "Sale Create", "entity": "Sale", "event": "created", "attribution_mechanism": "user_id + ActivityLog" },
+    { "mutation": "Sale Cancel", "entity": "Sale", "event": "cancelled", "attribution_mechanism": "cancelled_by + ActivityLog" },
+    { "mutation": "Sale Return", "entity": "SaleReturn", "event": "returned", "attribution_mechanism": "ActivityLog" },
+    { "mutation": "Customer Payment", "entity": "CustomerPayment", "event": "created", "attribution_mechanism": "user_id + ActivityLog" },
+    { "mutation": "Payment Reversal", "entity": "CustomerPayment", "event": "reversed", "attribution_mechanism": "ActivityLog" },
+    { "mutation": "Purchase Create", "entity": "Purchase", "event": "created", "attribution_mechanism": "ActivityLog" },
+    { "mutation": "Purchase Cancel", "entity": "Purchase", "event": "cancelled", "attribution_mechanism": "ActivityLog" },
+    { "mutation": "Supplier Payment", "entity": "SupplierPayment", "event": "created", "attribution_mechanism": "user_id + ActivityLog" },
+    { "mutation": "Supplier Return", "entity": "SupplierReturn", "event": "created", "attribution_mechanism": "ActivityLog" },
+    { "mutation": "Stock Adjustment", "entity": "InventoryAdjustment", "event": "adjusted", "attribution_mechanism": "adjusted_by + ActivityLog" },
+    { "mutation": "Stock Transfer", "entity": "InventoryTransfer", "event": "transferred", "attribution_mechanism": "transferred_by + ActivityLog" },
+    { "mutation": "Expense Create", "entity": "Expense", "event": "created", "attribution_mechanism": "created_by + ActivityLog" },
+    { "mutation": "Expense Void", "entity": "Expense", "event": "voided", "attribution_mechanism": "ActivityLog" },
+    { "mutation": "Financial Transfer", "entity": "AccountTransfer", "event": "transferred", "attribution_mechanism": "transferred_by + ActivityLog" },
+    { "mutation": "Employee Create", "entity": "User", "event": "created", "attribution_mechanism": "ActivityLog" },
+    { "mutation": "Employee Role Change", "entity": "User", "event": "role_changed", "attribution_mechanism": "ActivityLog" },
+    { "mutation": "Employee Branch Assignment", "entity": "User", "event": "branch_assigned", "attribution_mechanism": "ActivityLog" },
+    { "mutation": "Employee Deactivation", "entity": "User", "event": "deactivated", "attribution_mechanism": "ActivityLog" },
+    { "mutation": "Business Profile Update", "entity": "Business", "event": "updated", "attribution_mechanism": "ActivityLog" },
+    { "mutation": "Branch Create", "entity": "Branch", "event": "created", "attribution_mechanism": "ActivityLog" },
+    { "mutation": "Branch Deactivate", "entity": "Branch", "event": "deactivated", "attribution_mechanism": "ActivityLog" }
+  ],
+  "security_event_categories": [
+    "AUTH_LOGIN",
+    "AUTH_LOGOUT",
+    "PASSWORD_CHANGED",
+    "PASSWORD_RESET",
+    "USER_CREATED",
+    "USER_DEACTIVATED",
+    "ROLE_CHANGED",
+    "BRANCH_ASSIGNMENT_CHANGED",
+    "BUSINESS_PROFILE_CHANGED",
+    "BRANCH_CREATED",
+    "BRANCH_DEACTIVATED"
+  ],
+  "sensitive_data_redaction": {
+    "status": "ENFORCED",
+    "rules": "Recursive deep property sanitizer masks password, confirmation, tokens, secret keys, cvv, and auth headers with [REDACTED]",
+    "passwords_logged_count": 0,
+    "tokens_logged_count": 0
+  },
+  "role_change_actor_preservation": {
+    "status": "VERIFIED_PASS",
+    "behavior": "When an employee changes roles, previously created transaction records (e.g. Sales, Expenses) and previously recorded ActivityLog entries remain immutable, retaining original human actor ID and original role snapshot"
+  }
+}

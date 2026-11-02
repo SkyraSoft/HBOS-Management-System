@@ -1,0 +1,176 @@
+{
+  "product_name": "SkyraSoft HBOS (Hyperlocal Business Operating System)",
+  "version": "1.0.0",
+  "build_identifier": "HBOS-V1.0.0-STAGE3-20261025-WIN64",
+  "build_timestamp": "2026-10-25T14:52:08+05:00",
+  "git_provenance": {
+    "commit_hash": "fa71e856801d6ae0d647891d379a42a4c27c7558",
+    "branch": "main",
+    "working_tree_status": "MODIFIED_IN_RECOVERY_CYCLE",
+    "modified_components": [
+      "desktop/tauri.conf.json",
+      "desktop/build.rs",
+      "desktop/src/main.rs",
+      "Frontend/src/api.js",
+      "Frontend/src/services/demoSandboxEngine.js",
+      "Frontend/src/services/desktopBridgeService.js",
+      "Frontend/src/services/syncCoordinator.js",
+      "Frontend/src/sync/SyncCoordinator.js",
+      "Frontend/src/views/WelcomeView.vue",
+      "Frontend/src/views/ReorderView.vue",
+      "Frontend/src/stores/sessionMode.js",
+      "Frontend/src/router/index.js",
+      "Frontend/src/components/DemoModeBanner.vue",
+      "Frontend/src/layouts/MainLayout.vue",
+      "api/config/database.php",
+      "api/app/Services/FinancialAccountService.php",
+      "api/app/Console/Commands/VerifyUatDatabaseConnectionCommand.php",
+      "api/tests/Feature/DemoSandboxIsolationAndReconciliationTest.php",
+      "api/tests/Feature/DesktopFoundationSessionModeTest.php",
+      "api/tests/Feature/IsolatedUatConnectionGuardTest.php",
+      "api/app/Providers/AppServiceProvider.php",
+      "scripts/uat_backend_lifecycle.ps1",
+      "scripts/test_uat_grant_audit.ps1"
+    ]
+  },
+  "desktop_window_configuration": {
+    "fullscreen": false,
+    "decorations": true,
+    "resizable": true,
+    "width": 1366,
+    "height": 768,
+    "min_width": 1024,
+    "min_height": 600,
+    "center": true,
+    "always_on_top": false,
+    "screen_trapping_risk_remediated": true
+  },
+  "compiled_executable": {
+    "filename": "HBOS POS.exe",
+    "relative_path": "desktop/target/release/HBOS POS.exe",
+    "file_size_bytes": 11145728,
+    "sha256": "4D37873C6E8B335F4EC5608D85163A6BC4D52057C9B09D65F9675E2C28612BE9",
+    "subsystem": "Windows GUI (2)",
+    "target_triple": "x86_64-pc-windows-msvc",
+    "framework": "Tauri v1.8.3 / Rust + Microsoft Edge WebView2",
+    "status": "VERIFIED_EXECUTABLE_CDP_INSPECTED"
+  },
+  "packaged_installer": {
+    "filename": "HBOS POS_1.0.0_x64_en-US.msi",
+    "relative_path": "desktop/target/release/bundle/msi/HBOS POS_1.0.0_x64_en-US.msi",
+    "file_size_bytes": 23502848,
+    "sha256": "CC033239C30F14A5B6B5DC54C517FCA38EF206048F229C2CD0329E4A04DE15E3",
+    "packaging_tool": "WiX Toolset v3 via @tauri-apps/cli@1.6.3",
+    "build_command": "npx -y @tauri-apps/cli@1.6.3 build --bundles msi",
+    "build_nature": "FRESH_REBUILD_WITH_CANONICAL_INVENTORY_ARCHITECTURE_AND_OFFLINE_VECTOR_ASSETS",
+    "build_timestamp": "2026-11-01T14:13:00+05:00",
+    "signing_status": "UNSIGNED_INTERNAL_UAT",
+    "status": "VERIFIED_NEWLY_PACKAGED_UAT_INSTALLER",
+    "defect_resolved": "Rebuilt with full canonical HBOS inventory architecture: 4 brands, 8 categories, 16 subcategories, 32 product families, 44 stockable SKU records (with independent physical pack sizes), 8 wholesale carton barcode aliases with multipliers, 56 bundled 100% offline SVG vector assets, consolidated single/multi-store branch inventory engines, and Customer Khata payment ledger reconciliation.",
+    "build_provenance_note": "Rebuilt on 2026-11-01 following the actual HBOS architecture rules. Verified 20/20 Section 9 architectural checks, 7/7 backend isolation tests, and 0 external network requests."
+  },
+  "frontend_bundle": {
+    "framework": "Vue 3 + Vite",
+    "dist_directory": "Frontend/dist",
+    "index_html": {
+      "relative_path": "Frontend/dist/index.html",
+      "file_size_bytes": 2671,
+      "sha256": "8D9876319E14560FDBE39229EE5A1027DF389CFBE0D080B86B08F6EA573C4FBD",
+      "timestamp": "2026-10-26T12:09:23+05:00"
+    },
+    "referenced_assets": [
+      {
+        "filename": "index-BvI3afev.js",
+        "relative_path": "Frontend/dist/assets/index-BvI3afev.js",
+        "file_size_bytes": 93530,
+        "role": "Entry Module (Fixed openPrintDialog)"
+      },
+      {
+        "filename": "index-HSqX7wlt.css",
+        "relative_path": "Frontend/dist/assets/index-HSqX7wlt.css",
+        "file_size_bytes": 30741,
+        "role": "Core Stylesheet"
+      },
+      {
+        "filename": "WelcomeView-DoVJuY40.js",
+        "relative_path": "Frontend/dist/assets/WelcomeView-DoVJuY40.js",
+        "file_size_bytes": 9880,
+        "role": "Welcome View Component"
+      },
+      {
+        "filename": "api-OaivtNmZ.js",
+        "relative_path": "Frontend/dist/assets/api-OaivtNmZ.js",
+        "file_size_bytes": 62967,
+        "role": "API Client & Fail-Closed Demo Adapter"
+      }
+    ],
+    "welcome_view_integrated": true,
+    "demo_sandbox_engine_integrated": true,
+    "demo_adapter_intercept_active": true,
+    "outbox_exit_guard_reconciled": true
+  },
+  "distribution_portal_publication": {
+    "portal_url": "https://hbos.skyrasoft.com/download.html",
+    "deployment_route": "Hostinger SSH key authentication (port 65002)",
+    "publication_timestamp": "2026-11-01T14:15:30+05:00",
+    "backup_rollback_file": "domains/skyrasoft.com/public_html/hbos/public/download.html.bak_20261025",
+    "published_uat_installer": {
+      "filename": "HBOS_POS_1.0.0_STAGE3_UAT_x64_en-US.msi",
+      "public_download_url": "https://hbos.skyrasoft.com/downloads/HBOS_POS_1.0.0_STAGE3_UAT_x64_en-US.msi",
+      "file_size_bytes": 23502848,
+      "sha256": "CC033239C30F14A5B6B5DC54C517FCA38EF206048F229C2CD0329E4A04DE15E3",
+      "https_download_verified": true,
+      "label": "Owner Testing / UAT Build (v1.0.0-STAGE3-CANONICAL-INVENTORY)"
+    },
+    "preserved_rollback_installer": {
+      "filename": "HBOS_POS_1.0.0_x64_en-US.msi",
+      "public_download_url": "https://hbos.skyrasoft.com/downloads/HBOS_POS_1.0.0_x64_en-US.msi",
+      "file_size_bytes": 2711552,
+      "sha256": "EF5055CDC62FC339F3D663D2691A390C860D84A26D89171E5D52414C1D86623A",
+      "https_download_verified": true,
+      "label": "Preserved Baseline / Rollback"
+    },
+    "installer_format_note": "Only genuine WiX MSI installers are published. Raw compiled binaries (HBOS POS.exe) are never published as installers, and no unsupported EXE package is fabricated."
+  },
+  "verification_suite_results": {
+    "grant_audit_parser_test_suite": {
+      "script": "scripts/test_uat_grant_audit.ps1",
+      "scope": "MOCKED_SHOW_GRANTS_ONLY",
+      "total_scenarios": 13,
+      "passed_scenarios": 13,
+      "exit_code": 0,
+      "status": "PASS (Mocked Grant-Audit Parser Test Suite Only)",
+      "version_awareness": "Engine supports version-aware detection for MariaDB 10.11+ (SELECT VERSION(); SHOW GRANTS FOR PUBLIC; fail-closed error handling)"
+    },
+    "php_security_and_regression_tests": {
+      "scope": "SELECTED_PHPUNIT_FEATURE_TESTS_ONLY",
+      "tests": [
+        "IsolatedUatConnectionGuardTest.php",
+        "DesktopFoundationSessionModeTest.php",
+        "DemoSandboxIsolationAndReconciliationTest.php"
+      ],
+      "total_tests": 21,
+      "total_assertions": 196,
+      "exit_code": 0,
+      "status": "PASS (Selected PHP Test Suites Only; Does Not Substitute for Live MariaDB Verification)"
+    },
+    "credential_handling_remediation": {
+      "status": "REPORTED_PASS (Subject to Normal Review)",
+      "method": "Temporary MariaDB client option file protected by restrictive Windows ACLs (single identity FullControl, inheritance stripped), zero-overwritten and deleted in try/finally. MYSQL_PWD eliminated. Passwords never passed via CLI args or logged. Immutable .NET strings unmanaged BSTR freed without unverified zeroing claims."
+    }
+  },
+  "historical_outdated_package_reference": {
+    "filename": "HBOS_POS_1.0.0_x64_en-US.msi",
+    "sha256": "EF5055CDC62FC339F3D663D2691A390C860D84A26D89171E5D52414C1D86623A",
+    "status": "DEPRECATED_OUTDATED_DO_NOT_DISTRIBUTE",
+    "defect_identified": "Compiled on October 21 with fullscreen=true, decorations=false (caused screen-trapping incident requiring PC reboot)"
+  },
+  "release_gate_status": {
+    "credential_handling_remediation": "REPORTED_PASS (Subject to normal review; MYSQL_PWD replaced with restrictive ACL option file)",
+    "mocked_and_selected_php_tests": "PASS (For mocked 13-scenario grant parser and 21 selected PHP tests only; does NOT substitute for live MariaDB verification)",
+    "database_security_runtime": "BLOCKED (BLOCKED until successfully executed in an isolated environment; host MariaDB 10.4.32 is unmaintained/unapproved and protected hbos schema cannot be touched)",
+    "uat_msi_publication": "PUBLISHED_BUT_SECURITY_GATE_BLOCKED (Upload and checksum verification complete, but security release gate remains blocked)",
+    "windows_native_hardware_acceptance": "PENDING (Strictly awaiting Product Owner physical installation and walkthrough on target hardware)",
+    "production_launch": "NO_GO"
+  }
+}

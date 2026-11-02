@@ -27,7 +27,7 @@
                             Account Details
                         </h2>
 
-                        <button type="button" class="edit-btn" data-edit-section="account">
+                        <button type="button" class="edit-btn" @click="router.push('/businesssetup1')">
                             <i class="bi bi-pencil"></i>
                             <span>Edit</span>
                         </button>
@@ -42,26 +42,22 @@
 
                             <div class="field" data-field="fullName">
                                 <span class="field-label">Full Name</span>
-                                <span class="field-value">Jane Doe</span>
+                                <span class="field-value">{{ userData.name || 'Owner' }}</span>
                             </div>
 
                             <div class="field" data-field="email">
                                 <span class="field-label">Email Address</span>
-                                <span class="field-value">
-                                    jane.doe@example.com
-                                </span>
+                                <span class="field-value">{{ userData.email || '-' }}</span>
                             </div>
 
                             <div class="field" data-field="phone">
                                 <span class="field-label">Phone Number</span>
-                                <span class="field-value">
-                                    +1 (555) 123-4567
-                                </span>
+                                <span class="field-value">{{ userData.phone || '-' }}</span>
                             </div>
 
                             <div class="field" data-field="role">
                                 <span class="field-label">Role</span>
-                                <span class="field-value">Store Owner</span>
+                                <span class="field-value">Business Owner</span>
                             </div>
 
                         </div>
@@ -83,7 +79,7 @@
                             Business Info
                         </h2>
 
-                        <button type="button" class="edit-btn" data-edit-section="business">
+                        <button type="button" class="edit-btn" @click="router.push('/businesssetup1')">
                             <i class="bi bi-pencil"></i>
                             <span>Edit</span>
                         </button>
@@ -97,41 +93,24 @@
                         <div class="business-grid">
 
                             <div class="field store-name" data-field="storeName">
-                                <span class="field-label">Store Name</span>
-                                <span class="field-value">
-                                    Downtown Convenience
-                                </span>
+                                <span class="field-label">Business Name</span>
+                                <span class="field-value">{{ bizData.name || 'My Store' }}</span>
                             </div>
 
                             <div class="field" data-field="businessType">
-                                <span class="field-label">
-                                    Business Type
-                                </span>
-
-                                <span class="field-value">
-                                    Retail - Grocery
-                                </span>
+                                <span class="field-label">Business Type</span>
+                                <span class="field-value">{{ bizData.type || 'Retail Store' }}</span>
                             </div>
 
                             <div class="field" data-field="taxId">
-                                <span class="field-label">
-                                    Tax ID / GSTIN
-                                </span>
-
-                                <span class="field-value">
-                                    27ABCDE1234F1Z5
-                                </span>
+                                <span class="field-label">Tax ID / NTN</span>
+                                <span class="field-value">{{ bizData.tax_number || 'N/A' }}</span>
                             </div>
 
                             <div class="field address" data-field="address">
-                                <span class="field-label">
-                                    Store Address
-                                </span>
-
+                                <span class="field-label">Store Address</span>
                                 <span class="field-value address-value">
-                                    123 Main Street, Suite 200<br>
-                                    Metropolis, NY 10001<br>
-                                    United States
+                                    {{ bizData.address || 'Address Not Provided' }}
                                 </span>
                             </div>
 
@@ -140,6 +119,63 @@
                     </div>
                 </section>
 
+                <!-- =====================================================
+                 PRIMARY MAIN STORE
+            ====================================================== -->
+
+                <section class="review-card store-card" id="storeCard" data-section="Primary Store">
+
+                    <div class="review-card-header">
+
+                        <h2 class="review-card-title">
+                            <i class="bi bi-geo-alt"></i>
+                            Primary Main Store
+                        </h2>
+
+                        <button type="button" class="edit-btn" @click="router.push('/mainstoresetup')">
+                            <i class="bi bi-pencil"></i>
+                            <span>Edit</span>
+                        </button>
+
+                    </div>
+
+                    <div class="card-divider"></div>
+
+                    <div class="review-card-body">
+
+                        <div class="review-grid">
+
+                            <div class="field" data-field="storeName">
+                                <span class="field-label">Store / Branch Name</span>
+                                <span class="field-value">{{ branchData.name || 'Main Branch' }}</span>
+                            </div>
+
+                            <div class="field" data-field="branchCode">
+                                <span class="field-label">Branch Code</span>
+                                <span class="field-value">{{ branchData.code || 'MAIN' }}</span>
+                            </div>
+
+                            <div class="field" data-field="storePhone">
+                                <span class="field-label">Store Phone</span>
+                                <span class="field-value">{{ branchData.phone || 'N/A' }}</span>
+                            </div>
+
+                            <div class="field" data-field="storeCity">
+                                <span class="field-label">City</span>
+                                <span class="field-value">{{ branchData.city || 'Lahore' }}</span>
+                            </div>
+
+                            <div class="field address" data-field="storeAddress">
+                                <span class="field-label">Store Address</span>
+                                <span class="field-value address-value">
+                                    {{ branchData.address || 'Address Not Provided' }}
+                                </span>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </section>
 
                 <!-- =====================================================
                  PREFERENCES
@@ -154,7 +190,7 @@
                             Preferences
                         </h2>
 
-                        <button type="button" class="edit-btn" data-edit-section="preferences">
+                        <button type="button" class="edit-btn" @click="router.push('/preferences')">
                             <i class="bi bi-pencil"></i>
                             <span>Edit</span>
                         </button>
@@ -168,23 +204,13 @@
                         <div class="review-grid">
 
                             <div class="field" data-field="currency">
-                                <span class="field-label">
-                                    Currency
-                                </span>
-
-                                <span class="field-value">
-                                    USD ($)
-                                </span>
+                                <span class="field-label">Currency</span>
+                                <span class="field-value">{{ bizData.currency || 'PKR' }}</span>
                             </div>
 
                             <div class="field" data-field="timezone">
-                                <span class="field-label">
-                                    Timezone
-                                </span>
-
-                                <span class="field-value">
-                                    Eastern Time (ET)
-                                </span>
+                                <span class="field-label">Timezone</span>
+                                <span class="field-value">{{ bizData.timezone || 'Asia/Karachi' }}</span>
                             </div>
 
                         </div>
@@ -201,7 +227,7 @@
 
                     <div class="confirm-row">
 
-                        <input type="checkbox" id="confirmInfo" class="confirm-checkbox">
+                        <input type="checkbox" id="confirmInfo" v-model="confirmed" class="confirm-checkbox">
 
                         <label for="confirmInfo" class="confirm-label">
                             I confirm that the information provided for my
@@ -216,12 +242,12 @@
 
                     <div class="actions">
 
-                        <button type="button" class="btn-back" id="backButton">
+                        <button type="button" class="btn-back" id="backButton" @click="router.push('/preferences')">
                             Back
                         </button>
 
-                        <button type="button" class="btn-complete" id="completeButton" disabled="">
-                            <span>Complete Business Setup</span>
+                        <button type="button" class="btn-complete" id="completeButton" :disabled="!confirmed || loading" @click="handleComplete">
+                            <span>{{ loading ? 'Finalizing Setup...' : 'Complete Business Setup' }}</span>
                             <i class="bi bi-arrow-right"></i>
                         </button>
 
@@ -236,9 +262,101 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import api from '../api';
+import { useAuthStore } from '../stores/auth';
+import { useToast } from 'vue-toastification';
 
-onMounted(() => {
+const router = useRouter();
+const authStore = useAuthStore();
+const toast = useToast();
+
+const confirmed = ref(false);
+const loading = ref(false);
+
+const userData = reactive({
+  name: '',
+  email: '',
+  phone: '',
+});
+
+const bizData = reactive({
+  name: '',
+  type: '',
+  tax_number: '',
+  address: '',
+  currency: 'PKR',
+  timezone: 'Asia/Karachi',
+});
+
+const branchData = reactive({
+  name: 'Main Branch',
+  code: 'MAIN',
+  phone: '',
+  address: '',
+  city: 'Lahore',
+});
+
+const handleComplete = async () => {
+  if (!confirmed.value) return;
+  loading.value = true;
+  try {
+    const res = await api.post('/onboarding/step', {
+      step: 5,
+      confirm: true,
+    });
+    
+    // Set active business context
+    if (res.data?.business?.id) {
+      authStore.setActiveBusinessId(res.data.business.id);
+    }
+    toast.success('Business onboarding completed successfully!');
+    router.push('/');
+  } catch (err) {
+    console.error('Failed to complete onboarding', err);
+    toast.error(err.response?.data?.message || 'Failed to complete setup');
+  } finally {
+    loading.value = false;
+  }
+};
+
+onMounted(async () => {
+  try {
+    const res = await api.get('/onboarding/status');
+    const user = res.data?.user;
+    const biz = res.data?.business;
+    const branch = res.data?.primary_branch;
+    
+    if (user) {
+      userData.name = user.name || '';
+      userData.email = user.email || '';
+      userData.phone = user.phone || '';
+    }
+    
+    if (biz) {
+      if (biz.onboarding_status === 'completed') {
+        router.push('/');
+        return;
+      }
+      bizData.name = biz.name || '';
+      bizData.type = biz.type || '';
+      bizData.tax_number = biz.tax_number || '';
+      bizData.address = biz.address || '';
+      bizData.currency = biz.currency || 'PKR';
+      bizData.timezone = biz.timezone || 'Asia/Karachi';
+    }
+
+    if (branch) {
+      branchData.name = branch.name || 'Main Branch';
+      branchData.code = branch.code || 'MAIN';
+      branchData.phone = branch.phone || '';
+      branchData.address = branch.address || '';
+      branchData.city = branch.city || 'Lahore';
+    }
+  } catch (err) {
+    console.warn('Could not fetch onboarding details', err);
+  }
 });
 </script>
 

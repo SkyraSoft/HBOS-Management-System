@@ -111,13 +111,14 @@ class CustomerAccountService
 
         // 1. Opening Balance entry
         $opBal = (float) ($customer->opening_balance ?? 0.00);
+        $isMulti = Branch::where('business_id', $customer->business_id)->where('status', 'active')->count() > 1;
         $ledger[] = [
             'id' => 'opening-' . $customer->id,
             'date' => $customer->created_at ? $customer->created_at->toDateString() : date('Y-m-d'),
             'created_at' => $customer->created_at ? $customer->created_at->toDateTimeString() : date('Y-m-d H:i:s'),
             'type' => 'Opening Balance',
             'reference' => 'OPENING',
-            'branch' => 'All Branches',
+            'branch' => $isMulti ? 'All Branches' : 'Main Store',
             'debit' => $opBal > 0 ? $opBal : 0.00,
             'credit' => $opBal < 0 ? abs($opBal) : 0.00,
             'status' => 'posted',
@@ -162,6 +163,8 @@ class CustomerAccountService
             $isPosted = $payment->status === 'posted';
             $ledger[] = [
                 'id' => 'payment-' . $payment->id,
+                'payment_id' => $payment->id,
+                'is_payment' => true,
                 'date' => $payment->date ? $payment->date->toDateString() : $payment->created_at->toDateString(),
                 'created_at' => $payment->created_at->toDateTimeString(),
                 'type' => $isPosted ? 'Payment Received' : 'Payment Voided',

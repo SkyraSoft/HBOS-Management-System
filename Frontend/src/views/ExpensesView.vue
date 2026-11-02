@@ -132,7 +132,7 @@
                     <input type="text" class="form-control" v-model="expenseForm.reference" placeholder="Receipt or Tx #12345" />
                   </div>
 
-                  <div class="col-md-6">
+                  <div class="col-md-6" v-if="navigationStore.isMultiBranch">
                     <label class="form-label">Branch Allocation</label>
                     <select class="form-select" v-model="expenseForm.branch">
                       <option>Main Branch</option>
@@ -188,7 +188,7 @@
                   <span class="preview-value">{{ expenseForm.method || 'Cash' }}</span>
                 </div>
 
-                <div class="preview-line">
+                <div class="preview-line" v-if="navigationStore.isMultiBranch">
                   <span class="preview-label">Branch</span>
                   <span class="preview-value">{{ expenseForm.branch || 'Main Branch' }}</span>
                 </div>
@@ -352,7 +352,7 @@
                 <tr v-for="expense in paginatedExpenses" :key="expense.id" class="expense-table-row">
                   <td>
                     <div class="fw-semibold text-dark">{{ expense.date }}</div>
-                    <div class="text-muted small">{{ expense.branch || 'Main Branch' }}</div>
+                    <div v-if="navigationStore.isMultiBranch" class="text-muted small">{{ expense.branch || 'Main Branch' }}</div>
                   </td>
 
                   <td>
@@ -667,7 +667,7 @@
                   <input type="text" class="form-control" v-model="expenseForm.reference" placeholder="Receipt or Tx #12345" />
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-md-6" v-if="navigationStore.isMultiBranch">
                   <label class="form-label">Branch Allocation</label>
                   <select class="form-select" v-model="expenseForm.branch">
                     <option>Main Branch</option>
@@ -735,6 +735,7 @@
 import { defineProps, defineEmits, ref, onMounted, computed, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useExpensesStore } from '../stores/expenses';
+import { useNavigationStore } from '../stores/navigation';
 import { storeToRefs } from 'pinia';
 
 const props = defineProps({
@@ -745,6 +746,7 @@ const emit = defineEmits(['success', 'close']);
 
 const router = useRouter();
 const route = useRoute();
+const navigationStore = useNavigationStore();
 
 const activeTab = ref(props.isModal ? (props.modalPage || 'overview') : (route.query.tab || 'overview'));
 

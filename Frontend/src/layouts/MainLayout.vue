@@ -1,9 +1,17 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useNotificationStore } from '../stores/notifications'
+import { useNavigationStore } from '../stores/navigation'
+import { useAuthStore } from '../stores/auth'
+import ViewAsBanner from '../components/ViewAsBanner.vue'
+import DemoModeBanner from '../components/DemoModeBanner.vue'
+import SyncStatusBadge from '../components/SyncStatusBadge.vue'
+import { syncCoordinator } from '../services/syncCoordinator.js'
 
 const notificationStore = useNotificationStore()
+const navigationStore = useNavigationStore()
+const authStore = useAuthStore()
 
 const router = useRouter()
 const route = useRoute()
@@ -19,86 +27,36 @@ const toggleSidebar = () => {
   }
 }
 
-const navItems = [
-  { name: 'Main Dashboard', path: '/', icon: 'bi-grid-1x2' },
-  { name: 'Sales & POS', path: '/POS?tab=sales', icon: 'bi-cart3' },
-  { 
-    name: 'Inventory', 
-    path: '/inventry', 
-    icon: 'bi-boxes',
-    children: [
-      { name: 'All Products & Stock', path: '/inventry?tab=products' },
-      { name: 'Categories', path: '/inventry?tab=categories' },
-      { name: 'Brands', path: '/inventry?tab=brands' }
-    ]
-  },
-  { name: 'Customers', path: '/customer?tab=customers', icon: 'bi-people' },
-  { name: 'Khata', path: '/khata?tab=khata', icon: 'bi-journal-text' },
-  { 
-    name: 'Suppliers', 
-    path: '/supplierpayable', 
-    icon: 'bi-truck',
-    children: [
-      { name: 'Supplier List', path: '/supplierpayable?tab=supplier-intelligence' },
-      { name: 'Supplier Profile', path: '/supplier' },
-      { name: 'Purchases', path: '/supplierpayable?tab=purchase-orders' },
-      { name: 'Supplier Performance', path: '/supplierpayable?tab=supplier-performance' }
-    ]
-  },
-  { 
-    name: 'Expenses', 
-    path: '/expenses', 
-    icon: 'bi-wallet2',
-    children: [
-      { name: 'Expense List', path: '/expenses?tab=overview' },
-      { name: 'Expense Categories', path: '/expenses?tab=categories' },
-      { name: 'Expense Reports', path: '/expenses?tab=reports' }
-    ]
-  },
-  { name: 'Employees & HR', path: '/employees', icon: 'bi-person-badge' },
-  { name: 'Reports', path: '/reports?tab=reports', icon: 'bi-graph-up' },
-  { name: 'Analytics', path: '/reports1?tab=analytics', icon: 'bi-pie-chart' }
-]
-
-const bottomNavItems = [
-  { 
-    name: 'Settings', 
-    path: '/settings', 
-    icon: 'bi-gear',
-    children: [
-      { name: 'Users', path: '/settings?tab=users' },
-      { name: 'Roles & Permissions', path: '/settings?tab=roles' },
-      { name: 'Receipts & Invoices', path: '/settings?tab=receipts' },
-      { name: 'Security & Audit', path: '/settings?tab=security' },
-      { name: 'Offline Sync', path: '/settings?tab=sync' }
-    ]
-  },
-  { name: 'Help / Support', path: '/support', icon: 'bi-question-circle' }
-]
+// Adaptive Navigation items centralized from navigationStore
+const navItems = computed(() => navigationStore.visibleNavItems)
+const bottomNavItems = computed(() => navigationStore.bottomNavItems)
 
 const expandedMenus = ref({});
 
-import { watch, onUnmounted } from 'vue';
-
 const isStoreDropdownOpen = ref(false);
 const showNotifications = ref(false);
-const selectedStoreName = ref(localStorage.getItem('hbos_selected_store') || 'Main Store');
 
-const availableStores = ref([
-  { id: 1, name: 'Main Store', code: 'HQ-01', location: 'Commercial Area, Karachi' },
-  { id: 2, name: 'Warehouse Hub', code: 'WH-02', location: 'Industrial Zone, Lahore' },
-  { id: 3, name: 'Downtown Express', code: 'DX-03', location: 'Mall Road, Islamabad' },
-  { id: 4, name: 'Gulberg Branch', code: 'GB-04', location: 'Gulberg III, Lahore' }
-]);
+const currentSelectedScopeName = computed(() => {
+  if (navigationStore.selectedBranchScope === 'all') {
+    return 'All Stores'
+  }
+  const branch = navigationStore.activeBranches.find(b => String(b.id) === String(navigationStore.selectedBranchScope))
+  if (branch) {
+    return (branch.is_primary === true || branch.is_primary === 1) ? 'Main Store' : branch.name
+  }
+  return 'All Stores'
+})
 
 const toggleStoreDropdown = () => {
   isStoreDropdownOpen.value = !isStoreDropdownOpen.value;
 };
 
-const selectStore = (store) => {
-  selectedStoreName.value = store.name;
-  localStorage.setItem('hbos_selected_store', store.name);
+const selectBranchScope = (scope) => {
+  navigationStore.setSelectedBranchScope(scope);
   isStoreDropdownOpen.value = false;
+  if (scope !== 'all') {
+    authStore.setActiveBranch(scope);
+  }
 };
 
 const globalSearchQuery = ref('');
@@ -107,7 +65,7 @@ const showGlobalSearch = ref(false);
 const allSearchableRoutes = computed(() => {
   const routes = [];
   const processItems = (items) => {
-    items.forEach(item => {
+    (items || []).forEach(item => {
       if (item.children && item.children.length > 0) {
         routes.push({
           title: item.name,
@@ -133,8 +91,8 @@ const allSearchableRoutes = computed(() => {
       }
     });
   };
-  processItems(navItems);
-  processItems(bottomNavItems);
+  processItems(navItems.value);
+  processItems(bottomNavItems.value);
   return routes;
 });
 
@@ -164,13 +122,47 @@ const handleDocumentClick = (e) => {
   }
 };
 
+const dropdownNotifTab = ref('all');
+
+const dropdownFilteredNotifications = computed(() => {
+  const list = notificationStore.formattedNotifications || [];
+  if (dropdownNotifTab.value === 'alerts') {
+    return list.filter(n => n.type === 'Alerts & Attention' || n.type === 'Emergency/Critical' || n.severity === 'warning' || n.severity === 'critical');
+  }
+  if (dropdownNotifTab.value === 'activity') {
+    return list.filter(n => n.type === 'Common / Activity' || n.type === 'Common/General');
+  }
+  return list;
+});
+
+const handleNotificationClick = (notif) => {
+  if (!notif.isRead) {
+    notificationStore.markAsRead(notif.id);
+  }
+  showNotifications.value = false;
+  if (notif.action_payload && typeof notif.action_payload === 'string' && notif.action_payload.trim() !== '') {
+    router.push(notif.action_payload);
+  } else {
+    router.push('/notifications');
+  }
+};
+
 onMounted(() => {
   document.addEventListener('click', handleDocumentClick);
   if (window.innerWidth <= 768) {
     isSidebarCollapsed.value = true;
   }
-  // Fetch initial notifications
-  notificationStore.fetchNotifications();
+  // Fetch initial notifications, branches, and pending counts if authenticated or in demo mode
+  const token = localStorage.getItem('hbos_token');
+  const isDemo = localStorage.getItem('hbos_demo_mode');
+  if (token || isDemo) {
+    notificationStore.fetchNotifications();
+    navigationStore.fetchBranches();
+    if (token) {
+      navigationStore.fetchActionNotesPendingCount();
+      syncCoordinator.init();
+    }
+  }
 });
 
 onUnmounted(() => {
@@ -178,7 +170,7 @@ onUnmounted(() => {
 });
 
 watch(() => [route.path, route.query], () => {
-  [...navItems, ...bottomNavItems].forEach(item => {
+  [...(navItems.value || []), ...(bottomNavItems.value || [])].forEach(item => {
     if (item.children && isItemActive(item)) {
       expandedMenus.value[item.path] = true;
     }
@@ -398,6 +390,12 @@ function isChildActive(child, item) {
     <!-- Main Content -->
     <main class="main" :class="{ 'full-width': isSidebarCollapsed }">
       
+      <!-- Demo Mode Workspace Banner (Checkpoints 3.1 & 3.2) -->
+      <DemoModeBanner />
+
+      <!-- View-As Read-Only Preview Banner (REQ-0006) -->
+      <ViewAsBanner />
+
       <!-- TOPBAR -->
       <header class="topbar">
         <button class="hamburger-toggle-btn" type="button" @click="toggleSidebar" aria-label="Toggle navigation menu" title="Toggle Sidebar">
@@ -443,6 +441,21 @@ function isChildActive(child, item) {
 
         <div class="topbar-actions d-flex align-items-center gap-4">
           
+          <!-- Phase-8 Sync Status Badge (REQ-0030 / SRT-GAP-025) -->
+          <SyncStatusBadge />
+
+          <!-- Action Notes Badge (REQ-0029 / SRT-GAP-023) -->
+          <router-link 
+            v-if="navigationStore.actionNotesPendingCount > 0"
+            to="/?tab=action-notes"
+            class="d-flex align-items-center gap-1 text-decoration-none px-2 py-1 rounded-pill"
+            style="background: #fef3c7; color: #b45309; font-size: 13px; font-weight: 600; border: 1px solid #fde68a;"
+            title="Pending Operational Action Notes"
+          >
+            <i class="bi bi-clipboard-check"></i>
+            <span>{{ navigationStore.actionNotesPendingCount }}</span>
+          </router-link>
+
           <!-- Notifications Dropdown -->
           <div class="notification-wrapper position-relative">
             <button 
@@ -453,39 +466,128 @@ function isChildActive(child, item) {
               style="cursor: pointer; transition: color 0.2s;"
               onmouseover="this.style.color='#0d6efd'"
               onmouseout="this.style.color=''"
+              title="Notifications & Alerts"
             >
               <i class="bi bi-bell"></i>
-              <span v-if="notificationStore.unreadCount > 0" class="notification-dot position-absolute p-1 bg-danger rounded-circle border border-white" style="top: 0px; right: 2px;"></span>
+              <span 
+                v-if="notificationStore.unreadCount > 0" 
+                class="position-absolute badge rounded-pill bg-danger shadow-sm" 
+                style="top: -4px; right: -6px; font-size: 10px; padding: 2px 5px; min-width: 17px; line-height: 12px;"
+              >
+                {{ notificationStore.unreadCount }}
+              </span>
             </button>
             
-            <div class="notification-dropdown shadow-lg rounded-3 bg-white" v-if="showNotifications" @click.stop style="position: absolute; top: 120%; right: -10px; width: 300px; z-index: 1050; border: 1px solid #e2e8f0;">
+            <div 
+              class="notification-dropdown shadow-lg rounded-3 bg-white" 
+              v-if="showNotifications" 
+              @click.stop 
+              style="position: absolute; top: 120%; right: -10px; width: 350px; z-index: 1050; border: 1px solid #e2e8f0;"
+            >
               <div class="p-3 border-bottom d-flex justify-content-between align-items-center bg-light rounded-top-3">
-                <h6 class="m-0 fw-bold">Notifications</h6>
+                <div class="d-flex align-items-center gap-2">
+                  <i class="bi bi-bell-fill text-primary"></i>
+                  <h6 class="m-0 fw-bold text-dark">Notifications &amp; Alerts</h6>
+                </div>
                 <span class="badge bg-primary rounded-pill">{{ notificationStore.unreadCount }} New</span>
               </div>
-              <div class="list-group list-group-flush" style="max-height: 300px; overflow-y: auto;">
-                <a v-for="notif in notificationStore.formattedNotifications.slice(0, 5)" :key="notif.id" href="#" class="list-group-item list-group-item-action p-3" :class="{'bg-light': !notif.isRead}">
-                  <div class="d-flex gap-3">
-                    <div class="mt-1" :class="notif.colorClass"><i class="bi" :class="notif.icon"></i></div>
-                    <div>
-                      <h6 class="mb-1 text-dark fs-6">{{ notif.title }}</h6>
-                      <p class="mb-0 text-muted small">{{ notif.message }}</p>
-                      <small class="text-muted" style="font-size: 11px;">{{ notif.time }}</small>
+
+              <!-- Interactive Tabs inside Dropdown -->
+              <div class="px-3 py-2 border-bottom bg-white d-flex gap-1.5 align-items-center">
+                <button
+                  type="button"
+                  class="btn btn-sm rounded-pill px-2.5 py-0.5 fw-semibold border-0"
+                  :class="dropdownNotifTab === 'all' ? 'btn-primary text-white' : 'btn-light text-secondary'"
+                  style="font-size: 11px;"
+                  @click="dropdownNotifTab = 'all'"
+                >
+                  All ({{ notificationStore.formattedNotifications.length }})
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-sm rounded-pill px-2.5 py-0.5 fw-semibold border-0 d-flex align-items-center gap-1"
+                  :class="dropdownNotifTab === 'alerts' ? 'btn-warning text-dark' : 'btn-light text-secondary'"
+                  style="font-size: 11px;"
+                  @click="dropdownNotifTab = 'alerts'"
+                >
+                  <i class="bi bi-exclamation-triangle-fill" style="font-size: 10px;"></i>
+                  Alerts ({{ notificationStore.alertCount }})
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-sm rounded-pill px-2.5 py-0.5 fw-semibold border-0"
+                  :class="dropdownNotifTab === 'activity' ? 'btn-secondary text-white' : 'btn-light text-secondary'"
+                  style="font-size: 11px;"
+                  @click="dropdownNotifTab = 'activity'"
+                >
+                  Activity
+                </button>
+              </div>
+              
+              <div class="list-group list-group-flush" style="max-height: 350px; overflow-y: auto;">
+                <div 
+                  v-for="notif in dropdownFilteredNotifications.slice(0, 8)" 
+                  :key="notif.id" 
+                  class="list-group-item list-group-item-action p-3"
+                  :class="{
+                    'bg-light-subtle': !notif.isRead,
+                    'border-start border-3 border-warning': notif.type === 'Alerts & Attention'
+                  }"
+                  @click="handleNotificationClick(notif)"
+                  style="cursor: pointer; transition: background-color 0.15s ease;"
+                >
+                  <div class="d-flex gap-2.5">
+                    <div class="mt-0.5 fs-5 flex-shrink-0" :class="notif.colorClass">
+                      <i class="bi" :class="notif.icon"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                      <div class="d-flex align-items-center justify-content-between mb-1">
+                        <h6 class="mb-0 text-dark fw-bold" style="font-size: 13.5px;">{{ notif.title }}</h6>
+                        <span 
+                          v-if="notif.type === 'Alerts & Attention'" 
+                          class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle rounded-pill" 
+                          style="font-size: 10px;"
+                        >
+                          Alert
+                        </span>
+                      </div>
+                      <p class="mb-1 text-muted small" style="font-size: 12px; line-height: 1.4;">{{ notif.message }}</p>
+                      <div class="d-flex justify-content-between align-items-center mt-1">
+                        <small class="text-muted" style="font-size: 11px;">{{ notif.time }}</small>
+                        <span v-if="notif.action_payload" class="text-primary fw-semibold small" style="font-size: 11px;">
+                          {{ notif.action_label || 'View' }} &rarr;
+                        </span>
+                      </div>
                     </div>
                   </div>
-                </a>
-                <div v-if="notificationStore.formattedNotifications.length === 0" class="p-4 text-center text-muted small">
-                  No new notifications.
+                </div>
+                
+                <div v-if="dropdownFilteredNotifications.length === 0" class="p-4 text-center text-muted small">
+                  {{ dropdownNotifTab === 'alerts' ? 'No active alerts requiring attention.' : dropdownNotifTab === 'activity' ? 'No recent activity logs.' : 'No new notifications or alerts.' }}
                 </div>
               </div>
-              <div class="p-2 border-top text-center bg-light rounded-bottom-3">
-                <router-link to="/notifications" class="text-decoration-none small fw-semibold text-primary" @click="showNotifications = false">View All Notifications</router-link>
+              
+              <div class="p-2.5 border-top d-flex justify-content-between align-items-center bg-light rounded-bottom-3 px-3">
+                <button 
+                  type="button" 
+                  class="btn btn-link btn-sm p-0 text-decoration-none text-muted small" 
+                  @click="notificationStore.markAllAsRead"
+                >
+                  Mark all read
+                </button>
+                <router-link 
+                  to="/notifications" 
+                  class="text-decoration-none small fw-semibold text-primary" 
+                  @click="showNotifications = false"
+                >
+                  View All Notifications &rarr;
+                </router-link>
               </div>
             </div>
           </div>
 
-          <!-- Store Selector Dropdown -->
-          <div class="store-selector-wrapper position-relative">
+          <!-- Store Selector Dropdown: Visible ONLY for Multi-Branch Owner (>= 2 active branches) -->
+          <div v-if="navigationStore.branchSelectorVisible" class="store-selector-wrapper position-relative">
             <button 
               type="button" 
               class="store-selector-btn d-flex align-items-center gap-2 text-secondary fw-semibold border-0 bg-transparent"
@@ -496,7 +598,7 @@ function isChildActive(child, item) {
               title="Switch Active Store"
             >
               <i class="bi bi-shop store-icon text-primary"></i>
-              <span class="store-current-name">{{ selectedStoreName }}</span>
+              <span class="store-current-name">{{ currentSelectedScopeName }}</span>
               <i class="bi bi-chevron-down store-arrow-icon" :class="{ 'rotated': isStoreDropdownOpen }"></i>
             </button>
 
@@ -504,34 +606,56 @@ function isChildActive(child, item) {
             <div class="store-dropdown-menu shadow-lg" v-if="isStoreDropdownOpen" @click.stop>
               <div class="store-dropdown-header">
                 <span class="store-dropdown-title">Select Store / Branch</span>
-                <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-2 py-0.5" style="font-size: 11px;">4 Outlets</span>
+                <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-2 py-0.5" style="font-size: 11px;">
+                  {{ navigationStore.activeBranchCount }} Outlets
+                </span>
               </div>
 
               <div class="store-list-items">
+                <!-- ALL STORES AGGREGATE OPTION -->
                 <div 
-                  v-for="s in availableStores" 
+                  class="store-menu-item"
+                  :class="{ 'selected': navigationStore.selectedBranchScope === 'all' }"
+                  @click="selectBranchScope('all')"
+                >
+                  <div class="store-item-icon-box" :class="{ 'selected': navigationStore.selectedBranchScope === 'all' }">
+                    <i class="bi bi-buildings"></i>
+                  </div>
+                  <div class="store-item-details">
+                    <div class="d-flex align-items-center justify-content-between">
+                      <span class="store-item-name">All Stores</span>
+                      <span class="badge bg-secondary-subtle text-dark">Chain</span>
+                    </div>
+                    <span class="store-item-location">Aggregate Chain Scope</span>
+                  </div>
+                  <i class="bi bi-check2 text-primary fs-5 ms-2" v-if="navigationStore.selectedBranchScope === 'all'"></i>
+                </div>
+
+                <!-- ACTIVE BRANCHES -->
+                <div 
+                  v-for="s in navigationStore.activeBranches" 
                   :key="s.id"
                   class="store-menu-item"
-                  :class="{ 'selected': selectedStoreName === s.name }"
-                  @click="selectStore(s)"
+                  :class="{ 'selected': String(navigationStore.selectedBranchScope) === String(s.id) }"
+                  @click="selectBranchScope(s.id)"
                 >
-                  <div class="store-item-icon-box" :class="{ 'selected': selectedStoreName === s.name }">
+                  <div class="store-item-icon-box" :class="{ 'selected': String(navigationStore.selectedBranchScope) === String(s.id) }">
                     <i class="bi bi-shop"></i>
                   </div>
                   <div class="store-item-details">
                     <div class="d-flex align-items-center justify-content-between">
-                      <span class="store-item-name">{{ s.name }}</span>
-                      <span class="store-item-code">{{ s.code }}</span>
+                      <span class="store-item-name">{{ (s.is_primary === true || s.is_primary === 1) ? 'Main Store' : s.name }}</span>
+                      <span class="store-item-code" v-if="s.code">{{ s.code }}</span>
                     </div>
-                    <span class="store-item-location">{{ s.location }}</span>
+                    <span class="store-item-location" v-if="s.address || s.city">{{ s.address || s.city }}</span>
                   </div>
-                  <i class="bi bi-check2 text-primary fs-5 ms-2" v-if="selectedStoreName === s.name"></i>
+                  <i class="bi bi-check2 text-primary fs-5 ms-2" v-if="String(navigationStore.selectedBranchScope) === String(s.id)"></i>
                 </div>
               </div>
 
               <div class="store-dropdown-footer">
-                <router-link to="/busniesssetup" class="store-manage-link" @click="isStoreDropdownOpen = false">
-                  <i class="bi bi-gear me-1"></i> Manage Store Branches
+                <router-link to="/settings?tab=users" class="store-manage-link" @click="isStoreDropdownOpen = false">
+                  <i class="bi bi-gear me-1"></i> Store &amp; Branch Settings
                 </router-link>
               </div>
             </div>

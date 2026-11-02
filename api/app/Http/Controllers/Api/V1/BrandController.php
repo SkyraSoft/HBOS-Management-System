@@ -28,6 +28,8 @@ class BrandController extends Controller
             return response()->json(['message' => 'Unauthorized action.'], 403);
         }
 
+        $businessId = ResolveActiveBusiness::requireActiveBusinessId();
+
         $request->validate([
             'name' => 'required|string|max:255',
             'image' => 'nullable'
@@ -35,8 +37,9 @@ class BrandController extends Controller
 
         $imagePath = null;
         try {
+            $storageDir = 'businesses/' . $businessId . '/brands';
             if ($request->hasFile('image') && $request->file('image')->isValid()) {
-                $path = $request->file('image')->store('brands', 'public');
+                $path = $request->file('image')->store($storageDir, 'public');
                 $imagePath = asset('storage/' . $path);
             } else if ($request->filled('image_url')) {
                 $imagePath = $request->image_url;
@@ -47,8 +50,8 @@ class BrandController extends Controller
                 $image = str_replace($replace, '', $image_64);
                 $image = str_replace(' ', '+', $image);
                 $imageName = 'brand_' . time() . '_' . uniqid() . '.' . $extension;
-                \Illuminate\Support\Facades\Storage::disk('public')->put('brands/' . $imageName, base64_decode($image));
-                $imagePath = asset('storage/brands/' . $imageName);
+                \Illuminate\Support\Facades\Storage::disk('public')->put($storageDir . '/' . $imageName, base64_decode($image));
+                $imagePath = asset('storage/' . $storageDir . '/' . $imageName);
             } else if ($request->filled('image') && is_string($request->image)) {
                 $imagePath = $request->image;
             }
@@ -56,7 +59,6 @@ class BrandController extends Controller
             \Log::warning('Brand image upload warning: ' . $e->getMessage());
         }
 
-        $businessId = ResolveActiveBusiness::requireActiveBusinessId();
         $name = trim($request->name);
         $brand = Brand::firstOrCreate(
             [
@@ -103,8 +105,9 @@ class BrandController extends Controller
 
         $imagePath = $brand->image;
         try {
+            $storageDir = 'businesses/' . $businessId . '/brands';
             if ($request->hasFile('image') && $request->file('image')->isValid()) {
-                $path = $request->file('image')->store('brands', 'public');
+                $path = $request->file('image')->store($storageDir, 'public');
                 $imagePath = asset('storage/' . $path);
             } else if ($request->filled('image_url')) {
                 $imagePath = $request->image_url;
@@ -115,8 +118,8 @@ class BrandController extends Controller
                 $image = str_replace($replace, '', $image_64);
                 $image = str_replace(' ', '+', $image);
                 $imageName = 'brand_' . time() . '_' . uniqid() . '.' . $extension;
-                \Illuminate\Support\Facades\Storage::disk('public')->put('brands/' . $imageName, base64_decode($image));
-                $imagePath = asset('storage/brands/' . $imageName);
+                \Illuminate\Support\Facades\Storage::disk('public')->put($storageDir . '/' . $imageName, base64_decode($image));
+                $imagePath = asset('storage/' . $storageDir . '/' . $imageName);
             } else if ($request->has('image') && is_string($request->image)) {
                 $imagePath = $request->image;
             }

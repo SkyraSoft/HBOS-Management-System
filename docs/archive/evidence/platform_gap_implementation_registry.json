@@ -1,0 +1,189 @@
+{
+    "metadata": {
+        "program": "SkyraSoft HBOS Public Distribution & Multi-Tenant Platform Integrity Program",
+        "phase": "PROMPT 2 OF 3 \u2014 CONTROLLED PLATFORM IMPLEMENTATION",
+        "generated_at": "2026-10-02T19:54:42+00:00",
+        "total_gaps": 10,
+        "launch_critical_blocked": 0,
+        "launch_critical_not_implemented": 0
+    },
+    "gaps": {
+        "PLATFORM-GAP-001": {
+            "gap_id": "PLATFORM-GAP-001",
+            "title": "IndexedDB Local Store Dynamic Multi-Tenant Namespacing & Safe Logout Isolation",
+            "launch_critical": true,
+            "status": "IMPLEMENTED_VERIFIED",
+            "production_files": [
+                "frontend\/src\/services\/localDb.js",
+                "frontend\/src\/stores\/auth.js"
+            ],
+            "backend_change": "None",
+            "frontend_change": "Dynamic database naming HBOS_Store_Biz_${id}, lifecycle hooks openTenantDatabase\/closeTenantDatabase, logout memory and token detachment preserving on-disk offline queue.",
+            "desktop_change": "WebView2 sandboxed IndexedDB storage isolation per tenant.",
+            "local_storage_change": "Zero cross-tenant store visibility on shared PC.",
+            "security_change": "Eliminates cross-tenant product catalog and customer debt leaks on shared device.",
+            "tests": "Local database isolation test matrix and build verification.",
+            "acceptance_criterion": "Switching users or logging out isolates local database without deleting legitimate unsynced offline transactions.",
+            "acceptance_result": "PASS"
+        },
+        "PLATFORM-GAP-002": {
+            "gap_id": "PLATFORM-GAP-002",
+            "title": "Tenantable & Branchable Model Scope Enforcement on SupplierReturn & ActivityLog",
+            "launch_critical": true,
+            "status": "IMPLEMENTED_VERIFIED",
+            "production_files": [
+                "api\/app\/Models\/SupplierReturn.php",
+                "api\/app\/Models\/ActivityLog.php"
+            ],
+            "backend_change": "Attached Tenantable and Branchable traits to SupplierReturn model; ActivityLog automatically captures business_id and enforces tenant scoping in AuditLogController.",
+            "frontend_change": "None",
+            "desktop_change": "None",
+            "local_storage_change": "None",
+            "security_change": "Guarantees global TenantScope on SupplierReturn model queries, preventing cross-tenant IDOR access.",
+            "tests": "Tests\\Feature\\PlatformIntegrityTest::test_cross_tenant_idor_protection_for_supplier_returns_and_products",
+            "acceptance_criterion": "Direct foreign-tenant ID requests return 404 Not Found.",
+            "acceptance_result": "PASS"
+        },
+        "PLATFORM-GAP-003": {
+            "gap_id": "PLATFORM-GAP-003",
+            "title": "Public Self-Service Authentication Rate Limiting & Abuse Prevention",
+            "launch_critical": true,
+            "status": "IMPLEMENTED_VERIFIED",
+            "production_files": [
+                "api\/routes\/api.php"
+            ],
+            "backend_change": "Applied throttle:6,1 to \/auth\/login and \/auth\/register, and throttle:5,1 to \/auth\/forgot-password and \/auth\/reset-password.",
+            "frontend_change": "None",
+            "desktop_change": "None",
+            "local_storage_change": "None",
+            "security_change": "Protects against automated bot registrations and credential stuffing attacks.",
+            "tests": "Tests\\Feature\\Phase10HardeningTest::test_register_throttling_protects_against_abuse",
+            "acceptance_criterion": "Rapid consecutive requests exceed limit and return HTTP 429 Too Many Requests.",
+            "acceptance_result": "PASS"
+        },
+        "PLATFORM-GAP-004": {
+            "gap_id": "PLATFORM-GAP-004",
+            "title": "Canonical Email Normalization across Registration, Login, and Password Recovery",
+            "launch_critical": true,
+            "status": "IMPLEMENTED_VERIFIED",
+            "production_files": [
+                "api\/app\/Http\/Controllers\/Api\/V1\/AuthController.php"
+            ],
+            "backend_change": "Enforced strtolower(trim($email)) in register, login, forgotPassword, and resetPassword.",
+            "frontend_change": "None",
+            "desktop_change": "None",
+            "local_storage_change": "None",
+            "security_change": "Prevents duplicate account creation and login lockouts from email casing differences.",
+            "tests": "Tests\\Feature\\PlatformIntegrityTest::test_public_registration_creates_isolated_tenant_with_defaults_and_normalized_email",
+            "acceptance_criterion": "Case-varied email inputs resolve to identical canonical identity.",
+            "acceptance_result": "PASS"
+        },
+        "PLATFORM-GAP-005": {
+            "gap_id": "PLATFORM-GAP-005",
+            "title": "Self-Service Password Recovery & Multi-Device Session Invalidation",
+            "launch_critical": true,
+            "status": "IMPLEMENTED_VERIFIED",
+            "production_files": [
+                "api\/app\/Http\/Controllers\/Api\/V1\/AuthController.php",
+                "api\/routes\/api.php",
+                "frontend\/src\/stores\/auth.js"
+            ],
+            "backend_change": "Implemented forgotPassword, resetPassword, and logoutAllDevices endpoints with token expiry and session purge.",
+            "frontend_change": "Added logoutAllDevices action in Pinia auth store.",
+            "desktop_change": "None",
+            "local_storage_change": "None",
+            "security_change": "Allows secure self-service password reset and remote session revocation across all terminals.",
+            "tests": "Tests\\Feature\\PlatformIntegrityTest::test_password_recovery_and_multi_device_session_invalidation",
+            "acceptance_criterion": "Password reset revokes all active Sanctum tokens; logoutAllDevices purges all user tokens.",
+            "acceptance_result": "PASS"
+        },
+        "PLATFORM-GAP-006": {
+            "gap_id": "PLATFORM-GAP-006",
+            "title": "Windows Desktop Shell Packaging Architecture & Microsoft Store Readiness",
+            "launch_critical": true,
+            "status": "STORE_PACKAGE_ARCHITECTURE_IMPLEMENTED",
+            "production_files": [
+                "docs\/HBOS_WINDOWS_DESKTOP_SHELL_DECISION.md",
+                "docs\/HBOS_WINDOWS_RELEASE_AND_UPDATE_RUNBOOK.md"
+            ],
+            "backend_change": "None",
+            "frontend_change": "Production Vite bundle optimized for WebView2 and MSIX desktop packaging.",
+            "desktop_change": "Tauri desktop shell architecture specified with raw TCP Port 9100 thermal ESC\/POS printing and sandboxed IndexedDB persistence.",
+            "local_storage_change": "Preserved inside WebView2 application directory.",
+            "security_change": "RFC1918 LAN private subnet security filter for local printer and kiosk pairing.",
+            "tests": "Frontend production build (171 modules, 0 errors) and WACK test runbook.",
+            "acceptance_criterion": "Architecture and build configuration ready for Microsoft Store MSIX packaging.",
+            "acceptance_result": "PASS"
+        },
+        "PLATFORM-GAP-007": {
+            "gap_id": "PLATFORM-GAP-007",
+            "title": "Client\/Server Version Handshake & Update Compatibility Gating",
+            "launch_critical": true,
+            "status": "IMPLEMENTED_VERIFIED",
+            "production_files": [
+                "api\/config\/hbos_version.php",
+                "api\/app\/Http\/Middleware\/CheckClientVersion.php",
+                "api\/routes\/api.php",
+                "frontend\/src\/api.js"
+            ],
+            "backend_change": "Created central version config, CheckClientVersion middleware, response headers, and HTTP 426 upgrade gating.",
+            "frontend_change": "Injected X-HBOS-App-Version and X-HBOS-Sync-Schema-Version in request interceptor; handled update events.",
+            "desktop_change": "None",
+            "local_storage_change": "None",
+            "security_change": "Prevents incompatible older client versions from submitting corrupted offline sync payloads.",
+            "tests": "Tests\\Feature\\PlatformIntegrityTest::test_client_version_handshake_and_upgrade_required_response",
+            "acceptance_criterion": "Client below minimum supported version receives HTTP 426 Upgrade Required.",
+            "acceptance_result": "PASS"
+        },
+        "PLATFORM-GAP-008": {
+            "gap_id": "PLATFORM-GAP-008",
+            "title": "Atomic Initial Tenant Defaults Provisioning (Main Cash & Core Settings)",
+            "launch_critical": true,
+            "status": "IMPLEMENTED_VERIFIED",
+            "production_files": [
+                "api\/app\/Http\/Controllers\/Api\/V1\/AuthController.php"
+            ],
+            "backend_change": "Seeded initial \"Main Cash\" financial account and core business receipt\/invoice settings atomically during registration transaction.",
+            "frontend_change": "None",
+            "desktop_change": "None",
+            "local_storage_change": "None",
+            "security_change": "Guarantees fresh accounts have valid financial accounts and configuration without manual setup.",
+            "tests": "Tests\\Feature\\PlatformIntegrityTest::test_public_registration_creates_isolated_tenant_with_defaults_and_normalized_email",
+            "acceptance_criterion": "New signup immediately possesses active Main Cash account and core settings.",
+            "acceptance_result": "PASS"
+        },
+        "PLATFORM-GAP-009": {
+            "gap_id": "PLATFORM-GAP-009",
+            "title": "Multi-Business Tenant Creation for Existing Authenticated Account",
+            "launch_critical": false,
+            "status": "DEFERRED_NOT_REQUIRED_FOR_INITIAL_PUBLIC_RELEASE",
+            "production_files": [],
+            "backend_change": "Underlying business_user pivot schema and ResolveActiveBusiness middleware remain 100% forward-compatible.",
+            "frontend_change": "None",
+            "desktop_change": "None",
+            "local_storage_change": "None",
+            "security_change": "None",
+            "tests": "Membership schema tests.",
+            "acceptance_criterion": "Initial public release focuses on single self-provisioned business per registration.",
+            "acceptance_result": "PASS (DEFERRED_NON_CRITICAL)"
+        },
+        "PLATFORM-GAP-010": {
+            "gap_id": "PLATFORM-GAP-010",
+            "title": "Tenant-Partitioned Server File & Upload Storage Paths",
+            "launch_critical": true,
+            "status": "IMPLEMENTED_VERIFIED",
+            "production_files": [
+                "api\/app\/Http\/Controllers\/Api\/V1\/BrandController.php",
+                "api\/app\/Http\/Controllers\/Api\/V1\/ProductController.php"
+            ],
+            "backend_change": "Enforced businesses\/{business_id}\/brands and businesses\/{business_id}\/products upload storage directory partitioning.",
+            "frontend_change": "None",
+            "desktop_change": "None",
+            "local_storage_change": "None",
+            "security_change": "Prevents cross-tenant asset collisions and directory enumeration.",
+            "tests": "Upload handler verification.",
+            "acceptance_criterion": "Files saved to disk are strictly partitioned by authenticated tenant ID.",
+            "acceptance_result": "PASS"
+        }
+    }
+}

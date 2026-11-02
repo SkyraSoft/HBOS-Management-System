@@ -1,0 +1,29 @@
+{
+    "metadata": {
+        "technology": "IndexedDB (localDb.js)",
+        "strategy": "BUSINESS_SCOPED_LOCAL_DB (HBOS_Store_Biz_${business_id})",
+        "generated_at": "2026-10-02T19:54:42+00:00"
+    },
+    "scenarios": {
+        "tenant_a_login": {
+            "action": "Open DB A",
+            "result": "HBOS_Store_Biz_101 opened; catalog cached"
+        },
+        "tenant_a_offline_mutations": {
+            "action": "Queue sale & payment",
+            "result": "Saved to outbox store with business_id: 101"
+        },
+        "tenant_a_logout": {
+            "action": "Logout",
+            "result": "DB A closed; token purged; outbox records preserved intact on disk"
+        },
+        "tenant_b_login_same_pc": {
+            "action": "Login User B",
+            "result": "HBOS_Store_Biz_202 opened; zero visibility into DB A"
+        },
+        "tenant_a_relogin": {
+            "action": "Re-login User A",
+            "result": "HBOS_Store_Biz_101 reopened; all pending offline work available for sync"
+        }
+    }
+}

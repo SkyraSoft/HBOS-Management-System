@@ -1,0 +1,137 @@
+[
+    {
+        "capability_id": "DELTA-001",
+        "title": "Split-Tender Payment Allocation Table",
+        "gap": "GAP-003",
+        "implementation_source": "api/database/migrations/2026_10_02_000003_create_sale_payments_table.php, api/app/Models/SalePayment.php, api/app/Services/SaleService.php",
+        "operator_surface": "POS Counter (/pos) & Sales History (/sales/history)",
+        "doc_section": "Definitive Guide Section 7, Page Manual FORM-003",
+        "sop_ref": "SOP-003"
+    },
+    {
+        "capability_id": "DELTA-002",
+        "title": "Supplier Debit Notes & Returns Master Table",
+        "gap": "GAP-011",
+        "implementation_source": "api/database/migrations/2026_10_02_000008_create_supplier_returns_table.php, api/app/Models/SupplierReturn.php, api/app/Services/SupplierReturnService.php",
+        "operator_surface": "Supplier AP Ledger (/suppliers/:id/ledger)",
+        "doc_section": "Definitive Guide Section 9, Page Manual FORM-019",
+        "sop_ref": "SOP-017"
+    },
+    {
+        "capability_id": "DELTA-003",
+        "title": "Supplier Return Line Items Specification Table",
+        "gap": "GAP-011",
+        "implementation_source": "api/database/migrations/2026_10_02_000008_create_supplier_returns_table.php, api/app/Models/SupplierReturnItem.php",
+        "operator_surface": "Supplier AP Ledger (/suppliers/:id/ledger)",
+        "doc_section": "Definitive Guide Section 9, Page Manual TAB-027",
+        "sop_ref": "SOP-017"
+    },
+    {
+        "capability_id": "DELTA-004",
+        "title": "Point-in-Time Transaction Snapshots on Sale Items",
+        "gap": "GAP-001",
+        "implementation_source": "api/database/migrations/2026_10_02_000001_add_snapshot_columns_to_sale_items_table.php, api/app/Models/SaleItem.php",
+        "operator_surface": "Sales History (/sales/history) & Invoice Reprint Overlays",
+        "doc_section": "Definitive Guide Section 5, Page Manual FORM-002",
+        "sop_ref": "SOP-006"
+    },
+    {
+        "capability_id": "DELTA-005",
+        "title": "Wholesale Price Tier Persistence on Product Master",
+        "gap": "GAP-002",
+        "implementation_source": "api/database/migrations/2026_10_02_000002_add_wholesale_price_to_products_table.php, api/app/Models/Product.php",
+        "operator_surface": "Product Catalog (/inventory/products) & POS Wholesale Tier",
+        "doc_section": "Definitive Guide Section 7, Page Manual FORM-006",
+        "sop_ref": "SOP-004"
+    },
+    {
+        "capability_id": "DELTA-006",
+        "title": "Purchase Freight & Landed Cost Ingestion",
+        "gap": "GAP-005",
+        "implementation_source": "api/database/migrations/2026_10_02_000005_add_landed_cost_to_purchases_table.php, api/app/Models/Purchase.php",
+        "operator_surface": "Purchases (/purchases) & GRN Receiving",
+        "doc_section": "Definitive Guide Section 6, Page Manual FORM-016",
+        "sop_ref": "SOP-015"
+    },
+    {
+        "capability_id": "DELTA-007",
+        "title": "Inter-Branch Stock Movement Transit State Tracking",
+        "gap": "GAP-007",
+        "implementation_source": "api/database/migrations/2026_10_02_000006_add_transfer_status_to_inventory_movements.php, api/app/Models/InventoryMovement.php",
+        "operator_surface": "Stock Transfers (/inventory/transfers)",
+        "doc_section": "Definitive Guide Section 6, Page Manual FORM-011",
+        "sop_ref": "SOP-014"
+    },
+    {
+        "capability_id": "DELTA-008",
+        "title": "Sale Return Restock Condition & Scrap Classification",
+        "gap": "GAP-010",
+        "implementation_source": "api/database/migrations/2026_10_02_000007_add_restock_condition_to_sale_return_items.php, api/app/Models/SaleReturnItem.php",
+        "operator_surface": "Sale Returns (/sales/returns)",
+        "doc_section": "Definitive Guide Section 6, Page Manual FORM-005",
+        "sop_ref": "SOP-008"
+    },
+    {
+        "capability_id": "DELTA-009",
+        "title": "Staff Payroll & Wage Agreement Field Persistence",
+        "gap": "GAP-029",
+        "implementation_source": "api/database/migrations/2026_10_02_000009_add_payroll_columns_to_users_table.php, api/app/Models/User.php",
+        "operator_surface": "User Staff Governance (/users)",
+        "doc_section": "Definitive Guide Section 3, Page Manual FORM-022",
+        "sop_ref": "SOP-024"
+    },
+    {
+        "capability_id": "DELTA-010",
+        "title": "Customer Secondary Contact Phone Persistence",
+        "gap": "GAP-030",
+        "implementation_source": "api/database/migrations/2026_10_02_000010_add_secondary_phone_to_customers_table.php, api/app/Models/Customer.php",
+        "operator_surface": "Customer Directory (/customers)",
+        "doc_section": "Definitive Guide Section 8, Page Manual FORM-013",
+        "sop_ref": "SOP-009"
+    },
+    {
+        "capability_id": "DELTA-011",
+        "title": "Expense Category Monthly Budget Ceiling Persistence",
+        "gap": "GAP-031",
+        "implementation_source": "api/database/migrations/2026_10_02_000011_add_monthly_budget_to_expense_categories_table.php, api/app/Models/ExpenseCategory.php",
+        "operator_surface": "Expense Categories (/expenses/categories)",
+        "doc_section": "Definitive Guide Section 10, Page Manual FORM-021",
+        "sop_ref": "SOP-019"
+    },
+    {
+        "capability_id": "DELTA-012",
+        "title": "Supplier Payment Reversal Endpoint & Ledger Settlement",
+        "gap": "GAP-012",
+        "implementation_source": "api/app/Http/Controllers/Api/V1/SupplierPaymentController.php@reverse, api/routes/api.php",
+        "operator_surface": "Supplier AP Ledger (/suppliers/:id/ledger)",
+        "doc_section": "Definitive Guide Section 9, Page Manual ACTION-050",
+        "sop_ref": "SOP-018"
+    },
+    {
+        "capability_id": "DELTA-013",
+        "title": "Mandatory Expense Funding Account Validation Guard",
+        "gap": "GAP-013",
+        "implementation_source": "api/database/migrations/2026_10_02_000004_enforce_non_null_financial_account_on_expenses.php, api/app/Http/Controllers/Api/V1/ExpenseController.php",
+        "operator_surface": "Operating Expenses (/expenses)",
+        "doc_section": "Definitive Guide Section 10, Page Manual FORM-020",
+        "sop_ref": "SOP-019"
+    },
+    {
+        "capability_id": "DELTA-014",
+        "title": "Server-Authoritative Financial Totals & Concurrency Locks",
+        "gap": "GAP-018, GAP-020",
+        "implementation_source": "api/app/Services/SaleService.php, api/app/Services/InventoryService.php",
+        "operator_surface": "POS Counter (/pos) & Backend API",
+        "doc_section": "Definitive Guide Section 5, Page Manual FORM-002",
+        "sop_ref": "SOP-001"
+    },
+    {
+        "capability_id": "DELTA-015",
+        "title": "Strict RFC1918 Subnet Device Pairing Security & Port Guard",
+        "gap": "GAP-024",
+        "implementation_source": "Frontend/src/services/devicePairingService.js",
+        "operator_surface": "Device Pairing (/device-pairing)",
+        "doc_section": "Definitive Guide Section 13, Page Manual FORM-031",
+        "sop_ref": "SOP-032"
+    }
+]

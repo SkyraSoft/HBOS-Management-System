@@ -1,0 +1,3341 @@
+{
+    "businesses": {
+        "migration": "0000_01_01_000000_create_businesses_table.php",
+        "columns": {
+            "id": {
+                "type": "bigint unsigned",
+                "nullable": "NO",
+                "default": "AUTO_INCREMENT",
+                "migration": "0000_01_01_000000_create_businesses_table.php",
+                "raw": "$table->id()"
+            },
+            "name": {
+                "type": "string",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "0000_01_01_000000_create_businesses_table.php",
+                "raw": "$table->string('name')"
+            },
+            "type": {
+                "type": "string",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "0000_01_01_000000_create_businesses_table.php",
+                "raw": "$table->string('type')->nullable()"
+            },
+            "address": {
+                "type": "string",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "0000_01_01_000000_create_businesses_table.php",
+                "raw": "$table->string('address')->nullable()"
+            },
+            "phone": {
+                "type": "string",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "0000_01_01_000000_create_businesses_table.php",
+                "raw": "$table->string('phone')->nullable()"
+            },
+            "email": {
+                "type": "string",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "0000_01_01_000000_create_businesses_table.php",
+                "raw": "$table->string('email')->nullable()"
+            },
+            "logo": {
+                "type": "string",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "0000_01_01_000000_create_businesses_table.php",
+                "raw": "$table->string('logo')->nullable()"
+            },
+            "currency": {
+                "type": "string",
+                "nullable": "NO",
+                "default": "PKR",
+                "migration": "0000_01_01_000000_create_businesses_table.php",
+                "raw": "$table->string('currency')->default('PKR')"
+            },
+            "created_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "0000_01_01_000000_create_businesses_table.php",
+                "raw": "$table->timestamps()"
+            },
+            "updated_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "0000_01_01_000000_create_businesses_table.php",
+                "raw": "$table->timestamps()"
+            }
+        },
+        "indexes": [],
+        "foreign_keys": []
+    },
+    "users": {
+        "migration": "0001_01_01_000000_create_users_table.php",
+        "columns": {
+            "id": {
+                "type": "bigint unsigned",
+                "nullable": "NO",
+                "default": "AUTO_INCREMENT",
+                "migration": "0001_01_01_000000_create_users_table.php",
+                "raw": "$table->id()"
+            },
+            "business_id": {
+                "type": "foreignId",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "0001_01_01_000000_create_users_table.php",
+                "raw": "$table->foreignId('business_id')->nullable()->constrained()->onDelete('cascade')"
+            },
+            "name": {
+                "type": "string",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "0001_01_01_000000_create_users_table.php",
+                "raw": "$table->string('name')"
+            },
+            "email": {
+                "type": "string",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "0001_01_01_000000_create_users_table.php",
+                "raw": "$table->string('email')->unique()"
+            },
+            "role": {
+                "type": "string",
+                "nullable": "NO",
+                "default": "cashier",
+                "migration": "0001_01_01_000000_create_users_table.php",
+                "raw": "$table->string('role')->default('cashier')"
+            },
+            "is_active": {
+                "type": "boolean",
+                "nullable": "NO",
+                "default": "true",
+                "migration": "0001_01_01_000000_create_users_table.php",
+                "raw": "$table->boolean('is_active')->default(true)"
+            },
+            "last_login_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "0001_01_01_000000_create_users_table.php",
+                "raw": "$table->timestamp('last_login_at')->nullable()"
+            },
+            "email_verified_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "0001_01_01_000000_create_users_table.php",
+                "raw": "$table->timestamp('email_verified_at')->nullable()"
+            },
+            "password": {
+                "type": "string",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "0001_01_01_000000_create_users_table.php",
+                "raw": "$table->string('password')"
+            },
+            "created_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "0001_01_01_000000_create_users_table.php",
+                "raw": "$table->timestamps()"
+            },
+            "updated_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "0001_01_01_000000_create_users_table.php",
+                "raw": "$table->timestamps()"
+            },
+            "branch_id": {
+                "type": "foreignId",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_13_104137_restructure_for_hbos_phase_r.php",
+                "raw": "$table->foreignId('branch_id')->nullable()->after('business_id')->constrained('branches')->onDelete('set null')"
+            }
+        },
+        "indexes": [],
+        "foreign_keys": []
+    },
+    "password_reset_tokens": {
+        "migration": "0001_01_01_000000_create_users_table.php",
+        "columns": {
+            "email": {
+                "type": "string",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "0001_01_01_000000_create_users_table.php",
+                "raw": "$table->string('email')->primary()"
+            },
+            "token": {
+                "type": "string",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "0001_01_01_000000_create_users_table.php",
+                "raw": "$table->string('token')"
+            },
+            "created_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "0001_01_01_000000_create_users_table.php",
+                "raw": "$table->timestamp('created_at')->nullable()"
+            }
+        },
+        "indexes": [],
+        "foreign_keys": []
+    },
+    "sessions": {
+        "migration": "0001_01_01_000000_create_users_table.php",
+        "columns": {
+            "id": {
+                "type": "string",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "0001_01_01_000000_create_users_table.php",
+                "raw": "$table->string('id')->primary()"
+            },
+            "user_id": {
+                "type": "foreignId",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "0001_01_01_000000_create_users_table.php",
+                "raw": "$table->foreignId('user_id')->nullable()->index()"
+            },
+            "ip_address": {
+                "type": "string(45)",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "0001_01_01_000000_create_users_table.php",
+                "raw": "$table->string('ip_address', 45)->nullable()"
+            },
+            "user_agent": {
+                "type": "text",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "0001_01_01_000000_create_users_table.php",
+                "raw": "$table->text('user_agent')->nullable()"
+            },
+            "payload": {
+                "type": "longText",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "0001_01_01_000000_create_users_table.php",
+                "raw": "$table->longText('payload')"
+            },
+            "last_activity": {
+                "type": "integer",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "0001_01_01_000000_create_users_table.php",
+                "raw": "$table->integer('last_activity')->index()"
+            }
+        },
+        "indexes": [],
+        "foreign_keys": []
+    },
+    "cache": {
+        "migration": "0001_01_01_000001_create_cache_table.php",
+        "columns": {
+            "key": {
+                "type": "string",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "0001_01_01_000001_create_cache_table.php",
+                "raw": "$table->string('key')->primary()"
+            },
+            "value": {
+                "type": "mediumText",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "0001_01_01_000001_create_cache_table.php",
+                "raw": "$table->mediumText('value')"
+            },
+            "expiration": {
+                "type": "integer",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "0001_01_01_000001_create_cache_table.php",
+                "raw": "$table->integer('expiration')->index()"
+            }
+        },
+        "indexes": [],
+        "foreign_keys": []
+    },
+    "cache_locks": {
+        "migration": "0001_01_01_000001_create_cache_table.php",
+        "columns": {
+            "key": {
+                "type": "string",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "0001_01_01_000001_create_cache_table.php",
+                "raw": "$table->string('key')->primary()"
+            },
+            "owner": {
+                "type": "string",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "0001_01_01_000001_create_cache_table.php",
+                "raw": "$table->string('owner')"
+            },
+            "expiration": {
+                "type": "integer",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "0001_01_01_000001_create_cache_table.php",
+                "raw": "$table->integer('expiration')->index()"
+            }
+        },
+        "indexes": [],
+        "foreign_keys": []
+    },
+    "jobs": {
+        "migration": "0001_01_01_000002_create_jobs_table.php",
+        "columns": {
+            "id": {
+                "type": "bigint unsigned",
+                "nullable": "NO",
+                "default": "AUTO_INCREMENT",
+                "migration": "0001_01_01_000002_create_jobs_table.php",
+                "raw": "$table->id()"
+            },
+            "queue": {
+                "type": "string",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "0001_01_01_000002_create_jobs_table.php",
+                "raw": "$table->string('queue')->index()"
+            },
+            "payload": {
+                "type": "longText",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "0001_01_01_000002_create_jobs_table.php",
+                "raw": "$table->longText('payload')"
+            },
+            "attempts": {
+                "type": "unsignedTinyInteger",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "0001_01_01_000002_create_jobs_table.php",
+                "raw": "$table->unsignedTinyInteger('attempts')"
+            },
+            "reserved_at": {
+                "type": "unsignedInteger",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "0001_01_01_000002_create_jobs_table.php",
+                "raw": "$table->unsignedInteger('reserved_at')->nullable()"
+            },
+            "available_at": {
+                "type": "unsignedInteger",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "0001_01_01_000002_create_jobs_table.php",
+                "raw": "$table->unsignedInteger('available_at')"
+            },
+            "created_at": {
+                "type": "unsignedInteger",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "0001_01_01_000002_create_jobs_table.php",
+                "raw": "$table->unsignedInteger('created_at')"
+            }
+        },
+        "indexes": [],
+        "foreign_keys": []
+    },
+    "job_batches": {
+        "migration": "0001_01_01_000002_create_jobs_table.php",
+        "columns": {
+            "id": {
+                "type": "string",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "0001_01_01_000002_create_jobs_table.php",
+                "raw": "$table->string('id')->primary()"
+            },
+            "name": {
+                "type": "string",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "0001_01_01_000002_create_jobs_table.php",
+                "raw": "$table->string('name')"
+            },
+            "total_jobs": {
+                "type": "integer",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "0001_01_01_000002_create_jobs_table.php",
+                "raw": "$table->integer('total_jobs')"
+            },
+            "pending_jobs": {
+                "type": "integer",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "0001_01_01_000002_create_jobs_table.php",
+                "raw": "$table->integer('pending_jobs')"
+            },
+            "failed_jobs": {
+                "type": "integer",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "0001_01_01_000002_create_jobs_table.php",
+                "raw": "$table->integer('failed_jobs')"
+            },
+            "failed_job_ids": {
+                "type": "longText",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "0001_01_01_000002_create_jobs_table.php",
+                "raw": "$table->longText('failed_job_ids')"
+            },
+            "options": {
+                "type": "mediumText",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "0001_01_01_000002_create_jobs_table.php",
+                "raw": "$table->mediumText('options')->nullable()"
+            },
+            "cancelled_at": {
+                "type": "integer",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "0001_01_01_000002_create_jobs_table.php",
+                "raw": "$table->integer('cancelled_at')->nullable()"
+            },
+            "created_at": {
+                "type": "integer",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "0001_01_01_000002_create_jobs_table.php",
+                "raw": "$table->integer('created_at')"
+            },
+            "finished_at": {
+                "type": "integer",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "0001_01_01_000002_create_jobs_table.php",
+                "raw": "$table->integer('finished_at')->nullable()"
+            }
+        },
+        "indexes": [],
+        "foreign_keys": []
+    },
+    "failed_jobs": {
+        "migration": "0001_01_01_000002_create_jobs_table.php",
+        "columns": {
+            "id": {
+                "type": "bigint unsigned",
+                "nullable": "NO",
+                "default": "AUTO_INCREMENT",
+                "migration": "0001_01_01_000002_create_jobs_table.php",
+                "raw": "$table->id()"
+            },
+            "uuid": {
+                "type": "string",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "0001_01_01_000002_create_jobs_table.php",
+                "raw": "$table->string('uuid')->unique()"
+            },
+            "connection": {
+                "type": "text",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "0001_01_01_000002_create_jobs_table.php",
+                "raw": "$table->text('connection')"
+            },
+            "queue": {
+                "type": "text",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "0001_01_01_000002_create_jobs_table.php",
+                "raw": "$table->text('queue')"
+            },
+            "payload": {
+                "type": "longText",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "0001_01_01_000002_create_jobs_table.php",
+                "raw": "$table->longText('payload')"
+            },
+            "exception": {
+                "type": "longText",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "0001_01_01_000002_create_jobs_table.php",
+                "raw": "$table->longText('exception')"
+            },
+            "failed_at": {
+                "type": "timestamp",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "0001_01_01_000002_create_jobs_table.php",
+                "raw": "$table->timestamp('failed_at')->useCurrent()"
+            }
+        },
+        "indexes": [],
+        "foreign_keys": []
+    },
+    "personal_access_tokens": {
+        "migration": "2026_08_24_045838_create_personal_access_tokens_table.php",
+        "columns": {
+            "id": {
+                "type": "bigint unsigned",
+                "nullable": "NO",
+                "default": "AUTO_INCREMENT",
+                "migration": "2026_08_24_045838_create_personal_access_tokens_table.php",
+                "raw": "$table->id()"
+            },
+            "tokenable": {
+                "type": "morphs",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_08_24_045838_create_personal_access_tokens_table.php",
+                "raw": "$table->morphs('tokenable')"
+            },
+            "name": {
+                "type": "text",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_08_24_045838_create_personal_access_tokens_table.php",
+                "raw": "$table->text('name')"
+            },
+            "token": {
+                "type": "string(64)",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_08_24_045838_create_personal_access_tokens_table.php",
+                "raw": "$table->string('token', 64)->unique()"
+            },
+            "abilities": {
+                "type": "text",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_08_24_045838_create_personal_access_tokens_table.php",
+                "raw": "$table->text('abilities')->nullable()"
+            },
+            "last_used_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_08_24_045838_create_personal_access_tokens_table.php",
+                "raw": "$table->timestamp('last_used_at')->nullable()"
+            },
+            "expires_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_08_24_045838_create_personal_access_tokens_table.php",
+                "raw": "$table->timestamp('expires_at')->nullable()->index()"
+            },
+            "created_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_08_24_045838_create_personal_access_tokens_table.php",
+                "raw": "$table->timestamps()"
+            },
+            "updated_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_08_24_045838_create_personal_access_tokens_table.php",
+                "raw": "$table->timestamps()"
+            }
+        },
+        "indexes": [],
+        "foreign_keys": []
+    },
+    "categories": {
+        "migration": "2026_08_24_050946_create_categories_table.php",
+        "columns": {
+            "id": {
+                "type": "bigint unsigned",
+                "nullable": "NO",
+                "default": "AUTO_INCREMENT",
+                "migration": "2026_08_24_050946_create_categories_table.php",
+                "raw": "$table->id()"
+            },
+            "business_id": {
+                "type": "foreignId",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_08_24_050946_create_categories_table.php",
+                "raw": "$table->foreignId('business_id')->constrained()->onDelete('cascade')"
+            },
+            "name": {
+                "type": "string",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_08_24_050946_create_categories_table.php",
+                "raw": "$table->string('name')"
+            },
+            "description": {
+                "type": "text",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_08_24_050946_create_categories_table.php",
+                "raw": "$table->text('description')->nullable()"
+            },
+            "created_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_08_24_050946_create_categories_table.php",
+                "raw": "$table->timestamps()"
+            },
+            "updated_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_08_24_050946_create_categories_table.php",
+                "raw": "$table->timestamps()"
+            }
+        },
+        "indexes": [],
+        "foreign_keys": []
+    },
+    "products": {
+        "migration": "2026_08_24_050947_create_products_table.php",
+        "columns": {
+            "id": {
+                "type": "bigint unsigned",
+                "nullable": "NO",
+                "default": "AUTO_INCREMENT",
+                "migration": "2026_08_24_050947_create_products_table.php",
+                "raw": "$table->id()"
+            },
+            "business_id": {
+                "type": "foreignId",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_08_24_050947_create_products_table.php",
+                "raw": "$table->foreignId('business_id')->constrained()->onDelete('cascade')"
+            },
+            "category_id": {
+                "type": "foreignId",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_08_24_050947_create_products_table.php",
+                "raw": "$table->foreignId('category_id')->nullable()->constrained()->onDelete('set null')"
+            },
+            "name": {
+                "type": "string",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_08_24_050947_create_products_table.php",
+                "raw": "$table->string('name')"
+            },
+            "sku": {
+                "type": "string",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_08_24_050947_create_products_table.php",
+                "raw": "$table->string('sku')->nullable()"
+            },
+            "barcode": {
+                "type": "string",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_08_24_050947_create_products_table.php",
+                "raw": "$table->string('barcode')->nullable()"
+            },
+            "cost_price": {
+                "type": "decimal(10, 2)",
+                "nullable": "NO",
+                "default": "0",
+                "migration": "2026_08_24_050947_create_products_table.php",
+                "raw": "$table->decimal('cost_price', 10, 2)->default(0)"
+            },
+            "selling_price": {
+                "type": "decimal(10, 2)",
+                "nullable": "NO",
+                "default": "0",
+                "migration": "2026_08_24_050947_create_products_table.php",
+                "raw": "$table->decimal('selling_price', 10, 2)->default(0)"
+            },
+            "stock": {
+                "type": "integer",
+                "nullable": "NO",
+                "default": "0",
+                "migration": "2026_08_24_050947_create_products_table.php",
+                "raw": "$table->integer('stock')->default(0)"
+            },
+            "min_stock": {
+                "type": "integer",
+                "nullable": "NO",
+                "default": "0",
+                "migration": "2026_08_24_050947_create_products_table.php",
+                "raw": "$table->integer('min_stock')->default(0)"
+            },
+            "unit": {
+                "type": "string",
+                "nullable": "NO",
+                "default": "pcs",
+                "migration": "2026_08_24_050947_create_products_table.php",
+                "raw": "$table->string('unit')->default('pcs')"
+            },
+            "description": {
+                "type": "text",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_08_24_050947_create_products_table.php",
+                "raw": "$table->text('description')->nullable()"
+            },
+            "image": {
+                "type": "string",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_08_24_050947_create_products_table.php",
+                "raw": "$table->string('image')->nullable()"
+            },
+            "is_active": {
+                "type": "boolean",
+                "nullable": "NO",
+                "default": "true",
+                "migration": "2026_08_24_050947_create_products_table.php",
+                "raw": "$table->boolean('is_active')->default(true)"
+            },
+            "created_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_08_24_050947_create_products_table.php",
+                "raw": "$table->timestamps()"
+            },
+            "updated_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_08_24_050947_create_products_table.php",
+                "raw": "$table->timestamps()"
+            },
+            "brand_id": {
+                "type": "foreignId",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_08_27_105514_add_brand_and_subcategory_to_products_table.php",
+                "raw": "$table->foreignId('brand_id')->nullable()->constrained()->onDelete('set null')"
+            },
+            "subcategory_id": {
+                "type": "foreignId",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_08_27_105514_add_brand_and_subcategory_to_products_table.php",
+                "raw": "$table->foreignId('subcategory_id')->nullable()->constrained()->onDelete('set null')"
+            },
+            "has_variations": {
+                "type": "boolean",
+                "nullable": "NO",
+                "default": "false",
+                "migration": "2026_09_03_000000_add_variation_columns_to_products_table.php",
+                "raw": "$table->boolean('has_variations')->default(false)->after('is_active')"
+            },
+            "attributes": {
+                "type": "json",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_03_000000_add_variation_columns_to_products_table.php",
+                "raw": "$table->json('attributes')->nullable()->after('has_variations')"
+            },
+            "variations": {
+                "type": "json",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_03_000000_add_variation_columns_to_products_table.php",
+                "raw": "$table->json('variations')->nullable()->after('attributes')"
+            },
+            "expected_sell_date": {
+                "type": "date",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_04_102104_add_expected_sell_date_to_products_table.php",
+                "raw": "$table->date('expected_sell_date')->nullable()->after('min_stock')"
+            },
+            "products_business_id_sku_unique": {
+                "type": "dropUnique",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_14_000000_add_tenant_unique_sku_barcode_to_products_table.php",
+                "raw": "$table->dropUnique('products_business_id_sku_unique')"
+            },
+            "products_business_id_barcode_unique": {
+                "type": "dropUnique",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_14_000000_add_tenant_unique_sku_barcode_to_products_table.php",
+                "raw": "$table->dropUnique('products_business_id_barcode_unique')"
+            }
+        },
+        "indexes": [],
+        "foreign_keys": []
+    },
+    "sales": {
+        "migration": "2026_08_24_051341_create_sales_table.php",
+        "columns": {
+            "id": {
+                "type": "bigint unsigned",
+                "nullable": "NO",
+                "default": "AUTO_INCREMENT",
+                "migration": "2026_08_24_051341_create_sales_table.php",
+                "raw": "$table->id()"
+            },
+            "business_id": {
+                "type": "foreignId",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_08_24_051341_create_sales_table.php",
+                "raw": "$table->foreignId('business_id')->constrained()->onDelete('cascade')"
+            },
+            "user_id": {
+                "type": "foreignId",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_08_24_051341_create_sales_table.php",
+                "raw": "$table->foreignId('user_id')->constrained()->onDelete('cascade')"
+            },
+            "customer_id": {
+                "type": "unsignedBigInteger",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_08_24_051341_create_sales_table.php",
+                "raw": "$table->unsignedBigInteger('customer_id')->nullable()"
+            },
+            "invoice_number": {
+                "type": "string",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_08_24_051341_create_sales_table.php",
+                "raw": "\/\/ Will foreign key later after customers table is made\n            $table->string('invoice_number')->unique()"
+            },
+            "date": {
+                "type": "date",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_08_24_051341_create_sales_table.php",
+                "raw": "$table->date('date')"
+            },
+            "subtotal": {
+                "type": "decimal(12, 2)",
+                "nullable": "NO",
+                "default": "0",
+                "migration": "2026_08_24_051341_create_sales_table.php",
+                "raw": "$table->decimal('subtotal', 12, 2)->default(0)"
+            },
+            "discount": {
+                "type": "decimal(12, 2)",
+                "nullable": "NO",
+                "default": "0",
+                "migration": "2026_08_24_051341_create_sales_table.php",
+                "raw": "$table->decimal('discount', 12, 2)->default(0)"
+            },
+            "tax": {
+                "type": "decimal(12, 2)",
+                "nullable": "NO",
+                "default": "0",
+                "migration": "2026_08_24_051341_create_sales_table.php",
+                "raw": "$table->decimal('tax', 12, 2)->default(0)"
+            },
+            "total": {
+                "type": "decimal(12, 2)",
+                "nullable": "NO",
+                "default": "0",
+                "migration": "2026_08_24_051341_create_sales_table.php",
+                "raw": "$table->decimal('total', 12, 2)->default(0)"
+            },
+            "payment_method": {
+                "type": "string",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_08_24_051341_create_sales_table.php",
+                "raw": "$table->string('payment_method')->nullable()"
+            },
+            "notes": {
+                "type": "text",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_08_24_051341_create_sales_table.php",
+                "raw": "$table->text('notes')->nullable()"
+            },
+            "created_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_08_24_051341_create_sales_table.php",
+                "raw": "$table->timestamps()"
+            },
+            "updated_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_08_24_051341_create_sales_table.php",
+                "raw": "$table->timestamps()"
+            },
+            "paid_amount": {
+                "type": "decimal(12, 2)",
+                "nullable": "NO",
+                "default": "0",
+                "migration": "2026_09_17_000000_add_phase_5_sales_pos_fields.php",
+                "raw": "if (!Schema::hasColumn('sales', 'paid_amount')) {\n                $table->decimal('paid_amount', 12, 2)->default(0)->after('total')"
+            },
+            "due_amount": {
+                "type": "decimal(12, 2)",
+                "nullable": "NO",
+                "default": "0",
+                "migration": "2026_09_17_000000_add_phase_5_sales_pos_fields.php",
+                "raw": "}\n            if (!Schema::hasColumn('sales', 'due_amount')) {\n                $table->decimal('due_amount', 12, 2)->default(0)->after('paid_amount')"
+            },
+            "30": {
+                "type": "status(->default('completed')->after('due_amount'))",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_17_000000_add_phase_5_sales_pos_fields.php",
+                "raw": "}\n            if (!Schema::hasColumn('sales', 'status')) {\n                $table->string('status', 30)->default('completed')->after('due_amount')"
+            },
+            "cancelled_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_17_000000_add_phase_5_sales_pos_fields.php",
+                "raw": "}\n            if (!Schema::hasColumn('sales', 'cancelled_at')) {\n                $table->timestamp('cancelled_at')->nullable()->after('status')"
+            },
+            "cancelled_by": {
+                "type": "foreignId",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_17_000000_add_phase_5_sales_pos_fields.php",
+                "raw": "}\n            if (!Schema::hasColumn('sales', 'cancelled_by')) {\n                $table->foreignId('cancelled_by')->nullable()->constrained('users')->onDelete('set null')->after('cancelled_at')"
+            },
+            "cancellation_reason": {
+                "type": "text",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_17_000000_add_phase_5_sales_pos_fields.php",
+                "raw": "}\n            if (!Schema::hasColumn('sales', 'cancellation_reason')) {\n                $table->text('cancellation_reason')->nullable()->after('cancelled_by')"
+            },
+            "100": {
+                "type": "idempotency_key(->nullable()->after('notes'))",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_18_000000_add_idempotency_key_to_sales_table.php",
+                "raw": "if (!Schema::hasColumn('sales', 'idempotency_key')) {\n                $table->string('idempotency_key', 100)->nullable()->after('notes')"
+            },
+            "sales_business_idempotency_unique": {
+                "type": "dropUnique",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_18_000000_add_idempotency_key_to_sales_table.php",
+                "raw": "$table->dropUnique('sales_business_idempotency_unique')"
+            },
+            "sales_invoice_number_unique": {
+                "type": "dropUnique",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_18_000002_replace_global_sales_invoice_unique_with_business_scoped_unique.php",
+                "raw": "\/\/ Drop historical global unique index on invoice_number\n            $table->dropUnique('sales_invoice_number_unique')"
+            },
+            "sales_business_invoice_number_unique": {
+                "type": "dropUnique",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_18_000002_replace_global_sales_invoice_unique_with_business_scoped_unique.php",
+                "raw": "\/\/ Drop tenant-scoped composite unique index\n            $table->dropUnique('sales_business_invoice_number_unique')"
+            },
+            "idx_sales_biz_branch_date_status": {
+                "type": "dropIndex",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_21_000000_add_phase_8_reporting_indexes.php",
+                "raw": "$table->dropIndex('idx_sales_biz_branch_date_status')"
+            }
+        },
+        "indexes": [],
+        "foreign_keys": []
+    },
+    "purchases": {
+        "migration": "2026_08_24_051342_create_purchases_table.php",
+        "columns": {
+            "id": {
+                "type": "bigint unsigned",
+                "nullable": "NO",
+                "default": "AUTO_INCREMENT",
+                "migration": "2026_08_24_051342_create_purchases_table.php",
+                "raw": "$table->id()"
+            },
+            "business_id": {
+                "type": "foreignId",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_08_24_051342_create_purchases_table.php",
+                "raw": "$table->foreignId('business_id')->constrained()->onDelete('cascade')"
+            },
+            "supplier_id": {
+                "type": "unsignedBigInteger",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_08_24_051342_create_purchases_table.php",
+                "raw": "$table->unsignedBigInteger('supplier_id')->nullable()"
+            },
+            "user_id": {
+                "type": "foreignId",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_08_24_051342_create_purchases_table.php",
+                "raw": "\/\/ Foreign key later\n            $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null')"
+            },
+            "po_number": {
+                "type": "string",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_08_24_051342_create_purchases_table.php",
+                "raw": "$table->string('po_number')->unique()"
+            },
+            "date": {
+                "type": "date",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_08_24_051342_create_purchases_table.php",
+                "raw": "$table->date('date')"
+            },
+            "subtotal": {
+                "type": "decimal(12, 2)",
+                "nullable": "NO",
+                "default": "0",
+                "migration": "2026_08_24_051342_create_purchases_table.php",
+                "raw": "$table->decimal('subtotal', 12, 2)->default(0)"
+            },
+            "total": {
+                "type": "decimal(12, 2)",
+                "nullable": "NO",
+                "default": "0",
+                "migration": "2026_08_24_051342_create_purchases_table.php",
+                "raw": "$table->decimal('total', 12, 2)->default(0)"
+            },
+            "status": {
+                "type": "string",
+                "nullable": "NO",
+                "default": "received",
+                "migration": "2026_08_24_051342_create_purchases_table.php",
+                "raw": "$table->string('status')->default('received')"
+            },
+            "notes": {
+                "type": "text",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_08_24_051342_create_purchases_table.php",
+                "raw": "\/\/ e.g. pending, received\n            $table->text('notes')->nullable()"
+            },
+            "created_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_08_24_051342_create_purchases_table.php",
+                "raw": "$table->timestamps()"
+            },
+            "updated_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_08_24_051342_create_purchases_table.php",
+                "raw": "$table->timestamps()"
+            },
+            "paid_amount": {
+                "type": "decimal(12, 2)",
+                "nullable": "NO",
+                "default": "0",
+                "migration": "2026_09_16_000000_update_purchases_and_suppliers_schema_for_phase_4.php",
+                "raw": "if (!Schema::hasColumn('purchases', 'paid_amount')) {\n                $table->decimal('paid_amount', 12, 2)->default(0)->after('total')"
+            },
+            "due_amount": {
+                "type": "decimal(12, 2)",
+                "nullable": "NO",
+                "default": "0",
+                "migration": "2026_09_16_000000_update_purchases_and_suppliers_schema_for_phase_4.php",
+                "raw": "}\n            if (!Schema::hasColumn('purchases', 'due_amount')) {\n                $table->decimal('due_amount', 12, 2)->default(0)->after('paid_amount')"
+            },
+            "cancelled_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_16_000000_update_purchases_and_suppliers_schema_for_phase_4.php",
+                "raw": "}\n            if (!Schema::hasColumn('purchases', 'cancelled_at')) {\n                $table->timestamp('cancelled_at')->nullable()->after('notes')"
+            },
+            "cancelled_by": {
+                "type": "foreignId",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_16_000000_update_purchases_and_suppliers_schema_for_phase_4.php",
+                "raw": "}\n            if (!Schema::hasColumn('purchases', 'cancelled_by')) {\n                $table->foreignId('cancelled_by')->nullable()->after('cancelled_at')->constrained('users')->onDelete('set null')"
+            },
+            "cancellation_reason": {
+                "type": "text",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_16_000000_update_purchases_and_suppliers_schema_for_phase_4.php",
+                "raw": "}\n            if (!Schema::hasColumn('purchases', 'cancellation_reason')) {\n                $table->text('cancellation_reason')->nullable()->after('cancelled_by')"
+            },
+            "purchases_po_number_unique": {
+                "type": "dropUnique",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_16_000000_update_purchases_and_suppliers_schema_for_phase_4.php",
+                "raw": "}\n\n            \/\/ Drop old global po_number unique constraint and add composite unique (business_id, po_number)\n            $table->dropUnique('purchases_po_number_unique')"
+            },
+            "purchases_business_po_number_unique": {
+                "type": "dropUnique",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_16_000000_update_purchases_and_suppliers_schema_for_phase_4.php",
+                "raw": "$table->dropUnique('purchases_business_po_number_unique')"
+            }
+        },
+        "indexes": [],
+        "foreign_keys": []
+    },
+    "sale_items": {
+        "migration": "2026_08_24_051342_create_sale_items_table.php",
+        "columns": {
+            "id": {
+                "type": "bigint unsigned",
+                "nullable": "NO",
+                "default": "AUTO_INCREMENT",
+                "migration": "2026_08_24_051342_create_sale_items_table.php",
+                "raw": "$table->id()"
+            },
+            "sale_id": {
+                "type": "foreignId",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_08_24_051342_create_sale_items_table.php",
+                "raw": "$table->foreignId('sale_id')->constrained()->onDelete('cascade')"
+            },
+            "product_id": {
+                "type": "foreignId",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_08_24_051342_create_sale_items_table.php",
+                "raw": "$table->foreignId('product_id')->constrained()->onDelete('cascade')"
+            },
+            "quantity": {
+                "type": "integer",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_08_24_051342_create_sale_items_table.php",
+                "raw": "$table->integer('quantity')"
+            },
+            "unit_price": {
+                "type": "decimal(12, 2)",
+                "nullable": "NO",
+                "default": "0",
+                "migration": "2026_08_24_051342_create_sale_items_table.php",
+                "raw": "$table->decimal('unit_price', 12, 2)->default(0)"
+            },
+            "discount": {
+                "type": "decimal(12, 2)",
+                "nullable": "NO",
+                "default": "0",
+                "migration": "2026_08_24_051342_create_sale_items_table.php",
+                "raw": "$table->decimal('discount', 12, 2)->default(0)"
+            },
+            "total": {
+                "type": "decimal(12, 2)",
+                "nullable": "NO",
+                "default": "0",
+                "migration": "2026_08_24_051342_create_sale_items_table.php",
+                "raw": "$table->decimal('total', 12, 2)->default(0)"
+            },
+            "created_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_08_24_051342_create_sale_items_table.php",
+                "raw": "$table->timestamps()"
+            },
+            "updated_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_08_24_051342_create_sale_items_table.php",
+                "raw": "$table->timestamps()"
+            },
+            "cost_price": {
+                "type": "decimal(12, 2)",
+                "nullable": "NO",
+                "default": "0",
+                "migration": "2026_09_21_000001_ensure_sale_item_cost_price_not_null.php",
+                "raw": "$table->decimal('cost_price', 12, 2)->default(0)->change()"
+            },
+            "returned_quantity": {
+                "type": "integer",
+                "nullable": "NO",
+                "default": "0",
+                "migration": "2026_09_17_000000_add_phase_5_sales_pos_fields.php",
+                "raw": "}\n            if (!Schema::hasColumn('sale_items', 'returned_quantity')) {\n                $table->integer('returned_quantity')->default(0)->after('quantity')"
+            },
+            "idx_sale_items_sale_product": {
+                "type": "dropIndex",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_21_000000_add_phase_8_reporting_indexes.php",
+                "raw": "$table->dropIndex('idx_sale_items_sale_product')"
+            }
+        },
+        "indexes": [],
+        "foreign_keys": []
+    },
+    "purchase_items": {
+        "migration": "2026_08_24_051343_create_purchase_items_table.php",
+        "columns": {
+            "id": {
+                "type": "bigint unsigned",
+                "nullable": "NO",
+                "default": "AUTO_INCREMENT",
+                "migration": "2026_08_24_051343_create_purchase_items_table.php",
+                "raw": "$table->id()"
+            },
+            "purchase_id": {
+                "type": "foreignId",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_08_24_051343_create_purchase_items_table.php",
+                "raw": "$table->foreignId('purchase_id')->constrained()->onDelete('cascade')"
+            },
+            "product_id": {
+                "type": "foreignId",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_08_24_051343_create_purchase_items_table.php",
+                "raw": "$table->foreignId('product_id')->constrained()->onDelete('cascade')"
+            },
+            "quantity": {
+                "type": "integer",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_08_24_051343_create_purchase_items_table.php",
+                "raw": "$table->integer('quantity')"
+            },
+            "unit_cost": {
+                "type": "decimal(12, 2)",
+                "nullable": "NO",
+                "default": "0",
+                "migration": "2026_08_24_051343_create_purchase_items_table.php",
+                "raw": "$table->decimal('unit_cost', 12, 2)->default(0)"
+            },
+            "total": {
+                "type": "decimal(12, 2)",
+                "nullable": "NO",
+                "default": "0",
+                "migration": "2026_08_24_051343_create_purchase_items_table.php",
+                "raw": "$table->decimal('total', 12, 2)->default(0)"
+            },
+            "created_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_08_24_051343_create_purchase_items_table.php",
+                "raw": "$table->timestamps()"
+            },
+            "updated_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_08_24_051343_create_purchase_items_table.php",
+                "raw": "$table->timestamps()"
+            }
+        },
+        "indexes": [],
+        "foreign_keys": []
+    },
+    "customers": {
+        "migration": "2026_08_24_051931_create_customers_table.php",
+        "columns": {
+            "id": {
+                "type": "bigint unsigned",
+                "nullable": "NO",
+                "default": "AUTO_INCREMENT",
+                "migration": "2026_08_24_051931_create_customers_table.php",
+                "raw": "$table->id()"
+            },
+            "business_id": {
+                "type": "foreignId",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_08_24_051931_create_customers_table.php",
+                "raw": "$table->foreignId('business_id')->constrained()->onDelete('cascade')"
+            },
+            "name": {
+                "type": "string",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_08_24_051931_create_customers_table.php",
+                "raw": "$table->string('name')"
+            },
+            "phone": {
+                "type": "string",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_08_24_051931_create_customers_table.php",
+                "raw": "$table->string('phone')->nullable()"
+            },
+            "email": {
+                "type": "string",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_08_24_051931_create_customers_table.php",
+                "raw": "$table->string('email')->nullable()"
+            },
+            "address": {
+                "type": "text",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_08_24_051931_create_customers_table.php",
+                "raw": "$table->text('address')->nullable()"
+            },
+            "balance": {
+                "type": "decimal(12, 2)",
+                "nullable": "NO",
+                "default": "0",
+                "migration": "2026_08_24_051931_create_customers_table.php",
+                "raw": "$table->decimal('balance', 12, 2)->default(0)"
+            },
+            "created_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_08_24_051931_create_customers_table.php",
+                "raw": "$table->timestamps()"
+            },
+            "updated_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_08_24_051931_create_customers_table.php",
+                "raw": "$table->timestamps()"
+            },
+            "opening_balance": {
+                "type": "decimal(12, 2)",
+                "nullable": "NO",
+                "default": "0.00",
+                "migration": "2026_09_19_000000_add_opening_balance_to_customers_table.php",
+                "raw": "$table->decimal('opening_balance', 12, 2)->default(0.00)->after('address')"
+            }
+        },
+        "indexes": [],
+        "foreign_keys": []
+    },
+    "khata_transactions": {
+        "migration": "2026_08_24_051931_create_khata_transactions_table.php",
+        "columns": {
+            "id": {
+                "type": "bigint unsigned",
+                "nullable": "NO",
+                "default": "AUTO_INCREMENT",
+                "migration": "2026_08_24_051931_create_khata_transactions_table.php",
+                "raw": "$table->id()"
+            },
+            "business_id": {
+                "type": "foreignId",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_08_24_051931_create_khata_transactions_table.php",
+                "raw": "$table->foreignId('business_id')->constrained()->onDelete('cascade')"
+            },
+            "customer_id": {
+                "type": "foreignId",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_08_24_051931_create_khata_transactions_table.php",
+                "raw": "$table->foreignId('customer_id')->constrained()->onDelete('cascade')"
+            },
+            "type": {
+                "type": "enum(['give', 'got'])",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_08_24_051931_create_khata_transactions_table.php",
+                "raw": "$table->enum('type', ['give', 'got'])"
+            },
+            "amount": {
+                "type": "decimal(12, 2)",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_08_24_051931_create_khata_transactions_table.php",
+                "raw": "\/\/ give = credit to customer, got = payment received\n            $table->decimal('amount', 12, 2)"
+            },
+            "date": {
+                "type": "date",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_08_24_051931_create_khata_transactions_table.php",
+                "raw": "$table->date('date')"
+            },
+            "notes": {
+                "type": "text",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_08_24_051931_create_khata_transactions_table.php",
+                "raw": "$table->text('notes')->nullable()"
+            },
+            "created_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_08_24_051931_create_khata_transactions_table.php",
+                "raw": "$table->timestamps()"
+            },
+            "updated_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_08_24_051931_create_khata_transactions_table.php",
+                "raw": "$table->timestamps()"
+            }
+        },
+        "indexes": [],
+        "foreign_keys": []
+    },
+    "suppliers": {
+        "migration": "2026_08_24_051932_create_suppliers_table.php",
+        "columns": {
+            "id": {
+                "type": "bigint unsigned",
+                "nullable": "NO",
+                "default": "AUTO_INCREMENT",
+                "migration": "2026_08_24_051932_create_suppliers_table.php",
+                "raw": "$table->id()"
+            },
+            "business_id": {
+                "type": "foreignId",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_08_24_051932_create_suppliers_table.php",
+                "raw": "$table->foreignId('business_id')->constrained()->onDelete('cascade')"
+            },
+            "name": {
+                "type": "string",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_08_24_051932_create_suppliers_table.php",
+                "raw": "$table->string('name')"
+            },
+            "contact_person": {
+                "type": "string",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_08_24_051932_create_suppliers_table.php",
+                "raw": "$table->string('contact_person')->nullable()"
+            },
+            "phone": {
+                "type": "string",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_08_24_051932_create_suppliers_table.php",
+                "raw": "$table->string('phone')->nullable()"
+            },
+            "email": {
+                "type": "string",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_08_24_051932_create_suppliers_table.php",
+                "raw": "$table->string('email')->nullable()"
+            },
+            "address": {
+                "type": "text",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_08_24_051932_create_suppliers_table.php",
+                "raw": "$table->text('address')->nullable()"
+            },
+            "balance": {
+                "type": "decimal(12, 2)",
+                "nullable": "NO",
+                "default": "0",
+                "migration": "2026_08_24_051932_create_suppliers_table.php",
+                "raw": "$table->decimal('balance', 12, 2)->default(0)"
+            },
+            "created_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_08_24_051932_create_suppliers_table.php",
+                "raw": "$table->timestamps()"
+            },
+            "updated_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_08_24_051932_create_suppliers_table.php",
+                "raw": "$table->timestamps()"
+            },
+            "": {
+                "type": "code(->nullable()->after('name'))",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_02_000000_add_code_to_suppliers_table.php",
+                "raw": "if (!Schema::hasColumn('suppliers', 'code')) {\n                $table->string('code')->nullable()->after('name')"
+            },
+            "suppliers_business_code_unique": {
+                "type": "dropUnique",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_16_000000_update_purchases_and_suppliers_schema_for_phase_4.php",
+                "raw": "$table->dropUnique('suppliers_business_code_unique')"
+            },
+            "opening_balance": {
+                "type": "decimal(12, 2)",
+                "nullable": "NO",
+                "default": "0",
+                "migration": "2026_09_16_010000_add_supplier_reconciliation_provenance_for_phase_4.php",
+                "raw": "if (!Schema::hasColumn('suppliers', 'opening_balance')) {\n                $table->decimal('opening_balance', 12, 2)->default(0)->after('address')"
+            }
+        },
+        "indexes": [],
+        "foreign_keys": []
+    },
+    "supplier_payments": {
+        "migration": "2026_08_24_051933_create_supplier_payments_table.php",
+        "columns": {
+            "id": {
+                "type": "bigint unsigned",
+                "nullable": "NO",
+                "default": "AUTO_INCREMENT",
+                "migration": "2026_08_24_051933_create_supplier_payments_table.php",
+                "raw": "$table->id()"
+            },
+            "business_id": {
+                "type": "foreignId",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_08_24_051933_create_supplier_payments_table.php",
+                "raw": "$table->foreignId('business_id')->constrained()->onDelete('cascade')"
+            },
+            "supplier_id": {
+                "type": "foreignId",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_08_24_051933_create_supplier_payments_table.php",
+                "raw": "$table->foreignId('supplier_id')->constrained()->onDelete('cascade')"
+            },
+            "amount": {
+                "type": "decimal(12, 2)",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_08_24_051933_create_supplier_payments_table.php",
+                "raw": "$table->decimal('amount', 12, 2)"
+            },
+            "date": {
+                "type": "date",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_08_24_051933_create_supplier_payments_table.php",
+                "raw": "$table->date('date')"
+            },
+            "payment_method": {
+                "type": "string",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_08_24_051933_create_supplier_payments_table.php",
+                "raw": "$table->string('payment_method')->nullable()"
+            },
+            "notes": {
+                "type": "text",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_08_24_051933_create_supplier_payments_table.php",
+                "raw": "$table->text('notes')->nullable()"
+            },
+            "created_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_08_24_051933_create_supplier_payments_table.php",
+                "raw": "$table->timestamps()"
+            },
+            "updated_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_08_24_051933_create_supplier_payments_table.php",
+                "raw": "$table->timestamps()"
+            },
+            "user_id": {
+                "type": "foreignId",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_16_000000_update_purchases_and_suppliers_schema_for_phase_4.php",
+                "raw": "if (!Schema::hasColumn('supplier_payments', 'user_id')) {\n                $table->foreignId('user_id')->nullable()->after('supplier_id')->constrained('users')->onDelete('set null')"
+            },
+            "purchase_id": {
+                "type": "foreignId",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_16_010000_add_supplier_reconciliation_provenance_for_phase_4.php",
+                "raw": "if (!Schema::hasColumn('supplier_payments', 'purchase_id')) {\n                $table->foreignId('purchase_id')->nullable()->after('supplier_id')->constrained('purchases')->onDelete('cascade')"
+            },
+            "100": {
+                "type": "idempotency_key(->nullable()->after('notes'))",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_22_000001_add_idempotency_key_to_supplier_payments_table.php",
+                "raw": "$table->string('idempotency_key', 100)->nullable()->after('notes')"
+            },
+            "sp_business_idempotency_unique": {
+                "type": "dropUnique",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_22_000001_add_idempotency_key_to_supplier_payments_table.php",
+                "raw": "$table->dropUnique('sp_business_idempotency_unique')"
+            }
+        },
+        "indexes": [],
+        "foreign_keys": []
+    },
+    "expenses": {
+        "migration": "2026_08_24_051934_create_expenses_table.php",
+        "columns": {
+            "id": {
+                "type": "bigint unsigned",
+                "nullable": "NO",
+                "default": "AUTO_INCREMENT",
+                "migration": "2026_08_24_051934_create_expenses_table.php",
+                "raw": "$table->id()"
+            },
+            "business_id": {
+                "type": "foreignId",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_08_24_051934_create_expenses_table.php",
+                "raw": "$table->foreignId('business_id')->constrained()->onDelete('cascade')"
+            },
+            "category": {
+                "type": "string",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_08_24_051934_create_expenses_table.php",
+                "raw": "$table->string('category')"
+            },
+            "amount": {
+                "type": "decimal(12, 2)",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_08_24_051934_create_expenses_table.php",
+                "raw": "$table->decimal('amount', 12, 2)"
+            },
+            "date": {
+                "type": "date",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_08_24_051934_create_expenses_table.php",
+                "raw": "$table->date('date')"
+            },
+            "description": {
+                "type": "text",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_08_24_051934_create_expenses_table.php",
+                "raw": "$table->text('description')->nullable()"
+            },
+            "created_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_08_24_051934_create_expenses_table.php",
+                "raw": "$table->timestamps()"
+            },
+            "updated_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_08_24_051934_create_expenses_table.php",
+                "raw": "$table->timestamps()"
+            },
+            "user_id": {
+                "type": "foreignId",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_20_000003_harden_expenses_and_categories_for_phase_7.php",
+                "raw": "$table->foreignId('user_id')->nullable()->after('branch_id')->constrained('users')->nullOnDelete()"
+            },
+            "category_id": {
+                "type": "foreignId",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_20_000003_harden_expenses_and_categories_for_phase_7.php",
+                "raw": "$table->foreignId('category_id')->nullable()->after('user_id')->constrained('expense_categories')->nullOnDelete()"
+            },
+            "financial_account_id": {
+                "type": "foreignId",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_20_000003_harden_expenses_and_categories_for_phase_7.php",
+                "raw": "$table->foreignId('financial_account_id')->nullable()->after('category_id')->constrained('financial_accounts')->nullOnDelete()"
+            },
+            "status": {
+                "type": "enum(['posted', 'voided'])",
+                "nullable": "NO",
+                "default": "posted",
+                "migration": "2026_09_20_000003_harden_expenses_and_categories_for_phase_7.php",
+                "raw": "$table->enum('status', ['posted', 'voided'])->default('posted')->after('amount')"
+            },
+            "": {
+                "type": "void_reason(->nullable()->after('voided_by'))",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_20_000003_harden_expenses_and_categories_for_phase_7.php",
+                "raw": "$table->string('void_reason')->nullable()->after('voided_by')"
+            },
+            "voided_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_20_000003_harden_expenses_and_categories_for_phase_7.php",
+                "raw": "$table->timestamp('voided_at')->nullable()->after('idempotency_key')"
+            },
+            "voided_by": {
+                "type": "foreignId",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_20_000003_harden_expenses_and_categories_for_phase_7.php",
+                "raw": "$table->foreignId('voided_by')->nullable()->after('voided_at')->constrained('users')->nullOnDelete()"
+            },
+            "expenses_biz_idem_unique": {
+                "type": "dropUnique",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_20_000003_harden_expenses_and_categories_for_phase_7.php",
+                "raw": "$table->dropUnique('expenses_biz_idem_unique')"
+            },
+            "idx_expenses_biz_branch_date_status": {
+                "type": "dropIndex",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_21_000000_add_phase_8_reporting_indexes.php",
+                "raw": "$table->dropIndex('idx_expenses_biz_branch_date_status')"
+            }
+        },
+        "indexes": [],
+        "foreign_keys": []
+    },
+    "recurring_expenses": {
+        "migration": "2026_08_24_051934_create_recurring_expenses_table.php",
+        "columns": {
+            "id": {
+                "type": "bigint unsigned",
+                "nullable": "NO",
+                "default": "AUTO_INCREMENT",
+                "migration": "2026_08_24_051934_create_recurring_expenses_table.php",
+                "raw": "$table->id()"
+            },
+            "business_id": {
+                "type": "foreignId",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_08_24_051934_create_recurring_expenses_table.php",
+                "raw": "$table->foreignId('business_id')->constrained()->onDelete('cascade')"
+            },
+            "category": {
+                "type": "string",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_08_24_051934_create_recurring_expenses_table.php",
+                "raw": "$table->string('category')"
+            },
+            "amount": {
+                "type": "decimal(12, 2)",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_08_24_051934_create_recurring_expenses_table.php",
+                "raw": "$table->decimal('amount', 12, 2)"
+            },
+            "frequency": {
+                "type": "string",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_08_24_051934_create_recurring_expenses_table.php",
+                "raw": "$table->string('frequency')"
+            },
+            "next_due_date": {
+                "type": "date",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_08_24_051934_create_recurring_expenses_table.php",
+                "raw": "\/\/ e.g., monthly, weekly, yearly\n            $table->date('next_due_date')"
+            },
+            "description": {
+                "type": "text",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_08_24_051934_create_recurring_expenses_table.php",
+                "raw": "$table->text('description')->nullable()"
+            },
+            "created_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_08_24_051934_create_recurring_expenses_table.php",
+                "raw": "$table->timestamps()"
+            },
+            "updated_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_08_24_051934_create_recurring_expenses_table.php",
+                "raw": "$table->timestamps()"
+            }
+        },
+        "indexes": [],
+        "foreign_keys": []
+    },
+    "settings": {
+        "migration": "2026_08_24_052516_create_settings_table.php",
+        "columns": {
+            "id": {
+                "type": "bigint unsigned",
+                "nullable": "NO",
+                "default": "AUTO_INCREMENT",
+                "migration": "2026_08_24_052516_create_settings_table.php",
+                "raw": "$table->id()"
+            },
+            "business_id": {
+                "type": "foreignId",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_08_24_052516_create_settings_table.php",
+                "raw": "$table->foreignId('business_id')->constrained()->onDelete('cascade')"
+            },
+            "key": {
+                "type": "string",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_08_24_052516_create_settings_table.php",
+                "raw": "$table->string('key')"
+            },
+            "value": {
+                "type": "text",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_08_24_052516_create_settings_table.php",
+                "raw": "$table->text('value')->nullable()"
+            },
+            "type": {
+                "type": "string",
+                "nullable": "NO",
+                "default": "string",
+                "migration": "2026_08_24_052516_create_settings_table.php",
+                "raw": "$table->string('type')->default('string')"
+            },
+            "created_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_08_24_052516_create_settings_table.php",
+                "raw": "$table->timestamps()"
+            },
+            "updated_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_08_24_052516_create_settings_table.php",
+                "raw": "$table->timestamps()"
+            }
+        },
+        "indexes": [],
+        "foreign_keys": []
+    },
+    "brands": {
+        "migration": "2026_08_27_105512_create_brands_table.php",
+        "columns": {
+            "id": {
+                "type": "bigint unsigned",
+                "nullable": "NO",
+                "default": "AUTO_INCREMENT",
+                "migration": "2026_08_27_105512_create_brands_table.php",
+                "raw": "$table->id()"
+            },
+            "business_id": {
+                "type": "foreignId",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_08_27_105512_create_brands_table.php",
+                "raw": "$table->foreignId('business_id')->constrained()->onDelete('cascade')"
+            },
+            "name": {
+                "type": "string",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_08_27_105512_create_brands_table.php",
+                "raw": "$table->string('name')"
+            },
+            "created_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_08_27_105512_create_brands_table.php",
+                "raw": "$table->timestamps()"
+            },
+            "updated_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_08_27_105512_create_brands_table.php",
+                "raw": "$table->timestamps()"
+            },
+            "": {
+                "type": "image(->nullable()->after('name'))",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_01_000000_add_image_to_brands_table.php",
+                "raw": "$table->string('image')->nullable()->after('name')"
+            }
+        },
+        "indexes": [],
+        "foreign_keys": []
+    },
+    "subcategories": {
+        "migration": "2026_08_27_105513_create_subcategories_table.php",
+        "columns": {
+            "id": {
+                "type": "bigint unsigned",
+                "nullable": "NO",
+                "default": "AUTO_INCREMENT",
+                "migration": "2026_08_27_105513_create_subcategories_table.php",
+                "raw": "$table->id()"
+            },
+            "business_id": {
+                "type": "foreignId",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_08_27_105513_create_subcategories_table.php",
+                "raw": "$table->foreignId('business_id')->constrained()->onDelete('cascade')"
+            },
+            "category_id": {
+                "type": "foreignId",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_08_27_105513_create_subcategories_table.php",
+                "raw": "$table->foreignId('category_id')->constrained()->onDelete('cascade')"
+            },
+            "name": {
+                "type": "string",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_08_27_105513_create_subcategories_table.php",
+                "raw": "$table->string('name')"
+            },
+            "created_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_08_27_105513_create_subcategories_table.php",
+                "raw": "$table->timestamps()"
+            },
+            "updated_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_08_27_105513_create_subcategories_table.php",
+                "raw": "$table->timestamps()"
+            }
+        },
+        "indexes": [],
+        "foreign_keys": []
+    },
+    "expense_categories": {
+        "migration": "2026_09_04_083856_create_expense_categories_table.php",
+        "columns": {
+            "id": {
+                "type": "bigint unsigned",
+                "nullable": "NO",
+                "default": "AUTO_INCREMENT",
+                "migration": "2026_09_04_083856_create_expense_categories_table.php",
+                "raw": "$table->id()"
+            },
+            "business_id": {
+                "type": "foreignId",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_04_083856_create_expense_categories_table.php",
+                "raw": "$table->foreignId('business_id')->constrained()->onDelete('cascade')"
+            },
+            "name": {
+                "type": "string",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_04_083856_create_expense_categories_table.php",
+                "raw": "$table->string('name')"
+            },
+            "created_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_09_04_083856_create_expense_categories_table.php",
+                "raw": "$table->timestamps()"
+            },
+            "updated_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_09_04_083856_create_expense_categories_table.php",
+                "raw": "$table->timestamps()"
+            }
+        },
+        "indexes": [],
+        "foreign_keys": []
+    },
+    "notifications": {
+        "migration": "2026_09_04_100812_create_notifications_table.php",
+        "columns": {
+            "id": {
+                "type": "uuid",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_04_100812_create_notifications_table.php",
+                "raw": "$table->uuid('id')->primary()"
+            },
+            "type": {
+                "type": "string",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_04_100812_create_notifications_table.php",
+                "raw": "$table->string('type')"
+            },
+            "notifiable": {
+                "type": "morphs",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_04_100812_create_notifications_table.php",
+                "raw": "$table->morphs('notifiable')"
+            },
+            "data": {
+                "type": "text",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_04_100812_create_notifications_table.php",
+                "raw": "$table->text('data')"
+            },
+            "read_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_04_100812_create_notifications_table.php",
+                "raw": "$table->timestamp('read_at')->nullable()"
+            },
+            "created_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_09_04_100812_create_notifications_table.php",
+                "raw": "$table->timestamps()"
+            },
+            "updated_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_09_04_100812_create_notifications_table.php",
+                "raw": "$table->timestamps()"
+            }
+        },
+        "indexes": [],
+        "foreign_keys": []
+    },
+    "employees": {
+        "migration": "2026_09_04_102948_create_employees_table.php",
+        "columns": {
+            "id": {
+                "type": "bigint unsigned",
+                "nullable": "NO",
+                "default": "AUTO_INCREMENT",
+                "migration": "2026_09_13_104137_restructure_for_hbos_phase_r.php",
+                "raw": "$table->id()"
+            },
+            "business_id": {
+                "type": "foreignId",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_13_104137_restructure_for_hbos_phase_r.php",
+                "raw": "$table->foreignId('business_id')->constrained('businesses')->onDelete('cascade')"
+            },
+            "name": {
+                "type": "string",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_13_104137_restructure_for_hbos_phase_r.php",
+                "raw": "$table->string('name')"
+            },
+            "role": {
+                "type": "string",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_13_104137_restructure_for_hbos_phase_r.php",
+                "raw": "$table->string('role')->nullable()"
+            },
+            "phone": {
+                "type": "string",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_13_104137_restructure_for_hbos_phase_r.php",
+                "raw": "$table->string('phone')->nullable()"
+            },
+            "salary_amount": {
+                "type": "decimal(10, 2)",
+                "nullable": "NO",
+                "default": "0",
+                "migration": "2026_09_04_102948_create_employees_table.php",
+                "raw": "$table->decimal('salary_amount', 10, 2)->default(0)"
+            },
+            "payment_cycle": {
+                "type": "string",
+                "nullable": "NO",
+                "default": "monthly",
+                "migration": "2026_09_04_102948_create_employees_table.php",
+                "raw": "$table->string('payment_cycle')->default('monthly')"
+            },
+            "next_payment_date": {
+                "type": "date",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_04_102948_create_employees_table.php",
+                "raw": "\/\/ daily, weekly, monthly\n            $table->date('next_payment_date')->nullable()"
+            },
+            "is_active": {
+                "type": "boolean",
+                "nullable": "NO",
+                "default": "true",
+                "migration": "2026_09_04_102948_create_employees_table.php",
+                "raw": "$table->boolean('is_active')->default(true)"
+            },
+            "created_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_09_13_104137_restructure_for_hbos_phase_r.php",
+                "raw": "$table->timestamps()"
+            },
+            "updated_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_09_13_104137_restructure_for_hbos_phase_r.php",
+                "raw": "$table->timestamps()"
+            },
+            "email": {
+                "type": "string",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_13_104137_restructure_for_hbos_phase_r.php",
+                "raw": "$table->string('email')->nullable()"
+            },
+            "salary": {
+                "type": "decimal(10, 2)",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_13_104137_restructure_for_hbos_phase_r.php",
+                "raw": "$table->decimal('salary', 10, 2)->nullable()"
+            }
+        },
+        "indexes": [],
+        "foreign_keys": []
+    },
+    "activity_log": {
+        "migration": "2026_09_10_061517_create_activity_log_table.php",
+        "columns": {
+            "id": {
+                "type": "bigint unsigned",
+                "nullable": "NO",
+                "default": "AUTO_INCREMENT",
+                "migration": "2026_09_10_061517_create_activity_log_table.php",
+                "raw": "$table->id()"
+            },
+            "log_name": {
+                "type": "string",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_10_061517_create_activity_log_table.php",
+                "raw": "$table->string('log_name')->nullable()->index()"
+            },
+            "description": {
+                "type": "text",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_10_061517_create_activity_log_table.php",
+                "raw": "$table->text('description')"
+            },
+            "subject": {
+                "type": "nullableMorphs('subject')",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_10_061517_create_activity_log_table.php",
+                "raw": "$table->nullableMorphs('subject', 'subject')"
+            },
+            "event": {
+                "type": "string",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_10_061517_create_activity_log_table.php",
+                "raw": "$table->string('event')->nullable()"
+            },
+            "causer": {
+                "type": "nullableMorphs('causer')",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_10_061517_create_activity_log_table.php",
+                "raw": "$table->nullableMorphs('causer', 'causer')"
+            },
+            "attribute_changes": {
+                "type": "json",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_10_061517_create_activity_log_table.php",
+                "raw": "$table->json('attribute_changes')->nullable()"
+            },
+            "properties": {
+                "type": "json",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_10_061517_create_activity_log_table.php",
+                "raw": "$table->json('properties')->nullable()"
+            },
+            "created_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_09_10_061517_create_activity_log_table.php",
+                "raw": "$table->timestamps()"
+            },
+            "updated_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_09_10_061517_create_activity_log_table.php",
+                "raw": "$table->timestamps()"
+            },
+            "business_id": {
+                "type": "foreignId",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_22_000000_add_business_and_branch_to_activity_log_table.php",
+                "raw": "$table->foreignId('business_id')->nullable()->after('id')->constrained('businesses')->nullOnDelete()"
+            },
+            "branch_id": {
+                "type": "foreignId",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_22_000000_add_business_and_branch_to_activity_log_table.php",
+                "raw": "$table->foreignId('branch_id')->nullable()->after('business_id')->constrained('branches')->nullOnDelete()"
+            },
+            "activity_log_business_created_idx": {
+                "type": "dropIndex",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_22_000000_add_business_and_branch_to_activity_log_table.php",
+                "raw": "$table->dropIndex('activity_log_business_created_idx')"
+            },
+            "activity_log_business_branch_idx": {
+                "type": "dropIndex",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_22_000000_add_business_and_branch_to_activity_log_table.php",
+                "raw": "$table->dropIndex('activity_log_business_branch_idx')"
+            },
+            "activity_log_business_causer_idx": {
+                "type": "dropIndex",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_22_000000_add_business_and_branch_to_activity_log_table.php",
+                "raw": "$table->dropIndex('activity_log_business_causer_idx')"
+            },
+            "activity_log_business_log_name_idx": {
+                "type": "dropIndex",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_22_000000_add_business_and_branch_to_activity_log_table.php",
+                "raw": "$table->dropIndex('activity_log_business_log_name_idx')"
+            }
+        },
+        "indexes": [],
+        "foreign_keys": []
+    },
+    "business_user": {
+        "migration": "2026_09_10_105700_create_business_user_table.php",
+        "columns": {
+            "id": {
+                "type": "bigint unsigned",
+                "nullable": "NO",
+                "default": "AUTO_INCREMENT",
+                "migration": "2026_09_10_105700_create_business_user_table.php",
+                "raw": "$table->id()"
+            },
+            "business_id": {
+                "type": "foreignId",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_10_105700_create_business_user_table.php",
+                "raw": "$table->foreignId('business_id')->constrained('businesses')->onDelete('cascade')"
+            },
+            "user_id": {
+                "type": "foreignId",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_10_105700_create_business_user_table.php",
+                "raw": "$table->foreignId('user_id')->constrained('users')->onDelete('cascade')"
+            },
+            "created_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_09_10_105700_create_business_user_table.php",
+                "raw": "$table->timestamps()"
+            },
+            "updated_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_09_10_105700_create_business_user_table.php",
+                "raw": "$table->timestamps()"
+            }
+        },
+        "indexes": [],
+        "foreign_keys": []
+    },
+    "branches": {
+        "migration": "2026_09_13_104137_restructure_for_hbos_phase_r.php",
+        "columns": {
+            "id": {
+                "type": "bigint unsigned",
+                "nullable": "NO",
+                "default": "AUTO_INCREMENT",
+                "migration": "2026_09_13_104137_restructure_for_hbos_phase_r.php",
+                "raw": "$table->id()"
+            },
+            "business_id": {
+                "type": "foreignId",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_13_104137_restructure_for_hbos_phase_r.php",
+                "raw": "$table->foreignId('business_id')->constrained('businesses')->onDelete('cascade')"
+            },
+            "name": {
+                "type": "string",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_13_104137_restructure_for_hbos_phase_r.php",
+                "raw": "$table->string('name')"
+            },
+            "code": {
+                "type": "string",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_13_104137_restructure_for_hbos_phase_r.php",
+                "raw": "$table->string('code')->nullable()"
+            },
+            "phone": {
+                "type": "string",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_13_104137_restructure_for_hbos_phase_r.php",
+                "raw": "$table->string('phone')->nullable()"
+            },
+            "address": {
+                "type": "string",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_13_104137_restructure_for_hbos_phase_r.php",
+                "raw": "$table->string('address')->nullable()"
+            },
+            "city": {
+                "type": "string",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_13_104137_restructure_for_hbos_phase_r.php",
+                "raw": "$table->string('city')->nullable()"
+            },
+            "is_primary": {
+                "type": "boolean",
+                "nullable": "NO",
+                "default": "false",
+                "migration": "2026_09_13_104137_restructure_for_hbos_phase_r.php",
+                "raw": "$table->boolean('is_primary')->default(false)"
+            },
+            "status": {
+                "type": "string",
+                "nullable": "NO",
+                "default": "active",
+                "migration": "2026_09_13_104137_restructure_for_hbos_phase_r.php",
+                "raw": "$table->string('status')->default('active')"
+            },
+            "created_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_09_13_104137_restructure_for_hbos_phase_r.php",
+                "raw": "$table->timestamps()"
+            },
+            "updated_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_09_13_104137_restructure_for_hbos_phase_r.php",
+                "raw": "$table->timestamps()"
+            }
+        },
+        "indexes": [],
+        "foreign_keys": []
+    },
+    "inventory_movements": {
+        "migration": "2026_09_13_104201_create_ledgers_for_phase_r.php",
+        "columns": {
+            "id": {
+                "type": "bigint unsigned",
+                "nullable": "NO",
+                "default": "AUTO_INCREMENT",
+                "migration": "2026_09_13_104201_create_ledgers_for_phase_r.php",
+                "raw": "$table->id()"
+            },
+            "business_id": {
+                "type": "foreignId",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_13_104201_create_ledgers_for_phase_r.php",
+                "raw": "$table->foreignId('business_id')->constrained('businesses')->onDelete('cascade')"
+            },
+            "branch_id": {
+                "type": "foreignId",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_13_104201_create_ledgers_for_phase_r.php",
+                "raw": "$table->foreignId('branch_id')->constrained('branches')->onDelete('cascade')"
+            },
+            "product_id": {
+                "type": "foreignId",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_13_104201_create_ledgers_for_phase_r.php",
+                "raw": "$table->foreignId('product_id')->constrained('products')->onDelete('cascade')"
+            },
+            "type": {
+                "type": "string",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_13_104201_create_ledgers_for_phase_r.php",
+                "raw": "$table->string('type')"
+            },
+            "reference": {
+                "type": "morphs",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_13_104201_create_ledgers_for_phase_r.php",
+                "raw": "\/\/ 'purchase', 'sale', 'return', 'adjustment'\n            $table->morphs('reference')"
+            },
+            "quantity": {
+                "type": "integer",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_13_104201_create_ledgers_for_phase_r.php",
+                "raw": "\/\/ allows linking to Sale, Purchase, etc. (reference_id, reference_type)\n            $table->integer('quantity')"
+            },
+            "balance": {
+                "type": "integer",
+                "nullable": "YES",
+                "default": "0",
+                "migration": "2026_09_15_000000_create_branch_inventories_and_update_movements_table.php",
+                "raw": "$table->integer('balance')->default(0)->nullable()->change()"
+            },
+            "notes": {
+                "type": "text",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_13_104201_create_ledgers_for_phase_r.php",
+                "raw": "\/\/ running total for the branch\n            $table->text('notes')->nullable()"
+            },
+            "created_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_09_13_104201_create_ledgers_for_phase_r.php",
+                "raw": "$table->timestamps()"
+            },
+            "updated_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_09_13_104201_create_ledgers_for_phase_r.php",
+                "raw": "$table->timestamps()"
+            },
+            "unit_cost": {
+                "type": "decimal(10, 2)",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_15_000000_create_branch_inventories_and_update_movements_table.php",
+                "raw": "if (!Schema::hasColumn('inventory_movements', 'unit_cost')) {\n                    $table->decimal('unit_cost', 10, 2)->nullable()->after('quantity')"
+            },
+            "performed_by": {
+                "type": "foreignId",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_15_000000_create_branch_inventories_and_update_movements_table.php",
+                "raw": "}\n                if (!Schema::hasColumn('inventory_movements', 'performed_by')) {\n                    $table->foreignId('performed_by')->nullable()->after('reference_id')->constrained('users')->onDelete('set null')"
+            },
+            "": {
+                "type": "reference_type(->nullable()->change())",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_15_000000_create_branch_inventories_and_update_movements_table.php",
+                "raw": "$table->string('reference_type')->nullable()->change()"
+            },
+            "reference_id": {
+                "type": "unsignedBigInteger",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_15_000000_create_branch_inventories_and_update_movements_table.php",
+                "raw": "$table->unsignedBigInteger('reference_id')->nullable()->change()"
+            }
+        },
+        "indexes": [],
+        "foreign_keys": []
+    },
+    "cash_ledgers": {
+        "migration": "2026_09_13_104201_create_ledgers_for_phase_r.php",
+        "columns": {
+            "id": {
+                "type": "bigint unsigned",
+                "nullable": "NO",
+                "default": "AUTO_INCREMENT",
+                "migration": "2026_09_13_104201_create_ledgers_for_phase_r.php",
+                "raw": "$table->id()"
+            },
+            "business_id": {
+                "type": "foreignId",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_13_104201_create_ledgers_for_phase_r.php",
+                "raw": "$table->foreignId('business_id')->constrained('businesses')->onDelete('cascade')"
+            },
+            "branch_id": {
+                "type": "foreignId",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_13_104201_create_ledgers_for_phase_r.php",
+                "raw": "$table->foreignId('branch_id')->constrained('branches')->onDelete('cascade')"
+            },
+            "type": {
+                "type": "string",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_13_104201_create_ledgers_for_phase_r.php",
+                "raw": "$table->string('type')"
+            },
+            "reference": {
+                "type": "morphs",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_13_104201_create_ledgers_for_phase_r.php",
+                "raw": "\/\/ 'sale', 'expense', 'supplier_payment', 'customer_payment', 'deposit', 'withdrawal'\n            $table->morphs('reference')"
+            },
+            "amount": {
+                "type": "decimal(12, 2)",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_13_104201_create_ledgers_for_phase_r.php",
+                "raw": "\/\/ allows linking to Sale, Expense, etc.\n            $table->decimal('amount', 12, 2)"
+            },
+            "balance": {
+                "type": "decimal(12, 2)",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_13_104201_create_ledgers_for_phase_r.php",
+                "raw": "\/\/ positive (in) or negative (out)\n            $table->decimal('balance', 12, 2)"
+            },
+            "notes": {
+                "type": "text",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_13_104201_create_ledgers_for_phase_r.php",
+                "raw": "\/\/ running balance for the branch\n            $table->text('notes')->nullable()"
+            },
+            "created_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_09_13_104201_create_ledgers_for_phase_r.php",
+                "raw": "$table->timestamps()"
+            },
+            "updated_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_09_13_104201_create_ledgers_for_phase_r.php",
+                "raw": "$table->timestamps()"
+            }
+        },
+        "indexes": [],
+        "foreign_keys": []
+    },
+    "branch_user": {
+        "migration": "2026_09_13_210000_phase_1_core_architecture.php",
+        "columns": {
+            "id": {
+                "type": "bigint unsigned",
+                "nullable": "NO",
+                "default": "AUTO_INCREMENT",
+                "migration": "2026_09_13_210000_phase_1_core_architecture.php",
+                "raw": "$table->id()"
+            },
+            "business_id": {
+                "type": "foreignId",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_13_210000_phase_1_core_architecture.php",
+                "raw": "$table->foreignId('business_id')->constrained('businesses')->onDelete('cascade')"
+            },
+            "branch_id": {
+                "type": "foreignId",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_13_210000_phase_1_core_architecture.php",
+                "raw": "$table->foreignId('branch_id')->constrained('branches')->onDelete('cascade')"
+            },
+            "user_id": {
+                "type": "foreignId",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_13_210000_phase_1_core_architecture.php",
+                "raw": "$table->foreignId('user_id')->constrained('users')->onDelete('cascade')"
+            },
+            "created_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_09_13_210000_phase_1_core_architecture.php",
+                "raw": "$table->timestamps()"
+            },
+            "updated_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_09_13_210000_phase_1_core_architecture.php",
+                "raw": "$table->timestamps()"
+            }
+        },
+        "indexes": [],
+        "foreign_keys": []
+    },
+    "branch_inventories": {
+        "migration": "2026_09_15_000000_create_branch_inventories_and_update_movements_table.php",
+        "columns": {
+            "id": {
+                "type": "bigint unsigned",
+                "nullable": "NO",
+                "default": "AUTO_INCREMENT",
+                "migration": "2026_09_15_000000_create_branch_inventories_and_update_movements_table.php",
+                "raw": "$table->id()"
+            },
+            "business_id": {
+                "type": "foreignId",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_15_000000_create_branch_inventories_and_update_movements_table.php",
+                "raw": "$table->foreignId('business_id')->constrained('businesses')->onDelete('cascade')"
+            },
+            "branch_id": {
+                "type": "foreignId",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_15_000000_create_branch_inventories_and_update_movements_table.php",
+                "raw": "$table->foreignId('branch_id')->constrained('branches')->onDelete('cascade')"
+            },
+            "product_id": {
+                "type": "foreignId",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_15_000000_create_branch_inventories_and_update_movements_table.php",
+                "raw": "$table->foreignId('product_id')->constrained('products')->onDelete('cascade')"
+            },
+            "quantity_on_hand": {
+                "type": "integer",
+                "nullable": "NO",
+                "default": "0",
+                "migration": "2026_09_15_000000_create_branch_inventories_and_update_movements_table.php",
+                "raw": "$table->integer('quantity_on_hand')->default(0)"
+            },
+            "minimum_stock": {
+                "type": "integer",
+                "nullable": "NO",
+                "default": "0",
+                "migration": "2026_09_15_000000_create_branch_inventories_and_update_movements_table.php",
+                "raw": "$table->integer('minimum_stock')->default(0)"
+            },
+            "reorder_level": {
+                "type": "integer",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_15_000000_create_branch_inventories_and_update_movements_table.php",
+                "raw": "$table->integer('reorder_level')->nullable()"
+            },
+            "created_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_09_15_000000_create_branch_inventories_and_update_movements_table.php",
+                "raw": "$table->timestamps()"
+            },
+            "updated_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_09_15_000000_create_branch_inventories_and_update_movements_table.php",
+                "raw": "$table->timestamps()"
+            }
+        },
+        "indexes": [],
+        "foreign_keys": []
+    },
+    "sale_returns": {
+        "migration": "2026_09_17_000000_add_phase_5_sales_pos_fields.php",
+        "columns": {
+            "id": {
+                "type": "bigint unsigned",
+                "nullable": "NO",
+                "default": "AUTO_INCREMENT",
+                "migration": "2026_09_17_000000_add_phase_5_sales_pos_fields.php",
+                "raw": "$table->id()"
+            },
+            "business_id": {
+                "type": "foreignId",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_17_000000_add_phase_5_sales_pos_fields.php",
+                "raw": "$table->foreignId('business_id')->constrained('businesses')->onDelete('cascade')"
+            },
+            "branch_id": {
+                "type": "foreignId",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_17_000000_add_phase_5_sales_pos_fields.php",
+                "raw": "$table->foreignId('branch_id')->constrained('branches')->onDelete('cascade')"
+            },
+            "sale_id": {
+                "type": "foreignId",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_17_000000_add_phase_5_sales_pos_fields.php",
+                "raw": "$table->foreignId('sale_id')->constrained('sales')->onDelete('cascade')"
+            },
+            "user_id": {
+                "type": "foreignId",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_17_000000_add_phase_5_sales_pos_fields.php",
+                "raw": "$table->foreignId('user_id')->constrained('users')->onDelete('cascade')"
+            },
+            "return_number": {
+                "type": "string(50)",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_17_000000_add_phase_5_sales_pos_fields.php",
+                "raw": "$table->string('return_number', 50)"
+            },
+            "refund_amount": {
+                "type": "decimal(12, 2)",
+                "nullable": "NO",
+                "default": "0",
+                "migration": "2026_09_17_000000_add_phase_5_sales_pos_fields.php",
+                "raw": "$table->decimal('refund_amount', 12, 2)->default(0)"
+            },
+            "reason": {
+                "type": "text",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_17_000000_add_phase_5_sales_pos_fields.php",
+                "raw": "$table->text('reason')->nullable()"
+            },
+            "created_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_09_17_000000_add_phase_5_sales_pos_fields.php",
+                "raw": "$table->timestamps()"
+            },
+            "updated_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_09_17_000000_add_phase_5_sales_pos_fields.php",
+                "raw": "$table->timestamps()"
+            },
+            "100": {
+                "type": "idempotency_key(->nullable()->after('reason'))",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_18_000001_add_idempotency_key_to_sale_returns_table.php",
+                "raw": "if (!Schema::hasColumn('sale_returns', 'idempotency_key')) {\n                $table->string('idempotency_key', 100)->nullable()->after('reason')"
+            },
+            "sale_returns_business_idempotency_unique": {
+                "type": "dropUnique",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_18_000001_add_idempotency_key_to_sale_returns_table.php",
+                "raw": "$table->dropUnique('sale_returns_business_idempotency_unique')"
+            },
+            "idx_sale_returns_biz_branch_created": {
+                "type": "dropIndex",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_21_000000_add_phase_8_reporting_indexes.php",
+                "raw": "$table->dropIndex('idx_sale_returns_biz_branch_created')"
+            }
+        },
+        "indexes": [],
+        "foreign_keys": []
+    },
+    "sale_return_items": {
+        "migration": "2026_09_17_000000_add_phase_5_sales_pos_fields.php",
+        "columns": {
+            "id": {
+                "type": "bigint unsigned",
+                "nullable": "NO",
+                "default": "AUTO_INCREMENT",
+                "migration": "2026_09_17_000000_add_phase_5_sales_pos_fields.php",
+                "raw": "$table->id()"
+            },
+            "sale_return_id": {
+                "type": "foreignId",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_17_000000_add_phase_5_sales_pos_fields.php",
+                "raw": "$table->foreignId('sale_return_id')->constrained('sale_returns')->onDelete('cascade')"
+            },
+            "sale_item_id": {
+                "type": "foreignId",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_17_000000_add_phase_5_sales_pos_fields.php",
+                "raw": "$table->foreignId('sale_item_id')->constrained('sale_items')->onDelete('cascade')"
+            },
+            "product_id": {
+                "type": "foreignId",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_17_000000_add_phase_5_sales_pos_fields.php",
+                "raw": "$table->foreignId('product_id')->constrained('products')->onDelete('cascade')"
+            },
+            "quantity": {
+                "type": "integer",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_17_000000_add_phase_5_sales_pos_fields.php",
+                "raw": "$table->integer('quantity')"
+            },
+            "unit_price": {
+                "type": "decimal(12, 2)",
+                "nullable": "NO",
+                "default": "0",
+                "migration": "2026_09_17_000000_add_phase_5_sales_pos_fields.php",
+                "raw": "$table->decimal('unit_price', 12, 2)->default(0)"
+            },
+            "refund_amount": {
+                "type": "decimal(12, 2)",
+                "nullable": "NO",
+                "default": "0",
+                "migration": "2026_09_17_000000_add_phase_5_sales_pos_fields.php",
+                "raw": "$table->decimal('refund_amount', 12, 2)->default(0)"
+            },
+            "created_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_09_17_000000_add_phase_5_sales_pos_fields.php",
+                "raw": "$table->timestamps()"
+            },
+            "updated_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_09_17_000000_add_phase_5_sales_pos_fields.php",
+                "raw": "$table->timestamps()"
+            }
+        },
+        "indexes": [],
+        "foreign_keys": []
+    },
+    "customer_payments": {
+        "migration": "2026_09_19_000001_create_customer_payments_table.php",
+        "columns": {
+            "id": {
+                "type": "bigint unsigned",
+                "nullable": "NO",
+                "default": "AUTO_INCREMENT",
+                "migration": "2026_09_19_000001_create_customer_payments_table.php",
+                "raw": "$table->id()"
+            },
+            "business_id": {
+                "type": "foreignId",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_19_000001_create_customer_payments_table.php",
+                "raw": "$table->foreignId('business_id')->constrained('businesses')->onDelete('cascade')"
+            },
+            "branch_id": {
+                "type": "foreignId",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_19_000001_create_customer_payments_table.php",
+                "raw": "$table->foreignId('branch_id')->constrained('branches')->onDelete('cascade')"
+            },
+            "customer_id": {
+                "type": "foreignId",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_19_000001_create_customer_payments_table.php",
+                "raw": "$table->foreignId('customer_id')->constrained('customers')->onDelete('cascade')"
+            },
+            "sale_id": {
+                "type": "foreignId",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_19_000001_create_customer_payments_table.php",
+                "raw": "$table->foreignId('sale_id')->nullable()->constrained('sales')->onDelete('set null')"
+            },
+            "user_id": {
+                "type": "foreignId",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_19_000001_create_customer_payments_table.php",
+                "raw": "$table->foreignId('user_id')->constrained('users')->onDelete('cascade')"
+            },
+            "payment_number": {
+                "type": "string",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_19_000001_create_customer_payments_table.php",
+                "raw": "$table->string('payment_number')"
+            },
+            "amount": {
+                "type": "decimal(12, 2)",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_19_000001_create_customer_payments_table.php",
+                "raw": "$table->decimal('amount', 12, 2)"
+            },
+            "payment_method": {
+                "type": "string",
+                "nullable": "NO",
+                "default": "cash",
+                "migration": "2026_09_19_000001_create_customer_payments_table.php",
+                "raw": "$table->string('payment_method')->default('cash')"
+            },
+            "date": {
+                "type": "date",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_19_000001_create_customer_payments_table.php",
+                "raw": "$table->date('date')"
+            },
+            "notes": {
+                "type": "text",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_19_000001_create_customer_payments_table.php",
+                "raw": "$table->text('notes')->nullable()"
+            },
+            "idempotency_key": {
+                "type": "string",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_19_000001_create_customer_payments_table.php",
+                "raw": "$table->string('idempotency_key')->nullable()"
+            },
+            "status": {
+                "type": "string",
+                "nullable": "NO",
+                "default": "posted",
+                "migration": "2026_09_19_000001_create_customer_payments_table.php",
+                "raw": "$table->string('status')->default('posted')"
+            },
+            "reversed_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_19_000001_create_customer_payments_table.php",
+                "raw": "\/\/ posted, voided\n                $table->timestamp('reversed_at')->nullable()"
+            },
+            "reversed_by": {
+                "type": "foreignId",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_19_000001_create_customer_payments_table.php",
+                "raw": "$table->foreignId('reversed_by')->nullable()->constrained('users')->onDelete('set null')"
+            },
+            "reversal_reason": {
+                "type": "text",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_19_000001_create_customer_payments_table.php",
+                "raw": "$table->text('reversal_reason')->nullable()"
+            },
+            "created_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_09_19_000001_create_customer_payments_table.php",
+                "raw": "$table->timestamps()"
+            },
+            "updated_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_09_19_000001_create_customer_payments_table.php",
+                "raw": "$table->timestamps()"
+            }
+        },
+        "indexes": [],
+        "foreign_keys": []
+    },
+    "financial_accounts": {
+        "migration": "2026_09_20_000000_create_financial_accounts_table.php",
+        "columns": {
+            "id": {
+                "type": "bigint unsigned",
+                "nullable": "NO",
+                "default": "AUTO_INCREMENT",
+                "migration": "2026_09_20_000000_create_financial_accounts_table.php",
+                "raw": "$table->id()"
+            },
+            "business_id": {
+                "type": "foreignId",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_20_000000_create_financial_accounts_table.php",
+                "raw": "$table->foreignId('business_id')->constrained('businesses')->cascadeOnDelete()"
+            },
+            "branch_id": {
+                "type": "foreignId",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_20_000000_create_financial_accounts_table.php",
+                "raw": "$table->foreignId('branch_id')->nullable()->constrained('branches')->nullOnDelete()"
+            },
+            "name": {
+                "type": "string",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_20_000000_create_financial_accounts_table.php",
+                "raw": "$table->string('name')"
+            },
+            "type": {
+                "type": "enum(['cash', 'bank'])",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_20_000000_create_financial_accounts_table.php",
+                "raw": "$table->enum('type', ['cash', 'bank'])"
+            },
+            "account_number": {
+                "type": "string",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_20_000000_create_financial_accounts_table.php",
+                "raw": "$table->string('account_number')->nullable()"
+            },
+            "bank_name": {
+                "type": "string",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_20_000000_create_financial_accounts_table.php",
+                "raw": "$table->string('bank_name')->nullable()"
+            },
+            "opening_balance": {
+                "type": "decimal(12, 2)",
+                "nullable": "NO",
+                "default": "0.00",
+                "migration": "2026_09_20_000000_create_financial_accounts_table.php",
+                "raw": "$table->decimal('opening_balance', 12, 2)->default(0.00)"
+            },
+            "balance": {
+                "type": "decimal(12, 2)",
+                "nullable": "NO",
+                "default": "0.00",
+                "migration": "2026_09_20_000000_create_financial_accounts_table.php",
+                "raw": "$table->decimal('balance', 12, 2)->default(0.00)"
+            },
+            "is_default": {
+                "type": "boolean",
+                "nullable": "NO",
+                "default": "false",
+                "migration": "2026_09_20_000000_create_financial_accounts_table.php",
+                "raw": "$table->boolean('is_default')->default(false)"
+            },
+            "status": {
+                "type": "enum(['active', 'inactive'])",
+                "nullable": "NO",
+                "default": "active",
+                "migration": "2026_09_20_000000_create_financial_accounts_table.php",
+                "raw": "$table->enum('status', ['active', 'inactive'])->default('active')"
+            },
+            "created_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_09_20_000000_create_financial_accounts_table.php",
+                "raw": "$table->timestamps()"
+            },
+            "updated_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_09_20_000000_create_financial_accounts_table.php",
+                "raw": "$table->timestamps()"
+            },
+            "deleted_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_09_20_000000_create_financial_accounts_table.php",
+                "raw": "$table->softDeletes()"
+            }
+        },
+        "indexes": [],
+        "foreign_keys": []
+    },
+    "account_movements": {
+        "migration": "2026_09_20_000001_create_account_movements_table.php",
+        "columns": {
+            "id": {
+                "type": "bigint unsigned",
+                "nullable": "NO",
+                "default": "AUTO_INCREMENT",
+                "migration": "2026_09_20_000001_create_account_movements_table.php",
+                "raw": "$table->id()"
+            },
+            "business_id": {
+                "type": "foreignId",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_20_000001_create_account_movements_table.php",
+                "raw": "$table->foreignId('business_id')->constrained('businesses')->cascadeOnDelete()"
+            },
+            "branch_id": {
+                "type": "foreignId",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_20_000001_create_account_movements_table.php",
+                "raw": "$table->foreignId('branch_id')->nullable()->constrained('branches')->nullOnDelete()"
+            },
+            "account_id": {
+                "type": "foreignId",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_20_000001_create_account_movements_table.php",
+                "raw": "$table->foreignId('account_id')->constrained('financial_accounts')->cascadeOnDelete()"
+            },
+            "type": {
+                "type": "enum(['inflow', 'outflow'])",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_20_000001_create_account_movements_table.php",
+                "raw": "$table->enum('type', ['inflow', 'outflow'])"
+            },
+            "movement_category": {
+                "type": "enum([\n                'sale_pos',\n                'customer_payment',\n                'supplier_payment',\n                'expense',\n                'refund',\n                'capital_in',\n                'capital_out',\n                'transfer_in',\n                'transfer_out'\n            ])",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_20_000001_create_account_movements_table.php",
+                "raw": "$table->enum('movement_category', [\n                'sale_pos',\n                'customer_payment',\n                'supplier_payment',\n                'expense',\n                'refund',\n                'capital_in',\n                'capital_out',\n                'transfer_in',\n                'transfer_out'\n            ])"
+            },
+            "reference_type": {
+                "type": "string",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_20_000001_create_account_movements_table.php",
+                "raw": "$table->string('reference_type')->nullable()"
+            },
+            "reference_id": {
+                "type": "unsignedBigInteger",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_20_000001_create_account_movements_table.php",
+                "raw": "$table->unsignedBigInteger('reference_id')->nullable()"
+            },
+            "amount": {
+                "type": "decimal(12, 2)",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_20_000001_create_account_movements_table.php",
+                "raw": "$table->decimal('amount', 12, 2)"
+            },
+            "date": {
+                "type": "date",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_20_000001_create_account_movements_table.php",
+                "raw": "$table->date('date')"
+            },
+            "description": {
+                "type": "text",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_20_000001_create_account_movements_table.php",
+                "raw": "$table->text('description')->nullable()"
+            },
+            "user_id": {
+                "type": "foreignId",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_20_000001_create_account_movements_table.php",
+                "raw": "$table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete()"
+            },
+            "idempotency_key": {
+                "type": "string",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_20_000001_create_account_movements_table.php",
+                "raw": "$table->string('idempotency_key')->nullable()"
+            },
+            "status": {
+                "type": "enum(['posted', 'voided'])",
+                "nullable": "NO",
+                "default": "posted",
+                "migration": "2026_09_20_000001_create_account_movements_table.php",
+                "raw": "$table->enum('status', ['posted', 'voided'])->default('posted')"
+            },
+            "reversed_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_20_000001_create_account_movements_table.php",
+                "raw": "$table->timestamp('reversed_at')->nullable()"
+            },
+            "reversed_by": {
+                "type": "foreignId",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_20_000001_create_account_movements_table.php",
+                "raw": "$table->foreignId('reversed_by')->nullable()->constrained('users')->nullOnDelete()"
+            },
+            "reversal_reason": {
+                "type": "string",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_20_000001_create_account_movements_table.php",
+                "raw": "$table->string('reversal_reason')->nullable()"
+            },
+            "created_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_09_20_000001_create_account_movements_table.php",
+                "raw": "$table->timestamps()"
+            },
+            "updated_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_09_20_000001_create_account_movements_table.php",
+                "raw": "$table->timestamps()"
+            }
+        },
+        "indexes": [],
+        "foreign_keys": []
+    },
+    "account_transfers": {
+        "migration": "2026_09_20_000002_create_account_transfers_table.php",
+        "columns": {
+            "id": {
+                "type": "bigint unsigned",
+                "nullable": "NO",
+                "default": "AUTO_INCREMENT",
+                "migration": "2026_09_20_000002_create_account_transfers_table.php",
+                "raw": "$table->id()"
+            },
+            "business_id": {
+                "type": "foreignId",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_20_000002_create_account_transfers_table.php",
+                "raw": "$table->foreignId('business_id')->constrained('businesses')->cascadeOnDelete()"
+            },
+            "source_account_id": {
+                "type": "foreignId",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_20_000002_create_account_transfers_table.php",
+                "raw": "$table->foreignId('source_account_id')->constrained('financial_accounts')->cascadeOnDelete()"
+            },
+            "destination_account_id": {
+                "type": "foreignId",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_20_000002_create_account_transfers_table.php",
+                "raw": "$table->foreignId('destination_account_id')->constrained('financial_accounts')->cascadeOnDelete()"
+            },
+            "amount": {
+                "type": "decimal(12, 2)",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_20_000002_create_account_transfers_table.php",
+                "raw": "$table->decimal('amount', 12, 2)"
+            },
+            "date": {
+                "type": "date",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_20_000002_create_account_transfers_table.php",
+                "raw": "$table->date('date')"
+            },
+            "notes": {
+                "type": "text",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_20_000002_create_account_transfers_table.php",
+                "raw": "$table->text('notes')->nullable()"
+            },
+            "user_id": {
+                "type": "foreignId",
+                "nullable": "NO",
+                "default": "None",
+                "migration": "2026_09_20_000002_create_account_transfers_table.php",
+                "raw": "$table->foreignId('user_id')->constrained('users')->cascadeOnDelete()"
+            },
+            "idempotency_key": {
+                "type": "string",
+                "nullable": "YES",
+                "default": "None",
+                "migration": "2026_09_20_000002_create_account_transfers_table.php",
+                "raw": "$table->string('idempotency_key')->nullable()"
+            },
+            "status": {
+                "type": "enum(['posted', 'voided'])",
+                "nullable": "NO",
+                "default": "posted",
+                "migration": "2026_09_20_000002_create_account_transfers_table.php",
+                "raw": "$table->enum('status', ['posted', 'voided'])->default('posted')"
+            },
+            "created_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_09_20_000002_create_account_transfers_table.php",
+                "raw": "$table->timestamps()"
+            },
+            "updated_at": {
+                "type": "timestamp",
+                "nullable": "YES",
+                "default": "NULL",
+                "migration": "2026_09_20_000002_create_account_transfers_table.php",
+                "raw": "$table->timestamps()"
+            }
+        },
+        "indexes": [],
+        "foreign_keys": []
+    }
+}

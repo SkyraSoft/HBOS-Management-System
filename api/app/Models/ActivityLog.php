@@ -73,6 +73,11 @@ class ActivityLog extends SpatieActivity
         return $query->where('business_id', $businessId);
     }
 
+    public function getUserIdAttribute()
+    {
+        return $this->causer_id;
+    }
+
     /**
      * Scope query to a specific branch.
      */

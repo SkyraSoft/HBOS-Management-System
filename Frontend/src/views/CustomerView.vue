@@ -1,6 +1,6 @@
 <template>
 <div class="customer-view-container" style="width: 100%; height: 100%; overflow: auto; flex: 1; min-width: 0;">
-<section v-if="!isModal" class="page">
+<section v-if="!isModal && !selectedCustomerProfile" class="page">
 
                 <!-- HEADER -->
                 <div class="page-header">
@@ -8,11 +8,11 @@
                     <div>
 
                         <h1 class="page-title">
-                            Customers
+                            Customers & Khata Accounts
                         </h1>
 
                         <p class="page-description">
-                            Manage client relationships and track balances.
+                            Manage client relationships, credit limits, and live Khata ledgers.
                         </p>
 
                     </div>
@@ -47,11 +47,11 @@
                             Customers
                         </div>
                         <div class="stat-value">
-                            842
+                            {{ totalCustomersCount }}
                         </div>
 
                         <div class="stat-note success">
-                            ↗ +12
+                            ↗ +{{ thisMonthNewCustomersCount }}
                             <span style="color:#555b64;">
                                 this month
                             </span>
@@ -71,11 +71,11 @@
                         </div>
 
                         <div class="stat-value">
-                            796
+                            {{ activeCustomersCount }}
                         </div>
 
                         <div class="stat-note">
-                            94% engagement rate
+                            {{ engagementRate }}% engagement rate
                         </div>
 
                     </div>
@@ -93,11 +93,11 @@
                         </div>
 
                         <div class="stat-value currency">
-                            PKR 486,500
+                            PKR {{ totalOutstanding.toLocaleString() }}
                         </div>
 
                         <div class="stat-note">
-                            Across 124 accounts
+                            Across {{ outstandingAccountsCount }} accounts
                         </div>
 
                     </div>
@@ -114,8 +114,9 @@
                         </div>
 
                         <div class="stat-value currency danger">
-                            PKR 64,200
-                        </div>                        <div class="stat-note danger">
+                            PKR {{ totalOverdue.toLocaleString() }}
+                        </div>
+                        <div class="stat-note danger">
                             Requires immediate<br />
                             attention
                         </div>
@@ -244,49 +245,52 @@
 
                             
                             <tbody id="customerTable">
-                                <tr v-for="c in paginatedCustomers" :key="c.id" :data-type="c.type || 'regular'" :data-status="c.status || 'active'">
+                                <tr v-for="c in paginatedCustomers" :key="c.id" :data-type="c.type || 'regular'" :data-status="c.status || 'active'" style="cursor: pointer;" @click="openCustomerProfile(c)">
                                     <td>
                                         <div class="customer-info">
                                             <div class="customer-avatar">
                                                 {{ c.name ? c.name.charAt(0).toUpperCase() : 'C' }}
                                             </div>
                                             <div>
-                                                <div class="customer-name">
+                                                <div class="customer-name fw-bold text-primary">
                                                     {{ c.name }}
                                                 </div>
-                                                <div class="customer-phone">
+                                                <div class="customer-phone font-monospace">
                                                     {{ c.phone }}
                                                 </div>
                                             </div>
                                         </div>
                                     </td>
                                     <td class="amount">
-                                        PKR {{ (c.sales || 0).toLocaleString() }}
+                                        PKR {{ getCustomerSales(c).toLocaleString() }}
                                     </td>
-                                    <td :class="['amount', c.status === 'overdue' || c.status === 'outstanding' ? 'danger' : '']">
-                                        PKR {{ (c.received || 0).toLocaleString() }}
+                                    <td :class="['amount', getCustomerOutstanding(c) > 0 ? 'danger fw-bold' : '']">
+                                        PKR {{ getCustomerOutstanding(c).toLocaleString() }}
                                     </td>
                                     <td>
-                                        PKR {{ (c.balance || 0).toLocaleString() }}
+                                        PKR {{ getCustomerCreditLimit(c).toLocaleString() }}
                                     </td>
                                     <td>
                                         {{ c.created_at ? new Date(c.created_at).toLocaleDateString() : 'N/A' }}<br>
                                         {{ c.type || 'Regular' }}
                                     </td>
                                     <td>
-                                        <span :class="['status', c.status || 'active']">
-                                            {{ (c.status || 'active').charAt(0).toUpperCase() + (c.status || 'active').slice(1) }}
+                                        <span :class="['status', getCustomerOutstanding(c) > 0 ? 'outstanding' : (c.status || 'active')]">
+                                            {{ getCustomerOutstanding(c) > 0 ? 'Outstanding' : ((c.status || 'active').charAt(0).toUpperCase() + (c.status || 'active').slice(1)) }}
                                         </span>
                                     </td>
                                     <td>
-                                        <div class="action-buttons">
-                                            <button class="action-btn" @click="openViewModal(c)">
-                                                <i class="bi bi-eye"></i>
+                                        <div class="action-buttons" @click.stop>
+                                            <button class="action-btn text-success" title="Record Payment" @click.stop="openRecordPaymentModal(c)">
+                                                <i class="bi bi-wallet2"></i>
                                             </button>
-                                            <button class="action-btn more" @click="openEditModal(c)">
+                                            <button class="action-btn text-primary" title="View Customer Profile & Khata Ledger" @click.stop="openCustomerProfile(c)">
+                                                <i class="bi bi-person-lines-fill"></i>
+                                            </button>
+                                            <button class="action-btn more" title="Edit Customer" @click.stop="openEditModal(c)">
                                                 <i class="bi bi-pencil"></i>
                                             </button>
-                                            <button class="action-btn more text-danger" @click="deleteCustomer(c.id)">
+                                            <button class="action-btn more text-danger" title="Delete Customer" @click.stop="deleteCustomer(c.id)">
                                                 <i class="bi bi-trash"></i>
                                             </button>
                                         </div>
@@ -331,6 +335,199 @@
                                 <i class="bi bi-chevron-right"></i>
                             </button>
                         </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ====================================================
+                 CUSTOMER DETAILED PROFILE & KHATA LEDGER VIEW
+            ===================================================== -->
+            <section v-else-if="!isModal && selectedCustomerProfile" class="page customer-profile-page p-4">
+                <!-- TOP BREADCRUMB / BACK BAR -->
+                <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+                    <button class="btn btn-sm btn-light border rounded-3 fw-semibold px-3 py-1.5 shadow-sm d-flex align-items-center gap-2" @click="closeCustomerProfile">
+                        <i class="bi bi-arrow-left"></i> Back to All Customers
+                    </button>
+                    <div class="text-end">
+                        <span class="text-muted small font-monospace">Customer Account #{{ selectedCustomerProfile.id }}</span>
+                    </div>
+                </div>
+
+                <!-- CUSTOMER PROFILE HEADER CARD -->
+                <div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden bg-white">
+                    <div class="card-body p-4">
+                        <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="customer-profile-avatar" style="width: 64px; height: 64px; border-radius: 16px; background: linear-gradient(135deg, #0757e5, #0046c7); color: #fff; font-size: 26px; font-weight: bold; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(7, 87, 229, 0.2);">
+                                    {{ selectedCustomerProfile.name ? selectedCustomerProfile.name.charAt(0).toUpperCase() : 'C' }}
+                                </div>
+                                <div>
+                                    <div class="d-flex align-items-center gap-2 mb-1 flex-wrap">
+                                        <h2 class="fw-bold text-dark m-0 fs-4">{{ selectedCustomerProfile.name }}</h2>
+                                        <span :class="['badge rounded-pill px-2.5 py-1 text-uppercase font-monospace', getCustomerOutstanding(selectedCustomerProfile) > 0 ? 'bg-danger text-white' : 'bg-success text-white']" style="font-size: 11px;">
+                                            {{ getCustomerOutstanding(selectedCustomerProfile) > 0 ? 'Outstanding Loan' : 'Settled / Clear' }}
+                                        </span>
+                                        <span class="badge bg-light text-dark border rounded-pill px-2.5 py-1" style="font-size: 11px;">
+                                            {{ selectedCustomerProfile.type || 'Regular Customer' }}
+                                        </span>
+                                    </div>
+                                    <div class="d-flex flex-wrap gap-3 text-muted small">
+                                        <span v-if="selectedCustomerProfile.phone"><i class="bi bi-telephone me-1 text-primary"></i><a :href="'tel:' + selectedCustomerProfile.phone" class="text-decoration-none text-muted font-monospace">{{ selectedCustomerProfile.phone }}</a></span>
+                                        <span v-if="selectedCustomerProfile.address"><i class="bi bi-geo-alt me-1 text-primary"></i>{{ selectedCustomerProfile.address }}</span>
+                                        <span v-if="selectedCustomerProfile.email"><i class="bi bi-envelope me-1 text-primary"></i>{{ selectedCustomerProfile.email }}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- QUICK ACTIONS BAR -->
+                            <div class="d-flex flex-wrap gap-2">
+                                <button class="btn btn-success btn-sm rounded-3 fw-semibold px-3 py-2 shadow-sm d-flex align-items-center gap-1" @click="openRecordPaymentModal(selectedCustomerProfile)">
+                                    <i class="bi bi-wallet2"></i> Record Payment
+                                </button>
+                                <button class="btn btn-primary btn-sm rounded-3 fw-semibold px-3 py-2 shadow-sm d-flex align-items-center gap-1" @click="router.push('/pos')">
+                                    <i class="bi bi-cart-plus"></i> New Sale
+                                </button>
+                                <button class="btn btn-outline-success btn-sm rounded-3 fw-semibold px-3 py-2 d-flex align-items-center gap-1" @click="shareCustomerStatementWhatsApp">
+                                    <i class="bi bi-whatsapp"></i> WhatsApp
+                                </button>
+                                <button class="btn btn-outline-secondary btn-sm rounded-3 fw-semibold px-3 py-2 d-flex align-items-center gap-1" @click="printCustomerLedger">
+                                    <i class="bi bi-printer"></i> Print Statement
+                                </button>
+                                <button class="btn btn-outline-primary btn-sm rounded-3 fw-semibold px-2.5 py-2" title="Edit Customer" @click="openEditModal(selectedCustomerProfile)">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4 FINANCIAL KPI CARDS -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-3">
+                        <div class="card border-0 shadow-sm rounded-4 p-3 bg-white h-100">
+                            <span class="text-muted small fw-semibold text-uppercase">Total Purchases</span>
+                            <div class="fs-4 fw-bold text-dark mt-1">PKR {{ getCustomerSales(selectedCustomerProfile).toLocaleString() }}</div>
+                            <span class="text-muted small mt-auto pt-1 font-monospace" style="font-size: 11px;">Cumulative sales</span>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card border-0 shadow-sm rounded-4 p-3 bg-white h-100" style="border-left: 4px solid #d32222 !important;">
+                            <span class="text-danger small fw-bold text-uppercase">Khata Balance (Loan Owed)</span>
+                            <div class="fs-4 fw-bold text-danger mt-1">PKR {{ getCustomerOutstanding(selectedCustomerProfile).toLocaleString() }}</div>
+                            <span class="text-muted small mt-auto pt-1 font-monospace" style="font-size: 11px;">Current due debt</span>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card border-0 shadow-sm rounded-4 p-3 bg-white h-100" style="border-left: 4px solid #079b68 !important;">
+                            <span class="text-success small fw-bold text-uppercase">Total Payments Settled</span>
+                            <div class="fs-4 fw-bold text-success mt-1">PKR {{ profileTotalPayments.toLocaleString() }}</div>
+                            <span class="text-muted small mt-auto pt-1 font-monospace" style="font-size: 11px;">Recovered payments</span>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card border-0 shadow-sm rounded-4 p-3 bg-white h-100">
+                            <span class="text-muted small fw-semibold text-uppercase">Credit Limit</span>
+                            <div class="fs-4 fw-bold text-dark mt-1">PKR {{ getCustomerCreditLimit(selectedCustomerProfile).toLocaleString() }}</div>
+                            <span class="text-muted small mt-auto pt-1 font-monospace" style="font-size: 11px;">Max loan allowance</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CHRONOLOGICAL KHATA LEDGER & PAYMENT REVERSALS TABLE -->
+                <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white mb-4">
+                    <div class="card-header bg-white border-0 px-4 py-3 d-flex flex-wrap justify-content-between align-items-center gap-2">
+                        <div>
+                            <h3 class="fw-bold text-dark fs-5 m-0 d-flex align-items-center gap-2">
+                                <i class="bi bi-journal-text text-primary"></i>
+                                Khata Ledger & Payment History
+                            </h3>
+                            <p class="text-muted small m-0 mt-1">Every credit purchase (loan taken), payment received, and reversal chronologically audited.</p>
+                        </div>
+                        <!-- FILTER PILLS -->
+                        <div class="d-flex gap-1 bg-light p-1 rounded-3 border">
+                            <button :class="['btn btn-sm rounded-2 px-3 fw-semibold', ledgerFilter === 'all' ? 'btn-primary shadow-sm' : 'btn-light text-secondary border-0']" @click="ledgerFilter = 'all'">All</button>
+                            <button :class="['btn btn-sm rounded-2 px-3 fw-semibold', ledgerFilter === 'sales' ? 'btn-primary shadow-sm' : 'btn-light text-secondary border-0']" @click="ledgerFilter = 'sales'">Credit Sales</button>
+                            <button :class="['btn btn-sm rounded-2 px-3 fw-semibold', ledgerFilter === 'payments' ? 'btn-primary shadow-sm' : 'btn-light text-secondary border-0']" @click="ledgerFilter = 'payments'">Payments</button>
+                            <button :class="['btn btn-sm rounded-2 px-3 fw-semibold', ledgerFilter === 'voided' ? 'btn-primary shadow-sm' : 'btn-light text-secondary border-0']" @click="ledgerFilter = 'voided'">Reversals</button>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle m-0" style="font-size: 13.5px;">
+                            <thead class="bg-light text-secondary">
+                                <tr>
+                                    <th class="ps-4" style="width: 120px;">Date</th>
+                                    <th style="width: 150px;">Transaction Type</th>
+                                    <th style="width: 140px;">Reference #</th>
+                                    <th>Details / Description</th>
+                                    <th class="text-end" style="width: 130px;">Debit (Took Loan)</th>
+                                    <th class="text-end" style="width: 130px;">Credit (Paid Back)</th>
+                                    <th class="text-end" style="width: 140px;">Running Balance</th>
+                                    <th class="text-end pe-4" style="width: 110px;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-if="isLoadingLedger">
+                                    <td colspan="8" class="text-center py-5 text-muted">
+                                        <span class="spinner-border spinner-border-sm me-2"></span> Loading customer Khata ledger...
+                                    </td>
+                                </tr>
+                                <tr v-else-if="filteredLedger.length === 0">
+                                    <td colspan="8" class="text-center py-5 text-muted">
+                                        <i class="bi bi-inbox fs-2 d-block mb-1 text-secondary opacity-50"></i>
+                                        No transactions found for this customer account.
+                                    </td>
+                                </tr>
+                                <tr v-for="entry in filteredLedger" :key="entry.id">
+                                    <td class="ps-4 font-monospace text-secondary">{{ entry.date || (entry.created_at ? entry.created_at.split('T')[0] : '—') }}</td>
+                                    <td>
+                                        <span v-if="entry.type === 'Credit Sale'" class="badge bg-danger-subtle text-danger px-2 py-1 rounded-pill fw-semibold">
+                                            <i class="bi bi-cart-dash me-1"></i> Credit Sale
+                                        </span>
+                                        <span v-else-if="entry.type === 'Payment Received'" class="badge bg-success-subtle text-success px-2 py-1 rounded-pill fw-semibold">
+                                            <i class="bi bi-check-circle me-1"></i> Payment
+                                        </span>
+                                        <span v-else-if="entry.type === 'Payment Voided' || entry.status === 'voided'" class="badge bg-dark-subtle text-dark px-2 py-1 rounded-pill fw-semibold">
+                                            <i class="bi bi-arrow-counterclockwise me-1"></i> Voided
+                                        </span>
+                                        <span v-else class="badge bg-secondary-subtle text-secondary px-2 py-1 rounded-pill fw-semibold">
+                                            {{ entry.type || 'Transaction' }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <code class="fw-semibold text-primary">{{ entry.reference || '—' }}</code>
+                                    </td>
+                                    <td class="text-dark">
+                                        <div>{{ entry.notes || '—' }}</div>
+                                        <span v-if="entry.payment_method" class="badge bg-light text-secondary border font-monospace" style="font-size: 10px;">{{ entry.payment_method }}</span>
+                                    </td>
+                                    <td class="text-end fw-bold" :class="Number(entry.debit) > 0 ? 'text-danger' : 'text-muted'">
+                                        {{ Number(entry.debit) > 0 ? ('PKR ' + Number(entry.debit).toLocaleString()) : '—' }}
+                                    </td>
+                                    <td class="text-end fw-bold" :class="Number(entry.credit) > 0 ? 'text-success' : 'text-muted'">
+                                        {{ Number(entry.credit) > 0 ? ('PKR ' + Number(entry.credit).toLocaleString()) : '—' }}
+                                    </td>
+                                    <td class="text-end fw-bold" :class="Number(entry.running_balance) > 0 ? 'text-danger' : 'text-success'">
+                                        PKR {{ Number(entry.running_balance || 0).toLocaleString() }}
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <button 
+                                            v-if="entry.is_payment && entry.status === 'posted'"
+                                            class="btn btn-sm btn-outline-danger px-2.5 py-1 rounded-2 fw-semibold"
+                                            style="font-size: 11px;"
+                                            @click="openReverseModal(entry)"
+                                            title="Reverse this payment entry"
+                                        >
+                                            <i class="bi bi-arrow-counterclockwise me-1"></i> Reverse
+                                        </button>
+                                        <span v-else-if="entry.status === 'voided' || entry.type === 'Payment Voided'" class="badge bg-danger-subtle text-danger" style="font-size: 10px;">
+                                            Reversed
+                                        </span>
+                                        <span v-else class="text-muted small">—</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </section>
@@ -419,22 +616,55 @@
 
     <!-- VIEW CUSTOMER MODAL -->
     <div class="modal fade" id="viewCustomerModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Customer Details</h5>
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 480px;">
+            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="modal-header border-0 bg-light px-4 py-3">
+                    <h5 class="modal-title fw-bold text-dark m-0 d-flex align-items-center">
+                        <i class="bi bi-person-badge text-primary me-2"></i>
+                        Customer Details
+                    </h5>
                     <button type="button" class="btn-close" @click="closeModal('viewCustomerModal')"></button>
                 </div>
-                <div class="modal-body" v-if="viewingCustomer">
-                    <p><strong>Name:</strong> {{ viewingCustomer.name }}</p>
-                    <p><strong>Phone:</strong> {{ viewingCustomer.phone }}</p>
-                    <p><strong>Total Sales:</strong> PKR {{ (viewingCustomer.sales || 0).toLocaleString() }}</p>
-                    <p><strong>Received:</strong> PKR {{ (viewingCustomer.received || 0).toLocaleString() }}</p>
-                    <p><strong>Balance:</strong> PKR {{ (viewingCustomer.balance || 0).toLocaleString() }}</p>
-                    <p><strong>Status:</strong> {{ viewingCustomer.status || 'Active' }}</p>
+                <div class="modal-body px-4 py-3" v-if="viewingCustomer">
+                    <div class="d-flex align-items-center gap-3 p-3 mb-3 bg-light rounded-3 border">
+                        <div class="customer-avatar" style="width: 48px; height: 48px; font-size: 20px;">
+                            {{ viewingCustomer.name ? viewingCustomer.name.charAt(0).toUpperCase() : 'C' }}
+                        </div>
+                        <div>
+                            <h5 class="fw-bold text-dark m-0">{{ viewingCustomer.name }}</h5>
+                            <span class="text-muted small font-monospace"><i class="bi bi-telephone me-1"></i>{{ viewingCustomer.phone || 'No phone' }}</span>
+                        </div>
+                    </div>
+                    <div class="row g-2 mb-2">
+                        <div class="col-6">
+                            <span class="text-muted small">Total Purchases:</span>
+                            <div class="fw-semibold text-dark">PKR {{ getCustomerSales(viewingCustomer).toLocaleString() }}</div>
+                        </div>
+                        <div class="col-6">
+                            <span class="text-muted small">Credit Limit:</span>
+                            <div class="fw-semibold text-dark">PKR {{ getCustomerCreditLimit(viewingCustomer).toLocaleString() }}</div>
+                        </div>
+                        <div class="col-6">
+                            <span class="text-muted small">Outstanding Balance:</span>
+                            <div class="fw-bold fs-6" :class="getCustomerOutstanding(viewingCustomer) > 0 ? 'text-danger' : 'text-success'">
+                                PKR {{ getCustomerOutstanding(viewingCustomer).toLocaleString() }}
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <span class="text-muted small">Account Status:</span>
+                            <div>
+                                <span :class="['badge px-2 py-1 rounded-pill', getCustomerOutstanding(viewingCustomer) > 0 ? 'bg-danger text-white' : 'bg-success text-white']">
+                                    {{ getCustomerOutstanding(viewingCustomer) > 0 ? 'Outstanding Debt' : (viewingCustomer.status || 'Active') }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" @click="closeModal('viewCustomerModal')">Close</button>
+                <div class="modal-footer border-0 bg-light px-4 py-2.5 d-flex justify-content-between">
+                    <button type="button" class="btn btn-sm btn-success rounded-3 px-3 fw-semibold shadow-sm d-flex align-items-center gap-1" @click="closeModal('viewCustomerModal'); openRecordPaymentModal(viewingCustomer)">
+                        <i class="bi bi-wallet2 me-1"></i> Record Payment
+                    </button>
+                    <button type="button" class="btn btn-sm btn-secondary rounded-3 px-3" @click="closeModal('viewCustomerModal')">Close</button>
                 </div>
             </div>
         </div>
@@ -442,34 +672,192 @@
 
     <!-- RECORD PAYMENT MODAL -->
     <div class="modal fade" id="recordPaymentModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Record Payment</h5>
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 500px;">
+            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="modal-header border-0 bg-light px-4 py-3">
+                    <h5 class="modal-title fw-bold text-dark m-0 d-flex align-items-center">
+                        <i class="bi bi-wallet2 text-success me-2"></i>
+                        Record Customer Payment
+                    </h5>
                     <button type="button" class="btn-close" @click="closeModal('recordPaymentModal')"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body px-4 py-3">
+                    <!-- Error Alert -->
+                    <div v-if="paymentError" class="alert alert-danger py-2 px-3 small rounded-3 mb-3 d-flex align-items-center justify-content-between">
+                        <div><i class="bi bi-exclamation-circle-fill me-1"></i> {{ paymentError }}</div>
+                        <button type="button" class="btn-close btn-sm" @click="paymentError = ''"></button>
+                    </div>
+
+                    <!-- Customer Selector -->
                     <div class="mb-3">
-                        <label class="form-label">Select Customer</label>
-                        <select class="form-select" v-model="paymentForm.customerId">
-                            <option v-for="c in customers" :key="c.id" :value="c.id">{{c.name}} (Balance: PKR {{(c.balance || 0).toLocaleString()}})</option>
+                        <label class="form-label small fw-semibold text-secondary">Select Customer <span class="text-danger">*</span></label>
+                        <select class="form-select rounded-3" v-model="paymentForm.customerId">
+                            <option :value="null" disabled>-- Choose a customer --</option>
+                            <option v-for="c in customers" :key="c.id" :value="c.id">
+                                {{ c.name }} ({{ c.phone || 'No Phone' }}) — Due: PKR {{ getCustomerOutstanding(c).toLocaleString() }}
+                            </option>
                         </select>
                     </div>
+
+                    <!-- Selected Customer Info Card -->
+                    <div v-if="selectedPaymentCustomer" class="p-3 mb-3 rounded-3 border bg-light">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <div class="fw-bold text-dark fs-6">{{ selectedPaymentCustomer.name }}</div>
+                                <div class="text-muted small font-monospace"><i class="bi bi-telephone me-1"></i>{{ selectedPaymentCustomer.phone || 'No phone' }}</div>
+                            </div>
+                            <span :class="['badge px-2.5 py-1 rounded-pill text-uppercase font-monospace', getCustomerOutstanding(selectedPaymentCustomer) > 0 ? 'bg-danger text-white' : 'bg-success text-white']" style="font-size: 11px;">
+                                {{ getCustomerOutstanding(selectedPaymentCustomer) > 0 ? 'Outstanding' : 'Settled' }}
+                            </span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center pt-2 border-top">
+                            <div>
+                                <span class="text-muted small">Outstanding Balance:</span>
+                                <div class="fw-bold fs-5" :class="getCustomerOutstanding(selectedPaymentCustomer) > 0 ? 'text-danger' : 'text-success'">
+                                    PKR {{ getCustomerOutstanding(selectedPaymentCustomer).toLocaleString() }}
+                                </div>
+                            </div>
+                            <button 
+                                v-if="getCustomerOutstanding(selectedPaymentCustomer) > 0" 
+                                type="button" 
+                                class="btn btn-sm btn-outline-danger rounded-2 fw-semibold px-2 py-1"
+                                style="font-size: 12px;"
+                                @click="setFullOutstandingAmount"
+                            >
+                                Pay Full Due
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Payment Amount -->
                     <div class="mb-3">
-                        <label class="form-label">Payment Amount</label>
-                        <input type="number" class="form-control" placeholder="Enter amount..." v-model.number="paymentForm.amount">
+                        <label class="form-label small fw-semibold text-secondary">Payment Amount (PKR) <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light fw-bold text-secondary">PKR</span>
+                            <input 
+                                type="number" 
+                                min="1" 
+                                step="0.01" 
+                                class="form-control rounded-end-3" 
+                                placeholder="Enter amount received..." 
+                                v-model.number="paymentForm.amount"
+                                @keydown.enter.prevent="savePayment"
+                            />
+                        </div>
+                    </div>
+
+                    <div class="row g-2 mb-3">
+                        <!-- Payment Method -->
+                        <div class="col-6">
+                            <label class="form-label small fw-semibold text-secondary">Payment Method</label>
+                            <select class="form-select rounded-3" v-model="paymentForm.method">
+                                <option value="Cash">Cash</option>
+                                <option value="Online">Online / Bank / Wallet</option>
+                            </select>
+                        </div>
+
+                        <!-- Payment Date -->
+                        <div class="col-6">
+                            <label class="form-label small fw-semibold text-secondary">Date</label>
+                            <input type="date" class="form-control rounded-3" v-model="paymentForm.date" />
+                        </div>
+                    </div>
+
+                    <!-- Notes / Reference -->
+                    <div class="mb-2">
+                        <label class="form-label small fw-semibold text-secondary">Notes / Reference (Optional)</label>
+                        <input type="text" class="form-control rounded-3" placeholder="e.g. Cash received, Raast slip #102..." v-model="paymentForm.notes" />
                     </div>
                 </div>
-                <div class="modal-footer justify-content-between">
-    <div>
-        <button type="button" class="btn btn-info me-2 text-white" @click="$emit('open-purchase')">New Purchase</button>
-        <button type="button" class="btn btn-warning" @click="$emit('open-return-debt')">Return Debt</button>
+
+                <div class="modal-footer border-0 bg-light px-4 py-2.5 d-flex justify-content-between">
+                    <button type="button" class="btn btn-light rounded-3 px-3" @click="closeModal('recordPaymentModal')">
+                        Cancel
+                    </button>
+                    <button 
+                        type="button" 
+                        class="btn btn-success rounded-3 px-4 fw-semibold shadow-sm d-flex align-items-center gap-1"
+                        :disabled="isSubmittingPayment" 
+                        @click="savePayment"
+                    >
+                        <span v-if="isSubmittingPayment" class="spinner-border spinner-border-sm me-1"></span>
+                        <i v-else class="bi bi-check-circle me-1"></i>
+                        Record Payment
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
-    <div>
-        <button type="button" class="btn btn-secondary me-2" @click="closeModal('recordPaymentModal')">Cancel</button>
-        <button type="button" class="btn btn-primary" @click="savePayment">Record Payment</button>
+
+    <!-- REVERSE PAYMENT CONFIRMATION MODAL -->
+    <div v-if="showReverseModal && selectedPaymentForReversal" class="modal-backdrop fade show" style="z-index: 1060; background: rgba(0,0,0,0.5);"></div>
+    <div v-if="showReverseModal && selectedPaymentForReversal" class="modal fade show d-block" tabindex="-1" style="z-index: 1070;">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 460px;">
+            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="modal-header border-0 bg-danger text-white px-4 py-3">
+                    <h5 class="modal-title fw-bold m-0 d-flex align-items-center">
+                        <i class="bi bi-arrow-counterclockwise me-2"></i>
+                        Reverse Customer Payment
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" @click="closeReverseModal"></button>
+                </div>
+                <div class="modal-body px-4 py-3">
+                    <p class="text-secondary small mb-3">
+                        Are you sure you want to reverse this payment? This will restore the customer's outstanding balance and mark the payment audit record as voided.
+                    </p>
+                    <div class="p-3 bg-light rounded-3 border mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="text-muted small">Reference #:</span>
+                            <span class="font-monospace fw-bold">{{ selectedPaymentForReversal.reference || selectedPaymentForReversal.id }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="text-muted small">Amount:</span>
+                            <span class="fw-bold text-success fs-6">PKR {{ Number(selectedPaymentForReversal.credit || selectedPaymentForReversal.amount || 0).toLocaleString() }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span class="text-muted small">Date:</span>
+                            <span class="font-monospace text-secondary">{{ selectedPaymentForReversal.date || '—' }}</span>
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label small fw-semibold text-secondary">Reason for Reversal <span class="text-danger">*</span></label>
+                        <input 
+                            type="text" 
+                            class="form-control rounded-3" 
+                            v-model="reversalReason" 
+                            placeholder="e.g. Returned cheque, wrong entry, duplicate payment..." 
+                            required
+                        />
+                    </div>
+                </div>
+                <div class="modal-footer border-0 bg-light px-4 py-2.5 d-flex justify-content-between">
+                    <button type="button" class="btn btn-light rounded-3 px-3" @click="closeReverseModal" :disabled="isReversingPayment">
+                        Cancel
+                    </button>
+                    <button 
+                        type="button" 
+                        class="btn btn-danger rounded-3 px-3 fw-semibold shadow-sm d-flex align-items-center gap-1"
+                        :disabled="isReversingPayment || !reversalReason.trim()"
+                        @click="confirmReversePayment"
+                    >
+                        <span v-if="isReversingPayment" class="spinner-border spinner-border-sm me-1"></span>
+                        <i v-else class="bi bi-arrow-counterclockwise me-1"></i>
+                        Confirm Reversal
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
-</div>
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div v-if="toastMessage" class="position-fixed bottom-0 end-0 p-3" style="z-index: 1080;">
+        <div :class="['toast show align-items-center text-white border-0 shadow-lg rounded-3', toastType === 'success' ? 'bg-success' : 'bg-danger']" role="alert">
+            <div class="d-flex">
+                <div class="toast-body fw-semibold">
+                    <i :class="['bi me-2', toastType === 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill']"></i>
+                    {{ toastMessage }}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" @click="toastMessage = ''"></button>
             </div>
         </div>
     </div>
@@ -502,19 +890,123 @@ const filterStatus = ref('all');
 const currentPage = ref(1);
 const itemsPerPage = ref(10);
 
-const paymentForm = ref({ customerId: null, amount: 0 });
+const paymentForm = ref({ customerId: null, amount: null, method: 'Cash', date: new Date().toISOString().split('T')[0], notes: '' });
+const isSubmittingPayment = ref(false);
+const paymentError = ref('');
+const toastMessage = ref('');
+const toastType = ref('success');
+let toastTimer = null;
+
+const showToast = (msg, type = 'success') => {
+    toastMessage.value = msg;
+    toastType.value = type;
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => {
+        toastMessage.value = '';
+    }, 4000);
+};
+
+const getCustomerOutstanding = (c) => {
+    if (!c) return 0;
+    return Number(c.outstanding ?? c.current_balance ?? c.balance ?? 0);
+};
+
+const getCustomerCreditLimit = (c) => {
+    if (!c) return 0;
+    return Number(c.credit_limit ?? c.creditLimit ?? 0);
+};
+
+const getCustomerSales = (c) => {
+    if (!c) return 0;
+    return Number(c.sales ?? c.total_purchases ?? 0);
+};
+
+const selectedPaymentCustomer = computed(() => {
+    if (!paymentForm.value.customerId) return null;
+    return (customers.value || []).find(c => c.id === paymentForm.value.customerId || String(c.id) === String(paymentForm.value.customerId)) || null;
+});
+
+const setFullOutstandingAmount = () => {
+    if (selectedPaymentCustomer.value) {
+        const due = getCustomerOutstanding(selectedPaymentCustomer.value);
+        if (due > 0) {
+            paymentForm.value.amount = due;
+        }
+    }
+};
+
 const newCustomer = ref({ name: '', phone: '', email: '', type: 'regular', address: '', creditLimit: 0, openingBalance: 0 });
 const editingCustomer = ref({ id: null, name: '', phone: '' });
 const viewingCustomer = ref(null);
+
+// Customer Profile & Khata Ledger State
+const selectedCustomerProfile = ref(null);
+const customerLedger = ref([]);
+const isLoadingLedger = ref(false);
+const ledgerFilter = ref('all');
+
+// Payment Reversal State
+const showReverseModal = ref(false);
+const selectedPaymentForReversal = ref(null);
+const reversalReason = ref('');
+const isReversingPayment = ref(false);
+
+const profileTotalPayments = computed(() => {
+    return (customerLedger.value || []).reduce((sum, entry) => {
+        if (entry.status !== 'voided' && entry.type !== 'Payment Voided' && Number(entry.credit) > 0) {
+            return sum + Number(entry.credit);
+        }
+        return sum;
+    }, 0);
+});
+
+const filteredLedger = computed(() => {
+    const list = customerLedger.value || [];
+    if (ledgerFilter.value === 'all') return list;
+    if (ledgerFilter.value === 'sales') {
+        return list.filter(e => e.type === 'Credit Sale' || Number(e.debit) > 0);
+    }
+    if (ledgerFilter.value === 'payments') {
+        return list.filter(e => e.type === 'Payment Received' || (e.is_payment && e.status !== 'voided'));
+    }
+    if (ledgerFilter.value === 'voided') {
+        return list.filter(e => e.status === 'voided' || e.type === 'Payment Voided');
+    }
+    return list;
+});
 
 onMounted(async () => {
     if (!props.isModal && !route.query.tab) {
         router.replace({ path: '/customer', query: { ...route.query, tab: 'customers' } });
     }
-    if (props.isModal && props.modalPage === 'payment') {
-        setTimeout(() => openRecordPaymentModal(), 150);
-    }
     await store.fetchCustomers();
+
+    // Deep link directly to a customer's detailed profile and ledger if id passed in URL
+    const targetCustId = route.query.id || route.query.customer_id;
+    if (targetCustId && customers.value && customers.value.length) {
+        const found = customers.value.find(c => String(c.id) === String(targetCustId));
+        if (found) {
+            await openCustomerProfile(found);
+        }
+    }
+
+    if ((props.isModal && props.modalPage === 'payment') || route.query.action === 'payment') {
+        openRecordPaymentModal();
+    }
+});
+
+const totalCustomersCount = computed(() => (customers.value || []).length);
+const activeCustomersCount = computed(() => (customers.value || []).filter(c => (c.status || 'active').toLowerCase() === 'active').length);
+const totalOutstanding = computed(() => (customers.value || []).reduce((sum, c) => sum + (getCustomerOutstanding(c) > 0 ? getCustomerOutstanding(c) : 0), 0));
+const totalOverdue = computed(() => (customers.value || []).filter(c => (c.status || '').toLowerCase() === 'overdue').reduce((sum, c) => sum + (getCustomerOutstanding(c) > 0 ? getCustomerOutstanding(c) : 0), 0));
+const outstandingAccountsCount = computed(() => (customers.value || []).filter(c => getCustomerOutstanding(c) > 0).length);
+const thisMonthNewCustomersCount = computed(() => {
+    const currentMonth = new Date().toISOString().slice(0, 7);
+    return (customers.value || []).filter(c => (c.created_at || '').startsWith(currentMonth)).length;
+});
+const engagementRate = computed(() => {
+    if (!customers.value || !customers.value.length) return 0;
+    return Math.round((activeCustomersCount.value / customers.value.length) * 100);
 });
 
 const filteredCustomers = computed(() => {
@@ -656,8 +1148,25 @@ async function deleteCustomer(id) {
     }
 }
 
-function openRecordPaymentModal() {
-    if (customers.value.length > 0) paymentForm.value.customerId = customers.value[0].id;
+function openRecordPaymentModal(customer = null) {
+    paymentError.value = '';
+    if (customer && customer.id) {
+        paymentForm.value.customerId = customer.id;
+        const due = getCustomerOutstanding(customer);
+        paymentForm.value.amount = due > 0 ? due : null;
+    } else if (customers.value && customers.value.length > 0) {
+        // Prefer first customer with outstanding balance
+        const debtor = customers.value.find(c => getCustomerOutstanding(c) > 0) || customers.value[0];
+        paymentForm.value.customerId = debtor.id;
+        const due = getCustomerOutstanding(debtor);
+        paymentForm.value.amount = due > 0 ? due : null;
+    } else {
+        paymentForm.value.customerId = null;
+        paymentForm.value.amount = null;
+    }
+    paymentForm.value.method = 'Cash';
+    paymentForm.value.date = new Date().toISOString().split('T')[0];
+    paymentForm.value.notes = '';
     openModal('recordPaymentModal');
 }
 
@@ -679,28 +1188,175 @@ function downloadCustomers() {
 }
 
 async function savePayment() {
-    if (!paymentForm.value.customerId || !paymentForm.value.amount || paymentForm.value.amount <= 0) return;
-    
-    const payload = {
-        customer_id: paymentForm.value.customerId,
-        type: 'got',
-        amount: paymentForm.value.amount,
-        date: new Date().toISOString().split('T')[0],
-        notes: 'Payment received (Cash)'
-    };
-    
-    const res = await khataStore.addTransaction(payload);
-    
-    if (res.success) {
-        await store.fetchCustomers();
+    paymentError.value = '';
+    if (!paymentForm.value.customerId) {
+        paymentError.value = 'Please select a customer.';
+        return;
+    }
+    const amt = parseFloat(paymentForm.value.amount);
+    if (!amt || amt <= 0) {
+        paymentError.value = 'Please enter a valid payment amount greater than zero.';
+        return;
+    }
+
+    isSubmittingPayment.value = true;
+    try {
+        const payload = {
+            customer_id: paymentForm.value.customerId,
+            type: 'got',
+            amount: amt,
+            payment_method: paymentForm.value.method || 'Cash',
+            date: paymentForm.value.date || new Date().toISOString().split('T')[0],
+            notes: paymentForm.value.notes ? `${paymentForm.value.notes} (${paymentForm.value.method})` : `Payment received (${paymentForm.value.method})`
+        };
+
+        const res = await khataStore.addTransaction(payload);
+        if (res.success) {
+            await store.fetchCustomers();
+            if (selectedCustomerProfile.value) {
+                const refreshed = (customers.value || []).find(c => c.id === selectedCustomerProfile.value.id || String(c.id) === String(selectedCustomerProfile.value.id));
+                if (refreshed) selectedCustomerProfile.value = refreshed;
+                await loadCustomerLedger(selectedCustomerProfile.value.id);
+            }
             closeModal('recordPaymentModal');
+            showToast(`Payment of PKR ${amt.toLocaleString()} recorded successfully!`, 'success');
             if (props.isModal) {
                 emit('success', res.message || 'Payment recorded successfully!');
                 return;
             }
-        paymentForm.value = { customerId: null, amount: 0 };
-    } else {
-        alert(res.message || "Failed to record payment.");
+            paymentForm.value = {
+                customerId: null,
+                amount: null,
+                method: 'Cash',
+                date: new Date().toISOString().split('T')[0],
+                notes: ''
+            };
+        } else {
+            paymentError.value = res.message || 'Failed to record payment.';
+        }
+    } catch (err) {
+        paymentError.value = err.response?.data?.message || err.message || 'Error processing payment.';
+    } finally {
+        isSubmittingPayment.value = false;
+    }
+}
+
+async function openCustomerProfile(customer) {
+    if (!customer) return;
+    selectedCustomerProfile.value = customer;
+    ledgerFilter.value = 'all';
+    await loadCustomerLedger(customer.id);
+}
+
+function closeCustomerProfile() {
+    selectedCustomerProfile.value = null;
+    customerLedger.value = [];
+    if (route.query.id || route.query.customer_id) {
+        const q = { ...route.query };
+        delete q.id;
+        delete q.customer_id;
+        router.replace({ path: '/customer', query: q });
+    }
+}
+
+async function loadCustomerLedger(customerId) {
+    isLoadingLedger.value = true;
+    try {
+        const res = await store.fetchCustomerLedger(customerId);
+        if (res.success && res.data) {
+            const data = res.data;
+            if (Array.isArray(data)) {
+                customerLedger.value = data;
+            } else if (data.ledger && Array.isArray(data.ledger)) {
+                customerLedger.value = data.ledger;
+                if (data.customer && selectedCustomerProfile.value) {
+                    selectedCustomerProfile.value = { ...selectedCustomerProfile.value, ...data.customer };
+                }
+            } else {
+                customerLedger.value = [];
+            }
+        } else {
+            customerLedger.value = [];
+        }
+    } catch (e) {
+        console.error('Error loading ledger:', e);
+        customerLedger.value = [];
+    } finally {
+        isLoadingLedger.value = false;
+    }
+}
+
+function shareCustomerStatementWhatsApp() {
+    if (!selectedCustomerProfile.value) return;
+    const c = selectedCustomerProfile.value;
+    const phone = (c.phone || '').replace(/[^0-9]/g, '');
+    const cleanPhone = phone.startsWith('0') ? '92' + phone.slice(1) : phone;
+    const balance = getCustomerOutstanding(c);
+    const purchases = getCustomerSales(c);
+    const limit = getCustomerCreditLimit(c);
+    const dateStr = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+
+    const msg = `*ACCOUNT STATEMENT - HBOS*\n` +
+                `Customer: ${c.name}\n` +
+                `Phone: ${c.phone || 'N/A'}\n` +
+                `Date: ${dateStr}\n` +
+                `------------------------\n` +
+                `Total Purchases: PKR ${purchases.toLocaleString()}\n` +
+                `Khata Balance (Due): PKR ${balance.toLocaleString()}\n` +
+                `Credit Limit: PKR ${limit.toLocaleString()}\n` +
+                `Status: ${balance > 0 ? 'Payment Outstanding' : 'Account Settled / Clear'}\n` +
+                `------------------------\n` +
+                `Thank you for your business!`;
+
+    const url = cleanPhone 
+        ? `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(msg)}`
+        : `https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`;
+    window.open(url, '_blank');
+}
+
+function printCustomerLedger() {
+    window.print();
+}
+
+function openReverseModal(entry) {
+    selectedPaymentForReversal.value = entry;
+    reversalReason.value = 'Mistaken entry / adjustment';
+    showReverseModal.value = true;
+}
+
+function closeReverseModal() {
+    showReverseModal.value = false;
+    selectedPaymentForReversal.value = null;
+    reversalReason.value = '';
+    isReversingPayment.value = false;
+}
+
+async function confirmReversePayment() {
+    if (!selectedPaymentForReversal.value) return;
+    const entry = selectedPaymentForReversal.value;
+    const rawId = entry.payment_id || (typeof entry.id === 'string' && entry.id.startsWith('payment-') ? entry.id.replace('payment-', '') : entry.id);
+    
+    isReversingPayment.value = true;
+    try {
+        const res = await khataStore.deleteTransaction(rawId, reversalReason.value || 'Payment reversed');
+        if (res.success) {
+            showToast('Payment reversed successfully and customer balance restored!', 'success');
+            closeReverseModal();
+            await store.fetchCustomers();
+            if (selectedCustomerProfile.value) {
+                const updated = customers.value.find(c => c.id === selectedCustomerProfile.value.id || String(c.id) === String(selectedCustomerProfile.value.id));
+                if (updated) {
+                    selectedCustomerProfile.value = updated;
+                }
+                await loadCustomerLedger(selectedCustomerProfile.value.id);
+            }
+        } else {
+            showToast(res.message || 'Failed to reverse payment', 'danger');
+        }
+    } catch (err) {
+        showToast(err.message || 'Error reversing payment', 'danger');
+    } finally {
+        isReversingPayment.value = false;
     }
 }
 
@@ -1594,6 +2250,31 @@ async function savePayment() {
 
             .btn-custom {
                 width: 100%;
+            }
+        }
+
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            .customer-profile-page, .customer-profile-page * {
+                visibility: visible;
+            }
+            .customer-profile-page {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                padding: 0 !important;
+                margin: 0 !important;
+                background: #ffffff !important;
+            }
+            .customer-profile-page button,
+            .btn,
+            .header-actions,
+            .filter-select,
+            .table-toolbar {
+                display: none !important;
             }
         }
     

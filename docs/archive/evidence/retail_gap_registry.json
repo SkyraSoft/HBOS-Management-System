@@ -1,0 +1,114 @@
+[
+  {
+    "gap_id": "RETAIL-GAP-001",
+    "category": "BUSINESS_ONBOARDING",
+    "title": "Registration Frontend UI & Validation Bugs",
+    "description": "RegisterView.vue contains CSS display:none on error messages, mismatched button class names, and ignores owner phone collection on backend.",
+    "severity": "HIGH",
+    "resolution_phase": "PROMPT_2"
+  },
+  {
+    "gap_id": "RETAIL-GAP-002",
+    "category": "BUSINESS_ONBOARDING",
+    "title": "Missing Multi-Step Staged Business Onboarding Flow",
+    "description": "Registration currently jumps straight to dashboard ('/') skipping essential business type, contact address, tax numbers, and receipt preferences setup.",
+    "severity": "HIGH",
+    "resolution_phase": "PROMPT_2"
+  },
+  {
+    "gap_id": "RETAIL-GAP-003",
+    "category": "BUSINESS_PROFILE",
+    "title": "Incomplete Business Profile Schema & Management Interface",
+    "description": "Business entity lacks structured fields for legal name, trading name, address, city, tax numbers (NTN/STRN), phone, email, and receipt overrides.",
+    "severity": "MEDIUM",
+    "resolution_phase": "PROMPT_2"
+  },
+  {
+    "gap_id": "RETAIL-GAP-004",
+    "category": "BRANCH_LIFECYCLE",
+    "title": "Branch Creation Lacks Extended Operational Profile & Manager Assignment",
+    "description": "Branches table only contains basic name/code; lacks address, city, phone, email, manager_id, and automatic inventory initialization.",
+    "severity": "HIGH",
+    "resolution_phase": "PROMPT_2"
+  },
+  {
+    "gap_id": "RETAIL-GAP-005",
+    "category": "USER_LIFECYCLE",
+    "title": "Employee Invitation & Password Setup Lifecycle Gaps",
+    "description": "Current staff creation requires plaintext admin password entry rather than a secure invitation token or first-login forced password reset flow.",
+    "severity": "HIGH",
+    "resolution_phase": "PROMPT_2"
+  },
+  {
+    "gap_id": "RETAIL-GAP-006",
+    "category": "EMPLOYEE_PROFILE",
+    "title": "HR / Employees View Disconnected from Backend Governance API",
+    "description": "Frontend EmployeesView.vue calls non-existent /employees endpoint instead of /users API, causing broken staff listing.",
+    "severity": "HIGH",
+    "resolution_phase": "PROMPT_2"
+  },
+  {
+    "gap_id": "RETAIL-GAP-007",
+    "category": "ROLE_ARCHITECTURE",
+    "title": "Missing Explicit Accountant & Inventory Manager Spatie Roles",
+    "description": "Only Business Owner, Branch Manager, and Salesperson are seeded; Accountant and Inventory Manager roles need canonical Spatie definition.",
+    "severity": "HIGH",
+    "resolution_phase": "PROMPT_3"
+  },
+  {
+    "gap_id": "RETAIL-GAP-008",
+    "category": "ROLE_UI",
+    "title": "Frontend Navigation & Route Guards Lack Dynamic Role & Branch Scoping",
+    "description": "All authenticated users see identical navigation sidebar and routes; Salesperson lands on Dashboard rather than /POS.",
+    "severity": "HIGH",
+    "resolution_phase": "PROMPT_3"
+  },
+  {
+    "gap_id": "RETAIL-GAP-009",
+    "category": "OWNER_ANALYTICS",
+    "title": "Super Owner Dashboard Lacks Consolidated Multi-Branch Comparison",
+    "description": "Dashboard only aggregates across single active branch filter; lacks comparative multi-store revenue, ranking, and consolidated profit views.",
+    "severity": "HIGH",
+    "resolution_phase": "PROMPT_3"
+  },
+  {
+    "gap_id": "RETAIL-GAP-010",
+    "category": "VIEW_AS",
+    "title": "Missing Super Owner Read-Only 'View As' Preview Mode",
+    "description": "Owner cannot inspect HBOS from perspective of a Branch Manager or Cashier without altering real credentials; needs read-only preview guard.",
+    "severity": "HIGH",
+    "resolution_phase": "PROMPT_3"
+  },
+  {
+    "gap_id": "RETAIL-GAP-011",
+    "category": "OWNER_REVIEW",
+    "title": "Missing Owner Review Notes & Action Request Infrastructure",
+    "description": "Owners have no lightweight mechanism to assign investigation tasks or notes to branch managers when reviewing discrepancies in preview mode.",
+    "severity": "MEDIUM",
+    "resolution_phase": "PROMPT_3"
+  },
+  {
+    "gap_id": "RETAIL-GAP-012",
+    "category": "ACTOR_ATTRIBUTION",
+    "title": "Transaction Attribution Historical Snapshot Protection",
+    "description": "Transactions must snapshot employee name and role at action time in audit log so future promotions/role changes do not alter historical reports.",
+    "severity": "HIGH",
+    "resolution_phase": "PROMPT_2"
+  },
+  {
+    "gap_id": "RETAIL-GAP-013",
+    "category": "SECURITY_EVENT",
+    "title": "Dedicated Security Events Categorization in Audit Trail",
+    "description": "Audit service should explicitly categorize logins, logouts, session revocations, password resets, and preview sessions separate from business ops.",
+    "severity": "MEDIUM",
+    "resolution_phase": "PROMPT_2"
+  },
+  {
+    "gap_id": "RETAIL-GAP-014",
+    "category": "ROLE_ARCHITECTURE",
+    "title": "Strict Separation of Platform Super Admin from Business Super Owner",
+    "description": "Platform-level operations (SkyraSoft) must never be conflated with customer business ownership, preventing cross-tenant security risks.",
+    "severity": "CRITICAL",
+    "resolution_phase": "PROMPT_1"
+  }
+]

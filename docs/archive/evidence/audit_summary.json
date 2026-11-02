@@ -1,0 +1,1092 @@
+{
+    "api": [
+        {
+            "id": "API-001",
+            "method": "GET|HEAD",
+            "uri": "\/",
+            "action": "Closure"
+        },
+        {
+            "id": "API-002",
+            "method": "GET|HEAD",
+            "uri": "api\/v1\/account-transfers",
+            "action": "App\\Http\\Controllers\\Api\\V1\\AccountTransferController@index"
+        },
+        {
+            "id": "API-003",
+            "method": "POST",
+            "uri": "api\/v1\/account-transfers",
+            "action": "App\\Http\\Controllers\\Api\\V1\\AccountTransferController@store"
+        },
+        {
+            "id": "API-004",
+            "method": "GET|HEAD",
+            "uri": "api\/v1\/audit-logs",
+            "action": "App\\Http\\Controllers\\Api\\V1\\AuditLogController@index"
+        },
+        {
+            "id": "API-005",
+            "method": "GET|HEAD",
+            "uri": "api\/v1\/audit-logs\/{id}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\AuditLogController@show"
+        },
+        {
+            "id": "API-006",
+            "method": "POST",
+            "uri": "api\/v1\/auth\/login",
+            "action": "App\\Http\\Controllers\\Api\\V1\\AuthController@login"
+        },
+        {
+            "id": "API-007",
+            "method": "POST",
+            "uri": "api\/v1\/auth\/logout",
+            "action": "App\\Http\\Controllers\\Api\\V1\\AuthController@logout"
+        },
+        {
+            "id": "API-008",
+            "method": "GET|HEAD",
+            "uri": "api\/v1\/auth\/me",
+            "action": "App\\Http\\Controllers\\Api\\V1\\AuthController@me"
+        },
+        {
+            "id": "API-009",
+            "method": "POST",
+            "uri": "api\/v1\/auth\/register",
+            "action": "App\\Http\\Controllers\\Api\\V1\\AuthController@register"
+        },
+        {
+            "id": "API-010",
+            "method": "GET|HEAD",
+            "uri": "api\/v1\/branches",
+            "action": "App\\Http\\Controllers\\Api\\V1\\BranchController@index"
+        },
+        {
+            "id": "API-011",
+            "method": "POST",
+            "uri": "api\/v1\/branches",
+            "action": "App\\Http\\Controllers\\Api\\V1\\BranchController@store"
+        },
+        {
+            "id": "API-012",
+            "method": "GET|HEAD",
+            "uri": "api\/v1\/branches\/{branch}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\BranchController@show"
+        },
+        {
+            "id": "API-013",
+            "method": "PUT|PATCH",
+            "uri": "api\/v1\/branches\/{branch}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\BranchController@update"
+        },
+        {
+            "id": "API-014",
+            "method": "DELETE",
+            "uri": "api\/v1\/branches\/{branch}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\BranchController@destroy"
+        },
+        {
+            "id": "API-015",
+            "method": "GET|HEAD",
+            "uri": "api\/v1\/brands",
+            "action": "App\\Http\\Controllers\\Api\\V1\\BrandController@index"
+        },
+        {
+            "id": "API-016",
+            "method": "POST",
+            "uri": "api\/v1\/brands",
+            "action": "App\\Http\\Controllers\\Api\\V1\\BrandController@store"
+        },
+        {
+            "id": "API-017",
+            "method": "GET|HEAD",
+            "uri": "api\/v1\/brands\/{brand}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\BrandController@show"
+        },
+        {
+            "id": "API-018",
+            "method": "PUT|PATCH",
+            "uri": "api\/v1\/brands\/{brand}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\BrandController@update"
+        },
+        {
+            "id": "API-019",
+            "method": "DELETE",
+            "uri": "api\/v1\/brands\/{brand}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\BrandController@destroy"
+        },
+        {
+            "id": "API-020",
+            "method": "GET|HEAD",
+            "uri": "api\/v1\/businesses",
+            "action": "App\\Http\\Controllers\\Api\\V1\\BusinessController@index"
+        },
+        {
+            "id": "API-021",
+            "method": "POST",
+            "uri": "api\/v1\/businesses",
+            "action": "App\\Http\\Controllers\\Api\\V1\\BusinessController@store"
+        },
+        {
+            "id": "API-022",
+            "method": "GET|HEAD",
+            "uri": "api\/v1\/businesses\/{business}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\BusinessController@show"
+        },
+        {
+            "id": "API-023",
+            "method": "PUT|PATCH",
+            "uri": "api\/v1\/businesses\/{business}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\BusinessController@update"
+        },
+        {
+            "id": "API-024",
+            "method": "DELETE",
+            "uri": "api\/v1\/businesses\/{business}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\BusinessController@destroy"
+        },
+        {
+            "id": "API-025",
+            "method": "GET|HEAD",
+            "uri": "api\/v1\/categories",
+            "action": "App\\Http\\Controllers\\Api\\V1\\CategoryController@index"
+        },
+        {
+            "id": "API-026",
+            "method": "POST",
+            "uri": "api\/v1\/categories",
+            "action": "App\\Http\\Controllers\\Api\\V1\\CategoryController@store"
+        },
+        {
+            "id": "API-027",
+            "method": "GET|HEAD",
+            "uri": "api\/v1\/categories\/{category}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\CategoryController@show"
+        },
+        {
+            "id": "API-028",
+            "method": "PUT|PATCH",
+            "uri": "api\/v1\/categories\/{category}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\CategoryController@update"
+        },
+        {
+            "id": "API-029",
+            "method": "DELETE",
+            "uri": "api\/v1\/categories\/{category}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\CategoryController@destroy"
+        },
+        {
+            "id": "API-030",
+            "method": "POST",
+            "uri": "api\/v1\/customer-payments\/{payment}\/reverse",
+            "action": "App\\Http\\Controllers\\Api\\V1\\CustomerPaymentController@reverse"
+        },
+        {
+            "id": "API-031",
+            "method": "GET|HEAD",
+            "uri": "api\/v1\/customers",
+            "action": "App\\Http\\Controllers\\Api\\V1\\CustomerController@index"
+        },
+        {
+            "id": "API-032",
+            "method": "POST",
+            "uri": "api\/v1\/customers",
+            "action": "App\\Http\\Controllers\\Api\\V1\\CustomerController@store"
+        },
+        {
+            "id": "API-033",
+            "method": "GET|HEAD",
+            "uri": "api\/v1\/customers\/{customer}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\CustomerController@show"
+        },
+        {
+            "id": "API-034",
+            "method": "PUT|PATCH",
+            "uri": "api\/v1\/customers\/{customer}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\CustomerController@update"
+        },
+        {
+            "id": "API-035",
+            "method": "DELETE",
+            "uri": "api\/v1\/customers\/{customer}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\CustomerController@destroy"
+        },
+        {
+            "id": "API-036",
+            "method": "GET|HEAD",
+            "uri": "api\/v1\/customers\/{customer}\/ledger",
+            "action": "App\\Http\\Controllers\\Api\\V1\\CustomerController@ledger"
+        },
+        {
+            "id": "API-037",
+            "method": "GET|HEAD",
+            "uri": "api\/v1\/customers\/{customer}\/payments",
+            "action": "App\\Http\\Controllers\\Api\\V1\\CustomerPaymentController@index"
+        },
+        {
+            "id": "API-038",
+            "method": "POST",
+            "uri": "api\/v1\/customers\/{customer}\/payments",
+            "action": "App\\Http\\Controllers\\Api\\V1\\CustomerPaymentController@store"
+        },
+        {
+            "id": "API-039",
+            "method": "GET|HEAD",
+            "uri": "api\/v1\/dashboard",
+            "action": "App\\Http\\Controllers\\Api\\V1\\DashboardController@index"
+        },
+        {
+            "id": "API-040",
+            "method": "GET|HEAD",
+            "uri": "api\/v1\/dashboard\/stats",
+            "action": "App\\Http\\Controllers\\Api\\V1\\DashboardController@stats"
+        },
+        {
+            "id": "API-041",
+            "method": "GET|HEAD",
+            "uri": "api\/v1\/expense-categories",
+            "action": "App\\Http\\Controllers\\Api\\V1\\ExpenseCategoryController@index"
+        },
+        {
+            "id": "API-042",
+            "method": "POST",
+            "uri": "api\/v1\/expense-categories",
+            "action": "App\\Http\\Controllers\\Api\\V1\\ExpenseCategoryController@store"
+        },
+        {
+            "id": "API-043",
+            "method": "GET|HEAD",
+            "uri": "api\/v1\/expense-categories\/{expense_category}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\ExpenseCategoryController@show"
+        },
+        {
+            "id": "API-044",
+            "method": "PUT|PATCH",
+            "uri": "api\/v1\/expense-categories\/{expense_category}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\ExpenseCategoryController@update"
+        },
+        {
+            "id": "API-045",
+            "method": "DELETE",
+            "uri": "api\/v1\/expense-categories\/{expense_category}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\ExpenseCategoryController@destroy"
+        },
+        {
+            "id": "API-046",
+            "method": "GET|HEAD",
+            "uri": "api\/v1\/expenses",
+            "action": "App\\Http\\Controllers\\Api\\V1\\ExpenseController@index"
+        },
+        {
+            "id": "API-047",
+            "method": "POST",
+            "uri": "api\/v1\/expenses",
+            "action": "App\\Http\\Controllers\\Api\\V1\\ExpenseController@store"
+        },
+        {
+            "id": "API-048",
+            "method": "GET|HEAD",
+            "uri": "api\/v1\/expenses\/{expense}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\ExpenseController@show"
+        },
+        {
+            "id": "API-049",
+            "method": "PUT|PATCH",
+            "uri": "api\/v1\/expenses\/{expense}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\ExpenseController@update"
+        },
+        {
+            "id": "API-050",
+            "method": "DELETE",
+            "uri": "api\/v1\/expenses\/{expense}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\ExpenseController@destroy"
+        },
+        {
+            "id": "API-051",
+            "method": "POST",
+            "uri": "api\/v1\/expenses\/{expense}\/void",
+            "action": "App\\Http\\Controllers\\Api\\V1\\ExpenseController@void"
+        },
+        {
+            "id": "API-052",
+            "method": "GET|HEAD",
+            "uri": "api\/v1\/financial-accounts",
+            "action": "App\\Http\\Controllers\\Api\\V1\\FinancialAccountController@index"
+        },
+        {
+            "id": "API-053",
+            "method": "POST",
+            "uri": "api\/v1\/financial-accounts",
+            "action": "App\\Http\\Controllers\\Api\\V1\\FinancialAccountController@store"
+        },
+        {
+            "id": "API-054",
+            "method": "POST",
+            "uri": "api\/v1\/financial-accounts\/{account}\/capital-in",
+            "action": "App\\Http\\Controllers\\Api\\V1\\FinancialAccountController@capitalIn"
+        },
+        {
+            "id": "API-055",
+            "method": "POST",
+            "uri": "api\/v1\/financial-accounts\/{account}\/capital-out",
+            "action": "App\\Http\\Controllers\\Api\\V1\\FinancialAccountController@capitalOut"
+        },
+        {
+            "id": "API-056",
+            "method": "GET|HEAD",
+            "uri": "api\/v1\/financial-accounts\/{account}\/movements",
+            "action": "App\\Http\\Controllers\\Api\\V1\\FinancialAccountController@movements"
+        },
+        {
+            "id": "API-057",
+            "method": "GET|HEAD",
+            "uri": "api\/v1\/financial-accounts\/{financial_account}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\FinancialAccountController@show"
+        },
+        {
+            "id": "API-058",
+            "method": "PUT|PATCH",
+            "uri": "api\/v1\/financial-accounts\/{financial_account}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\FinancialAccountController@update"
+        },
+        {
+            "id": "API-059",
+            "method": "DELETE",
+            "uri": "api\/v1\/financial-accounts\/{financial_account}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\FinancialAccountController@destroy"
+        },
+        {
+            "id": "API-060",
+            "method": "GET|HEAD",
+            "uri": "api\/v1\/health",
+            "action": "Closure"
+        },
+        {
+            "id": "API-061",
+            "method": "GET|HEAD",
+            "uri": "api\/v1\/inventory",
+            "action": "App\\Http\\Controllers\\Api\\V1\\InventoryController@index"
+        },
+        {
+            "id": "API-062",
+            "method": "POST",
+            "uri": "api\/v1\/inventory\/adjustments",
+            "action": "App\\Http\\Controllers\\Api\\V1\\InventoryController@adjust"
+        },
+        {
+            "id": "API-063",
+            "method": "GET|HEAD",
+            "uri": "api\/v1\/inventory\/movements",
+            "action": "App\\Http\\Controllers\\Api\\V1\\InventoryController@movements"
+        },
+        {
+            "id": "API-064",
+            "method": "POST",
+            "uri": "api\/v1\/inventory\/transfers",
+            "action": "App\\Http\\Controllers\\Api\\V1\\InventoryController@transfer"
+        },
+        {
+            "id": "API-065",
+            "method": "GET|HEAD",
+            "uri": "api\/v1\/khata",
+            "action": "App\\Http\\Controllers\\Api\\V1\\KhataController@index"
+        },
+        {
+            "id": "API-066",
+            "method": "POST",
+            "uri": "api\/v1\/khata",
+            "action": "App\\Http\\Controllers\\Api\\V1\\KhataController@store"
+        },
+        {
+            "id": "API-067",
+            "method": "DELETE",
+            "uri": "api\/v1\/khata\/{khatum}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\KhataController@destroy"
+        },
+        {
+            "id": "API-068",
+            "method": "GET|HEAD",
+            "uri": "api\/v1\/notifications",
+            "action": "App\\Http\\Controllers\\Api\\V1\\NotificationController@index"
+        },
+        {
+            "id": "API-069",
+            "method": "PUT",
+            "uri": "api\/v1\/notifications\/mark-all-read",
+            "action": "App\\Http\\Controllers\\Api\\V1\\NotificationController@markAllAsRead"
+        },
+        {
+            "id": "API-070",
+            "method": "DELETE",
+            "uri": "api\/v1\/notifications\/{id}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\NotificationController@destroy"
+        },
+        {
+            "id": "API-071",
+            "method": "PUT",
+            "uri": "api\/v1\/notifications\/{id}\/mark-read",
+            "action": "App\\Http\\Controllers\\Api\\V1\\NotificationController@markAsRead"
+        },
+        {
+            "id": "API-072",
+            "method": "GET|HEAD",
+            "uri": "api\/v1\/products",
+            "action": "App\\Http\\Controllers\\Api\\V1\\ProductController@index"
+        },
+        {
+            "id": "API-073",
+            "method": "POST",
+            "uri": "api\/v1\/products",
+            "action": "App\\Http\\Controllers\\Api\\V1\\ProductController@store"
+        },
+        {
+            "id": "API-074",
+            "method": "GET|HEAD",
+            "uri": "api\/v1\/products\/{product}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\ProductController@show"
+        },
+        {
+            "id": "API-075",
+            "method": "PUT|PATCH",
+            "uri": "api\/v1\/products\/{product}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\ProductController@update"
+        },
+        {
+            "id": "API-076",
+            "method": "DELETE",
+            "uri": "api\/v1\/products\/{product}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\ProductController@destroy"
+        },
+        {
+            "id": "API-077",
+            "method": "GET|HEAD",
+            "uri": "api\/v1\/profile",
+            "action": "App\\Http\\Controllers\\Api\\V1\\ProfileController@show"
+        },
+        {
+            "id": "API-078",
+            "method": "PUT",
+            "uri": "api\/v1\/profile",
+            "action": "App\\Http\\Controllers\\Api\\V1\\ProfileController@update"
+        },
+        {
+            "id": "API-079",
+            "method": "PUT",
+            "uri": "api\/v1\/profile\/password",
+            "action": "App\\Http\\Controllers\\Api\\V1\\ProfileController@updatePassword"
+        },
+        {
+            "id": "API-080",
+            "method": "GET|HEAD",
+            "uri": "api\/v1\/purchases",
+            "action": "App\\Http\\Controllers\\Api\\V1\\PurchaseController@index"
+        },
+        {
+            "id": "API-081",
+            "method": "POST",
+            "uri": "api\/v1\/purchases",
+            "action": "App\\Http\\Controllers\\Api\\V1\\PurchaseController@store"
+        },
+        {
+            "id": "API-082",
+            "method": "POST",
+            "uri": "api\/v1\/purchases\/{id}\/cancel",
+            "action": "App\\Http\\Controllers\\Api\\V1\\PurchaseController@cancel"
+        },
+        {
+            "id": "API-083",
+            "method": "GET|HEAD",
+            "uri": "api\/v1\/purchases\/{purchase}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\PurchaseController@show"
+        },
+        {
+            "id": "API-084",
+            "method": "PUT|PATCH",
+            "uri": "api\/v1\/purchases\/{purchase}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\PurchaseController@update"
+        },
+        {
+            "id": "API-085",
+            "method": "DELETE",
+            "uri": "api\/v1\/purchases\/{purchase}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\PurchaseController@destroy"
+        },
+        {
+            "id": "API-086",
+            "method": "GET|HEAD",
+            "uri": "api\/v1\/recurring-expenses",
+            "action": "App\\Http\\Controllers\\Api\\V1\\RecurringExpenseController@index"
+        },
+        {
+            "id": "API-087",
+            "method": "POST",
+            "uri": "api\/v1\/recurring-expenses",
+            "action": "App\\Http\\Controllers\\Api\\V1\\RecurringExpenseController@store"
+        },
+        {
+            "id": "API-088",
+            "method": "GET|HEAD",
+            "uri": "api\/v1\/recurring-expenses\/{recurring_expense}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\RecurringExpenseController@show"
+        },
+        {
+            "id": "API-089",
+            "method": "PUT|PATCH",
+            "uri": "api\/v1\/recurring-expenses\/{recurring_expense}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\RecurringExpenseController@update"
+        },
+        {
+            "id": "API-090",
+            "method": "DELETE",
+            "uri": "api\/v1\/recurring-expenses\/{recurring_expense}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\RecurringExpenseController@destroy"
+        },
+        {
+            "id": "API-091",
+            "method": "GET|HEAD",
+            "uri": "api\/v1\/reports\/branches",
+            "action": "App\\Http\\Controllers\\Api\\V1\\ReportController@branches"
+        },
+        {
+            "id": "API-092",
+            "method": "GET|HEAD",
+            "uri": "api\/v1\/reports\/customers",
+            "action": "App\\Http\\Controllers\\Api\\V1\\ReportController@customers"
+        },
+        {
+            "id": "API-093",
+            "method": "GET|HEAD",
+            "uri": "api\/v1\/reports\/expenses",
+            "action": "App\\Http\\Controllers\\Api\\V1\\ReportController@expenses"
+        },
+        {
+            "id": "API-094",
+            "method": "GET|HEAD",
+            "uri": "api\/v1\/reports\/financial-accounts",
+            "action": "App\\Http\\Controllers\\Api\\V1\\ReportController@financialAccounts"
+        },
+        {
+            "id": "API-095",
+            "method": "GET|HEAD",
+            "uri": "api\/v1\/reports\/inventory",
+            "action": "App\\Http\\Controllers\\Api\\V1\\ReportController@inventory"
+        },
+        {
+            "id": "API-096",
+            "method": "GET|HEAD",
+            "uri": "api\/v1\/reports\/sales",
+            "action": "App\\Http\\Controllers\\Api\\V1\\ReportController@sales"
+        },
+        {
+            "id": "API-097",
+            "method": "GET|HEAD",
+            "uri": "api\/v1\/reports\/suppliers",
+            "action": "App\\Http\\Controllers\\Api\\V1\\ReportController@suppliers"
+        },
+        {
+            "id": "API-098",
+            "method": "POST",
+            "uri": "api\/v1\/sale-returns\/{saleReturn}\/reverse-refund",
+            "action": "App\\Http\\Controllers\\Api\\V1\\SaleReturnRefundController@reverseRefund"
+        },
+        {
+            "id": "API-099",
+            "method": "POST",
+            "uri": "api\/v1\/sale-returns\/{saleReturn}\/settle-refund",
+            "action": "App\\Http\\Controllers\\Api\\V1\\SaleReturnRefundController@settleRefund"
+        },
+        {
+            "id": "API-100",
+            "method": "GET|HEAD",
+            "uri": "api\/v1\/sales",
+            "action": "App\\Http\\Controllers\\Api\\V1\\SaleController@index"
+        },
+        {
+            "id": "API-101",
+            "method": "POST",
+            "uri": "api\/v1\/sales",
+            "action": "App\\Http\\Controllers\\Api\\V1\\SaleController@store"
+        },
+        {
+            "id": "API-102",
+            "method": "GET|HEAD",
+            "uri": "api\/v1\/sales\/{sale}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\SaleController@show"
+        },
+        {
+            "id": "API-103",
+            "method": "PUT|PATCH",
+            "uri": "api\/v1\/sales\/{sale}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\SaleController@update"
+        },
+        {
+            "id": "API-104",
+            "method": "DELETE",
+            "uri": "api\/v1\/sales\/{sale}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\SaleController@destroy"
+        },
+        {
+            "id": "API-105",
+            "method": "POST",
+            "uri": "api\/v1\/sales\/{sale}\/cancel",
+            "action": "App\\Http\\Controllers\\Api\\V1\\SaleController@cancel"
+        },
+        {
+            "id": "API-106",
+            "method": "POST",
+            "uri": "api\/v1\/sales\/{sale}\/returns",
+            "action": "App\\Http\\Controllers\\Api\\V1\\SaleController@returns"
+        },
+        {
+            "id": "API-107",
+            "method": "GET|HEAD",
+            "uri": "api\/v1\/sales\/{sale}\/returns",
+            "action": "App\\Http\\Controllers\\Api\\V1\\SaleController@listReturns"
+        },
+        {
+            "id": "API-108",
+            "method": "GET|HEAD",
+            "uri": "api\/v1\/settings",
+            "action": "App\\Http\\Controllers\\Api\\V1\\SettingController@index"
+        },
+        {
+            "id": "API-109",
+            "method": "POST",
+            "uri": "api\/v1\/settings",
+            "action": "App\\Http\\Controllers\\Api\\V1\\SettingController@store"
+        },
+        {
+            "id": "API-110",
+            "method": "GET|HEAD",
+            "uri": "api\/v1\/settings\/{key}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\SettingController@show"
+        },
+        {
+            "id": "API-111",
+            "method": "DELETE",
+            "uri": "api\/v1\/settings\/{key}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\SettingController@destroy"
+        },
+        {
+            "id": "API-112",
+            "method": "GET|HEAD",
+            "uri": "api\/v1\/subcategories",
+            "action": "App\\Http\\Controllers\\Api\\V1\\SubcategoryController@index"
+        },
+        {
+            "id": "API-113",
+            "method": "POST",
+            "uri": "api\/v1\/subcategories",
+            "action": "App\\Http\\Controllers\\Api\\V1\\SubcategoryController@store"
+        },
+        {
+            "id": "API-114",
+            "method": "GET|HEAD",
+            "uri": "api\/v1\/subcategories\/{subcategory}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\SubcategoryController@show"
+        },
+        {
+            "id": "API-115",
+            "method": "PUT|PATCH",
+            "uri": "api\/v1\/subcategories\/{subcategory}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\SubcategoryController@update"
+        },
+        {
+            "id": "API-116",
+            "method": "DELETE",
+            "uri": "api\/v1\/subcategories\/{subcategory}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\SubcategoryController@destroy"
+        },
+        {
+            "id": "API-117",
+            "method": "GET|HEAD",
+            "uri": "api\/v1\/suppliers",
+            "action": "App\\Http\\Controllers\\Api\\V1\\SupplierController@index"
+        },
+        {
+            "id": "API-118",
+            "method": "POST",
+            "uri": "api\/v1\/suppliers",
+            "action": "App\\Http\\Controllers\\Api\\V1\\SupplierController@store"
+        },
+        {
+            "id": "API-119",
+            "method": "GET|HEAD",
+            "uri": "api\/v1\/suppliers\/{supplier}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\SupplierController@show"
+        },
+        {
+            "id": "API-120",
+            "method": "PUT|PATCH",
+            "uri": "api\/v1\/suppliers\/{supplier}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\SupplierController@update"
+        },
+        {
+            "id": "API-121",
+            "method": "DELETE",
+            "uri": "api\/v1\/suppliers\/{supplier}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\SupplierController@destroy"
+        },
+        {
+            "id": "API-122",
+            "method": "GET|HEAD",
+            "uri": "api\/v1\/suppliers\/{supplier}\/payments",
+            "action": "App\\Http\\Controllers\\Api\\V1\\SupplierPaymentController@index"
+        },
+        {
+            "id": "API-123",
+            "method": "POST",
+            "uri": "api\/v1\/suppliers\/{supplier}\/payments",
+            "action": "App\\Http\\Controllers\\Api\\V1\\SupplierPaymentController@store"
+        },
+        {
+            "id": "API-124",
+            "method": "POST",
+            "uri": "api\/v1\/sync\/bulk-transactions",
+            "action": "App\\Http\\Controllers\\Api\\V1\\SyncController@bulkIngest"
+        },
+        {
+            "id": "API-125",
+            "method": "GET|HEAD",
+            "uri": "api\/v1\/sync\/catalog-delta",
+            "action": "App\\Http\\Controllers\\Api\\V1\\SyncController@catalogDelta"
+        },
+        {
+            "id": "API-126",
+            "method": "GET|HEAD",
+            "uri": "api\/v1\/sync\/status",
+            "action": "App\\Http\\Controllers\\Api\\V1\\SyncController@status"
+        },
+        {
+            "id": "API-127",
+            "method": "GET|HEAD",
+            "uri": "api\/v1\/users",
+            "action": "App\\Http\\Controllers\\Api\\V1\\UserGovernanceController@index"
+        },
+        {
+            "id": "API-128",
+            "method": "POST",
+            "uri": "api\/v1\/users",
+            "action": "App\\Http\\Controllers\\Api\\V1\\UserGovernanceController@store"
+        },
+        {
+            "id": "API-129",
+            "method": "GET|HEAD",
+            "uri": "api\/v1\/users\/{id}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\UserGovernanceController@show"
+        },
+        {
+            "id": "API-130",
+            "method": "PUT",
+            "uri": "api\/v1\/users\/{id}",
+            "action": "App\\Http\\Controllers\\Api\\V1\\UserGovernanceController@update"
+        },
+        {
+            "id": "API-131",
+            "method": "POST",
+            "uri": "api\/v1\/users\/{id}\/status",
+            "action": "App\\Http\\Controllers\\Api\\V1\\UserGovernanceController@toggleStatus"
+        },
+        {
+            "id": "API-132",
+            "method": "GET|HEAD",
+            "uri": "download.html",
+            "action": "Closure"
+        },
+        {
+            "id": "API-133",
+            "method": "GET|HEAD",
+            "uri": "downloads\/{filename}",
+            "action": "Closure"
+        }
+    ],
+    "fe_routes": [
+        {
+            "id": "ROUTE-001",
+            "path": "\/products",
+            "aliases": "",
+            "name": "Products",
+            "component": "..\/views\/InventryView.vue",
+            "redirect": ""
+        },
+        {
+            "id": "ROUTE-002",
+            "path": "\/inventory\/products",
+            "aliases": "",
+            "name": "InventoryProducts",
+            "component": "..\/views\/InventryView.vue",
+            "redirect": ""
+        },
+        {
+            "id": "ROUTE-003",
+            "path": "\/settings",
+            "aliases": "",
+            "name": "Settings",
+            "component": "..\/views\/SettingsView.vue",
+            "redirect": ""
+        },
+        {
+            "id": "ROUTE-004",
+            "path": "\/settings\/users",
+            "aliases": "",
+            "name": "",
+            "component": "",
+            "redirect": "\/settings?tab=users"
+        },
+        {
+            "id": "ROUTE-005",
+            "path": "\/settings\/roles",
+            "aliases": "",
+            "name": "",
+            "component": "",
+            "redirect": "\/settings?tab=roles"
+        },
+        {
+            "id": "ROUTE-006",
+            "path": "\/settings\/receipts",
+            "aliases": "",
+            "name": "",
+            "component": "",
+            "redirect": "\/settings?tab=receipts"
+        },
+        {
+            "id": "ROUTE-007",
+            "path": "\/settings\/security",
+            "aliases": "",
+            "name": "",
+            "component": "",
+            "redirect": "\/settings?tab=security"
+        },
+        {
+            "id": "ROUTE-008",
+            "path": "\/settings\/offline-sync",
+            "aliases": "",
+            "name": "",
+            "component": "",
+            "redirect": "\/settings?tab=sync"
+        },
+        {
+            "id": "ROUTE-009",
+            "path": "\/about",
+            "aliases": "",
+            "name": "About",
+            "component": "..\/views\/AboutView.vue",
+            "redirect": ""
+        },
+        {
+            "id": "ROUTE-010",
+            "path": "\/businesssetup1",
+            "aliases": "",
+            "name": "BusinessSetup1",
+            "component": "..\/views\/BusinessSetup1View.vue",
+            "redirect": ""
+        },
+        {
+            "id": "ROUTE-011",
+            "path": "\/busniesssetup",
+            "aliases": "",
+            "name": "BusniessSetup",
+            "component": "..\/views\/BusniessSetupView.vue",
+            "redirect": ""
+        },
+        {
+            "id": "ROUTE-012",
+            "path": "\/completereview",
+            "aliases": "",
+            "name": "CompleteReview",
+            "component": "..\/views\/CompleteReviewView.vue",
+            "redirect": ""
+        },
+        {
+            "id": "ROUTE-013",
+            "path": "\/notifications",
+            "aliases": "",
+            "name": "Notifications",
+            "component": "..\/views\/NotificationsView.vue",
+            "redirect": ""
+        },
+        {
+            "id": "ROUTE-014",
+            "path": "\/employees",
+            "aliases": "",
+            "name": "Employees",
+            "component": "..\/views\/EmployeesView.vue",
+            "redirect": ""
+        },
+        {
+            "id": "ROUTE-015",
+            "path": "\/completesetup",
+            "aliases": "",
+            "name": "CompleteSetup",
+            "component": "..\/views\/CompleteSetupView.vue",
+            "redirect": ""
+        },
+        {
+            "id": "ROUTE-016",
+            "path": "\/customer",
+            "aliases": "'\/customers'",
+            "name": "Customer",
+            "component": "..\/views\/CustomerView.vue",
+            "redirect": ""
+        },
+        {
+            "id": "ROUTE-017",
+            "path": "\/",
+            "aliases": "",
+            "name": "Dashboard",
+            "component": "..\/views\/DashboardView.vue",
+            "redirect": ""
+        },
+        {
+            "id": "ROUTE-018",
+            "path": "\/expenses",
+            "aliases": "",
+            "name": "Expenses",
+            "component": "..\/views\/ExpensesView.vue",
+            "redirect": ""
+        },
+        {
+            "id": "ROUTE-019",
+            "path": "\/information",
+            "aliases": "",
+            "name": "Information",
+            "component": "..\/views\/InformationView.vue",
+            "redirect": ""
+        },
+        {
+            "id": "ROUTE-020",
+            "path": "\/inventry",
+            "aliases": "\/inventory",
+            "name": "Inventry",
+            "component": "..\/views\/InventryView.vue",
+            "redirect": ""
+        },
+        {
+            "id": "ROUTE-021",
+            "path": "\/khata",
+            "aliases": "'\/khatas'",
+            "name": "Khata",
+            "component": "..\/views\/KhataView.vue",
+            "redirect": ""
+        },
+        {
+            "id": "ROUTE-022",
+            "path": "\/login",
+            "aliases": "",
+            "name": "Login",
+            "component": "..\/views\/LoginView.vue",
+            "redirect": ""
+        },
+        {
+            "id": "ROUTE-023",
+            "path": "\/POS",
+            "aliases": "",
+            "name": "PosSale",
+            "component": "..\/views\/PosSaleView.vue",
+            "redirect": ""
+        },
+        {
+            "id": "ROUTE-024",
+            "path": "\/preferences",
+            "aliases": "",
+            "name": "Preferences",
+            "component": "..\/views\/PreferencesView.vue",
+            "redirect": ""
+        },
+        {
+            "id": "ROUTE-025",
+            "path": "\/profilecustomer",
+            "aliases": "",
+            "name": "Profilecustomer",
+            "component": "..\/views\/ProfilecustomerView.vue",
+            "redirect": ""
+        },
+        {
+            "id": "ROUTE-026",
+            "path": "\/purchase",
+            "aliases": "",
+            "name": "Purchase",
+            "component": "..\/views\/PurchaseView.vue",
+            "redirect": ""
+        },
+        {
+            "id": "ROUTE-027",
+            "path": "\/register",
+            "aliases": "",
+            "name": "Register",
+            "component": "..\/views\/RegisterView.vue",
+            "redirect": ""
+        },
+        {
+            "id": "ROUTE-028",
+            "path": "\/reorderdetail",
+            "aliases": "",
+            "name": "ReorderDetail",
+            "component": "..\/views\/ReorderDetailView.vue",
+            "redirect": ""
+        },
+        {
+            "id": "ROUTE-029",
+            "path": "\/reorder",
+            "aliases": "",
+            "name": "Reorder",
+            "component": "..\/views\/ReorderView.vue",
+            "redirect": ""
+        },
+        {
+            "id": "ROUTE-030",
+            "path": "\/reports",
+            "aliases": "'\/report'",
+            "name": "Reports",
+            "component": "..\/views\/ReportsView.vue",
+            "redirect": ""
+        },
+        {
+            "id": "ROUTE-031",
+            "path": "\/reports1",
+            "aliases": "'\/analytics'",
+            "name": "",
+            "component": "",
+            "redirect": "\/reports"
+        },
+        {
+            "id": "ROUTE-032",
+            "path": "\/sales",
+            "aliases": "",
+            "name": "Sales",
+            "component": "..\/views\/SalesView.vue",
+            "redirect": ""
+        },
+        {
+            "id": "ROUTE-033",
+            "path": "\/supplierpayable",
+            "aliases": "",
+            "name": "Supplierpayable",
+            "component": "..\/views\/SupplierpayableView.vue",
+            "redirect": ""
+        },
+        {
+            "id": "ROUTE-034",
+            "path": "\/supplier",
+            "aliases": "",
+            "name": "Supplier",
+            "component": "..\/views\/SupplierView.vue",
+            "redirect": ""
+        },
+        {
+            "id": "ROUTE-035",
+            "path": "\/supplierpayment",
+            "aliases": "",
+            "name": "SupplierPayment",
+            "component": "..\/views\/SupplierPaymentView.vue",
+            "redirect": ""
+        },
+        {
+            "id": "ROUTE-036",
+            "path": "\/support",
+            "aliases": "",
+            "name": "Support",
+            "component": "..\/views\/SupportView.vue",
+            "redirect": ""
+        }
+    ]
+}

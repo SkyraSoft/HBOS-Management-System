@@ -1,0 +1,31 @@
+{
+    "metadata": {
+        "version_contract": "Client SemVer vs Server min_supported_client_version",
+        "generated_at": "2026-10-02T19:54:42+00:00"
+    },
+    "tests": {
+        "current_version_1_0_0": {
+            "request_header": "X-HBOS-App-Version: 1.0.0",
+            "status": "200 OK",
+            "header_status": "CURRENT (PASS)"
+        },
+        "outdated_version_0_8_5": {
+            "request_header": "X-HBOS-App-Version: 0.8.5",
+            "status": "426 Upgrade Required",
+            "header_status": "UPDATE_REQUIRED (PASS)"
+        },
+        "future_version_1_1_0": {
+            "request_header": "X-HBOS-App-Version: 1.1.0",
+            "status": "200 OK",
+            "header_status": "CURRENT (PASS)"
+        },
+        "sync_schema_valid": {
+            "request_header": "X-HBOS-Sync-Schema-Version: 1",
+            "status": "200 OK (PASS)"
+        },
+        "sync_schema_incompatible": {
+            "request_header": "X-HBOS-Sync-Schema-Version: 99",
+            "status": "422 Protocol Mismatch (PASS)"
+        }
+    }
+}

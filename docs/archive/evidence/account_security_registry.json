@@ -1,0 +1,51 @@
+{
+    "metadata": {
+        "audit_scope": "Authentication and Public Account Security Controls",
+        "generated_at": "2026-10-02T19:35:34+00:00"
+    },
+    "security_controls": {
+        "password_minimum": {
+            "status": "CONFIGURED",
+            "rule": "min:8",
+            "target": "min:8 with mixed character recommendation"
+        },
+        "password_hashing": {
+            "status": "CONFIGURED",
+            "algorithm": "bcrypt via Hash::make \/ Laravel hashed cast",
+            "strength": "STRONG"
+        },
+        "email_normalization": {
+            "status": "MISSING",
+            "gap_id": "PLATFORM-GAP-004",
+            "target": "strtolower(trim($email)) on register and login"
+        },
+        "email_uniqueness": {
+            "status": "CONFIGURED",
+            "rule": "unique:users,email",
+            "scope": "GLOBAL"
+        },
+        "email_verification": {
+            "status": "DEFERRED_OPTIONAL",
+            "target": "Optional activation link; allow instant onboarding on free tier with non-verified flag"
+        },
+        "password_reset": {
+            "status": "MISSING",
+            "gap_id": "PLATFORM-GAP-005",
+            "target": "Implement \/auth\/forgot-password and \/auth\/reset-password with signed tokens"
+        },
+        "login_throttling": {
+            "status": "MISSING",
+            "gap_id": "PLATFORM-GAP-003",
+            "target": "Apply throttle:5,1 to \/auth\/login and throttle:3,1 to \/auth\/register"
+        },
+        "session_revocation": {
+            "status": "PARTIAL",
+            "logout_single": "currentAccessToken()->delete()",
+            "logout_all_devices": "MISSING (PLATFORM-GAP-005)"
+        },
+        "inactive_user_handling": {
+            "status": "CONFIGURED",
+            "rule": "ResolveActiveBusiness and AuthController verify user.is_active !== false"
+        }
+    }
+}

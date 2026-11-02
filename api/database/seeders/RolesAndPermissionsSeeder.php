@@ -105,5 +105,43 @@ class RolesAndPermissionsSeeder extends Seeder
             'view brands',
             'view inventory',
         ]);
+
+        // Accountant: Financial ledgers, khata, payables, expenses, and reconciliation
+        $accountantRole = Role::firstOrCreate(['name' => 'Accountant']);
+        $accountantRole->syncPermissions([
+            'view full reports',
+            'view branch reports',
+            'view sales',
+            'view own sales',
+            'create customers',
+            'view suppliers',
+            'manage suppliers',
+            'record supplier payments',
+            'view purchases',
+            'view products',
+            'view categories',
+            'view brands',
+            'view inventory',
+        ]);
+
+        // Inventory Manager: Product catalog, stock balances, adjustments, transfers, and receiving
+        $inventoryManagerRole = Role::firstOrCreate(['name' => 'Inventory Manager']);
+        $inventoryManagerRole->syncPermissions([
+            'view products',
+            'manage products',
+            'view categories',
+            'manage categories',
+            'view brands',
+            'manage brands',
+            'view inventory',
+            'manage local inventory',
+            'adjust inventory',
+            'transfer inventory',
+            'view stock movements',
+            'view suppliers',
+            'view purchases',
+            'manage purchases',
+            'return purchases',
+        ]);
     }
 }

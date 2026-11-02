@@ -1,0 +1,40 @@
+{
+    "metadata": {
+        "flow": "Public Self-Service Account Registration & Defaults Seeding",
+        "generated_at": "2026-10-02T19:54:42+00:00"
+    },
+    "tests": {
+        "valid_signup": {
+            "status": "PASS",
+            "details": "Atomically creates business, main branch, owner user, role, Main Cash account, and settings."
+        },
+        "email_normalization": {
+            "status": "PASS",
+            "details": "Uppercase and whitespace email inputs normalized to lowercase."
+        },
+        "duplicate_prevention": {
+            "status": "PASS",
+            "details": "Re-registration with same email in different casing fails validation (422)."
+        },
+        "password_mismatch": {
+            "status": "PASS",
+            "details": "Password confirmation mismatch fails validation (422)."
+        },
+        "weak_password": {
+            "status": "PASS",
+            "details": "Password under 8 characters fails validation (422)."
+        },
+        "initial_cash_structure": {
+            "status": "PASS",
+            "details": "Main Cash account (CASH-MAIN) seeded with balance 0.00."
+        },
+        "initial_settings": {
+            "status": "PASS",
+            "details": "Receipt header and invoice prefix settings seeded automatically."
+        },
+        "token_generation": {
+            "status": "PASS",
+            "details": "Bearer token issued only after successful transaction commit."
+        }
+    }
+}

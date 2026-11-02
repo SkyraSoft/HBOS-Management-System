@@ -1,0 +1,52 @@
+{
+  "product_name": "SkyraSoft HBOS (Hyperlocal Business Operating System)",
+  "release_version": "1.0.0",
+  "build_identifier": "HBOS-V1.0.0-PILOT-20261021-MSI",
+  "source_fingerprint": "fa71e856801d6ae0d647891d379a42a4c27c7558",
+  "release_classification": "Internal Pilot / Testing Release",
+  "production_launch_status": "PRODUCTION_LAUNCH_NO_GO",
+  "artifacts": [
+    {
+      "platform": "windows",
+      "architecture": "x64 (AMD64 64-bit)",
+      "artifact_filename": "HBOS_POS_1.0.0_x64_en-US.msi",
+      "file_size_bytes": 2711552,
+      "sha256": "EF5055CDC62FC339F3D663D2691A390C860D84A26D89171E5D52414C1D86623A",
+      "packaging_type": "WiX Toolset Windows Installer (.msi)",
+      "build_timestamp": "2026-10-21T06:11:17.242Z",
+      "build_test_status": "VERIFIED_WORKING",
+      "installer_execution_status": "PASSED (Clean Per-User & Machine Installation)",
+      "installed_executable": {
+        "filename": "HBOS POS.exe",
+        "file_size_bytes": 6080512,
+        "sha256": "2BEF845017A401E89119C1AA3ACB9741B09C0C65FC8908CE7E894937C4369B16",
+        "subsystem": "Windows GUI (2)",
+        "framework": "Tauri v1.5 / Rust + WebView2"
+      },
+      "public_download_url": "https://hbos.skyrasoft.com/downloads/HBOS_POS_1.0.0_x64_en-US.msi",
+      "public_download_verification_result": "PREPARED_LOCALLY_VERIFIED (Ready for manual Hostinger sync or deployment when credentials available)"
+    },
+    {
+      "platform": "android",
+      "architecture": "universal",
+      "artifact_filename": null,
+      "file_size_bytes": 0,
+      "sha256": null,
+      "packaging_type": "Capacitor Android Package (.apk)",
+      "build_timestamp": null,
+      "build_test_status": "NOT_READY",
+      "installer_execution_status": "NOT_AVAILABLE (No genuine compiled APK package in repository)",
+      "public_download_url": null,
+      "public_download_verification_result": "DISABLED (Labeled as 'Android version — Testing / Coming Soon' on website)"
+    }
+  ],
+  "verification_metadata": {
+    "verification_timestamp": "2026-10-22T11:15:00.000Z",
+    "verifier": "Antigravity Release Distribution Auditor",
+    "decisions": {
+      "windows_installer": "VERIFIED_WORKING",
+      "android_installer": "NOT_READY",
+      "public_download_page": "PREPARED_NOT_DEPLOYED"
+    }
+  }
+}

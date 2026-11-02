@@ -1,0 +1,12 @@
+[
+    {
+        "finding_id": "P9-EMERGENT-001",
+        "related_gap_id": "GAP-003",
+        "title": "Compound unique constraint on account_movements for split tender payments",
+        "description": "When posting multiple payment allocations for a single sale, using the Sale model as reference_type caused a unique constraint violation on [business_id, reference_type, reference_id, movement_category]. Remediated by referencing individual SalePayment model instances for account movements.",
+        "severity": "LOW",
+        "remediation_applied": "SaleService now sets reference_type = SalePayment::class and reference_id = $salePayment->id for each payment allocation movement.",
+        "blocking": false,
+        "evidence": "Verified in test_split_tender_payments_and_account_movement_integrity"
+    }
+]

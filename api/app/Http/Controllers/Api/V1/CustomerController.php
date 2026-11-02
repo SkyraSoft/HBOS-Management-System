@@ -43,6 +43,8 @@ class CustomerController extends Controller
 
             $item = $c->toArray();
             $item['outstanding'] = $outstanding;
+            $item['current_balance'] = $outstanding;
+            $item['balance'] = $outstanding;
             $item['credit'] = $credit;
 
             if ($isManager && $managerBranch) {
@@ -64,6 +66,7 @@ class CustomerController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'phone' => 'nullable|string|max:255',
+            'secondary_phone' => 'nullable|string|max:255',
             'email' => 'nullable|email|max:255',
             'address' => 'nullable|string',
             'opening_balance' => 'nullable|numeric|min:0',
@@ -75,6 +78,7 @@ class CustomerController extends Controller
             'business_id' => $businessId,
             'name' => $request->name,
             'phone' => $request->phone,
+            'secondary_phone' => $request->secondary_phone,
             'email' => $request->email,
             'address' => $request->address,
             'opening_balance' => $openingBalance,
@@ -114,12 +118,13 @@ class CustomerController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'phone' => 'nullable|string|max:255',
+            'secondary_phone' => 'nullable|string|max:255',
             'email' => 'nullable|email|max:255',
             'address' => 'nullable|string',
         ]);
 
         // Explicitly guard balance and opening_balance from client modification
-        $customer->update($request->only(['name', 'phone', 'email', 'address']));
+        $customer->update($request->only(['name', 'phone', 'secondary_phone', 'email', 'address']));
 
         return response()->json($customer);
     }

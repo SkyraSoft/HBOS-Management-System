@@ -1,0 +1,46 @@
+{
+  "program": "SkyraSoft HBOS Retail Platform & Workforce Integrity Program",
+  "checkpoint": "2.2 Branch Profile & Lifecycle Implementation",
+  "registry_version": "1.0.0",
+  "date": "2026-10-03",
+  "branch_schema_fields": [
+    { "field": "name", "type": "string", "required": true, "description": "Branch display name" },
+    { "field": "code", "type": "string", "required": true, "description": "Short code, unique within tenant business" },
+    { "field": "phone", "type": "string", "required": false, "description": "Branch direct phone line" },
+    { "field": "email", "type": "string", "required": false, "description": "Branch contact email" },
+    { "field": "address", "type": "text", "required": false, "description": "Physical branch address" },
+    { "field": "city", "type": "string", "required": false, "description": "Branch city location" },
+    { "field": "status", "type": "enum:active,inactive", "default": "active", "description": "Operational lifecycle status" },
+    { "field": "is_primary", "type": "boolean", "default": false, "description": "Primary/flagship branch marker" }
+  ],
+  "cardinality_architecture": {
+    "selected_model": "BRANCH_USER_MEMBERSHIP_PLUS_ROLE",
+    "rationale": "Supports multiple managers per branch and managers assigned to multiple branches without rigid single manager_id schema column",
+    "table": "branch_user",
+    "pivot_attributes": ["user_id", "branch_id", "business_id"]
+  },
+  "branch_code_uniqueness": {
+    "scope": "TENANT_BUSINESS_SCOPED",
+    "database_index": "unique(['business_id', 'code'])",
+    "cross_tenant_test": "PASSED: Tenant A and Tenant B may both use 'STORE-01' without collision",
+    "same_tenant_test": "PASSED: Tenant A cannot create duplicate 'STORE-01'"
+  },
+  "branch_creation_pipeline": [
+    "1. Authorize calling actor possesses 'manage branches' or is Business Owner",
+    "2. Scope business_id from active business context (never trust spoofed payload)",
+    "3. Validate business-scoped code uniqueness",
+    "4. Persist branch record",
+    "5. Automatically attach creating user to branch_user pivot with business_id",
+    "6. Initialize default cash drawer account if financial module is enabled",
+    "7. Log branch creation audit event with actor causer attribution"
+  ],
+  "inventory_initialization_strategy": {
+    "strategy": "LAZY_INITIALIZATION",
+    "rationale": "Avoids eager creation of thousands of zero-balance rows across entire catalog; records are spawned dynamically upon stock receipt/transfer or first count"
+  },
+  "deactivation_and_deletion_safety": {
+    "primary_branch_protection": "Deactivating or deleting the primary branch without explicit replacement is prohibited (HTTP 422)",
+    "history_preservation": "Deactivated branches retain all historical sales, inventory movements, financial ledger entries, and staff memberships. Hard deletion of operational branches is blocked",
+    "operational_restriction": "Inactive branches reject new sales creation, stock receipts, and inventory adjustments"
+  }
+}

@@ -1,0 +1,90 @@
+{
+  "program": "SkyraSoft HBOS Retail Platform & Workforce Integrity Program",
+  "checkpoint": "2.3 Tenant Roles & Permissions Target Architecture",
+  "registry_version": "1.0.0",
+  "date": "2026-10-03",
+  "canonical_permission_universe_count": 30,
+  "tenant_roles": [
+    {
+      "persisted_role_name": "Business Owner",
+      "ui_display_label": "Business Super Owner",
+      "permission_count": 30,
+      "scope": "Tenant Wide (all branches and settings)",
+      "permissions": [
+        "view products", "create products", "edit products", "delete products",
+        "view categories", "create categories", "edit categories", "delete categories",
+        "view sales", "create sales", "manage sales", "cancel sales", "return sales", "override sale price",
+        "view purchases", "create purchases", "manage purchases", "cancel purchases",
+        "view expenses", "manage expenses",
+        "view suppliers", "manage suppliers",
+        "view reports",
+        "manage settings",
+        "manage users",
+        "manage branches",
+        "manage inventory", "adjust stock", "transfer stock",
+        "manage financial accounts"
+      ]
+    },
+    {
+      "persisted_role_name": "Branch Manager",
+      "ui_display_label": "Branch Manager",
+      "permission_count": 23,
+      "scope": "Assigned Branches Only",
+      "permissions": [
+        "view products",
+        "view categories",
+        "view sales", "create sales", "manage sales", "cancel sales", "return sales", "override sale price",
+        "view purchases", "create purchases", "manage purchases", "cancel purchases",
+        "view expenses", "manage expenses",
+        "view suppliers",
+        "view reports",
+        "manage inventory", "adjust stock", "transfer stock",
+        "manage financial accounts"
+      ]
+    },
+    {
+      "persisted_role_name": "Salesperson",
+      "ui_display_label": "Salesperson / Cashier",
+      "permission_count": 8,
+      "scope": "Assigned POS Terminal / Own Sales",
+      "permissions": [
+        "view products",
+        "view categories",
+        "view sales", "create sales",
+        "view inventory",
+        "view customers", "create customers"
+      ]
+    },
+    {
+      "persisted_role_name": "Accountant",
+      "ui_display_label": "Accountant",
+      "permission_count": 13,
+      "scope": "Tenant Financial Records & Ledgers",
+      "permissions": [
+        "view sales",
+        "view purchases",
+        "view expenses", "manage expenses",
+        "view suppliers", "manage suppliers",
+        "view reports",
+        "manage financial accounts"
+      ]
+    },
+    {
+      "persisted_role_name": "Inventory Manager",
+      "ui_display_label": "Inventory Manager",
+      "permission_count": 15,
+      "scope": "Tenant Warehousing & Product Catalog",
+      "permissions": [
+        "view products", "create products", "edit products", "delete products",
+        "view categories", "create categories", "edit categories", "delete categories",
+        "view purchases", "create purchases", "manage purchases",
+        "manage inventory", "adjust stock", "transfer stock"
+      ]
+    }
+  ],
+  "platform_super_admin_status": {
+    "is_tenant_role": false,
+    "classification": "PLATFORM_ADMIN_DOMAIN_RESERVED",
+    "isolation_guarantee": "Tenant users cannot grant, inherit, or access Platform Super Admin authority. Tenant role seeders and governance services strictly reject platform-domain role injection"
+  }
+}

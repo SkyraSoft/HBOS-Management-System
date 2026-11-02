@@ -1,0 +1,34 @@
+{
+    "PAIR-001": {
+        "pairing_id": "PAIR-001",
+        "device_type": "Mobile Tablet POS Terminal",
+        "pairing_ui": "Frontend/src/views/Settings/SyncView.vue / DevicePairingModal",
+        "configuration_fields": [
+            "device_name",
+            "local_ip",
+            "port",
+            "pairing_token"
+        ],
+        "ip_address": "AUTO_DETECTED_LOCAL_LAN_IP",
+        "port": 8080,
+        "protocol": "HTTP_REST_OR_WEBSOCKET",
+        "discovery_mechanism": "DYNAMIC_QR_CODE_SCAN",
+        "manual_entry_supported": true,
+        "validation_present": false,
+        "subnet_validation": "MISSING_SUBNET_BOUNDARY_CHECK",
+        "static_dynamic_assumption": "ASSUMES_LAN_DHCP_OR_STATIC_IP",
+        "connectivity_test": "INSTANT_HTTP_GET_PROBE",
+        "save_location": "LOCAL_STORAGE_AND_INDEXEDDB_SETTINGS",
+        "tenant_scope": "TENANT_SCOPED",
+        "branch_scope": "BRANCH_SCOPED",
+        "user_scope": "OPERATOR_DEVICE_BINDING",
+        "local_only_or_server_stored": "LOCAL_ONLY_DEVICE_CONFIG",
+        "credentials_secrets": "EPHEMERAL_SESSION_TOKEN",
+        "reconnect_behavior": "AUTO_RETRY_STORED_IP",
+        "unpair_behavior": "CLEAR_STORED_PAIRING_METADATA",
+        "failure_message": "Device pairing failed: Target desktop unreachable on local network",
+        "evidence": "Frontend/src/services/devicePairingService.js:20-65",
+        "gap": "P7-GAP-004",
+        "certification_status": "CERTIFIED_WITH_KNOWN_GAP"
+    }
+}

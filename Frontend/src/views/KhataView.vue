@@ -182,21 +182,21 @@
                 </td>
 
                 <td>
-                  <span class="balance-cell" :class="(c.balance || 0) < 0 ? 'text-danger fw-bold' : 'text-dark fw-semibold'">
-                    PKR {{ Math.abs(c.balance || 0).toLocaleString() }}
+                  <span class="balance-cell" :class="(Number(c.balance) || 0) > 0 ? 'text-danger fw-bold' : 'text-dark fw-semibold'">
+                    PKR {{ (Number(c.balance) || 0).toLocaleString() }}
                   </span>
                 </td>
 
                 <td>
                   <span v-if="c.overdue_amount > 0" class="badge-overdue text-danger fw-semibold">
-                    PKR {{ (c.overdue_amount || 0).toLocaleString() }}
+                    PKR {{ (Number(c.overdue_amount) || 0).toLocaleString() }}
                   </span>
                   <span v-else class="text-muted small">PKR 0</span>
                 </td>
 
                 <td>
-                  <span class="stock-pill" :class="(c.balance || 0) >= 0 ? 'badge-in' : 'badge-out'">
-                    <span class="pill-dot"></span> {{ (c.balance || 0) >= 0 ? 'Clear' : 'Outstanding' }}
+                  <span class="stock-pill" :class="(Number(c.balance) || 0) <= 0 ? 'badge-in' : 'badge-out'">
+                    <span class="pill-dot"></span> {{ (Number(c.balance) || 0) <= 0 ? 'Clear' : 'Outstanding' }}
                   </span>
                 </td>
 
@@ -204,6 +204,68 @@
                   <button class="btn btn-sm btn-primary rounded-3 fw-semibold px-3 py-1.5 shadow-sm action-pay-btn" @click="openPaymentModal(c.name)" type="button">
                     <i class="bi bi-wallet2 me-1"></i> Payment
                   </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- PAYMENT HISTORY & REVERSALS TABLE -->
+      <div class="khata-table-card mt-4">
+        <div class="khata-table-header-box d-flex justify-content-between align-items-center mb-3">
+          <div>
+            <h2 class="khata-card-title m-0">Customer Payment History & Reversals</h2>
+            <p class="text-muted small m-0 mt-1">Authoritative debt settlements and payment reversal audit trail.</p>
+          </div>
+          <span class="badge bg-secondary-subtle text-secondary fw-semibold px-2.5 py-1">
+            {{ paymentTransactions.length }} Settlements
+          </span>
+        </div>
+
+        <div class="khata-table-responsive">
+          <table class="khata-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Payment #</th>
+                <th>Customer</th>
+                <th>Method</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Notes / Reversal Reason</th>
+                <th style="text-align: right;">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-if="paymentTransactions.length === 0">
+                <td colspan="8" class="text-center py-4 text-muted small">
+                  No payment settlements recorded yet.
+                </td>
+              </tr>
+              <tr v-for="p in paymentTransactions" :key="p.id" class="khata-table-row">
+                <td>{{ p.date || '—' }}</td>
+                <td><code class="fw-semibold text-primary">{{ p.payment_number || ('CP-' + p.id) }}</code></td>
+                <td class="fw-medium text-dark">{{ getPaymentCustomerName(p) }}</td>
+                <td><span class="badge bg-light text-dark border">{{ p.payment_method || 'Cash' }}</span></td>
+                <td class="fw-bold text-success">PKR {{ (Number(p.amount) || 0).toLocaleString() }}</td>
+                <td>
+                  <span class="stock-pill" :class="p.status === 'voided' || p.status === 'reversed' ? 'badge-out' : 'badge-in'">
+                    <span class="pill-dot"></span> {{ p.status === 'voided' || p.status === 'reversed' ? 'Reversed' : 'Posted' }}
+                  </span>
+                </td>
+                <td class="small text-muted">{{ p.reversal_reason || p.notes || '—' }}</td>
+                <td style="text-align: right;">
+                  <button 
+                    v-if="p.status !== 'voided' && p.status !== 'reversed'" 
+                    class="btn btn-sm btn-outline-danger rounded-3 fw-semibold px-2.5 py-1"
+                    type="button"
+                    @click="openReverseModal(p)"
+                    title="Reverse customer payment"
+                  >
+                    <i class="bi bi-arrow-counterclockwise me-1"></i> Reverse
+                  </button>
+                  <span v-else class="badge bg-danger-subtle text-danger small">Reversed</span>
                 </td>
               </tr>
             </tbody>
@@ -399,6 +461,66 @@
         </div>
       </div>
     </div>
+
+    <!-- ====================================================
+         REVERSE PAYMENT MODAL
+    ===================================================== -->
+    <div v-if="showReverseModal" class="khata-modal-overlay" @click.self="showReverseModal = false" style="z-index: 1060;">
+      <div class="khata-modal-card" style="max-width: 480px;">
+        <div class="khata-modal-header border-bottom">
+          <div class="khata-modal-header-left">
+            <div class="khata-modal-icon bg-danger-subtle text-danger">
+              <i class="bi bi-arrow-counterclockwise"></i>
+            </div>
+            <div class="khata-modal-header-text">
+              <h3 class="khata-modal-title">Reverse Customer Payment</h3>
+              <p class="khata-modal-subtitle">Compensate financial accounts and restore customer receivable.</p>
+            </div>
+          </div>
+          <button type="button" class="khata-modal-close" @click="showReverseModal = false">✕</button>
+        </div>
+
+        <div class="khata-modal-body p-4">
+          <div v-if="selectedPaymentForReversal" class="mb-3 p-3 bg-light rounded-3 border">
+            <div class="d-flex justify-content-between mb-1">
+              <span class="text-muted small">Payment Number:</span>
+              <span class="fw-bold">{{ selectedPaymentForReversal.payment_number || ('CP-' + selectedPaymentForReversal.id) }}</span>
+            </div>
+            <div class="d-flex justify-content-between mb-1">
+              <span class="text-muted small">Customer:</span>
+              <span class="fw-semibold">{{ getPaymentCustomerName(selectedPaymentForReversal) }}</span>
+            </div>
+            <div class="d-flex justify-content-between mb-1">
+              <span class="text-muted small">Amount:</span>
+              <span class="fw-bold text-danger">PKR {{ (Number(selectedPaymentForReversal.amount) || 0).toLocaleString() }}</span>
+            </div>
+            <div class="d-flex justify-content-between">
+              <span class="text-muted small">Date:</span>
+              <span>{{ selectedPaymentForReversal.date }}</span>
+            </div>
+          </div>
+
+          <div class="form-group mb-3">
+            <label class="form-label fw-semibold">Reason for Reversal <span class="text-danger">*</span></label>
+            <textarea 
+              class="form-control" 
+              rows="3" 
+              v-model="reversalReason" 
+              placeholder="e.g. Incorrect amount recorded, wrong customer selected, or bounced cheque..."
+              required
+            ></textarea>
+          </div>
+
+          <div class="d-flex justify-content-end gap-2 mt-4 pt-2 border-top">
+            <button type="button" class="btn btn-light rounded-3 px-3" @click="showReverseModal = false" :disabled="isReversing">Cancel</button>
+            <button type="button" class="btn btn-danger rounded-3 px-4 fw-semibold" @click="confirmReversePayment" :disabled="isReversing || !reversalReason.trim()">
+              <span v-if="isReversing" class="spinner-border spinner-border-sm me-1"></span>
+              {{ isReversing ? 'Reversing...' : 'Confirm Reversal' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -441,16 +563,16 @@ const filteredCustomers = computed(() => {
   }
   
   if (creditFilter.value === 'No Credit') {
-    return list.filter(c => (Number(c.balance) || 0) >= 0);
+    return list.filter(c => (Number(c.balance) || 0) <= 0);
   }
   if (creditFilter.value === 'Low Credit') {
-    return list.filter(c => (Number(c.balance) || 0) < 0 && (Number(c.balance) || 0) >= -20000);
+    return list.filter(c => (Number(c.balance) || 0) > 0 && (Number(c.balance) || 0) <= 20000);
   }
   if (creditFilter.value === 'High Credit') {
-    return list.filter(c => (Number(c.balance) || 0) < -20000);
+    return list.filter(c => (Number(c.balance) || 0) > 20000);
   }
   if (creditFilter.value === 'Overdue Credit') {
-    return list.filter(c => (Number(c.balance) || 0) < 0 && (c.overdue_amount > 0 || c.is_overdue || (Number(c.balance) || 0) < -50000));
+    return list.filter(c => (Number(c.balance) || 0) > 0 && (c.overdue_amount > 0 || c.is_overdue || (Number(c.balance) || 0) > 50000));
   }
   return list;
 });
@@ -460,16 +582,16 @@ const resetFilters = () => {
   creditFilter.value = 'All Customers';
 };
 
-// DYNAMIC KPI CALCULATIONS
+// DYNAMIC KPI CALCULATIONS (bal > 0 is customer debt / outstanding receivable)
 const totalOutstandingBalance = computed(() => {
   return customers.value.reduce((sum, c) => {
     const bal = Number(c.balance) || 0;
-    return bal < 0 ? sum + Math.abs(bal) : sum;
+    return bal > 0 ? sum + bal : sum;
   }, 0);
 });
 
 const creditCustomerCount = computed(() => {
-  return customers.value.filter(c => (Number(c.balance) || 0) < 0).length;
+  return customers.value.filter(c => (Number(c.balance) || 0) > 0).length;
 });
 
 const totalOverdueAmount = computed(() => {
@@ -477,18 +599,17 @@ const totalOverdueAmount = computed(() => {
     const overdue = Number(c.overdue_amount) || 0;
     const bal = Number(c.balance) || 0;
     if (overdue > 0) return sum + overdue;
-    if (bal < -50000) return sum + Math.abs(bal);
+    if (bal > 50000) return sum + bal;
     return sum;
   }, 0);
 });
 
 const totalPaymentsReceived = computed(() => {
   const trans = transactions.value || [];
-  const gotTrans = trans.filter(t => t.type === 'got');
-  if (gotTrans.length > 0) {
-    return gotTrans.reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
-  }
-  return 145000;
+  return trans.reduce((sum, t) => {
+    if (t.status === 'voided' || t.status === 'reversed') return sum;
+    return sum + (Number(t.amount) || 0);
+  }, 0);
 });
 
 // AVATAR COLOR GENERATOR
@@ -525,8 +646,56 @@ const paymentForm = ref({
 const selectedCustomerBalance = computed(() => {
   if (!paymentForm.value.customer_name) return 0;
   const c = customers.value.find(c => c.name.toLowerCase() === paymentForm.value.customer_name.toLowerCase());
-  return c ? Math.abs(c.balance || 0) : 0;
+  return c ? Math.max(0, Number(c.balance) || 0) : 0;
 });
+
+// PAYMENT REVERSAL LOGIC
+const paymentTransactions = computed(() => store.transactions || []);
+const showReverseModal = ref(false);
+const selectedPaymentForReversal = ref(null);
+const reversalReason = ref('');
+const isReversing = ref(false);
+
+const getPaymentCustomerName = (payment) => {
+  if (payment.customer && payment.customer.name) return payment.customer.name;
+  const match = customers.value.find(c => c.id === payment.customer_id);
+  if (match) return match.name;
+  return 'Customer #' + (payment.customer_id || payment.id);
+};
+
+const openReverseModal = (payment) => {
+  selectedPaymentForReversal.value = payment;
+  reversalReason.value = '';
+  showReverseModal.value = true;
+};
+
+const confirmReversePayment = async () => {
+  if (!selectedPaymentForReversal.value || !reversalReason.value.trim()) {
+    showError("Please provide a reason for reversal.");
+    return;
+  }
+
+  isReversing.value = true;
+  try {
+    const res = await store.deleteTransaction(selectedPaymentForReversal.value.id, reversalReason.value.trim());
+    if (res.success) {
+      await customerStore.fetchCustomers();
+      await store.fetchTransactions();
+      showReverseModal.value = false;
+      successAlertMessage.value = 'Customer payment reversed successfully.';
+      if (successAlertTimer) clearTimeout(successAlertTimer);
+      successAlertTimer = setTimeout(() => {
+        successAlertMessage.value = '';
+      }, 5000);
+    } else {
+      showError(res.message || "Failed to reverse customer payment.");
+    }
+  } catch (err) {
+    showError("An error occurred while reversing payment.");
+  } finally {
+    isReversing.value = false;
+  }
+};
 
 const showPaymentModal = ref(false);
 const isSubmittingPayment = ref(false);

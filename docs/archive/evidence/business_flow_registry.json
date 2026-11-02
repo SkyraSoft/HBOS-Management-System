@@ -1,0 +1,1211 @@
+{
+    "FLOW-001": {
+        "flow_id": "FLOW-001",
+        "flow_name": "POS Direct Cash Sale (Fully Paid)",
+        "flow_family": "REVENUE",
+        "business_purpose": "Execute direct walk-in retail POS checkout with immediate full cash settlement, instant stock decrement, cash ledger entry, and receipt printing.",
+        "initiating_actor": "CASHIER / OPERATOR",
+        "entry_ui": "POS Interface (Frontend /views/pos/PosView.vue)",
+        "entry_route": "POST /api/v1/sales",
+        "primary_mutations": [
+            "MUTATION-029"
+        ],
+        "primary_entities": [
+            "ENTITY-020",
+            "ENTITY-021",
+            "ENTITY-018",
+            "ENTITY-019",
+            "ENTITY-037"
+        ],
+        "starting_state": "CART_OPEN",
+        "ending_state": "PAID",
+        "tables_written": [
+            "sales",
+            "sale_items",
+            "branch_inventories",
+            "inventory_movements",
+            "cash_ledgers",
+            "activity_log"
+        ],
+        "stock_effects": "DECREMENTS_QUANTITY_ON_HAND",
+        "inventory_ledger_effects": "POSTS_INVENTORY_MOVEMENT_TYPE_SALE",
+        "ar_effects": "NONE",
+        "customer_ledger_effects": "NONE",
+        "ap_effects": "NONE",
+        "supplier_ledger_effects": "NONE",
+        "financial_account_effects": "NONE",
+        "account_ledger_effects": "NONE",
+        "cash_effects": "POSTS_CASH_LEDGER_INFLOW",
+        "audit_effects": "LOGS_SALE_CREATION",
+        "print_document_effects": "THERMAL_RECEIPT_ESC_POS",
+        "sync_effects": "QUEUES_TRANSACTION_SYNC_RECORD",
+        "reversal_path": "FLOW-014 (Sale Cancellation) / FLOW-012 (Sale Return)",
+        "p1_references": [
+            "P1-GAP-005",
+            "P1-GAP-011"
+        ],
+        "p2_references": [
+            "P2-GAP-006"
+        ],
+        "p3_gap_ids": [
+            "P3-GAP-001"
+        ],
+        "source_evidence": "api/app/Http/Controllers/Api/V1/SaleController.php@store, api/app/Services/SaleService.php@createSale",
+        "verification_confidence": "SOURCE_VERIFIED_WITH_GAP",
+        "certification_status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "FLOW-002": {
+        "flow_id": "FLOW-002",
+        "flow_name": "POS Direct Bank / Digital Payment Sale",
+        "flow_family": "REVENUE",
+        "business_purpose": "Execute POS checkout with electronic bank/card settlement directly depositing into a selected financial account with stock decrement.",
+        "initiating_actor": "CASHIER / OPERATOR",
+        "entry_ui": "POS Interface (PaymentModal.vue)",
+        "entry_route": "POST /api/v1/sales",
+        "primary_mutations": [
+            "MUTATION-029"
+        ],
+        "primary_entities": [
+            "ENTITY-020",
+            "ENTITY-021",
+            "ENTITY-018",
+            "ENTITY-019",
+            "ENTITY-034",
+            "ENTITY-035"
+        ],
+        "starting_state": "CART_OPEN",
+        "ending_state": "PAID",
+        "tables_written": [
+            "sales",
+            "sale_items",
+            "branch_inventories",
+            "inventory_movements",
+            "financial_accounts",
+            "account_movements",
+            "activity_log"
+        ],
+        "stock_effects": "DECREMENTS_QUANTITY_ON_HAND",
+        "inventory_ledger_effects": "POSTS_INVENTORY_MOVEMENT_TYPE_SALE",
+        "ar_effects": "NONE",
+        "customer_ledger_effects": "NONE",
+        "ap_effects": "NONE",
+        "supplier_ledger_effects": "NONE",
+        "financial_account_effects": "INCREMENTS_FINANCIAL_ACCOUNT_BALANCE",
+        "account_ledger_effects": "POSTS_ACCOUNT_MOVEMENT_TYPE_SALE_PAYMENT",
+        "cash_effects": "NONE",
+        "audit_effects": "LOGS_SALE_CREATION",
+        "print_document_effects": "THERMAL_RECEIPT_ESC_POS",
+        "sync_effects": "QUEUES_TRANSACTION_SYNC_RECORD",
+        "reversal_path": "FLOW-014 (Sale Cancellation) / FLOW-012 (Sale Return)",
+        "p1_references": [
+            "P1-GAP-005"
+        ],
+        "p2_references": [
+            "P2-GAP-006"
+        ],
+        "p3_gap_ids": [
+            "P3-GAP-001"
+        ],
+        "source_evidence": "api/app/Http/Controllers/Api/V1/SaleController.php@store, api/app/Services/SaleService.php@createSale",
+        "verification_confidence": "SOURCE_VERIFIED_WITH_GAP",
+        "certification_status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "FLOW-003": {
+        "flow_id": "FLOW-003",
+        "flow_name": "POS Credit Sale on Customer Khata (Unpaid)",
+        "flow_family": "REVENUE",
+        "business_purpose": "Execute POS checkout on customer credit, decrementing stock and debiting customer Khata receivables balance without upfront payment.",
+        "initiating_actor": "CASHIER / MANAGER",
+        "entry_ui": "POS Interface (CustomerSelectModal.vue + PaymentModal.vue)",
+        "entry_route": "POST /api/v1/sales",
+        "primary_mutations": [
+            "MUTATION-029"
+        ],
+        "primary_entities": [
+            "ENTITY-020",
+            "ENTITY-021",
+            "ENTITY-018",
+            "ENTITY-019",
+            "ENTITY-024",
+            "ENTITY-025"
+        ],
+        "starting_state": "CART_OPEN",
+        "ending_state": "DUE",
+        "tables_written": [
+            "sales",
+            "sale_items",
+            "branch_inventories",
+            "inventory_movements",
+            "customers",
+            "khata_transactions",
+            "activity_log"
+        ],
+        "stock_effects": "DECREMENTS_QUANTITY_ON_HAND",
+        "inventory_ledger_effects": "POSTS_INVENTORY_MOVEMENT_TYPE_SALE",
+        "ar_effects": "INCREMENTS_CUSTOMER_RECEIVABLES_BALANCE",
+        "customer_ledger_effects": "POSTS_KHATA_TRANSACTION_TYPE_DEBIT",
+        "ap_effects": "NONE",
+        "supplier_ledger_effects": "NONE",
+        "financial_account_effects": "NONE",
+        "account_ledger_effects": "NONE",
+        "cash_effects": "NONE",
+        "audit_effects": "LOGS_CREDIT_SALE",
+        "print_document_effects": "A4_OR_THERMAL_CREDIT_INVOICE",
+        "sync_effects": "QUEUES_TRANSACTION_SYNC_RECORD",
+        "reversal_path": "FLOW-014 (Sale Cancellation) / FLOW-013 (Sale Return Credit)",
+        "p1_references": [
+            "P1-GAP-007"
+        ],
+        "p2_references": [
+            "P2-GAP-007"
+        ],
+        "p3_gap_ids": [
+            "P3-GAP-002"
+        ],
+        "source_evidence": "api/app/Http/Controllers/Api/V1/SaleController.php@store, api/app/Services/SaleService.php@createSale",
+        "verification_confidence": "SOURCE_VERIFIED_WITH_GAP",
+        "certification_status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "FLOW-004": {
+        "flow_id": "FLOW-004",
+        "flow_name": "POS Partially Paid Sale",
+        "flow_family": "REVENUE",
+        "business_purpose": "Execute POS checkout with partial cash/bank payment upfront, routing paid portion to liquid accounts and remainder to Customer Khata AR balance.",
+        "initiating_actor": "CASHIER / OPERATOR",
+        "entry_ui": "POS Interface (PaymentModal.vue)",
+        "entry_route": "POST /api/v1/sales",
+        "primary_mutations": [
+            "MUTATION-029"
+        ],
+        "primary_entities": [
+            "ENTITY-020",
+            "ENTITY-021",
+            "ENTITY-018",
+            "ENTITY-019",
+            "ENTITY-024",
+            "ENTITY-025",
+            "ENTITY-037"
+        ],
+        "starting_state": "CART_OPEN",
+        "ending_state": "PARTIAL",
+        "tables_written": [
+            "sales",
+            "sale_items",
+            "branch_inventories",
+            "inventory_movements",
+            "customers",
+            "khata_transactions",
+            "cash_ledgers",
+            "activity_log"
+        ],
+        "stock_effects": "DECREMENTS_QUANTITY_ON_HAND",
+        "inventory_ledger_effects": "POSTS_INVENTORY_MOVEMENT_TYPE_SALE",
+        "ar_effects": "INCREMENTS_CUSTOMER_RECEIVABLES_BY_DUE_PORTION",
+        "customer_ledger_effects": "POSTS_KHATA_TRANSACTION_FOR_DUE_PORTION",
+        "ap_effects": "NONE",
+        "supplier_ledger_effects": "NONE",
+        "financial_account_effects": "INCREMENTS_IF_PAID_DIGITALLY",
+        "account_ledger_effects": "POSTS_MOVEMENT_FOR_PAID_PORTION",
+        "cash_effects": "POSTS_CASH_DRAWER_INFLOW_FOR_PAID_CASH",
+        "audit_effects": "LOGS_PARTIAL_SALE",
+        "print_document_effects": "RECEIPT_WITH_DUE_BALANCE",
+        "sync_effects": "QUEUES_TRANSACTION_SYNC_RECORD",
+        "reversal_path": "FLOW-014 (Sale Cancellation)",
+        "p1_references": [
+            "P1-GAP-005",
+            "P1-GAP-007"
+        ],
+        "p2_references": [
+            "P2-GAP-006",
+            "P2-GAP-007"
+        ],
+        "p3_gap_ids": [
+            "P3-GAP-002"
+        ],
+        "source_evidence": "api/app/Http/Controllers/Api/V1/SaleController.php@store, api/app/Services/SaleService.php@createSale",
+        "verification_confidence": "SOURCE_VERIFIED_WITH_GAP",
+        "certification_status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "FLOW-005": {
+        "flow_id": "FLOW-005",
+        "flow_name": "POS Split-Tender / Multi-Payment Sale",
+        "flow_family": "REVENUE",
+        "business_purpose": "Execute POS checkout settled across multiple tender methods (e.g. Cash + Bank Card), splitting payments into respective ledger accounts.",
+        "initiating_actor": "CASHIER / OPERATOR",
+        "entry_ui": "POS Interface (SplitPaymentModal.vue)",
+        "entry_route": "POST /api/v1/sales",
+        "primary_mutations": [
+            "MUTATION-029"
+        ],
+        "primary_entities": [
+            "ENTITY-020",
+            "ENTITY-021",
+            "ENTITY-018",
+            "ENTITY-019",
+            "ENTITY-034",
+            "ENTITY-035",
+            "ENTITY-037"
+        ],
+        "starting_state": "CART_OPEN",
+        "ending_state": "PAID",
+        "tables_written": [
+            "sales",
+            "sale_items",
+            "branch_inventories",
+            "inventory_movements",
+            "financial_accounts",
+            "account_movements",
+            "cash_ledgers",
+            "activity_log"
+        ],
+        "stock_effects": "DECREMENTS_QUANTITY_ON_HAND",
+        "inventory_ledger_effects": "POSTS_INVENTORY_MOVEMENT_TYPE_SALE",
+        "ar_effects": "NONE",
+        "customer_ledger_effects": "NONE",
+        "ap_effects": "NONE",
+        "supplier_ledger_effects": "NONE",
+        "financial_account_effects": "INCREMENTS_BANK_ACCOUNT",
+        "account_ledger_effects": "POSTS_ACCOUNT_MOVEMENT",
+        "cash_effects": "POSTS_CASH_DRAWER_INFLOW",
+        "audit_effects": "LOGS_SPLIT_SALE",
+        "print_document_effects": "SPLIT_PAYMENT_RECEIPT",
+        "sync_effects": "QUEUES_TRANSACTION_SYNC_RECORD",
+        "reversal_path": "FLOW-014 (Sale Cancellation)",
+        "p1_references": [
+            "P1-GAP-005"
+        ],
+        "p2_references": [
+            "P2-GAP-006"
+        ],
+        "p3_gap_ids": [
+            "P3-GAP-003"
+        ],
+        "source_evidence": "api/app/Http/Controllers/Api/V1/SaleController.php@store, api/app/Services/SaleService.php@createSale",
+        "verification_confidence": "SOURCE_VERIFIED_WITH_GAP",
+        "certification_status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "FLOW-006": {
+        "flow_id": "FLOW-006",
+        "flow_name": "Post-Sale Customer Khata Payment Receipt",
+        "flow_family": "REVENUE",
+        "business_purpose": "Receive customer balance settlement for previous credit sales, depositing funds into cash/bank and crediting customer Khata AR balance.",
+        "initiating_actor": "CASHIER / ACCOUNTANT",
+        "entry_ui": "Customer Details / Khata Modal (CustomerPaymentModal.vue)",
+        "entry_route": "POST /api/v1/customer-payments",
+        "primary_mutations": [
+            "MUTATION-041"
+        ],
+        "primary_entities": [
+            "ENTITY-026",
+            "ENTITY-024",
+            "ENTITY-025",
+            "ENTITY-034",
+            "ENTITY-035",
+            "ENTITY-037"
+        ],
+        "starting_state": "PAYMENT_ENTRY",
+        "ending_state": "POSTED",
+        "tables_written": [
+            "customer_payments",
+            "customers",
+            "khata_transactions",
+            "financial_accounts",
+            "account_movements",
+            "cash_ledgers",
+            "activity_log"
+        ],
+        "stock_effects": "NONE",
+        "inventory_ledger_effects": "NONE",
+        "ar_effects": "DECREMENTS_CUSTOMER_RECEIVABLES_BALANCE",
+        "customer_ledger_effects": "POSTS_KHATA_TRANSACTION_TYPE_CREDIT",
+        "ap_effects": "NONE",
+        "supplier_ledger_effects": "NONE",
+        "financial_account_effects": "INCREMENTS_FINANCIAL_ACCOUNT_BALANCE",
+        "account_ledger_effects": "POSTS_ACCOUNT_MOVEMENT_INFLOW",
+        "cash_effects": "POSTS_CASH_DRAWER_INFLOW_IF_CASH",
+        "audit_effects": "LOGS_CUSTOMER_PAYMENT",
+        "print_document_effects": "PAYMENT_RECEIPT_VOUCHER",
+        "sync_effects": "SYNC_CUSTOMER_PAYMENT",
+        "reversal_path": "FLOW-015 (Customer Payment Reversal)",
+        "p1_references": [
+            "P1-GAP-007"
+        ],
+        "p2_references": [],
+        "p3_gap_ids": [],
+        "source_evidence": "api/app/Http/Controllers/Api/V1/CustomerPaymentController.php@store, api/app/Services/CustomerPaymentService.php@recordPayment",
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "FLOW-007": {
+        "flow_id": "FLOW-007",
+        "flow_name": "Offline POS Batch Sync Ingestion",
+        "flow_family": "REVENUE",
+        "business_purpose": "Ingest batches of sales and payments executed offline in browser/desktop Dexie database into server PostgreSQL database with UUID deduplication.",
+        "initiating_actor": "OFFLINE_POS_CLIENT / SYNC_WORKER",
+        "entry_ui": "Sync Engine Background Process (syncService.js)",
+        "entry_route": "POST /api/v1/sync/bulk-ingest",
+        "primary_mutations": [
+            "MUTATION-071"
+        ],
+        "primary_entities": [
+            "ENTITY-020",
+            "ENTITY-021",
+            "ENTITY-018",
+            "ENTITY-019",
+            "ENTITY-026",
+            "ENTITY-025",
+            "ENTITY-037"
+        ],
+        "starting_state": "QUEUED_LOCAL",
+        "ending_state": "INGESTED_SERVER",
+        "tables_written": [
+            "sales",
+            "sale_items",
+            "branch_inventories",
+            "inventory_movements",
+            "customer_payments",
+            "khata_transactions",
+            "cash_ledgers",
+            "activity_log"
+        ],
+        "stock_effects": "BATCH_DECREMENTS_BRANCH_STOCK",
+        "inventory_ledger_effects": "BATCH_POSTS_INVENTORY_MOVEMENTS",
+        "ar_effects": "BATCH_MUTATES_CUSTOMER_RECEIVABLES",
+        "customer_ledger_effects": "BATCH_POSTS_KHATA_ROWS",
+        "ap_effects": "NONE",
+        "supplier_ledger_effects": "NONE",
+        "financial_account_effects": "BATCH_POSTS_FINANCIAL_MOVEMENTS",
+        "account_ledger_effects": "BATCH_POSTS_ACCOUNT_MOVEMENTS",
+        "cash_effects": "BATCH_POSTS_CASH_DRAWER_MOVEMENTS",
+        "audit_effects": "LOGS_SYNC_BATCH",
+        "print_document_effects": "LOCAL_RECEIPT_PRINTED_AT_SALE_TIME",
+        "sync_effects": "CONFIRMS_INGEST_ACK",
+        "reversal_path": "INDIVIDUAL_TRANSACTION_REVERSALS",
+        "p1_references": [
+            "P1-GAP-005",
+            "P1-GAP-010"
+        ],
+        "p2_references": [
+            "P2-GAP-020"
+        ],
+        "p3_gap_ids": [
+            "P3-GAP-004"
+        ],
+        "source_evidence": "api/app/Http/Controllers/Api/V1/SyncController.php@bulkIngest, api/app/Services/BulkSyncService.php@ingestBulkTransactions",
+        "verification_confidence": "SOURCE_VERIFIED_WITH_GAP",
+        "certification_status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "FLOW-008": {
+        "flow_id": "FLOW-008",
+        "flow_name": "Purchase on Credit with Immediate GRN Stock Receipt",
+        "flow_family": "PROCUREMENT",
+        "business_purpose": "Record vendor purchase invoice on credit, receiving physical goods into branch inventory, updating weighted cost, and crediting Supplier AP.",
+        "initiating_actor": "STOCK_KEEPER / PROCUREMENT_MANAGER",
+        "entry_ui": "Purchase Entry Form (PurchaseCreateView.vue)",
+        "entry_route": "POST /api/v1/purchases",
+        "primary_mutations": [
+            "MUTATION-046"
+        ],
+        "primary_entities": [
+            "ENTITY-028",
+            "ENTITY-029",
+            "ENTITY-018",
+            "ENTITY-019",
+            "ENTITY-027"
+        ],
+        "starting_state": "PURCHASE_ENTRY",
+        "ending_state": "RECEIVED",
+        "tables_written": [
+            "purchases",
+            "purchase_items",
+            "branch_inventories",
+            "inventory_movements",
+            "suppliers",
+            "activity_log"
+        ],
+        "stock_effects": "INCREMENTS_QUANTITY_ON_HAND",
+        "inventory_ledger_effects": "POSTS_INVENTORY_MOVEMENT_TYPE_PURCHASE",
+        "ar_effects": "NONE",
+        "customer_ledger_effects": "NONE",
+        "ap_effects": "INCREMENTS_SUPPLIER_PAYABLE_BALANCE",
+        "supplier_ledger_effects": "UPDATES_SUPPLIER_BALANCE",
+        "financial_account_effects": "NONE",
+        "account_ledger_effects": "NONE",
+        "cash_effects": "NONE",
+        "audit_effects": "LOGS_PURCHASE_CREATION",
+        "print_document_effects": "GRN_PURCHASE_BILL_DOCUMENT",
+        "sync_effects": "CATALOG_STOCK_DELTA_SYNC",
+        "reversal_path": "FLOW-016 (Purchase Cancellation)",
+        "p1_references": [
+            "P1-GAP-006"
+        ],
+        "p2_references": [
+            "P2-GAP-013"
+        ],
+        "p3_gap_ids": [
+            "P3-GAP-005",
+            "P3-GAP-006"
+        ],
+        "source_evidence": "api/app/Http/Controllers/Api/V1/PurchaseController.php@store, api/app/Services/PurchaseService.php@createPurchase",
+        "verification_confidence": "SOURCE_VERIFIED_WITH_GAP",
+        "certification_status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "FLOW-009": {
+        "flow_id": "FLOW-009",
+        "flow_name": "Purchase with Immediate Full Cash/Bank Disbursal",
+        "flow_family": "PROCUREMENT",
+        "business_purpose": "Record vendor purchase with full upfront payment, immediately incrementing stock and debiting selected financial/cash account with zero net AP balance.",
+        "initiating_actor": "PROCUREMENT_MANAGER / ACCOUNTANT",
+        "entry_ui": "Purchase Entry Form (PurchaseCreateView.vue)",
+        "entry_route": "POST /api/v1/purchases",
+        "primary_mutations": [
+            "MUTATION-046"
+        ],
+        "primary_entities": [
+            "ENTITY-028",
+            "ENTITY-029",
+            "ENTITY-018",
+            "ENTITY-019",
+            "ENTITY-027",
+            "ENTITY-034",
+            "ENTITY-035"
+        ],
+        "starting_state": "PURCHASE_ENTRY",
+        "ending_state": "RECEIVED",
+        "tables_written": [
+            "purchases",
+            "purchase_items",
+            "branch_inventories",
+            "inventory_movements",
+            "suppliers",
+            "financial_accounts",
+            "account_movements",
+            "activity_log"
+        ],
+        "stock_effects": "INCREMENTS_QUANTITY_ON_HAND",
+        "inventory_ledger_effects": "POSTS_INVENTORY_MOVEMENT_TYPE_PURCHASE",
+        "ar_effects": "NONE",
+        "customer_ledger_effects": "NONE",
+        "ap_effects": "NET_ZERO_SUPPLIER_BALANCE_CHANGE",
+        "supplier_ledger_effects": "UPDATES_SUPPLIER_BALANCE",
+        "financial_account_effects": "DECREMENTS_FINANCIAL_ACCOUNT_BALANCE",
+        "account_ledger_effects": "POSTS_ACCOUNT_MOVEMENT_TYPE_PURCHASE_PAYMENT",
+        "cash_effects": "POSTS_CASH_DRAWER_OUTFLOW_IF_CASH",
+        "audit_effects": "LOGS_PURCHASE_WITH_PAYMENT",
+        "print_document_effects": "PAID_PURCHASE_INVOICE",
+        "sync_effects": "CATALOG_STOCK_DELTA_SYNC",
+        "reversal_path": "FLOW-016 (Purchase Cancellation)",
+        "p1_references": [
+            "P1-GAP-006"
+        ],
+        "p2_references": [
+            "P2-GAP-013"
+        ],
+        "p3_gap_ids": [
+            "P3-GAP-005"
+        ],
+        "source_evidence": "api/app/Http/Controllers/Api/V1/PurchaseController.php@store, api/app/Services/PurchaseService.php@createPurchase",
+        "verification_confidence": "SOURCE_VERIFIED_WITH_GAP",
+        "certification_status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "FLOW-010": {
+        "flow_id": "FLOW-010",
+        "flow_name": "Purchase with Partial Upfront Payment",
+        "flow_family": "PROCUREMENT",
+        "business_purpose": "Record vendor purchase with partial upfront payment, disbursing paid amount from liquid account and crediting remainder to Supplier AP liability.",
+        "initiating_actor": "PROCUREMENT_MANAGER / ACCOUNTANT",
+        "entry_ui": "Purchase Entry Form (PurchaseCreateView.vue)",
+        "entry_route": "POST /api/v1/purchases",
+        "primary_mutations": [
+            "MUTATION-046"
+        ],
+        "primary_entities": [
+            "ENTITY-028",
+            "ENTITY-029",
+            "ENTITY-018",
+            "ENTITY-019",
+            "ENTITY-027",
+            "ENTITY-034",
+            "ENTITY-035"
+        ],
+        "starting_state": "PURCHASE_ENTRY",
+        "ending_state": "RECEIVED",
+        "tables_written": [
+            "purchases",
+            "purchase_items",
+            "branch_inventories",
+            "inventory_movements",
+            "suppliers",
+            "financial_accounts",
+            "account_movements",
+            "activity_log"
+        ],
+        "stock_effects": "INCREMENTS_QUANTITY_ON_HAND",
+        "inventory_ledger_effects": "POSTS_INVENTORY_MOVEMENT_TYPE_PURCHASE",
+        "ar_effects": "NONE",
+        "customer_ledger_effects": "NONE",
+        "ap_effects": "INCREMENTS_SUPPLIER_PAYABLE_BY_REMAINING_DUE",
+        "supplier_ledger_effects": "UPDATES_SUPPLIER_BALANCE",
+        "financial_account_effects": "DECREMENTS_FINANCIAL_ACCOUNT_BY_PAID_PORTION",
+        "account_ledger_effects": "POSTS_ACCOUNT_MOVEMENT_FOR_PAID_PORTION",
+        "cash_effects": "POSTS_CASH_DRAWER_OUTFLOW_IF_CASH",
+        "audit_effects": "LOGS_PARTIAL_PURCHASE",
+        "print_document_effects": "PURCHASE_BILL_WITH_DUE_BALANCE",
+        "sync_effects": "CATALOG_STOCK_DELTA_SYNC",
+        "reversal_path": "FLOW-016 (Purchase Cancellation)",
+        "p1_references": [
+            "P1-GAP-006"
+        ],
+        "p2_references": [
+            "P2-GAP-013"
+        ],
+        "p3_gap_ids": [
+            "P3-GAP-005"
+        ],
+        "source_evidence": "api/app/Http/Controllers/Api/V1/PurchaseController.php@store, api/app/Services/PurchaseService.php@createPurchase",
+        "verification_confidence": "SOURCE_VERIFIED_WITH_GAP",
+        "certification_status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "FLOW-011": {
+        "flow_id": "FLOW-011",
+        "flow_name": "Post-GRN Supplier Payment Disbursal",
+        "flow_family": "PROCUREMENT",
+        "business_purpose": "Disburse payment to vendor against outstanding AP liabilities, debiting financial account/cash and reducing supplier payable balance.",
+        "initiating_actor": "ACCOUNTANT / OWNER",
+        "entry_ui": "Supplier Payment Form (SupplierPaymentModal.vue)",
+        "entry_route": "POST /api/v1/supplier-payments",
+        "primary_mutations": [
+            "MUTATION-049"
+        ],
+        "primary_entities": [
+            "ENTITY-030",
+            "ENTITY-027",
+            "ENTITY-034",
+            "ENTITY-035",
+            "ENTITY-037"
+        ],
+        "starting_state": "PAYMENT_ENTRY",
+        "ending_state": "POSTED",
+        "tables_written": [
+            "supplier_payments",
+            "suppliers",
+            "financial_accounts",
+            "account_movements",
+            "cash_ledgers",
+            "activity_log"
+        ],
+        "stock_effects": "NONE",
+        "inventory_ledger_effects": "NONE",
+        "ar_effects": "NONE",
+        "customer_ledger_effects": "NONE",
+        "ap_effects": "DECREMENTS_SUPPLIER_PAYABLE_BALANCE",
+        "supplier_ledger_effects": "UPDATES_SUPPLIER_BALANCE",
+        "financial_account_effects": "DECREMENTS_FINANCIAL_ACCOUNT_BALANCE",
+        "account_ledger_effects": "POSTS_OUTFLOW_ACCOUNT_MOVEMENT",
+        "cash_effects": "POSTS_CASH_DRAWER_OUTFLOW_IF_CASH",
+        "audit_effects": "LOGS_SUPPLIER_PAYMENT",
+        "print_document_effects": "SUPPLIER_PAYMENT_VOUCHER",
+        "sync_effects": "SERVER_MANAGED",
+        "reversal_path": "MANUAL_COMPENSATING_ENTRY (No dedicated reverse endpoint)",
+        "p1_references": [],
+        "p2_references": [
+            "P2-GAP-015"
+        ],
+        "p3_gap_ids": [
+            "P3-GAP-007"
+        ],
+        "source_evidence": "api/app/Http/Controllers/Api/V1/SupplierPaymentController.php@store, api/app/Services/SupplierBalanceService.php@recordPayment",
+        "verification_confidence": "SOURCE_VERIFIED_WITH_GAP",
+        "certification_status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "FLOW-012": {
+        "flow_id": "FLOW-012",
+        "flow_name": "Sale Return with Restocking & Cash/Bank Refund",
+        "flow_family": "REVERSAL",
+        "business_purpose": "Process customer return of sold goods, incrementing branch inventory, recording sale return items, and disbursing cash/bank refund to customer.",
+        "initiating_actor": "CASHIER / STORE_MANAGER",
+        "entry_ui": "Sale Return Interface (SaleReturnModal.vue)",
+        "entry_route": "POST /api/v1/sales/{id}/returns -> POST /api/v1/sale-returns/{id}/settle-refund",
+        "primary_mutations": [
+            "MUTATION-033",
+            "MUTATION-034"
+        ],
+        "primary_entities": [
+            "ENTITY-022",
+            "ENTITY-023",
+            "ENTITY-020",
+            "ENTITY-018",
+            "ENTITY-019",
+            "ENTITY-034",
+            "ENTITY-035",
+            "ENTITY-037"
+        ],
+        "starting_state": "RETURN_ENTRY",
+        "ending_state": "SETTLED",
+        "tables_written": [
+            "sale_returns",
+            "sale_return_items",
+            "branch_inventories",
+            "inventory_movements",
+            "financial_accounts",
+            "account_movements",
+            "cash_ledgers",
+            "activity_log"
+        ],
+        "stock_effects": "INCREMENTS_QUANTITY_ON_HAND",
+        "inventory_ledger_effects": "POSTS_INVENTORY_MOVEMENT_TYPE_SALE_RETURN",
+        "ar_effects": "NONE",
+        "customer_ledger_effects": "NONE",
+        "ap_effects": "NONE",
+        "supplier_ledger_effects": "NONE",
+        "financial_account_effects": "DECREMENTS_FINANCIAL_ACCOUNT_FOR_REFUND",
+        "account_ledger_effects": "POSTS_ACCOUNT_MOVEMENT_OUTFLOW",
+        "cash_effects": "POSTS_CASH_DRAWER_REFUND_OUTFLOW",
+        "audit_effects": "LOGS_SALE_RETURN_AND_REFUND",
+        "print_document_effects": "SALE_RETURN_REFUND_RECEIPT",
+        "sync_effects": "SERVER_OR_OFFLINE_SYNC",
+        "reversal_path": "MUTATION-035 (Reverse Refund)",
+        "p1_references": [],
+        "p2_references": [],
+        "p3_gap_ids": [
+            "P3-GAP-008"
+        ],
+        "source_evidence": "api/app/Http/Controllers/Api/V1/SaleController.php@returns, api/app/Http/Controllers/Api/V1/SaleReturnRefundController.php@settleRefund",
+        "verification_confidence": "SOURCE_VERIFIED_WITH_GAP",
+        "certification_status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "FLOW-013": {
+        "flow_id": "FLOW-013",
+        "flow_name": "Sale Return with Customer Store Credit / Khata Adjustment",
+        "flow_family": "REVERSAL",
+        "business_purpose": "Process customer return crediting customer Khata AR balance or issuing store credit without physical cash outflow.",
+        "initiating_actor": "CASHIER / STORE_MANAGER",
+        "entry_ui": "Sale Return Interface (SaleReturnModal.vue)",
+        "entry_route": "POST /api/v1/sales/{id}/returns -> POST /api/v1/sale-returns/{id}/settle-refund",
+        "primary_mutations": [
+            "MUTATION-033",
+            "MUTATION-034"
+        ],
+        "primary_entities": [
+            "ENTITY-022",
+            "ENTITY-023",
+            "ENTITY-020",
+            "ENTITY-018",
+            "ENTITY-019",
+            "ENTITY-024",
+            "ENTITY-025"
+        ],
+        "starting_state": "RETURN_ENTRY",
+        "ending_state": "SETTLED",
+        "tables_written": [
+            "sale_returns",
+            "sale_return_items",
+            "branch_inventories",
+            "inventory_movements",
+            "customers",
+            "khata_transactions",
+            "activity_log"
+        ],
+        "stock_effects": "INCREMENTS_QUANTITY_ON_HAND",
+        "inventory_ledger_effects": "POSTS_INVENTORY_MOVEMENT_TYPE_SALE_RETURN",
+        "ar_effects": "DECREMENTS_CUSTOMER_RECEIVABLES_OR_CREDITS_KHATA",
+        "customer_ledger_effects": "POSTS_KHATA_TRANSACTION_TYPE_CREDIT",
+        "ap_effects": "NONE",
+        "supplier_ledger_effects": "NONE",
+        "financial_account_effects": "NONE",
+        "account_ledger_effects": "NONE",
+        "cash_effects": "NONE",
+        "audit_effects": "LOGS_SALE_RETURN_CREDIT",
+        "print_document_effects": "CREDIT_NOTE_RECEIPT",
+        "sync_effects": "SERVER_OR_OFFLINE_SYNC",
+        "reversal_path": "MUTATION-035 (Reverse Refund)",
+        "p1_references": [],
+        "p2_references": [],
+        "p3_gap_ids": [],
+        "source_evidence": "api/app/Http/Controllers/Api/V1/SaleController.php@returns, api/app/Http/Controllers/Api/V1/SaleReturnRefundController.php@settleRefund",
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "FLOW-014": {
+        "flow_id": "FLOW-014",
+        "flow_name": "Sale Cancellation & Automatic Multi-Module Rollback",
+        "flow_family": "REVERSAL",
+        "business_purpose": "Formally cancel a posted sale invoice, automatically restoring decremented product quantities, reversing Khata AR debit, and compensating cash/bank inflows.",
+        "initiating_actor": "STORE_MANAGER / OWNER",
+        "entry_ui": "Sale Details View (CancelSaleModal.vue)",
+        "entry_route": "POST /api/v1/sales/{id}/cancel",
+        "primary_mutations": [
+            "MUTATION-031"
+        ],
+        "primary_entities": [
+            "ENTITY-020",
+            "ENTITY-018",
+            "ENTITY-019",
+            "ENTITY-024",
+            "ENTITY-025",
+            "ENTITY-037"
+        ],
+        "starting_state": "PAID / PARTIAL / DUE",
+        "ending_state": "CANCELLED",
+        "tables_written": [
+            "sales",
+            "branch_inventories",
+            "inventory_movements",
+            "customers",
+            "khata_transactions",
+            "cash_ledgers",
+            "activity_log"
+        ],
+        "stock_effects": "RESTORES_DECREMENTED_STOCK_QUANTITIES",
+        "inventory_ledger_effects": "POSTS_COMPENSATING_INVENTORY_MOVEMENTS",
+        "ar_effects": "REDUCES_CUSTOMER_RECEIVABLES_IF_CREDIT",
+        "customer_ledger_effects": "POSTS_REVERSAL_KHATA_ROW",
+        "ap_effects": "NONE",
+        "supplier_ledger_effects": "NONE",
+        "financial_account_effects": "REVERSES_FINANCIAL_INFLOW_IF_DIGITAL",
+        "account_ledger_effects": "POSTS_VOID_OR_OUTFLOW_MOVEMENT",
+        "cash_effects": "POSTS_CASH_DRAWER_REFUND_OUTFLOW",
+        "audit_effects": "LOGS_SALE_CANCELLATION",
+        "print_document_effects": "CANCELLED_INVOICE_WATERMARK",
+        "sync_effects": "PROPAGATES_CANCELLATION_TO_NODES",
+        "reversal_path": "IRREVERSIBLE (Terminal State)",
+        "p1_references": [],
+        "p2_references": [],
+        "p3_gap_ids": [],
+        "source_evidence": "api/app/Http/Controllers/Api/V1/SaleController.php@cancel, api/app/Services/SaleService.php@cancelSale",
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "FLOW-015": {
+        "flow_id": "FLOW-015",
+        "flow_name": "Customer Payment Reversal",
+        "flow_family": "REVERSAL",
+        "business_purpose": "Reverse an erroneous customer payment receipt, restoring the customer outstanding due balance and debiting liquid cash/bank account.",
+        "initiating_actor": "STORE_MANAGER / OWNER",
+        "entry_ui": "Customer Ledger View (PaymentReverseModal.vue)",
+        "entry_route": "POST /api/v1/customer-payments/{id}/reverse",
+        "primary_mutations": [
+            "MUTATION-042"
+        ],
+        "primary_entities": [
+            "ENTITY-026",
+            "ENTITY-024",
+            "ENTITY-025",
+            "ENTITY-034",
+            "ENTITY-035",
+            "ENTITY-037"
+        ],
+        "starting_state": "POSTED",
+        "ending_state": "REVERSED",
+        "tables_written": [
+            "customer_payments",
+            "customers",
+            "khata_transactions",
+            "financial_accounts",
+            "account_movements",
+            "cash_ledgers",
+            "activity_log"
+        ],
+        "stock_effects": "NONE",
+        "inventory_ledger_effects": "NONE",
+        "ar_effects": "RESTORES_CUSTOMER_DUE_BALANCE",
+        "customer_ledger_effects": "POSTS_COMPENSATING_KHATA_TRANSACTION_TYPE_DEBIT",
+        "ap_effects": "NONE",
+        "supplier_ledger_effects": "NONE",
+        "financial_account_effects": "DECREMENTS_FINANCIAL_ACCOUNT_BALANCE",
+        "account_ledger_effects": "POSTS_REVERSAL_OUTFLOW_MOVEMENT",
+        "cash_effects": "POSTS_CASH_DRAWER_OUTFLOW_CORRECTION",
+        "audit_effects": "LOGS_PAYMENT_REVERSAL",
+        "print_document_effects": "REVERSAL_VOUCHER",
+        "sync_effects": "SERVER_MANAGED",
+        "reversal_path": "IRREVERSIBLE",
+        "p1_references": [],
+        "p2_references": [],
+        "p3_gap_ids": [],
+        "source_evidence": "api/app/Http/Controllers/Api/V1/CustomerPaymentController.php@reverse, api/app/Services/CustomerPaymentService.php@reversePayment",
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "FLOW-016": {
+        "flow_id": "FLOW-016",
+        "flow_name": "Purchase Cancellation & Stock/AP Reversion",
+        "flow_family": "REVERSAL",
+        "business_purpose": "Formally cancel a received purchase order, decrementing stock previously received and removing the supplier accounts payable liability.",
+        "initiating_actor": "STORE_MANAGER / OWNER",
+        "entry_ui": "Purchase Details View (CancelPurchaseModal.vue)",
+        "entry_route": "POST /api/v1/purchases/{id}/cancel",
+        "primary_mutations": [
+            "MUTATION-047"
+        ],
+        "primary_entities": [
+            "ENTITY-028",
+            "ENTITY-018",
+            "ENTITY-019",
+            "ENTITY-027",
+            "ENTITY-034",
+            "ENTITY-035"
+        ],
+        "starting_state": "RECEIVED",
+        "ending_state": "CANCELLED",
+        "tables_written": [
+            "purchases",
+            "branch_inventories",
+            "inventory_movements",
+            "suppliers",
+            "financial_accounts",
+            "account_movements",
+            "activity_log"
+        ],
+        "stock_effects": "DECREMENTS_RECEIVED_STOCK_QUANTITIES",
+        "inventory_ledger_effects": "POSTS_COMPENSATING_INVENTORY_MOVEMENTS",
+        "ar_effects": "NONE",
+        "customer_ledger_effects": "NONE",
+        "ap_effects": "REDUCES_SUPPLIER_AP_BALANCE",
+        "supplier_ledger_effects": "UPDATES_SUPPLIER_BALANCE",
+        "financial_account_effects": "RESTORES_FINANCIAL_ACCOUNT_IF_PAID",
+        "account_ledger_effects": "POSTS_INFLOW_REVERSAL_MOVEMENT",
+        "cash_effects": "POSTS_CASH_DRAWER_INFLOW_CORRECTION",
+        "audit_effects": "LOGS_PURCHASE_CANCELLATION",
+        "print_document_effects": "CANCELLED_PURCHASE_BILL",
+        "sync_effects": "SERVER_MANAGED",
+        "reversal_path": "IRREVERSIBLE",
+        "p1_references": [],
+        "p2_references": [],
+        "p3_gap_ids": [
+            "P3-GAP-009"
+        ],
+        "source_evidence": "api/app/Http/Controllers/Api/V1/PurchaseController.php@cancel, api/app/Services/PurchaseService.php@cancelPurchase",
+        "verification_confidence": "SOURCE_VERIFIED_WITH_GAP",
+        "certification_status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "FLOW-017": {
+        "flow_id": "FLOW-017",
+        "flow_name": "Operating Expense Void & Account Restoration",
+        "flow_family": "REVERSAL",
+        "business_purpose": "Void an erroneous operating expense voucher, restoring liquid bank/cash account balances with compensating financial movement posting.",
+        "initiating_actor": "STORE_MANAGER / OWNER",
+        "entry_ui": "Expense Details View (VoidExpenseModal.vue)",
+        "entry_route": "POST /api/v1/expenses/{id}/void",
+        "primary_mutations": [
+            "MUTATION-059"
+        ],
+        "primary_entities": [
+            "ENTITY-031",
+            "ENTITY-034",
+            "ENTITY-035",
+            "ENTITY-037"
+        ],
+        "starting_state": "ACTIVE",
+        "ending_state": "VOIDED",
+        "tables_written": [
+            "expenses",
+            "financial_accounts",
+            "account_movements",
+            "cash_ledgers",
+            "activity_log"
+        ],
+        "stock_effects": "NONE",
+        "inventory_ledger_effects": "NONE",
+        "ar_effects": "NONE",
+        "customer_ledger_effects": "NONE",
+        "ap_effects": "NONE",
+        "supplier_ledger_effects": "NONE",
+        "financial_account_effects": "RESTORES_FINANCIAL_ACCOUNT_BALANCE",
+        "account_ledger_effects": "POSTS_COMPENSATING_INFLOW_MOVEMENT",
+        "cash_effects": "POSTS_CASH_DRAWER_INFLOW_CORRECTION",
+        "audit_effects": "LOGS_EXPENSE_VOID",
+        "print_document_effects": "VOIDED_EXPENSE_VOUCHER",
+        "sync_effects": "SERVER_MANAGED",
+        "reversal_path": "IRREVERSIBLE",
+        "p1_references": [],
+        "p2_references": [],
+        "p3_gap_ids": [],
+        "source_evidence": "api/app/Http/Controllers/Api/V1/ExpenseController.php@void, api/app/Services/ExpenseService.php@voidExpense",
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "FLOW-018": {
+        "flow_id": "FLOW-018",
+        "flow_name": "Inter-Account Fund Transfer Reversal",
+        "flow_family": "REVERSAL",
+        "business_purpose": "Reverse an erroneous inter-account bank/cash fund transfer by posting compensating opposing debit and credit movements.",
+        "initiating_actor": "OWNER / ACCOUNTANT",
+        "entry_ui": "Banking Transfer View (TransferReverseModal.vue)",
+        "entry_route": "POST /api/v1/account-transfers",
+        "primary_mutations": [
+            "MUTATION-065"
+        ],
+        "primary_entities": [
+            "ENTITY-036",
+            "ENTITY-034",
+            "ENTITY-035"
+        ],
+        "starting_state": "COMPLETED",
+        "ending_state": "REVERSED",
+        "tables_written": [
+            "account_transfers",
+            "financial_accounts",
+            "account_movements",
+            "activity_log"
+        ],
+        "stock_effects": "NONE",
+        "inventory_ledger_effects": "NONE",
+        "ar_effects": "NONE",
+        "customer_ledger_effects": "NONE",
+        "ap_effects": "NONE",
+        "supplier_ledger_effects": "NONE",
+        "financial_account_effects": "RESTORES_SOURCE_AND_DESTINATION_BALANCES",
+        "account_ledger_effects": "POSTS_TWO_COMPENSATING_ACCOUNT_MOVEMENTS",
+        "cash_effects": "NONE",
+        "audit_effects": "LOGS_TRANSFER_REVERSAL",
+        "print_document_effects": "TRANSFER_REVERSAL_RECEIPT",
+        "sync_effects": "SERVER_MANAGED",
+        "reversal_path": "IRREVERSIBLE",
+        "p1_references": [
+            "P1-GAP-013"
+        ],
+        "p2_references": [
+            "P2-GAP-018"
+        ],
+        "p3_gap_ids": [
+            "P3-GAP-010"
+        ],
+        "source_evidence": "api/app/Http/Controllers/Api/V1/AccountTransferController.php@store, api/app/Services/AccountMovementService.php@transfer",
+        "verification_confidence": "SOURCE_VERIFIED_WITH_GAP",
+        "certification_status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "FLOW-019": {
+        "flow_id": "FLOW-019",
+        "flow_name": "Manual Inventory Stock Adjustment",
+        "flow_family": "SUPPORTING",
+        "business_purpose": "Reconcile physical stock discrepancy identified during audit, updating branch quantity on hand and posting audit ledger movement.",
+        "initiating_actor": "STOCK_KEEPER / STORE_MANAGER",
+        "entry_ui": "Stock Audit Form (StockAdjustmentModal.vue)",
+        "entry_route": "POST /api/v1/inventory/adjust",
+        "primary_mutations": [
+            "MUTATION-027"
+        ],
+        "primary_entities": [
+            "ENTITY-018",
+            "ENTITY-019"
+        ],
+        "starting_state": "IN_STOCK / LOW_STOCK",
+        "ending_state": "IN_STOCK / LOW_STOCK",
+        "tables_written": [
+            "branch_inventories",
+            "inventory_movements",
+            "activity_log"
+        ],
+        "stock_effects": "MUTATES_QUANTITY_ON_HAND",
+        "inventory_ledger_effects": "POSTS_INVENTORY_MOVEMENT_ROW",
+        "ar_effects": "NONE",
+        "customer_ledger_effects": "NONE",
+        "ap_effects": "NONE",
+        "supplier_ledger_effects": "NONE",
+        "financial_account_effects": "NONE",
+        "account_ledger_effects": "NONE",
+        "cash_effects": "NONE",
+        "audit_effects": "RECORDED_IN_MOVEMENT_AND_AUDIT_LOG",
+        "print_document_effects": "STOCK_ADJUSTMENT_SLIP",
+        "sync_effects": "BRANCH_STOCK_DELTA_SYNC",
+        "reversal_path": "COMPENSATING_ADJUSTMENT",
+        "p1_references": [
+            "P1-GAP-003",
+            "P1-GAP-004"
+        ],
+        "p2_references": [
+            "P2-GAP-004"
+        ],
+        "p3_gap_ids": [
+            "P3-GAP-011"
+        ],
+        "source_evidence": "api/app/Http/Controllers/Api/V1/InventoryController.php@adjust, api/app/Services/InventoryService.php@adjustStock",
+        "verification_confidence": "SOURCE_VERIFIED_WITH_GAP",
+        "certification_status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "FLOW-020": {
+        "flow_id": "FLOW-020",
+        "flow_name": "Inter-Branch Stock Transfer",
+        "flow_family": "SUPPORTING",
+        "business_purpose": "Transfer physical product stock from source branch to destination branch with dual stock updates and balanced movement ledger entries.",
+        "initiating_actor": "STOCK_MANAGER",
+        "entry_ui": "Stock Transfer Form (StockTransferModal.vue)",
+        "entry_route": "POST /api/v1/inventory/transfer",
+        "primary_mutations": [
+            "MUTATION-028"
+        ],
+        "primary_entities": [
+            "ENTITY-018",
+            "ENTITY-019"
+        ],
+        "starting_state": "IN_STOCK",
+        "ending_state": "IN_STOCK / LOW_STOCK",
+        "tables_written": [
+            "branch_inventories",
+            "inventory_movements",
+            "activity_log"
+        ],
+        "stock_effects": "DECREMENTS_SOURCE_INCREMENTS_DESTINATION_STOCK",
+        "inventory_ledger_effects": "POSTS_TWO_INVENTORY_MOVEMENTS (OUT + IN)",
+        "ar_effects": "NONE",
+        "customer_ledger_effects": "NONE",
+        "ap_effects": "NONE",
+        "supplier_ledger_effects": "NONE",
+        "financial_account_effects": "NONE",
+        "account_ledger_effects": "NONE",
+        "cash_effects": "NONE",
+        "audit_effects": "LOGS_BRANCH_TRANSFER",
+        "print_document_effects": "DISPATCH_TRANSFER_NOTE",
+        "sync_effects": "CROSS_BRANCH_SYNC",
+        "reversal_path": "COMPENSATING_TRANSFER",
+        "p1_references": [
+            "P1-GAP-013"
+        ],
+        "p2_references": [
+            "P2-GAP-005"
+        ],
+        "p3_gap_ids": [
+            "P3-GAP-012"
+        ],
+        "source_evidence": "api/app/Http/Controllers/Api/V1/InventoryController.php@transfer, api/app/Services/InventoryService.php@transferStock",
+        "verification_confidence": "SOURCE_VERIFIED_WITH_GAP",
+        "certification_status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "FLOW-021": {
+        "flow_id": "FLOW-021",
+        "flow_name": "Financial Account Direct Capital Injection",
+        "flow_family": "SUPPORTING",
+        "business_purpose": "Deposit owner equity / capital inflow into business financial account, incrementing liquid asset balance and recording ledger movement.",
+        "initiating_actor": "BUSINESS_OWNER / ACCOUNTANT",
+        "entry_ui": "Banking Account View (CapitalInModal.vue)",
+        "entry_route": "POST /api/v1/financial-accounts/{id}/capital-in",
+        "primary_mutations": [
+            "MUTATION-063"
+        ],
+        "primary_entities": [
+            "ENTITY-034",
+            "ENTITY-035"
+        ],
+        "starting_state": "ACTIVE",
+        "ending_state": "ACTIVE",
+        "tables_written": [
+            "financial_accounts",
+            "account_movements",
+            "activity_log"
+        ],
+        "stock_effects": "NONE",
+        "inventory_ledger_effects": "NONE",
+        "ar_effects": "NONE",
+        "customer_ledger_effects": "NONE",
+        "ap_effects": "NONE",
+        "supplier_ledger_effects": "NONE",
+        "financial_account_effects": "INCREMENTS_FINANCIAL_ACCOUNT_BALANCE",
+        "account_ledger_effects": "POSTS_INFLOW_CAPITAL_MOVEMENT",
+        "cash_effects": "NONE",
+        "audit_effects": "LOGS_CAPITAL_INJECTION",
+        "print_document_effects": "CAPITAL_DEPOSIT_RECEIPT",
+        "sync_effects": "SERVER_MANAGED",
+        "reversal_path": "FLOW-022 (Capital Drawing)",
+        "p1_references": [],
+        "p2_references": [],
+        "p3_gap_ids": [],
+        "source_evidence": "api/app/Http/Controllers/Api/V1/FinancialAccountController.php@capitalIn, api/app/Services/AccountMovementService.php@postInflow",
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "FLOW-022": {
+        "flow_id": "FLOW-022",
+        "flow_name": "Financial Account Direct Capital Drawing",
+        "flow_family": "SUPPORTING",
+        "business_purpose": "Withdraw owner drawing from financial account, decrementing account balance and recording audit movement.",
+        "initiating_actor": "BUSINESS_OWNER",
+        "entry_ui": "Banking Account View (CapitalOutModal.vue)",
+        "entry_route": "POST /api/v1/financial-accounts/{id}/capital-out",
+        "primary_mutations": [
+            "MUTATION-064"
+        ],
+        "primary_entities": [
+            "ENTITY-034",
+            "ENTITY-035"
+        ],
+        "starting_state": "ACTIVE",
+        "ending_state": "ACTIVE",
+        "tables_written": [
+            "financial_accounts",
+            "account_movements",
+            "activity_log"
+        ],
+        "stock_effects": "NONE",
+        "inventory_ledger_effects": "NONE",
+        "ar_effects": "NONE",
+        "customer_ledger_effects": "NONE",
+        "ap_effects": "NONE",
+        "supplier_ledger_effects": "NONE",
+        "financial_account_effects": "DECREMENTS_FINANCIAL_ACCOUNT_BALANCE",
+        "account_ledger_effects": "POSTS_OUTFLOW_CAPITAL_MOVEMENT",
+        "cash_effects": "NONE",
+        "audit_effects": "LOGS_CAPITAL_DRAWING",
+        "print_document_effects": "DRAWING_VOUCHER",
+        "sync_effects": "SERVER_MANAGED",
+        "reversal_path": "FLOW-021 (Capital Injection)",
+        "p1_references": [],
+        "p2_references": [],
+        "p3_gap_ids": [],
+        "source_evidence": "api/app/Http/Controllers/Api/V1/FinancialAccountController.php@capitalOut, api/app/Services/AccountMovementService.php@postOutflow",
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "FLOW-023": {
+        "flow_id": "FLOW-023",
+        "flow_name": "Direct Operating Expense Disbursal",
+        "flow_family": "SUPPORTING",
+        "business_purpose": "Disburse operational expense, debiting financial account/cash drawer, posting account movement, and categorizing in P&L.",
+        "initiating_actor": "CASHIER / ACCOUNTANT",
+        "entry_ui": "Expense Entry Modal (ExpenseCreateModal.vue)",
+        "entry_route": "POST /api/v1/expenses",
+        "primary_mutations": [
+            "MUTATION-056"
+        ],
+        "primary_entities": [
+            "ENTITY-031",
+            "ENTITY-032",
+            "ENTITY-034",
+            "ENTITY-035",
+            "ENTITY-037"
+        ],
+        "starting_state": "EXPENSE_ENTRY",
+        "ending_state": "ACTIVE",
+        "tables_written": [
+            "expenses",
+            "financial_accounts",
+            "account_movements",
+            "cash_ledgers",
+            "activity_log"
+        ],
+        "stock_effects": "NONE",
+        "inventory_ledger_effects": "NONE",
+        "ar_effects": "NONE",
+        "customer_ledger_effects": "NONE",
+        "ap_effects": "NONE",
+        "supplier_ledger_effects": "NONE",
+        "financial_account_effects": "DECREMENTS_FINANCIAL_ACCOUNT_BALANCE",
+        "account_ledger_effects": "POSTS_OUTFLOW_EXPENSE_MOVEMENT",
+        "cash_effects": "POSTS_CASH_DRAWER_OUTFLOW_IF_CASH",
+        "audit_effects": "LOGS_EXPENSE_DISBURSAL",
+        "print_document_effects": "EXPENSE_VOUCHER_RECEIPT",
+        "sync_effects": "SERVER_OR_OFFLINE_SYNC",
+        "reversal_path": "FLOW-017 (Expense Void)",
+        "p1_references": [
+            "P1-GAP-012"
+        ],
+        "p2_references": [
+            "P2-GAP-016"
+        ],
+        "p3_gap_ids": [
+            "P3-GAP-013"
+        ],
+        "source_evidence": "api/app/Http/Controllers/Api/V1/ExpenseController.php@store, api/app/Services/ExpenseService.php@createExpense",
+        "verification_confidence": "SOURCE_VERIFIED_WITH_GAP",
+        "certification_status": "CERTIFIED_WITH_KNOWN_GAP"
+    }
+}

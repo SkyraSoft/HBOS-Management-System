@@ -1,0 +1,5067 @@
+{
+    "tabs": [
+        {
+            "file": "views\/ExpensesView.vue",
+            "tab": "add"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tab": "overview"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tab": "categories"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tab": "reports"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tab": "categories"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tab": "brands"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tab": "products"
+        },
+        {
+            "file": "views\/ReportsView.vue",
+            "tab": "sales"
+        },
+        {
+            "file": "views\/ReportsView.vue",
+            "tab": "inventory"
+        },
+        {
+            "file": "views\/ReportsView.vue",
+            "tab": "customers"
+        },
+        {
+            "file": "views\/ReportsView.vue",
+            "tab": "suppliers"
+        },
+        {
+            "file": "views\/ReportsView.vue",
+            "tab": "expenses"
+        },
+        {
+            "file": "views\/ReportsView.vue",
+            "tab": "accounts"
+        },
+        {
+            "file": "views\/ReportsView.vue",
+            "tab": "branches"
+        },
+        {
+            "file": "views\/SettingsView.vue",
+            "tab": "users"
+        },
+        {
+            "file": "views\/SettingsView.vue",
+            "tab": "roles"
+        },
+        {
+            "file": "views\/SettingsView.vue",
+            "tab": "receipts"
+        },
+        {
+            "file": "views\/SettingsView.vue",
+            "tab": "security"
+        },
+        {
+            "file": "views\/SettingsView.vue",
+            "tab": "sync"
+        },
+        {
+            "file": "views\/SettingsView.vue",
+            "tab": "offline-sync"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tab": "supplier-intelligence"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tab": "payables"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tab": "purchase-orders"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tab": "supplier-performance"
+        },
+        {
+            "file": "views\/reports1View.vue",
+            "tab": "Overview"
+        },
+        {
+            "file": "views\/reports1View.vue",
+            "tab": "Sales"
+        },
+        {
+            "file": "views\/reports1View.vue",
+            "tab": "Purchases"
+        },
+        {
+            "file": "views\/reports1View.vue",
+            "tab": "Profit"
+        },
+        {
+            "file": "views\/reports1View.vue",
+            "tab": "Expenses"
+        },
+        {
+            "file": "views\/reports1View.vue",
+            "tab": "Inventory"
+        },
+        {
+            "file": "views\/reports1View.vue",
+            "tab": "Customers"
+        },
+        {
+            "file": "views\/reports1View.vue",
+            "tab": "Suppliers"
+        },
+        {
+            "file": "views\/reports1View.vue",
+            "tab": "Products"
+        },
+        {
+            "file": "views\/reports1View.vue",
+            "tab": "Stock Movement"
+        }
+    ],
+    "modals": [
+        {
+            "file": "views\/CustomerView.vue",
+            "tag": "<section v-if=\"!isModal\" class=\"page\">"
+        },
+        {
+            "file": "views\/CustomerView.vue",
+            "tag": "<div class=\"modal fade\" id=\"addCustomerModal\" tabindex=\"-1\">"
+        },
+        {
+            "file": "views\/CustomerView.vue",
+            "tag": "<div class=\"modal-dialog modal-lg\">"
+        },
+        {
+            "file": "views\/CustomerView.vue",
+            "tag": "<div class=\"modal-content\">"
+        },
+        {
+            "file": "views\/CustomerView.vue",
+            "tag": "<div class=\"modal-header\">"
+        },
+        {
+            "file": "views\/CustomerView.vue",
+            "tag": "<div class=\"modal-body\">"
+        },
+        {
+            "file": "views\/CustomerView.vue",
+            "tag": "<div class=\"modal-footer\">"
+        },
+        {
+            "file": "views\/CustomerView.vue",
+            "tag": "<div class=\"modal fade\" id=\"editCustomerModal\" tabindex=\"-1\">"
+        },
+        {
+            "file": "views\/CustomerView.vue",
+            "tag": "<div class=\"modal-dialog\">"
+        },
+        {
+            "file": "views\/CustomerView.vue",
+            "tag": "<div class=\"modal-content\">"
+        },
+        {
+            "file": "views\/CustomerView.vue",
+            "tag": "<div class=\"modal-header\">"
+        },
+        {
+            "file": "views\/CustomerView.vue",
+            "tag": "<div class=\"modal-body\">"
+        },
+        {
+            "file": "views\/CustomerView.vue",
+            "tag": "<div class=\"modal-footer\">"
+        },
+        {
+            "file": "views\/CustomerView.vue",
+            "tag": "<div class=\"modal fade\" id=\"viewCustomerModal\" tabindex=\"-1\">"
+        },
+        {
+            "file": "views\/CustomerView.vue",
+            "tag": "<div class=\"modal-dialog\">"
+        },
+        {
+            "file": "views\/CustomerView.vue",
+            "tag": "<div class=\"modal-content\">"
+        },
+        {
+            "file": "views\/CustomerView.vue",
+            "tag": "<div class=\"modal-header\">"
+        },
+        {
+            "file": "views\/CustomerView.vue",
+            "tag": "<div class=\"modal-body\" v-if=\"viewingCustomer\">"
+        },
+        {
+            "file": "views\/CustomerView.vue",
+            "tag": "<div class=\"modal-footer\">"
+        },
+        {
+            "file": "views\/CustomerView.vue",
+            "tag": "<div class=\"modal fade\" id=\"recordPaymentModal\" tabindex=\"-1\">"
+        },
+        {
+            "file": "views\/CustomerView.vue",
+            "tag": "<div class=\"modal-dialog\">"
+        },
+        {
+            "file": "views\/CustomerView.vue",
+            "tag": "<div class=\"modal-content\">"
+        },
+        {
+            "file": "views\/CustomerView.vue",
+            "tag": "<div class=\"modal-header\">"
+        },
+        {
+            "file": "views\/CustomerView.vue",
+            "tag": "<div class=\"modal-body\">"
+        },
+        {
+            "file": "views\/CustomerView.vue",
+            "tag": "<div class=\"modal-footer justify-content-between\">"
+        },
+        {
+            "file": "views\/EmployeesView.vue",
+            "tag": "<div v-if=\"showAddModal\" class=\"modal fade show d-block\" style=\"background: rgba(0,0,0,0.5); z-index"
+        },
+        {
+            "file": "views\/EmployeesView.vue",
+            "tag": "<div class=\"modal-dialog modal-dialog-centered\">"
+        },
+        {
+            "file": "views\/EmployeesView.vue",
+            "tag": "<div class=\"modal-content border-0 shadow-lg rounded-4 overflow-hidden\">"
+        },
+        {
+            "file": "views\/EmployeesView.vue",
+            "tag": "<div class=\"modal-header border-0 bg-light px-4 py-3\">"
+        },
+        {
+            "file": "views\/EmployeesView.vue",
+            "tag": "<div class=\"modal-body px-4 py-3\">"
+        },
+        {
+            "file": "views\/EmployeesView.vue",
+            "tag": "<div class=\"modal-footer border-0 bg-light px-4 py-2.5\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div v-if=\"showExpenseModal\" class=\"expense-modal-overlay\" @click.self=\"closeExpenseModal\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div class=\"expense-modal-card\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div class=\"expense-modal-header\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div class=\"expense-modal-header-left\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div class=\"expense-modal-icon\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div class=\"expense-modal-header-text\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div class=\"expense-modal-body\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div class=\"expense-modal-layout\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div class=\"modal-action-buttons mt-3\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div v-if=\"showProductModal\" class=\"modal fade show d-block\" style=\"background: rgba(0,0,0,0.5); z-i"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"modal-dialog modal-dialog-centered modal-lg\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"modal-content border-0 shadow-lg rounded-4 overflow-hidden\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"modal-header border-0 bg-light px-4 py-3\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"modal-body px-4 py-3\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"modal-footer border-0 bg-light px-4 py-2.5\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div v-if=\"showRestockModal && restockProduct\" class=\"modal fade show d-block\" style=\"background: rg"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"modal-dialog modal-dialog-centered\" style=\"max-width: 420px;\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"modal-content border-0 shadow-lg rounded-4 overflow-hidden\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"modal-header border-0 bg-light px-4 py-3\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"modal-body px-4 py-3\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"modal-footer border-0 bg-light px-4 py-2.5\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div v-if=\"showViewCategoryModal && selectedCategoryForView\" class=\"modal fade show d-block\" style=\""
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"modal-dialog modal-dialog-centered\" style=\"max-width: 500px;\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"modal-content border-0 shadow-lg rounded-4 overflow-hidden\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"modal-header border-0 bg-light px-4 py-3\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"modal-body px-4 py-3\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"modal-footer border-0 bg-light px-4 py-2.5\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div v-if=\"showCategoryModal\" class=\"modal fade show d-block\" style=\"background: rgba(0,0,0,0.5); z-"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"modal-dialog modal-dialog-centered\" style=\"max-width: 480px;\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"modal-content border-0 shadow-lg rounded-4 overflow-hidden\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"modal-header border-0 bg-light px-4 py-3\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"modal-body px-4 py-3\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"modal-footer border-0 bg-light px-4 py-2.5\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div v-if=\"showBrandModal\" class=\"modal fade show d-block\" style=\"background: rgba(0,0,0,0.5); z-ind"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"modal-dialog modal-dialog-centered\" style=\"max-width: 440px;\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"modal-content border-0 shadow-lg rounded-4 overflow-hidden\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"modal-header border-0 bg-light px-4 py-3\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"modal-body px-4 py-3\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"modal-footer border-0 bg-light px-4 py-2.5\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div v-if=\"showDetailsModal && selectedProductDetails\" class=\"modal fade show d-block\" style=\"backgr"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"modal-dialog modal-dialog-centered\" style=\"max-width: 520px;\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"modal-content border-0 shadow-lg rounded-4 overflow-hidden\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"modal-header border-0 bg-light px-4 py-3\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"modal-body px-4 py-3\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"modal-footer border-0 bg-light px-4 py-2.5\">"
+        },
+        {
+            "file": "views\/KhataView.vue",
+            "tag": "<div v-if=\"showPaymentModal\" class=\"khata-modal-overlay\" @click.self=\"closePaymentModal\">"
+        },
+        {
+            "file": "views\/KhataView.vue",
+            "tag": "<div class=\"khata-modal-card\">"
+        },
+        {
+            "file": "views\/KhataView.vue",
+            "tag": "<div class=\"khata-modal-header\">"
+        },
+        {
+            "file": "views\/KhataView.vue",
+            "tag": "<div class=\"khata-modal-header-left\">"
+        },
+        {
+            "file": "views\/KhataView.vue",
+            "tag": "<div class=\"khata-modal-icon\">"
+        },
+        {
+            "file": "views\/KhataView.vue",
+            "tag": "<div class=\"khata-modal-header-text\">"
+        },
+        {
+            "file": "views\/KhataView.vue",
+            "tag": "<div class=\"khata-modal-body\">"
+        },
+        {
+            "file": "views\/KhataView.vue",
+            "tag": "<div v-if=\"showAddCustomerModal\" class=\"khata-modal-overlay\" @click.self=\"closeAddCustomerModal\" sty"
+        },
+        {
+            "file": "views\/KhataView.vue",
+            "tag": "<div class=\"khata-modal-card\" style=\"max-width: 460px;\">"
+        },
+        {
+            "file": "views\/KhataView.vue",
+            "tag": "<div class=\"khata-modal-header\">"
+        },
+        {
+            "file": "views\/KhataView.vue",
+            "tag": "<div class=\"khata-modal-header-left\">"
+        },
+        {
+            "file": "views\/KhataView.vue",
+            "tag": "<div class=\"khata-modal-icon bg-primary text-white\">"
+        },
+        {
+            "file": "views\/KhataView.vue",
+            "tag": "<div class=\"khata-modal-header-text\">"
+        },
+        {
+            "file": "views\/KhataView.vue",
+            "tag": "<div class=\"khata-modal-body\">"
+        },
+        {
+            "file": "views\/LoginView.vue",
+            "tag": "<div class=\"register-overlay\">"
+        },
+        {
+            "file": "views\/PosSaleView.vue",
+            "tag": "<section class=\"success-overlay\" :class=\"{ show: showInvoiceModal }\" @click.self=\"handleCloseInvoice"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-edit-sidebar\" v-if=\"!isModal\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-edit-sidebar\" v-if=\"!isModal\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div v-if=\"showBrandModal\" class=\"modal fade show d-block\" tabindex=\"-1\" style=\"z-index: 1050; backg"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"modal-dialog modal-dialog-centered\" style=\"max-width: 480px; width: 92%; margin: 1.75rem"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"modal-content border-0 shadow-lg rounded-4 overflow-hidden\" style=\"background: #ffffff;\""
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"modal-header bg-light border-0 px-4 py-3 d-flex justify-content-between align-items-cent"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"modal-body px-4 py-3\" style=\"background: #ffffff;\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div \r\n                    class=\"pv-cat-modal-dropzone\" \r\n                    :class=\"{ 'dragging':"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-cat-modal-drop-icon\" style=\"font-size: 22px; margin-bottom: 2px;\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-cat-modal-drop-text\" style=\"font-size: 13px;\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-cat-modal-drop-subtext\" style=\"font-size: 11px;\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div v-else class=\"pv-cat-modal-preview-box\" @click.stop>"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-cat-modal-preview-info\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"modal-footer bg-light border-0 px-4 py-3 d-flex justify-content-end gap-2\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div v-if=\"showCategoryModal\" class=\"modal fade show d-block\" tabindex=\"-1\" style=\"z-index: 1050; ba"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"modal-dialog modal-dialog-centered modal-dialog-scrollable\" style=\"max-width: 680px; wid"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"modal-content border-0 shadow-lg rounded-4 overflow-hidden\" style=\"max-height: 88vh; bac"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"modal-header bg-light border-0 px-4 py-3 d-flex justify-content-between align-items-cent"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"modal-body px-4 py-3\" style=\"background: #ffffff; overflow-y: auto;\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-cat-modal-section\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-cat-modal-divider\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-cat-modal-row\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-cat-modal-field\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-cat-modal-field\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-cat-modal-section\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-cat-modal-divider\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-cat-modal-field mb-2\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-cat-modal-radio-group\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-cat-modal-field mb-2\" v-if=\"categoryForm.categoryType === 'sub'\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-cat-modal-field\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-cat-modal-section\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-cat-modal-divider\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-cat-modal-field\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div \r\n                      class=\"pv-cat-modal-dropzone\" \r\n                      :class=\"{ 'draggi"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-cat-modal-drop-icon\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-cat-modal-drop-text\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-cat-modal-drop-subtext\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div v-else class=\"pv-cat-modal-preview-box\" @click.stop>"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-cat-modal-preview-info\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-cat-modal-section mb-1\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-cat-modal-divider\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-cat-modal-settings-box\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-cat-modal-settings-title\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-cat-modal-settings-desc\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"modal-footer bg-light border-0 px-4 py-2.5 d-flex justify-content-end gap-2\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div v-if=\"showViewCategoryModal && selectedCategoryForView\" class=\"modal fade show d-block\" tabinde"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"modal-dialog modal-dialog-centered\" style=\"max-width: 520px; width: 95%; margin: 1.75rem"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"modal-content border-0 shadow-lg rounded-4 overflow-hidden\" style=\"background: #ffffff;\""
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"modal-header bg-light border-0 px-4 py-3 d-flex justify-content-between align-items-cent"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"modal-body px-4 py-3\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"modal-footer bg-light border-0 px-4 py-2.5 d-flex justify-content-end gap-2\">"
+        },
+        {
+            "file": "views\/PurchaseView.vue",
+            "tag": "<div class=\"purchase-header\" v-if=\"!isModal\">"
+        },
+        {
+            "file": "views\/RegisterView.vue",
+            "tag": "<div class=\"register-overlay\">"
+        },
+        {
+            "file": "views\/SupplierView.vue",
+            "tag": "<div v-if=\"showSupplierModal\" class=\"supplier-modal-overlay\" @click.self=\"showSupplierModal = false\""
+        },
+        {
+            "file": "views\/SupplierView.vue",
+            "tag": "<div class=\"supplier-modal-card\">"
+        },
+        {
+            "file": "views\/SupplierView.vue",
+            "tag": "<div class=\"supplier-modal-header\">"
+        },
+        {
+            "file": "views\/SupplierView.vue",
+            "tag": "<div class=\"supplier-modal-header-left\">"
+        },
+        {
+            "file": "views\/SupplierView.vue",
+            "tag": "<div class=\"supplier-modal-icon\">"
+        },
+        {
+            "file": "views\/SupplierView.vue",
+            "tag": "<div class=\"supplier-modal-header-text\">"
+        },
+        {
+            "file": "views\/SupplierView.vue",
+            "tag": "<div class=\"supplier-modal-body\">"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div v-if=\"showSupplierModal\" class=\"supplier-modal-overlay\" @click.self=\"showSupplierModal = false\""
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div class=\"supplier-modal-card\">"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div class=\"supplier-modal-header\">"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div class=\"supplier-modal-header-left\">"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div class=\"supplier-modal-icon\">"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div class=\"supplier-modal-header-text\">"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div class=\"supplier-modal-body\">"
+        },
+        {
+            "file": "views\/Settings\/CategoriesView.vue",
+            "tag": "<div v-if=\"showCategoryModal\" class=\"modal fade show d-block\" style=\"background: rgba(0,0,0,0.5); z-"
+        },
+        {
+            "file": "views\/Settings\/CategoriesView.vue",
+            "tag": "<div class=\"modal-dialog modal-dialog-centered\" style=\"max-width: 480px;\">"
+        },
+        {
+            "file": "views\/Settings\/CategoriesView.vue",
+            "tag": "<div class=\"modal-content border-0 shadow-lg rounded-4 overflow-hidden\">"
+        },
+        {
+            "file": "views\/Settings\/CategoriesView.vue",
+            "tag": "<div class=\"modal-header border-0 bg-light px-4 py-3\">"
+        },
+        {
+            "file": "views\/Settings\/CategoriesView.vue",
+            "tag": "<div class=\"modal-body px-4 py-3\">"
+        },
+        {
+            "file": "views\/Settings\/CategoriesView.vue",
+            "tag": "<div class=\"modal-footer border-0 bg-light px-4 py-2.5\">"
+        },
+        {
+            "file": "views\/Settings\/CategoriesView.vue",
+            "tag": "<div v-if=\"showViewModal && selectedCategory\" class=\"modal fade show d-block\" style=\"background: rgb"
+        },
+        {
+            "file": "views\/Settings\/CategoriesView.vue",
+            "tag": "<div class=\"modal-dialog modal-dialog-centered\" style=\"max-width: 500px;\">"
+        },
+        {
+            "file": "views\/Settings\/CategoriesView.vue",
+            "tag": "<div class=\"modal-content border-0 shadow-lg rounded-4 overflow-hidden\">"
+        },
+        {
+            "file": "views\/Settings\/CategoriesView.vue",
+            "tag": "<div class=\"modal-header border-0 bg-light px-4 py-3\">"
+        },
+        {
+            "file": "views\/Settings\/CategoriesView.vue",
+            "tag": "<div class=\"modal-body px-4 py-3\">"
+        },
+        {
+            "file": "views\/Settings\/CategoriesView.vue",
+            "tag": "<div class=\"modal-footer border-0 bg-light px-4 py-2.5\">"
+        },
+        {
+            "file": "views\/Settings\/UsersView.vue",
+            "tag": "<div v-if=\"showUserModal\" class=\"user-modal-overlay\" @click.self=\"closeUserModal\">"
+        },
+        {
+            "file": "views\/Settings\/UsersView.vue",
+            "tag": "<div class=\"user-modal-dialog shadow-lg\">"
+        },
+        {
+            "file": "views\/Settings\/UsersView.vue",
+            "tag": "<div class=\"user-modal-header\">"
+        },
+        {
+            "file": "views\/Settings\/UsersView.vue",
+            "tag": "<div class=\"modal-icon-badge\" :class=\"isEditMode ? 'bg-primary-subtle text-primary' : 'bg-success-su"
+        },
+        {
+            "file": "components\/ActionModalFactory.vue",
+            "tag": "<div v-if=\"isVisible\" class=\"modal-backdrop fade show\" style=\"z-index: 1055;\">"
+        },
+        {
+            "file": "components\/ActionModalFactory.vue",
+            "tag": "<div \r\n    v-if=\"isVisible\" \r\n    class=\"modal fade show d-block\" \r\n    tabindex=\"-1\" \r\n    style=\"z"
+        },
+        {
+            "file": "components\/ActionModalFactory.vue",
+            "tag": "<div class=\"modal-dialog modal-dialog-centered\">"
+        },
+        {
+            "file": "components\/ActionModalFactory.vue",
+            "tag": "<div class=\"modal-content border-0 shadow-lg rounded-4 overflow-hidden\">"
+        },
+        {
+            "file": "components\/ActionModalFactory.vue",
+            "tag": "<div class=\"modal-header bg-light border-0 px-4 py-3\">"
+        },
+        {
+            "file": "components\/ActionModalFactory.vue",
+            "tag": "<div class=\"modal-body p-4\">"
+        },
+        {
+            "file": "components\/ActionModalFactory.vue",
+            "tag": "<div class=\"modal-footer border-0 px-4 py-3 bg-light d-flex justify-content-end gap-2\">"
+        },
+        {
+            "file": "sync\/ExitGuardModal.vue",
+            "tag": "<div v-if=\"visible\" class=\"exit-guard-overlay\">"
+        },
+        {
+            "file": "sync\/ExitGuardModal.vue",
+            "tag": "<div class=\"exit-guard-modal\">"
+        },
+        {
+            "file": "sync\/ExitGuardModal.vue",
+            "tag": "<div class=\"modal-header\">"
+        },
+        {
+            "file": "sync\/ExitGuardModal.vue",
+            "tag": "<div class=\"modal-body\">"
+        },
+        {
+            "file": "sync\/ExitGuardModal.vue",
+            "tag": "<div class=\"modal-footer\">"
+        },
+        {
+            "file": "layouts\/MainLayout.vue",
+            "tag": "<div \r\n    class=\"sidebar-overlay\" \r\n    :class=\"{ 'show': isSidebarOpen }\" \r\n    @click=\"toggleSide"
+        },
+        {
+            "file": "layouts\/ProductLayout.vue",
+            "tag": "<div \r\n    class=\"sidebar-overlay\" \r\n    :class=\"{ 'show': isSidebarOpen }\" \r\n    @click=\"toggleSide"
+        },
+        {
+            "file": "layouts\/SettingsLayout.vue",
+            "tag": "<div \r\n    class=\"sidebar-overlay\" \r\n    :class=\"{ 'show': isSidebarOpen }\" \r\n    @click=\"toggleSide"
+        }
+    ],
+    "forms": [
+        {
+            "file": "views\/AboutView.vue",
+            "index": 1,
+            "fields_count": 3,
+            "snippet": "<form class=\"setup-form\" id=\"businessForm\" novalidate=\"\">\r\n\r\n                <!-- BUSINESS NAME -->\r\n\r\n                <div class=\"field\">\r\n\r\n        "
+        },
+        {
+            "file": "views\/BusinessSetup1View.vue",
+            "index": 1,
+            "fields_count": 6,
+            "snippet": "<form class=\"setup-form\" id=\"businessSetupForm\" novalidate=\"\">\r\n\r\n\r\n                        <!-- BUSINESS NAME + TYPE -->\r\n\r\n                        <"
+        },
+        {
+            "file": "views\/EmployeesView.vue",
+            "index": 1,
+            "fields_count": 5,
+            "snippet": "<form @submit.prevent=\"submitAddEmployee\" id=\"addEmployeeForm\">\r\n            <div class=\"modal-body px-4 py-3\">\r\n              <div class=\"mb-3\">\r\n   "
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "index": 1,
+            "fields_count": 8,
+            "snippet": "<form @submit.prevent=\"submitExpenseForm\">\r\n                <div class=\"row g-3\">\r\n                  <div class=\"col-12\">\r\n                    <label "
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "index": 2,
+            "fields_count": 1,
+            "snippet": "<form @submit.prevent=\"handleAddCategory\" class=\"d-flex gap-2 mb-3\">\r\n                      <input type=\"text\" class=\"form-control form-control-sm\" v-"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "index": 3,
+            "fields_count": 8,
+            "snippet": "<form @submit.prevent=\"submitExpenseForm\" id=\"expenseModalForm\">\r\n              <div class=\"row g-3\">\r\n                <div class=\"col-12\">\r\n         "
+        },
+        {
+            "file": "views\/InformationView.vue",
+            "index": 1,
+            "fields_count": 7,
+            "snippet": "<form class=\"business-form\" id=\"businessForm\">\r\n\r\n\r\n                    <!-- Business Name -->\r\n\r\n                    <div class=\"form-row\">\r\n\r\n      "
+        },
+        {
+            "file": "views\/KhataView.vue",
+            "index": 1,
+            "fields_count": 7,
+            "snippet": "<form class=\"form-card\" id=\"paymentForm\" @submit.prevent=\"submitPayment\">\r\n              <div class=\"form-group mb-3\" style=\"position: relative;\">\r\n  "
+        },
+        {
+            "file": "views\/LoginView.vue",
+            "index": 1,
+            "fields_count": 3,
+            "snippet": "<form @submit.prevent=\"handleLogin\" id=\"loginForm\" novalidate >\r\n                    \r\n\r\n                        <!-- EMAIL \/ PHONE -->\r\n\r\n           "
+        },
+        {
+            "file": "views\/RegisterView.vue",
+            "index": 1,
+            "fields_count": 7,
+            "snippet": "<form @submit.prevent=\"handleRegister\" novalidate >\r\n                    \r\n                    <div class=\"input-group-custom\" :class=\"{ 'has-error': "
+        },
+        {
+            "file": "views\/SupplierView.vue",
+            "index": 1,
+            "fields_count": 5,
+            "snippet": "<form @submit.prevent=\"saveSupplierForm\">\r\n            <div class=\"row g-3\">\r\n              <div class=\"col-md-6\">\r\n                <label class=\"form"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "index": 1,
+            "fields_count": 5,
+            "snippet": "<form @submit.prevent=\"saveSupplierForm\">\r\n            <div class=\"row g-3\">\r\n              <div class=\"col-md-6\">\r\n                <label class=\"form"
+        },
+        {
+            "file": "views\/Settings\/UsersView.vue",
+            "index": 1,
+            "fields_count": 6,
+            "snippet": "<form @submit.prevent=\"saveUser\" class=\"user-modal-body\">\r\n          <div class=\"row g-3\">\r\n            <!-- Full Name -->\r\n            <div class=\"co"
+        }
+    ],
+    "tables": [
+        {
+            "file": "views\/CustomerView.vue",
+            "index": 1,
+            "columns": [
+                "Customer",
+                "Total\r\n                                        Purchases",
+                "Outstanding",
+                "Credit\r\n                                        Limit",
+                "Last\r\n                                        Transaction",
+                "Status",
+                "Actions"
+            ],
+            "snippet": "<table class=\"customers-table\">\r\n\r\n                            <thead>\r\n\r\n                          "
+        },
+        {
+            "file": "views\/DashboardView.vue",
+            "index": 1,
+            "columns": [
+                "Product",
+                "Units Sold",
+                "Net Sales"
+            ],
+            "snippet": "<table class=\"table table-hover align-middle mb-0 small\">\n                <thead class=\"table-light\""
+        },
+        {
+            "file": "views\/DashboardView.vue",
+            "index": 2,
+            "columns": [
+                "Product",
+                "SKU",
+                "Stock On Hand"
+            ],
+            "snippet": "<table class=\"table table-hover align-middle mb-0 small\">\n                <thead class=\"table-light\""
+        },
+        {
+            "file": "views\/DashboardView.vue",
+            "index": 3,
+            "columns": [
+                "Branch Name",
+                "Net Sales",
+                "Transactions",
+                "Gross Profit",
+                "Expenses",
+                "Cash Position"
+            ],
+            "snippet": "<table class=\"table table-hover align-middle mb-0 small\">\n            <thead class=\"table-light\">\n  "
+        },
+        {
+            "file": "views\/DashboardView.vue",
+            "index": 4,
+            "columns": [
+                "Reference",
+                "Type",
+                "Date",
+                "Amount",
+                "Status"
+            ],
+            "snippet": "<table class=\"table table-hover align-middle mb-0 small\">\n            <thead class=\"table-light\">\n  "
+        },
+        {
+            "file": "views\/EmployeesView.vue",
+            "index": 1,
+            "columns": [
+                "Employee",
+                "Role",
+                "Phone",
+                "Salary",
+                "Payment Cycle",
+                "Next Payment",
+                "Actions"
+            ],
+            "snippet": "<table class=\"table table-hover align-middle mb-0\">\r\n          <thead class=\"bg-light\">\r\n           "
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "index": 1,
+            "columns": [
+                "Date",
+                "Description",
+                "Category",
+                "Amount",
+                "Payment Method",
+                "Action"
+            ],
+            "snippet": "<table class=\"expense-table\">\r\n              <thead>\r\n                <tr>\r\n                  <th>Da"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "index": 2,
+            "columns": [
+                "Date",
+                "Description",
+                "Category",
+                "Amount",
+                "Status"
+            ],
+            "snippet": "<table class=\"expense-table\">\r\n              <thead>\r\n                <tr>\r\n                  <th>Da"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "index": 1,
+            "columns": [
+                "Product Name & SKU",
+                "Category",
+                "Brand",
+                "Cost (PKR)",
+                "Retail (PKR)",
+                "Margin %",
+                "Stock \/ Units",
+                "Stock Status",
+                "Actions",
+                "All Categories\r\n                  \r\n                    {{ c.name }}\r\n                  \r\n                  \r\n                    {{ s.name }}",
+                "All Brands\r\n                  {{ b.name }}",
+                "All Margins\r\n                  \u2265 50% Profit\r\n                  \u2265 30% Profit\r\n                  &lt; 15% Profit",
+                "All Stock\r\n                  High Stock (\u2265 50)\r\n                  Healthy Stock (> Min)\r\n                  Low Stock (\u2264 Min)\r\n                  Out of Stock (0)",
+                "All Status\r\n                  In Stock\r\n                  Low Stock\r\n                  Out of Stock",
+                "Reset"
+            ],
+            "snippet": "<table class=\"inv-table\">\r\n          <thead>\r\n            <!-- 1. COLUMN TITLES -->\r\n            <tr"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "index": 2,
+            "columns": [
+                "Category Name",
+                "Type",
+                "Parent Category",
+                "Associated Products",
+                "Status",
+                "Actions"
+            ],
+            "snippet": "<table class=\"inv-table\">\r\n          <thead>\r\n            <tr>\r\n              <th style=\"width: 320p"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "index": 3,
+            "columns": [
+                "Variant",
+                "SKU",
+                "Price (Rs)",
+                "Stock"
+            ],
+            "snippet": "<table class=\"table table-sm table-bordered bg-white\" style=\"font-size: 13px;\">\r\n                   "
+        },
+        {
+            "file": "views\/KhataView.vue",
+            "index": 1,
+            "columns": [
+                "Customer",
+                "Outstanding Balance",
+                "Overdue",
+                "Status",
+                "Action"
+            ],
+            "snippet": "<table class=\"khata-table\">\r\n            <thead>\r\n              <tr>\r\n                <th>Customer<\/"
+        },
+        {
+            "file": "views\/PosSaleView.vue",
+            "index": 1,
+            "columns": [
+                "Item",
+                "Qty",
+                "Amount"
+            ],
+            "snippet": "<table class=\"invoice-table\">\r\n                            <thead>\r\n                                "
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "index": 1,
+            "columns": [
+                "Product",
+                "Brand",
+                "Category",
+                "Subcategory",
+                "SKU",
+                "Purchase",
+                "Selling",
+                "Stock",
+                "Status",
+                "Action"
+            ],
+            "snippet": "<table class=\"pv-table\">\r\n                <thead>\r\n                  <tr>\r\n                    <th>P"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "index": 2,
+            "columns": [
+                "Variation",
+                "SKU",
+                "Price (PKR)",
+                "Stock",
+                "Active",
+                "Action"
+            ],
+            "snippet": "<table class=\"table table-hover align-middle mb-0 small\">\r\n                        <thead class=\"bg-"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "index": 3,
+            "columns": [],
+            "snippet": "<table class=\"pv-detail-table\">\r\n                  <tbody>\r\n                    <tr><td class=\"pv-dt"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "index": 4,
+            "columns": [],
+            "snippet": "<table class=\"pv-detail-table\">\r\n                  <tbody>\r\n                    <tr>\r\n              "
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "index": 5,
+            "columns": [],
+            "snippet": "<table class=\"pv-detail-table\">\r\n                  <tbody>\r\n                    <tr>\r\n              "
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "index": 6,
+            "columns": [
+                "Variation",
+                "SKU",
+                "Price (PKR)",
+                "Stock",
+                "Active",
+                "Action"
+            ],
+            "snippet": "<table class=\"table table-hover align-middle mb-0 small\">\r\n                        <thead class=\"bg-"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "index": 7,
+            "columns": [
+                "Category Name",
+                "Type",
+                "Associated Products",
+                "Status",
+                "Action"
+            ],
+            "snippet": "<table class=\"pv-table\">\r\n                <thead>\r\n                  <tr>\r\n                    <th>C"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "index": 8,
+            "columns": [
+                "Brand Name",
+                "Active Categories",
+                "Associated Products",
+                "Action"
+            ],
+            "snippet": "<table class=\"pv-table\">\r\n                <thead>\r\n                  <tr>\r\n                    <th>B"
+        },
+        {
+            "file": "views\/ProfilecustomerView.vue",
+            "index": 1,
+            "columns": [
+                "Date",
+                "Description",
+                "Debit (Rs)",
+                "Credit (Rs)",
+                "Balance"
+            ],
+            "snippet": "<table class=\"ledger-table\">\r\n\r\n                            <thead>\r\n\r\n                             "
+        },
+        {
+            "file": "views\/PurchaseView.vue",
+            "index": 1,
+            "columns": [
+                "Purchase",
+                "Supplier",
+                "Items",
+                "Total (PKR)",
+                "Paid (PKR)",
+                "Outstanding (PKR)",
+                "Status",
+                "Date",
+                "Action"
+            ],
+            "snippet": "<table>\r\n\r\n                            <thead>\r\n\r\n                                <tr>\r\n            "
+        },
+        {
+            "file": "views\/ReorderView.vue",
+            "index": 1,
+            "columns": [
+                "Product",
+                "Current\r\n                                        Stock",
+                "Min\r\n                                        Stock",
+                "Avg. Daily\r\n                                        Sales",
+                "Days\r\n                                        Rem.",
+                "Suggested\r\n                                        Qty",
+                "Supplier",
+                "Priority",
+                "Action"
+            ],
+            "snippet": "<table class=\"reorder-table\">\r\n\r\n                            <thead>\r\n\r\n                            "
+        },
+        {
+            "file": "views\/ReportsView.vue",
+            "index": 1,
+            "columns": [
+                "Invoice #",
+                "Date",
+                "Branch",
+                "Customer",
+                "Paid Amount",
+                "Due Amount",
+                "Total",
+                "Status"
+            ],
+            "snippet": "<table class=\"table table-hover align-middle mb-0 small\">\n              <thead class=\"table-light\">\n"
+        },
+        {
+            "file": "views\/ReportsView.vue",
+            "index": 2,
+            "columns": [
+                "Product Name",
+                "SKU",
+                "Category",
+                "Branch",
+                "Stock On Hand",
+                "Min Stock",
+                "Current Cost",
+                "Total Valuation"
+            ],
+            "snippet": "<table class=\"table table-hover align-middle mb-0 small\">\n              <thead class=\"table-light\">\n"
+        },
+        {
+            "file": "views\/ReportsView.vue",
+            "index": 3,
+            "columns": [
+                "Customer Name",
+                "Phone",
+                "Sales Volume",
+                "Transactions",
+                "Payments Collected",
+                "Outstanding Receivable",
+                "Advance Credit"
+            ],
+            "snippet": "<table class=\"table table-hover align-middle mb-0 small\">\n              <thead class=\"table-light\">\n"
+        },
+        {
+            "file": "views\/ReportsView.vue",
+            "index": 4,
+            "columns": [
+                "Supplier Name",
+                "Contact Person",
+                "Purchase Volume",
+                "Purchases Count",
+                "Payments Made",
+                "Reconciled Payable"
+            ],
+            "snippet": "<table class=\"table table-hover align-middle mb-0 small\">\n              <thead class=\"table-light\">\n"
+        },
+        {
+            "file": "views\/ReportsView.vue",
+            "index": 5,
+            "columns": [
+                "Expense ID",
+                "Date",
+                "Category",
+                "Description",
+                "Branch",
+                "Account",
+                "Amount",
+                "Status"
+            ],
+            "snippet": "<table class=\"table table-hover align-middle mb-0 small\">\n              <thead class=\"table-light\">\n"
+        },
+        {
+            "file": "views\/ReportsView.vue",
+            "index": 6,
+            "columns": [
+                "Account Name",
+                "Type",
+                "Branch",
+                "Current Balance",
+                "Period Inflows",
+                "Period Outflows",
+                "Status"
+            ],
+            "snippet": "<table class=\"table table-hover align-middle mb-0 small\">\n              <thead class=\"table-light\">\n"
+        },
+        {
+            "file": "views\/ReportsView.vue",
+            "index": 7,
+            "columns": [
+                "Branch Name",
+                "Net Sales",
+                "Transactions",
+                "Gross Profit",
+                "Posted Expenses",
+                "Cash Drawer Balance"
+            ],
+            "snippet": "<table class=\"table table-hover align-middle mb-0 small\">\n              <thead class=\"table-light\">\n"
+        },
+        {
+            "file": "views\/SalesView.vue",
+            "index": 1,
+            "columns": [
+                "Invoice #",
+                "Date",
+                "Customer",
+                "Status",
+                "Payment Method",
+                "Total (PKR)"
+            ],
+            "snippet": "<table class=\"table table-hover align-middle mb-0\">\r\n          <thead class=\"bg-light\">\r\n           "
+        },
+        {
+            "file": "views\/SupplierView.vue",
+            "index": 1,
+            "columns": [
+                "Vendor \/ Supplier",
+                "Contact",
+                "Location \/ Address",
+                "Total Purchases",
+                "Outstanding",
+                "Status",
+                "Action"
+            ],
+            "snippet": "<table class=\"supplier-table\">\r\n            <thead>\r\n              <tr>\r\n                <th>Vendor "
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "index": 1,
+            "columns": [
+                "Supplier",
+                "Contact",
+                "Location",
+                "Total Purchases",
+                "Outstanding",
+                "Status",
+                "Action"
+            ],
+            "snippet": "<table class=\"supplier-table\">\r\n              <thead>\r\n                <tr>\r\n                  <th>S"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "index": 2,
+            "columns": [
+                "Supplier Name",
+                "Contact",
+                "Total Billed",
+                "Amount Paid",
+                "Outstanding Due",
+                "Status"
+            ],
+            "snippet": "<table class=\"supplier-table\">\r\n              <thead>\r\n                <tr>\r\n                  <th>S"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "index": 3,
+            "columns": [
+                "PO Number",
+                "Supplier",
+                "Order Date",
+                "Items Count",
+                "Total Amount",
+                "Status"
+            ],
+            "snippet": "<table class=\"supplier-table\">\r\n              <thead>\r\n                <tr>\r\n                  <th>P"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "index": 4,
+            "columns": [
+                "Supplier Name",
+                "Delivery Rate",
+                "Quality Score",
+                "Pricing Compliance",
+                "Overall Score",
+                "Grade"
+            ],
+            "snippet": "<table class=\"supplier-table\">\r\n              <thead>\r\n                <tr>\r\n                  <th>S"
+        },
+        {
+            "file": "views\/reports1View.vue",
+            "index": 1,
+            "columns": [
+                "Date",
+                "Total Sales (PKR)",
+                "Purchases (PKR)",
+                "Expenses (PKR)",
+                "Net Profit (PKR)"
+            ],
+            "snippet": "<table class=\"analytics-table\">\r\n              <thead>\r\n                <tr>\r\n                  <th>"
+        },
+        {
+            "file": "views\/Settings\/CategoriesView.vue",
+            "index": 1,
+            "columns": [
+                "Category Name",
+                "Type",
+                "Parent Category",
+                "Associated Products",
+                "Status",
+                "Actions"
+            ],
+            "snippet": "<table class=\"table align-middle mb-0\" style=\"font-size: 13.5px;\">\r\n          <thead class=\"table-li"
+        },
+        {
+            "file": "views\/Settings\/ReceiptsView.vue",
+            "index": 1,
+            "columns": [
+                "Item",
+                "Qty",
+                "Total"
+            ],
+            "snippet": "<table class=\"w-100\" style=\"font-size: 12px; border-collapse: collapse;\">\r\n                <thead>\r\n"
+        },
+        {
+            "file": "views\/Settings\/RolesView.vue",
+            "index": 1,
+            "columns": [
+                "MODULES",
+                "BUSINESS OWNER\r\n                  \r\n                  Full Business Control",
+                "BRANCH MANAGER\r\n                  \r\n                  Branch Operational Access",
+                "SALESPERSON\r\n                  \r\n                  POS &amp; Counter Sales"
+            ],
+            "snippet": "<table class=\"matrix-table\">\r\n          <thead>\r\n            <tr>\r\n              <!-- MODULES Header"
+        },
+        {
+            "file": "views\/Settings\/SecurityView.vue",
+            "index": 1,
+            "columns": [
+                "TIMESTAMP",
+                "ACTOR",
+                "ACTION \/ DESCRIPTION",
+                "CATEGORY",
+                "BRANCH",
+                "EVENT"
+            ],
+            "snippet": "<table class=\"table table-hover align-middle mb-0 custom-audit-table\">\n                  <thead>\n   "
+        },
+        {
+            "file": "views\/Settings\/SyncView.vue",
+            "index": 1,
+            "columns": [
+                "ID",
+                "Type",
+                "Amount",
+                "Time",
+                "Status"
+            ],
+            "snippet": "<table class=\"table table-borderless align-middle mb-0\">\r\n              <thead class=\"border-bottom\""
+        },
+        {
+            "file": "views\/Settings\/UsersView.vue",
+            "index": 1,
+            "columns": [
+                "User Profile",
+                "Assigned Role",
+                "Branch",
+                "Status",
+                "Created",
+                "Actions"
+            ],
+            "snippet": "<table class=\"table table-hover align-middle mb-0 custom-users-table\">\r\n            <thead>\r\n       "
+        }
+    ],
+    "sections": [
+        {
+            "file": "views\/AboutView.vue",
+            "tag": "<section class=\"setup-header\">"
+        },
+        {
+            "file": "views\/BusinessSetup1View.vue",
+            "tag": "<section class=\"setup-card\">"
+        },
+        {
+            "file": "views\/BusinessSetup1View.vue",
+            "tag": "<div class=\"card-content\">"
+        },
+        {
+            "file": "views\/BusinessSetup1View.vue",
+            "tag": "<div class=\"card-footer-custom\">"
+        },
+        {
+            "file": "views\/BusniessSetupView.vue",
+            "tag": "<div class=\"progress-section\">"
+        },
+        {
+            "file": "views\/BusniessSetupView.vue",
+            "tag": "<div class=\"card-header-custom\">"
+        },
+        {
+            "file": "views\/BusniessSetupView.vue",
+            "tag": "<div class=\"card-title\">"
+        },
+        {
+            "file": "views\/BusniessSetupView.vue",
+            "tag": "<div class=\"data-grid\">"
+        },
+        {
+            "file": "views\/BusniessSetupView.vue",
+            "tag": "<div class=\"card-header-custom\">"
+        },
+        {
+            "file": "views\/BusniessSetupView.vue",
+            "tag": "<div class=\"card-title\">"
+        },
+        {
+            "file": "views\/BusniessSetupView.vue",
+            "tag": "<div class=\"data-grid\">"
+        },
+        {
+            "file": "views\/BusniessSetupView.vue",
+            "tag": "<div class=\"card-header-custom\">"
+        },
+        {
+            "file": "views\/BusniessSetupView.vue",
+            "tag": "<div class=\"card-title\">"
+        },
+        {
+            "file": "views\/BusniessSetupView.vue",
+            "tag": "<div class=\"data-grid single-row\">"
+        },
+        {
+            "file": "views\/CompleteReviewView.vue",
+            "tag": "<section class=\"review-card\" id=\"accountCard\" data-section=\"Account Details\">"
+        },
+        {
+            "file": "views\/CompleteReviewView.vue",
+            "tag": "<div class=\"review-card-header\">"
+        },
+        {
+            "file": "views\/CompleteReviewView.vue",
+            "tag": "<div class=\"card-divider\">"
+        },
+        {
+            "file": "views\/CompleteReviewView.vue",
+            "tag": "<div class=\"review-card-body\">"
+        },
+        {
+            "file": "views\/CompleteReviewView.vue",
+            "tag": "<div class=\"review-grid\">"
+        },
+        {
+            "file": "views\/CompleteReviewView.vue",
+            "tag": "<section class=\"review-card business-card\" id=\"businessCard\" data-section=\"Business Info\">"
+        },
+        {
+            "file": "views\/CompleteReviewView.vue",
+            "tag": "<div class=\"review-card-header\">"
+        },
+        {
+            "file": "views\/CompleteReviewView.vue",
+            "tag": "<div class=\"card-divider\">"
+        },
+        {
+            "file": "views\/CompleteReviewView.vue",
+            "tag": "<div class=\"review-card-body\">"
+        },
+        {
+            "file": "views\/CompleteReviewView.vue",
+            "tag": "<div class=\"business-grid\">"
+        },
+        {
+            "file": "views\/CompleteReviewView.vue",
+            "tag": "<section class=\"review-card preferences-card\" id=\"preferencesCard\" data-section=\"Preferences\">"
+        },
+        {
+            "file": "views\/CompleteReviewView.vue",
+            "tag": "<div class=\"review-card-header\">"
+        },
+        {
+            "file": "views\/CompleteReviewView.vue",
+            "tag": "<div class=\"card-divider\">"
+        },
+        {
+            "file": "views\/CompleteReviewView.vue",
+            "tag": "<div class=\"review-card-body\">"
+        },
+        {
+            "file": "views\/CompleteReviewView.vue",
+            "tag": "<div class=\"review-grid\">"
+        },
+        {
+            "file": "views\/CompleteReviewView.vue",
+            "tag": "<section class=\"completion-panel\">"
+        },
+        {
+            "file": "views\/CustomerView.vue",
+            "tag": "<div class=\"page-header\">"
+        },
+        {
+            "file": "views\/CustomerView.vue",
+            "tag": "<div class=\"header-actions\">"
+        },
+        {
+            "file": "views\/CustomerView.vue",
+            "tag": "<div class=\"stats-grid\">"
+        },
+        {
+            "file": "views\/CustomerView.vue",
+            "tag": "<div class=\"stat-card\">"
+        },
+        {
+            "file": "views\/CustomerView.vue",
+            "tag": "<div class=\"stat-card active-card\">"
+        },
+        {
+            "file": "views\/CustomerView.vue",
+            "tag": "<div class=\"stat-card outstanding-card\">"
+        },
+        {
+            "file": "views\/CustomerView.vue",
+            "tag": "<div class=\"stat-card overdue-card\">"
+        },
+        {
+            "file": "views\/CustomerView.vue",
+            "tag": "<div class=\"customer-panel\">"
+        },
+        {
+            "file": "views\/CustomerView.vue",
+            "tag": "<div class=\"modal-header\">"
+        },
+        {
+            "file": "views\/CustomerView.vue",
+            "tag": "<div class=\"modal-header\">"
+        },
+        {
+            "file": "views\/CustomerView.vue",
+            "tag": "<div class=\"modal-header\">"
+        },
+        {
+            "file": "views\/CustomerView.vue",
+            "tag": "<div class=\"modal-header\">"
+        },
+        {
+            "file": "views\/DashboardView.vue",
+            "tag": "<div class=\"dash-topbar-header mb-4 pb-3 border-bottom d-flex justify-content-between align-items-ce"
+        },
+        {
+            "file": "views\/DashboardView.vue",
+            "tag": "<div class=\"dash-header-controls d-flex align-items-center gap-2 flex-wrap\">"
+        },
+        {
+            "file": "views\/DashboardView.vue",
+            "tag": "<div class=\"card border-0 shadow-sm rounded-4 border-start border-4 border-warning overflow-hidden\">"
+        },
+        {
+            "file": "views\/DashboardView.vue",
+            "tag": "<div class=\"card-header bg-warning-subtle border-0 py-2.5 px-4 d-flex align-items-center justify-con"
+        },
+        {
+            "file": "views\/DashboardView.vue",
+            "tag": "<div class=\"card-body p-0\">"
+        },
+        {
+            "file": "views\/DashboardView.vue",
+            "tag": "<div class=\"card border-0 shadow-sm rounded-4 h-100 p-4 transition-hover\">"
+        },
+        {
+            "file": "views\/DashboardView.vue",
+            "tag": "<div :class=\"'p-2 rounded-3 bg-' + kpi.color + '-subtle text-' + kpi.color\">"
+        },
+        {
+            "file": "views\/DashboardView.vue",
+            "tag": "<div class=\"card border-0 shadow-sm rounded-4 h-100 p-4\">"
+        },
+        {
+            "file": "views\/DashboardView.vue",
+            "tag": "<div class=\"card border-0 shadow-sm rounded-4 h-100 p-4\">"
+        },
+        {
+            "file": "views\/DashboardView.vue",
+            "tag": "<div class=\"card border-0 shadow-sm rounded-4 p-4 mb-4\">"
+        },
+        {
+            "file": "views\/EmployeesView.vue",
+            "tag": "<div v-else class=\"card border-0 shadow-sm rounded-4\">"
+        },
+        {
+            "file": "views\/EmployeesView.vue",
+            "tag": "<div class=\"modal-header border-0 bg-light px-4 py-3\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div v-if=\"activeTab === 'add'\" class=\"tab-content-panel mb-4\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div class=\"expense-panel-card p-4\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div class=\"preview-dark-card mb-4\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div class=\"preview-header\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div class=\"budget-card-info p-3.5 bg-light rounded-3 border\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div v-if=\"activeTab === 'overview'\" class=\"tab-content-panel\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div class=\"expense-kpi-grid mb-4\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div class=\"expense-kpi-box\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div class=\"expense-kpi-icon bg-primary-subtle text-primary\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div class=\"expense-kpi-data\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div class=\"expense-kpi-num\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div class=\"expense-kpi-box\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div class=\"expense-kpi-icon bg-info-subtle text-info\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div class=\"expense-kpi-data\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div class=\"expense-kpi-num\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div class=\"expense-kpi-box\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div class=\"expense-kpi-icon bg-warning-subtle text-warning\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div class=\"expense-kpi-data\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div class=\"expense-kpi-num\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div class=\"expense-kpi-box\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div class=\"expense-kpi-icon bg-success-subtle text-success\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div class=\"expense-kpi-data\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div class=\"expense-kpi-num\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div class=\"expense-panel-card\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div class=\"expense-panel-header\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div class=\"expense-panel-footer\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div v-if=\"activeTab === 'categories'\" class=\"tab-content-panel\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div class=\"expense-panel-card h-100\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div class=\"expense-panel-header\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div class=\"expense-panel-card h-100\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div class=\"expense-panel-header\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div class=\"category-badges-grid\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div v-if=\"activeTab === 'reports'\" class=\"tab-content-panel\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div class=\"expense-kpi-box\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div class=\"expense-kpi-icon bg-danger-subtle text-danger\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div class=\"expense-kpi-data\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div class=\"expense-kpi-num\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div class=\"expense-kpi-box\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div class=\"expense-kpi-icon bg-primary-subtle text-primary\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div class=\"expense-kpi-data\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div class=\"expense-kpi-num\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div class=\"expense-kpi-box\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div class=\"expense-kpi-icon bg-warning-subtle text-warning\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div class=\"expense-kpi-data\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div class=\"expense-kpi-num\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div class=\"expense-panel-card\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div class=\"expense-panel-header\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div class=\"expense-modal-card\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div class=\"expense-modal-header\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div class=\"expense-modal-header-left\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div class=\"expense-modal-header-text\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div class=\"preview-dark-card\">"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "tag": "<div class=\"preview-header\">"
+        },
+        {
+            "file": "views\/InformationView.vue",
+            "tag": "<section class=\"logo-section\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div v-if=\"activeTab === 'products'\" class=\"inv-9kpi-grid mb-4\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"kpi-box\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"kpi-icon-wrap bg-primary-subtle text-primary\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"kpi-data\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"kpi-num\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"kpi-box\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"kpi-icon-wrap bg-info-subtle text-info\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"kpi-data\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"kpi-num\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"kpi-box\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"kpi-icon-wrap bg-success-subtle text-success\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"kpi-data\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"kpi-num text-success\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"kpi-box\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"kpi-icon-wrap bg-warning-subtle text-warning\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"kpi-data\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"kpi-num text-warning\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"kpi-box\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"kpi-icon-wrap bg-danger-subtle text-danger\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"kpi-data\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"kpi-num text-danger\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"kpi-box\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"kpi-icon-wrap\" style=\"background: #f3e8ff; color: #7e22ce;\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"kpi-data\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"kpi-num fs-5\" style=\"color: #6b21a8;\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"kpi-box\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"kpi-icon-wrap\" style=\"background: #ecfdf5; color: #047857;\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"kpi-data\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"kpi-num fs-5 text-success\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"kpi-box\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"kpi-icon-wrap\" style=\"background: #e0e7ff; color: #4338ca;\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"kpi-data\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"kpi-num\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"kpi-box\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"kpi-icon-wrap\" style=\"background: #ccfbf1; color: #0f766e;\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"kpi-data\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"kpi-num\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div v-if=\"activeTab === 'products'\" class=\"inv-card\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div v-if=\"activeTab === 'categories'\" class=\"inv-card\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"inv-card p-5\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"inv-card p-3 d-flex flex-column justify-content-between h-100\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"modal-header border-0 bg-light px-4 py-3\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"modal-header border-0 bg-light px-4 py-3\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"modal-header border-0 bg-light px-4 py-3\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"modal-header border-0 bg-light px-4 py-3\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"modal-header border-0 bg-light px-4 py-3\">"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "tag": "<div class=\"modal-header border-0 bg-light px-4 py-3\">"
+        },
+        {
+            "file": "views\/KhataView.vue",
+            "tag": "<div class=\"khata-kpi-grid mb-4\">"
+        },
+        {
+            "file": "views\/KhataView.vue",
+            "tag": "<div class=\"khata-kpi-box\">"
+        },
+        {
+            "file": "views\/KhataView.vue",
+            "tag": "<div class=\"khata-kpi-icon bg-primary-subtle text-primary\">"
+        },
+        {
+            "file": "views\/KhataView.vue",
+            "tag": "<div class=\"khata-kpi-data\">"
+        },
+        {
+            "file": "views\/KhataView.vue",
+            "tag": "<div class=\"khata-kpi-num\">"
+        },
+        {
+            "file": "views\/KhataView.vue",
+            "tag": "<div class=\"khata-kpi-box\">"
+        },
+        {
+            "file": "views\/KhataView.vue",
+            "tag": "<div class=\"khata-kpi-icon bg-info-subtle text-info\">"
+        },
+        {
+            "file": "views\/KhataView.vue",
+            "tag": "<div class=\"khata-kpi-data\">"
+        },
+        {
+            "file": "views\/KhataView.vue",
+            "tag": "<div class=\"khata-kpi-num\">"
+        },
+        {
+            "file": "views\/KhataView.vue",
+            "tag": "<div class=\"khata-kpi-box overdue-box\">"
+        },
+        {
+            "file": "views\/KhataView.vue",
+            "tag": "<div class=\"khata-kpi-icon bg-danger-subtle text-danger\">"
+        },
+        {
+            "file": "views\/KhataView.vue",
+            "tag": "<div class=\"khata-kpi-data\">"
+        },
+        {
+            "file": "views\/KhataView.vue",
+            "tag": "<div class=\"khata-kpi-num text-danger\">"
+        },
+        {
+            "file": "views\/KhataView.vue",
+            "tag": "<div class=\"khata-kpi-box\">"
+        },
+        {
+            "file": "views\/KhataView.vue",
+            "tag": "<div class=\"khata-kpi-icon bg-success-subtle text-success\">"
+        },
+        {
+            "file": "views\/KhataView.vue",
+            "tag": "<div class=\"khata-kpi-data\">"
+        },
+        {
+            "file": "views\/KhataView.vue",
+            "tag": "<div class=\"khata-kpi-num text-success\">"
+        },
+        {
+            "file": "views\/KhataView.vue",
+            "tag": "<div class=\"khata-panel-card\">"
+        },
+        {
+            "file": "views\/KhataView.vue",
+            "tag": "<div class=\"khata-panel-header\">"
+        },
+        {
+            "file": "views\/KhataView.vue",
+            "tag": "<div class=\"khata-modal-card\">"
+        },
+        {
+            "file": "views\/KhataView.vue",
+            "tag": "<div class=\"khata-modal-header\">"
+        },
+        {
+            "file": "views\/KhataView.vue",
+            "tag": "<div class=\"khata-modal-header-left\">"
+        },
+        {
+            "file": "views\/KhataView.vue",
+            "tag": "<div class=\"khata-modal-header-text\">"
+        },
+        {
+            "file": "views\/KhataView.vue",
+            "tag": "<div class=\"khata-modal-card\" style=\"max-width: 460px;\">"
+        },
+        {
+            "file": "views\/KhataView.vue",
+            "tag": "<div class=\"khata-modal-header\">"
+        },
+        {
+            "file": "views\/KhataView.vue",
+            "tag": "<div class=\"khata-modal-header-left\">"
+        },
+        {
+            "file": "views\/KhataView.vue",
+            "tag": "<div class=\"khata-modal-header-text\">"
+        },
+        {
+            "file": "views\/LoginView.vue",
+            "tag": "<div class=\"register-card\">"
+        },
+        {
+            "file": "views\/LoginView.vue",
+            "tag": "<div class=\"brand-header\">"
+        },
+        {
+            "file": "views\/NotificationsView.vue",
+            "tag": "<div \r\n          class=\"card border-0 shadow-sm rounded-4 overflow-hidden notification-card\"\r\n      "
+        },
+        {
+            "file": "views\/NotificationsView.vue",
+            "tag": "<div class=\"card-body p-4\">"
+        },
+        {
+            "file": "views\/PosSaleView.vue",
+            "tag": "<div class=\"header-right\">"
+        },
+        {
+            "file": "views\/PosSaleView.vue",
+            "tag": "<div class=\"header-divider\">"
+        },
+        {
+            "file": "views\/PosSaleView.vue",
+            "tag": "<section class=\"products-panel\">"
+        },
+        {
+            "file": "views\/PosSaleView.vue",
+            "tag": "<div class=\"product-grid\" id=\"productGrid\">"
+        },
+        {
+            "file": "views\/PosSaleView.vue",
+            "tag": "<div class=\"product-price-section\">"
+        },
+        {
+            "file": "views\/PosSaleView.vue",
+            "tag": "<div class=\"card-qty-control\">"
+        },
+        {
+            "file": "views\/PosSaleView.vue",
+            "tag": "<div class=\"order-summary-card\">"
+        },
+        {
+            "file": "views\/PosSaleView.vue",
+            "tag": "<div class=\"order-header-row\">"
+        },
+        {
+            "file": "views\/PosSaleView.vue",
+            "tag": "<div class=\"total-items-header\">"
+        },
+        {
+            "file": "views\/PosSaleView.vue",
+            "tag": "<div class=\"order-breakdown-card\">"
+        },
+        {
+            "file": "views\/PosSaleView.vue",
+            "tag": "<div class=\"sale-info-grid\">"
+        },
+        {
+            "file": "views\/PosSaleView.vue",
+            "tag": "<div class=\"sale-info-card\">"
+        },
+        {
+            "file": "views\/PosSaleView.vue",
+            "tag": "<div class=\"sale-info-card highlight\">"
+        },
+        {
+            "file": "views\/PosSaleView.vue",
+            "tag": "<div class=\"sale-info-card\">"
+        },
+        {
+            "file": "views\/PosSaleView.vue",
+            "tag": "<div class=\"sale-info-card\">"
+        },
+        {
+            "file": "views\/PosSaleView.vue",
+            "tag": "<div class=\"invoice-header\">"
+        },
+        {
+            "file": "views\/PreferencesView.vue",
+            "tag": "<section class=\"preference-card\">"
+        },
+        {
+            "file": "views\/PreferencesView.vue",
+            "tag": "<div class=\"card-heading\">"
+        },
+        {
+            "file": "views\/PreferencesView.vue",
+            "tag": "<div class=\"form-grid\">"
+        },
+        {
+            "file": "views\/PreferencesView.vue",
+            "tag": "<section class=\"preference-card\">"
+        },
+        {
+            "file": "views\/PreferencesView.vue",
+            "tag": "<div class=\"card-heading\">"
+        },
+        {
+            "file": "views\/PreferencesView.vue",
+            "tag": "<section class=\"preference-card\">"
+        },
+        {
+            "file": "views\/PreferencesView.vue",
+            "tag": "<div class=\"card-heading\">"
+        },
+        {
+            "file": "views\/PreferencesView.vue",
+            "tag": "<div class=\"receipt-grid\">"
+        },
+        {
+            "file": "views\/ProductDetailsView.vue",
+            "tag": "<div class=\"page-header\" style=\"margin-bottom: 25px; display: flex; justify-content: space-between; "
+        },
+        {
+            "file": "views\/ProductDetailsView.vue",
+            "tag": "<div class=\"detail-grid\" style=\"display: grid; grid-template-columns: 1.7fr 1fr; gap: 20px;\">"
+        },
+        {
+            "file": "views\/ProductDetailsView.vue",
+            "tag": "<div class=\"content-card\" style=\"background: white; border: 1px solid var(--border); border-radius: "
+        },
+        {
+            "file": "views\/ProductDetailsView.vue",
+            "tag": "<div class=\"content-card\" style=\"background: white; border: 1px solid var(--border); border-radius: "
+        },
+        {
+            "file": "views\/ProductDetailsView.vue",
+            "tag": "<div class=\"content-card\" style=\"background: white; border: 1px solid var(--border); border-radius: "
+        },
+        {
+            "file": "views\/ProductEditView.vue",
+            "tag": "<div class=\"page-header\" style=\"margin-bottom: 25px; display: flex; justify-content: space-between; "
+        },
+        {
+            "file": "views\/ProductEditView.vue",
+            "tag": "<div class=\"content-card\" style=\"background: white; border: 1px solid var(--border); border-radius: "
+        },
+        {
+            "file": "views\/ProductInvoiceView.vue",
+            "tag": "<div class=\"page-header\" style=\"margin-bottom: 25px; text-align: center;\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<section v-if=\"currentPage === 'products'\" class=\"pv-section\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-page-header\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-header-actions\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-stats-grid\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-stat-card\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-stat-card\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-stat-card\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-stat-card\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-card\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<section v-if=\"currentPage === 'add'\" class=\"pv-section\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-page-header\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-header-actions\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-form-card\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-section-heading\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-form-card\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-section-heading\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-form-card\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-section-heading\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-form-card\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-section-heading m-0\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div v-for=\"(attr, aIndex) in form.attributes\" :key=\"aIndex\" class=\"attribute-item-card p-3 mb-3 bg-"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-form-card\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-section-heading\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-detail-card pv-edit-summary-card\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-detail-card-title\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-detail-card\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-detail-card-title\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<section v-if=\"currentPage === 'details'\" class=\"pv-section\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-page-header\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-header-actions\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div v-if=\"!selectedProduct\" class=\"pv-empty-state pv-card\" style=\"margin-top:0;\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div v-if=\"selectedProduct\" class=\"pv-detail-grid\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-detail-card pv-detail-hero\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-detail-card\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-detail-card-title\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-detail-card\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-detail-card-title\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-detail-card\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-detail-card-title\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-detail-card\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-detail-card-title\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<section v-if=\"currentPage === 'edit'\" class=\"pv-section\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-page-header\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-header-actions\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div v-if=\"!selectedProduct\" class=\"pv-empty-state pv-card\" style=\"margin-top:0;\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-form-card\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-section-heading\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-form-card\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-section-heading\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-form-card\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-section-heading\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-form-card\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-section-heading m-0\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div v-for=\"(attr, aIndex) in editForm.attributes\" :key=\"aIndex\" class=\"attribute-item-card p-3 mb-3"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-form-card\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-section-heading\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-detail-card pv-edit-summary-card\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-detail-card-title\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-detail-card pv-edit-preview-card\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-detail-card-title\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<section v-if=\"currentPage === 'categories'\" class=\"pv-section\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-page-header\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-header-actions\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-stats-grid\" style=\"grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-stat-card\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-stat-card\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-stat-card\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-card\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<section v-if=\"currentPage === 'brands'\" class=\"pv-section\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-page-header\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-header-actions\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-stats-grid\" style=\"grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-stat-card\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-stat-card\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-card\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"modal-header bg-light border-0 px-4 py-3 d-flex justify-content-between align-items-cent"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"modal-header bg-light border-0 px-4 py-3 d-flex justify-content-between align-items-cent"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-cat-modal-section\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-cat-modal-section\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-cat-modal-section\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"pv-cat-modal-section mb-1\">"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "tag": "<div class=\"modal-header bg-light border-0 px-4 py-3 d-flex justify-content-between align-items-cent"
+        },
+        {
+            "file": "views\/ProfilecustomerView.vue",
+            "tag": "<div class=\"profile-card\">"
+        },
+        {
+            "file": "views\/ProfilecustomerView.vue",
+            "tag": "<div class=\"stats-grid\">"
+        },
+        {
+            "file": "views\/ProfilecustomerView.vue",
+            "tag": "<div class=\"stat-card\">"
+        },
+        {
+            "file": "views\/ProfilecustomerView.vue",
+            "tag": "<div class=\"stat-card\">"
+        },
+        {
+            "file": "views\/ProfilecustomerView.vue",
+            "tag": "<div class=\"stat-card\">"
+        },
+        {
+            "file": "views\/ProfilecustomerView.vue",
+            "tag": "<div class=\"ledger-card\">"
+        },
+        {
+            "file": "views\/ProfilecustomerView.vue",
+            "tag": "<div class=\"ledger-header\">"
+        },
+        {
+            "file": "views\/PurchaseView.vue",
+            "tag": "<div class=\"page-header\">"
+        },
+        {
+            "file": "views\/PurchaseView.vue",
+            "tag": "<div class=\"header-actions\">"
+        },
+        {
+            "file": "views\/PurchaseView.vue",
+            "tag": "<div class=\"stat-card\">"
+        },
+        {
+            "file": "views\/PurchaseView.vue",
+            "tag": "<div class=\"stat-card\">"
+        },
+        {
+            "file": "views\/PurchaseView.vue",
+            "tag": "<div class=\"stat-card\">"
+        },
+        {
+            "file": "views\/PurchaseView.vue",
+            "tag": "<div class=\"stat-card\">"
+        },
+        {
+            "file": "views\/PurchaseView.vue",
+            "tag": "<div class=\"table-card\">"
+        },
+        {
+            "file": "views\/PurchaseView.vue",
+            "tag": "<div class=\"purchase-header\" v-if=\"!isModal\">"
+        },
+        {
+            "file": "views\/PurchaseView.vue",
+            "tag": "<div class=\"header-actions\">"
+        },
+        {
+            "file": "views\/PurchaseView.vue",
+            "tag": "<div class=\"card\">"
+        },
+        {
+            "file": "views\/PurchaseView.vue",
+            "tag": "<div class=\"form-grid\">"
+        },
+        {
+            "file": "views\/PurchaseView.vue",
+            "tag": "<div class=\"card\">"
+        },
+        {
+            "file": "views\/PurchaseView.vue",
+            "tag": "<div class=\"product-row header\">"
+        },
+        {
+            "file": "views\/PurchaseView.vue",
+            "tag": "<div class=\"payment-section\">"
+        },
+        {
+            "file": "views\/RegisterView.vue",
+            "tag": "<div class=\"register-card\">"
+        },
+        {
+            "file": "views\/RegisterView.vue",
+            "tag": "<div class=\"brand-header\">"
+        },
+        {
+            "file": "views\/ReorderDetailView.vue",
+            "tag": "<div class=\"module-header\">"
+        },
+        {
+            "file": "views\/ReorderView.vue",
+            "tag": "<section class=\"page-header\" id=\"smart-reorder\">"
+        },
+        {
+            "file": "views\/ReorderView.vue",
+            "tag": "<div class=\"header-actions\">"
+        },
+        {
+            "file": "views\/ReorderView.vue",
+            "tag": "<section class=\"kpi-grid\">"
+        },
+        {
+            "file": "views\/ReorderView.vue",
+            "tag": "<div class=\"kpi-icon blue\">"
+        },
+        {
+            "file": "views\/ReorderView.vue",
+            "tag": "<div class=\"kpi-label\">"
+        },
+        {
+            "file": "views\/ReorderView.vue",
+            "tag": "<div class=\"kpi-value\">"
+        },
+        {
+            "file": "views\/ReorderView.vue",
+            "tag": "<div class=\"kpi-icon red\">"
+        },
+        {
+            "file": "views\/ReorderView.vue",
+            "tag": "<div class=\"kpi-label\">"
+        },
+        {
+            "file": "views\/ReorderView.vue",
+            "tag": "<div class=\"kpi-value\">"
+        },
+        {
+            "file": "views\/ReorderView.vue",
+            "tag": "<div class=\"kpi-icon orange\">"
+        },
+        {
+            "file": "views\/ReorderView.vue",
+            "tag": "<div class=\"kpi-label\">"
+        },
+        {
+            "file": "views\/ReorderView.vue",
+            "tag": "<div class=\"kpi-value\">"
+        },
+        {
+            "file": "views\/ReorderView.vue",
+            "tag": "<div class=\"kpi-icon money\">"
+        },
+        {
+            "file": "views\/ReorderView.vue",
+            "tag": "<div class=\"kpi-label\">"
+        },
+        {
+            "file": "views\/ReorderView.vue",
+            "tag": "<div class=\"kpi-value\">"
+        },
+        {
+            "file": "views\/ReorderView.vue",
+            "tag": "<section class=\"distribution-card\">"
+        },
+        {
+            "file": "views\/ReorderView.vue",
+            "tag": "<section class=\"filter-card\">"
+        },
+        {
+            "file": "views\/ReorderView.vue",
+            "tag": "<section class=\"table-card\">"
+        },
+        {
+            "file": "views\/ReportsView.vue",
+            "tag": "<div class=\"dash-topbar-header mb-4 pb-3 border-bottom d-flex justify-content-between align-items-ce"
+        },
+        {
+            "file": "views\/ReportsView.vue",
+            "tag": "<div class=\"card border-0 shadow-sm rounded-4 p-3 bg-white\">"
+        },
+        {
+            "file": "views\/ReportsView.vue",
+            "tag": "<div class=\"card border-0 shadow-sm rounded-4 p-3 bg-white\">"
+        },
+        {
+            "file": "views\/ReportsView.vue",
+            "tag": "<div class=\"card border-0 shadow-sm rounded-4 p-3 bg-white\">"
+        },
+        {
+            "file": "views\/ReportsView.vue",
+            "tag": "<div class=\"card border-0 shadow-sm rounded-4 p-3 bg-white\">"
+        },
+        {
+            "file": "views\/ReportsView.vue",
+            "tag": "<div class=\"card border-0 shadow-sm rounded-4 p-4\">"
+        },
+        {
+            "file": "views\/ReportsView.vue",
+            "tag": "<div class=\"card border-0 shadow-sm rounded-4 p-3 bg-white\">"
+        },
+        {
+            "file": "views\/ReportsView.vue",
+            "tag": "<div class=\"card border-0 shadow-sm rounded-4 p-3 bg-white\">"
+        },
+        {
+            "file": "views\/ReportsView.vue",
+            "tag": "<div class=\"card border-0 shadow-sm rounded-4 p-3 bg-white\">"
+        },
+        {
+            "file": "views\/ReportsView.vue",
+            "tag": "<div class=\"card border-0 shadow-sm rounded-4 p-3 bg-white\">"
+        },
+        {
+            "file": "views\/ReportsView.vue",
+            "tag": "<div class=\"card border-0 shadow-sm rounded-4 p-4\">"
+        },
+        {
+            "file": "views\/ReportsView.vue",
+            "tag": "<div class=\"card border-0 shadow-sm rounded-4 p-4\">"
+        },
+        {
+            "file": "views\/ReportsView.vue",
+            "tag": "<div class=\"card border-0 shadow-sm rounded-4 p-4\">"
+        },
+        {
+            "file": "views\/ReportsView.vue",
+            "tag": "<div class=\"card border-0 shadow-sm rounded-4 p-4\">"
+        },
+        {
+            "file": "views\/ReportsView.vue",
+            "tag": "<div class=\"card border-0 shadow-sm rounded-4 p-4\">"
+        },
+        {
+            "file": "views\/ReportsView.vue",
+            "tag": "<div class=\"card border-0 shadow-sm rounded-4 p-4\">"
+        },
+        {
+            "file": "views\/ReturnDebtView.vue",
+            "tag": "<div class=\"header mb-4\">"
+        },
+        {
+            "file": "views\/SalesView.vue",
+            "tag": "<div class=\"card border-0 shadow-sm rounded-4\">"
+        },
+        {
+            "file": "views\/SettingsView.vue",
+            "tag": "<div class=\"settings-active-panel\">"
+        },
+        {
+            "file": "views\/SettingsView.vue",
+            "tag": "<div v-if=\"activeTab === 'users'\" class=\"settings-view-card\">"
+        },
+        {
+            "file": "views\/SettingsView.vue",
+            "tag": "<div v-else-if=\"activeTab === 'roles'\" class=\"settings-view-card\">"
+        },
+        {
+            "file": "views\/SettingsView.vue",
+            "tag": "<div v-else-if=\"activeTab === 'receipts'\" class=\"settings-view-card\">"
+        },
+        {
+            "file": "views\/SettingsView.vue",
+            "tag": "<div v-else-if=\"activeTab === 'security'\" class=\"settings-view-card\">"
+        },
+        {
+            "file": "views\/SettingsView.vue",
+            "tag": "<div v-else-if=\"activeTab === 'sync' || activeTab === 'offline-sync'\" class=\"settings-view-card\">"
+        },
+        {
+            "file": "views\/SupplierPaymentView.vue",
+            "tag": "<section class=\"page-header\">"
+        },
+        {
+            "file": "views\/SupplierPaymentView.vue",
+            "tag": "<section class=\"cards-grid\">"
+        },
+        {
+            "file": "views\/SupplierPaymentView.vue",
+            "tag": "<section class=\"lower-grid\">"
+        },
+        {
+            "file": "views\/SupplierPaymentView.vue",
+            "tag": "<div class=\"supplier-table-card\">"
+        },
+        {
+            "file": "views\/SupplierPaymentView.vue",
+            "tag": "<div class=\"table-header\">"
+        },
+        {
+            "file": "views\/SupplierPaymentView.vue",
+            "tag": "<div class=\"payment-card\">"
+        },
+        {
+            "file": "views\/SupplierView.vue",
+            "tag": "<div class=\"supplier-kpi-grid mb-4\">"
+        },
+        {
+            "file": "views\/SupplierView.vue",
+            "tag": "<div class=\"supplier-kpi-box\">"
+        },
+        {
+            "file": "views\/SupplierView.vue",
+            "tag": "<div class=\"supplier-kpi-icon bg-primary-subtle text-primary\">"
+        },
+        {
+            "file": "views\/SupplierView.vue",
+            "tag": "<div class=\"supplier-kpi-data\">"
+        },
+        {
+            "file": "views\/SupplierView.vue",
+            "tag": "<div class=\"supplier-kpi-num\">"
+        },
+        {
+            "file": "views\/SupplierView.vue",
+            "tag": "<div class=\"supplier-kpi-box\">"
+        },
+        {
+            "file": "views\/SupplierView.vue",
+            "tag": "<div class=\"supplier-kpi-icon bg-success-subtle text-success\">"
+        },
+        {
+            "file": "views\/SupplierView.vue",
+            "tag": "<div class=\"supplier-kpi-data\">"
+        },
+        {
+            "file": "views\/SupplierView.vue",
+            "tag": "<div class=\"supplier-kpi-num\">"
+        },
+        {
+            "file": "views\/SupplierView.vue",
+            "tag": "<div class=\"supplier-kpi-box\" :class=\"{ 'overdue-box': totalPayablesAmount >"
+        },
+        {
+            "file": "views\/SupplierView.vue",
+            "tag": "<div class=\"supplier-kpi-icon bg-danger-subtle text-danger\">"
+        },
+        {
+            "file": "views\/SupplierView.vue",
+            "tag": "<div class=\"supplier-kpi-data\">"
+        },
+        {
+            "file": "views\/SupplierView.vue",
+            "tag": "<div class=\"supplier-kpi-num\" :class=\"totalPayablesAmount >"
+        },
+        {
+            "file": "views\/SupplierView.vue",
+            "tag": "<div class=\"supplier-kpi-box\">"
+        },
+        {
+            "file": "views\/SupplierView.vue",
+            "tag": "<div class=\"supplier-kpi-icon bg-info-subtle text-info\">"
+        },
+        {
+            "file": "views\/SupplierView.vue",
+            "tag": "<div class=\"supplier-kpi-data\">"
+        },
+        {
+            "file": "views\/SupplierView.vue",
+            "tag": "<div class=\"supplier-kpi-num text-info\">"
+        },
+        {
+            "file": "views\/SupplierView.vue",
+            "tag": "<div v-if=\"selectedSupplier\" class=\"supplier-profile-hero-card mb-4\">"
+        },
+        {
+            "file": "views\/SupplierView.vue",
+            "tag": "<div class=\"profile-hero-header\">"
+        },
+        {
+            "file": "views\/SupplierView.vue",
+            "tag": "<div class=\"supplier-panel-card\">"
+        },
+        {
+            "file": "views\/SupplierView.vue",
+            "tag": "<div class=\"supplier-panel-header\">"
+        },
+        {
+            "file": "views\/SupplierView.vue",
+            "tag": "<div class=\"supplier-modal-card\">"
+        },
+        {
+            "file": "views\/SupplierView.vue",
+            "tag": "<div class=\"supplier-modal-header\">"
+        },
+        {
+            "file": "views\/SupplierView.vue",
+            "tag": "<div class=\"supplier-modal-header-left\">"
+        },
+        {
+            "file": "views\/SupplierView.vue",
+            "tag": "<div class=\"supplier-modal-header-text\">"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div v-if=\"activeTab === 'supplier-intelligence'\" class=\"tab-content-panel\">"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div class=\"supplier-kpi-grid mb-4\">"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div class=\"supplier-kpi-box\">"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div class=\"supplier-kpi-icon bg-primary-subtle text-primary\">"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div class=\"supplier-kpi-data\">"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div class=\"supplier-kpi-num\">"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div class=\"supplier-kpi-box\">"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div class=\"supplier-kpi-icon bg-info-subtle text-info\">"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div class=\"supplier-kpi-data\">"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div class=\"supplier-kpi-num\">"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div class=\"supplier-kpi-box\">"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div class=\"supplier-kpi-icon bg-danger-subtle text-danger\">"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div class=\"supplier-kpi-data\">"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div class=\"supplier-kpi-num text-danger\">"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div class=\"supplier-kpi-box\">"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div class=\"supplier-kpi-icon bg-warning-subtle text-warning\">"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div class=\"supplier-kpi-data\">"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div class=\"supplier-kpi-num\">"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div class=\"supplier-kpi-box\">"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div class=\"supplier-kpi-icon bg-success-subtle text-success\">"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div class=\"supplier-kpi-data\">"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div class=\"supplier-kpi-num\">"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div class=\"supplier-panel-card\">"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div class=\"supplier-panel-header\">"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div v-if=\"activeTab === 'payables'\" class=\"tab-content-panel\">"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div class=\"supplier-panel-card h-100\">"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div class=\"supplier-panel-header\">"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div class=\"supplier-panel-card h-100\">"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div class=\"supplier-panel-header\">"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div class=\"supplier-panel-card\">"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div class=\"supplier-panel-header\">"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div v-if=\"activeTab === 'purchase-orders'\" class=\"tab-content-panel\">"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div class=\"supplier-panel-card\">"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div class=\"supplier-panel-header\">"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div v-if=\"activeTab === 'supplier-performance'\" class=\"tab-content-panel\">"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div class=\"supplier-kpi-box\">"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div class=\"supplier-kpi-icon bg-success-subtle text-success\">"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div class=\"supplier-kpi-data\">"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div class=\"supplier-kpi-num text-success\">"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div class=\"supplier-kpi-box\">"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div class=\"supplier-kpi-icon bg-primary-subtle text-primary\">"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div class=\"supplier-kpi-data\">"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div class=\"supplier-kpi-num text-primary\">"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div class=\"supplier-kpi-box\">"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div class=\"supplier-kpi-icon bg-info-subtle text-info\">"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div class=\"supplier-kpi-data\">"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div class=\"supplier-kpi-num text-info\">"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div class=\"supplier-panel-card\">"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div class=\"supplier-panel-header\">"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div class=\"supplier-modal-card\">"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div class=\"supplier-modal-header\">"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div class=\"supplier-modal-header-left\">"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "tag": "<div class=\"supplier-modal-header-text\">"
+        },
+        {
+            "file": "views\/SupportView.vue",
+            "tag": "<div class=\"card border-0 shadow-sm rounded-4 p-4 h-100\">"
+        },
+        {
+            "file": "views\/SupportView.vue",
+            "tag": "<div class=\"card border-0 shadow-sm rounded-4 p-4 mb-4\">"
+        },
+        {
+            "file": "views\/SupportView.vue",
+            "tag": "<div class=\"card border-0 shadow-sm rounded-4 p-4 bg-primary text-white\">"
+        },
+        {
+            "file": "views\/reports1View.vue",
+            "tag": "<div class=\"period-menu-header\">"
+        },
+        {
+            "file": "views\/reports1View.vue",
+            "tag": "<div v-if=\"activeTab === 'Overview'\" class=\"tab-content-panel\">"
+        },
+        {
+            "file": "views\/reports1View.vue",
+            "tag": "<div class=\"analytics-kpi-grid mb-4\">"
+        },
+        {
+            "file": "views\/reports1View.vue",
+            "tag": "<div class=\"analytics-kpi-box\">"
+        },
+        {
+            "file": "views\/reports1View.vue",
+            "tag": "<div class=\"kpi-icon-pill bg-primary-subtle text-primary\">"
+        },
+        {
+            "file": "views\/reports1View.vue",
+            "tag": "<div class=\"kpi-number text-dark\">"
+        },
+        {
+            "file": "views\/reports1View.vue",
+            "tag": "<div class=\"analytics-kpi-box\">"
+        },
+        {
+            "file": "views\/reports1View.vue",
+            "tag": "<div class=\"kpi-icon-pill bg-success-subtle text-success\">"
+        },
+        {
+            "file": "views\/reports1View.vue",
+            "tag": "<div class=\"kpi-number text-success\">"
+        },
+        {
+            "file": "views\/reports1View.vue",
+            "tag": "<div class=\"analytics-kpi-box\">"
+        },
+        {
+            "file": "views\/reports1View.vue",
+            "tag": "<div class=\"kpi-icon-pill bg-danger-subtle text-danger\">"
+        },
+        {
+            "file": "views\/reports1View.vue",
+            "tag": "<div class=\"kpi-number text-dark\">"
+        },
+        {
+            "file": "views\/reports1View.vue",
+            "tag": "<div class=\"analytics-kpi-box kpi-highlight-dark\">"
+        },
+        {
+            "file": "views\/reports1View.vue",
+            "tag": "<div class=\"kpi-icon-pill bg-white text-dark shadow-sm\">"
+        },
+        {
+            "file": "views\/reports1View.vue",
+            "tag": "<div class=\"kpi-number text-white\">"
+        },
+        {
+            "file": "views\/reports1View.vue",
+            "tag": "<div class=\"analytics-panel-card h-100\">"
+        },
+        {
+            "file": "views\/reports1View.vue",
+            "tag": "<div class=\"analytics-panel-header\">"
+        },
+        {
+            "file": "views\/reports1View.vue",
+            "tag": "<div class=\"grid-line\" style=\"top: 0%\">"
+        },
+        {
+            "file": "views\/reports1View.vue",
+            "tag": "<div class=\"grid-line\" style=\"top: 25%\">"
+        },
+        {
+            "file": "views\/reports1View.vue",
+            "tag": "<div class=\"grid-line\" style=\"top: 50%\">"
+        },
+        {
+            "file": "views\/reports1View.vue",
+            "tag": "<div class=\"grid-line\" style=\"top: 75%\">"
+        },
+        {
+            "file": "views\/reports1View.vue",
+            "tag": "<div class=\"grid-line\" style=\"top: 100%\">"
+        },
+        {
+            "file": "views\/reports1View.vue",
+            "tag": "<div class=\"analytics-panel-card\">"
+        },
+        {
+            "file": "views\/reports1View.vue",
+            "tag": "<div class=\"analytics-panel-header py-3\">"
+        },
+        {
+            "file": "views\/reports1View.vue",
+            "tag": "<div class=\"analytics-panel-card p-3.5\">"
+        },
+        {
+            "file": "views\/reports1View.vue",
+            "tag": "<div class=\"analytics-panel-card\">"
+        },
+        {
+            "file": "views\/reports1View.vue",
+            "tag": "<div class=\"analytics-panel-header\">"
+        },
+        {
+            "file": "views\/Settings\/CategoriesView.vue",
+            "tag": "<div class=\"card border-0 shadow-sm rounded-4 p-3 d-flex flex-row align-items-center gap-3\">"
+        },
+        {
+            "file": "views\/Settings\/CategoriesView.vue",
+            "tag": "<div class=\"card border-0 shadow-sm rounded-4 p-3 d-flex flex-row align-items-center gap-3\">"
+        },
+        {
+            "file": "views\/Settings\/CategoriesView.vue",
+            "tag": "<div class=\"card border-0 shadow-sm rounded-4 p-3 d-flex flex-row align-items-center gap-3\">"
+        },
+        {
+            "file": "views\/Settings\/CategoriesView.vue",
+            "tag": "<div class=\"card border-0 shadow-sm rounded-4 overflow-hidden\">"
+        },
+        {
+            "file": "views\/Settings\/CategoriesView.vue",
+            "tag": "<div class=\"modal-header border-0 bg-light px-4 py-3\">"
+        },
+        {
+            "file": "views\/Settings\/CategoriesView.vue",
+            "tag": "<div class=\"modal-header border-0 bg-light px-4 py-3\">"
+        },
+        {
+            "file": "views\/Settings\/ReceiptsView.vue",
+            "tag": "<div class=\"rcp-header mb-4\">"
+        },
+        {
+            "file": "views\/Settings\/ReceiptsView.vue",
+            "tag": "<div class=\"card border-0 shadow-sm rounded-4 p-4 mb-4\">"
+        },
+        {
+            "file": "views\/Settings\/ReceiptsView.vue",
+            "tag": "<div class=\"card border-0 shadow-sm rounded-4 p-4 mb-4\">"
+        },
+        {
+            "file": "views\/Settings\/ReceiptsView.vue",
+            "tag": "<div class=\"card border-0 shadow-sm rounded-4 p-4 mb-4\">"
+        },
+        {
+            "file": "views\/Settings\/ReceiptsView.vue",
+            "tag": "<div class=\"card border-0 shadow-sm rounded-4 p-4 sticky-top\" style=\"top: 2rem;\">"
+        },
+        {
+            "file": "views\/Settings\/RolesView.vue",
+            "tag": "<div class=\"header-section text-center mb-4\">"
+        },
+        {
+            "file": "views\/Settings\/RolesView.vue",
+            "tag": "<div class=\"matrix-card shadow-sm mb-5\">"
+        },
+        {
+            "file": "views\/Settings\/RolesView.vue",
+            "tag": "<div class=\"header-content dark-header\">"
+        },
+        {
+            "file": "views\/Settings\/RolesView.vue",
+            "tag": "<div class=\"header-content admin-header\">"
+        },
+        {
+            "file": "views\/Settings\/RolesView.vue",
+            "tag": "<div class=\"header-sub\">"
+        },
+        {
+            "file": "views\/Settings\/RolesView.vue",
+            "tag": "<div class=\"header-content manager-header\">"
+        },
+        {
+            "file": "views\/Settings\/RolesView.vue",
+            "tag": "<div class=\"header-sub\">"
+        },
+        {
+            "file": "views\/Settings\/RolesView.vue",
+            "tag": "<div class=\"header-content cashier-header\">"
+        },
+        {
+            "file": "views\/Settings\/RolesView.vue",
+            "tag": "<div class=\"header-sub\">"
+        },
+        {
+            "file": "views\/Settings\/RolesView.vue",
+            "tag": "<div class=\"guide-section mb-4\">"
+        },
+        {
+            "file": "views\/Settings\/RolesView.vue",
+            "tag": "<div class=\"guide-header-title text-center mb-4\">"
+        },
+        {
+            "file": "views\/Settings\/RolesView.vue",
+            "tag": "<div class=\"guide-card card-admin h-100\">"
+        },
+        {
+            "file": "views\/Settings\/RolesView.vue",
+            "tag": "<div class=\"guide-card-header d-flex align-items-center gap-2 mb-3\">"
+        },
+        {
+            "file": "views\/Settings\/RolesView.vue",
+            "tag": "<div class=\"guide-card card-manager h-100\">"
+        },
+        {
+            "file": "views\/Settings\/RolesView.vue",
+            "tag": "<div class=\"guide-card-header d-flex align-items-center gap-2 mb-3\">"
+        },
+        {
+            "file": "views\/Settings\/RolesView.vue",
+            "tag": "<div class=\"guide-card card-cashier h-100\">"
+        },
+        {
+            "file": "views\/Settings\/RolesView.vue",
+            "tag": "<div class=\"guide-card-header d-flex align-items-center gap-2 mb-3\">"
+        },
+        {
+            "file": "views\/Settings\/SecurityView.vue",
+            "tag": "<div class=\"header-icon-badge\">"
+        },
+        {
+            "file": "views\/Settings\/SecurityView.vue",
+            "tag": "<div class=\"kpi-card card border-0 shadow-sm rounded-4 p-3 h-100\">"
+        },
+        {
+            "file": "views\/Settings\/SecurityView.vue",
+            "tag": "<div class=\"kpi-icon-wrap bg-primary-subtle text-primary\">"
+        },
+        {
+            "file": "views\/Settings\/SecurityView.vue",
+            "tag": "<div class=\"kpi-value text-dark\">"
+        },
+        {
+            "file": "views\/Settings\/SecurityView.vue",
+            "tag": "<div class=\"kpi-subtext text-muted\">"
+        },
+        {
+            "file": "views\/Settings\/SecurityView.vue",
+            "tag": "<div class=\"kpi-card card border-0 shadow-sm rounded-4 p-3 h-100\">"
+        },
+        {
+            "file": "views\/Settings\/SecurityView.vue",
+            "tag": "<div class=\"kpi-icon-wrap bg-info-subtle text-info\">"
+        },
+        {
+            "file": "views\/Settings\/SecurityView.vue",
+            "tag": "<div class=\"kpi-value text-dark\">"
+        },
+        {
+            "file": "views\/Settings\/SecurityView.vue",
+            "tag": "<div class=\"kpi-subtext text-muted\">"
+        },
+        {
+            "file": "views\/Settings\/SecurityView.vue",
+            "tag": "<div class=\"kpi-card card border-0 shadow-sm rounded-4 p-3 h-100\">"
+        },
+        {
+            "file": "views\/Settings\/SecurityView.vue",
+            "tag": "<div class=\"kpi-icon-wrap bg-secondary-subtle text-secondary\">"
+        },
+        {
+            "file": "views\/Settings\/SecurityView.vue",
+            "tag": "<div class=\"kpi-value text-dark\">"
+        },
+        {
+            "file": "views\/Settings\/SecurityView.vue",
+            "tag": "<div class=\"kpi-subtext text-muted\">"
+        },
+        {
+            "file": "views\/Settings\/SecurityView.vue",
+            "tag": "<div class=\"kpi-card card border-0 shadow-sm rounded-4 p-3 h-100\">"
+        },
+        {
+            "file": "views\/Settings\/SecurityView.vue",
+            "tag": "<div class=\"kpi-icon-wrap bg-success-subtle text-success\">"
+        },
+        {
+            "file": "views\/Settings\/SecurityView.vue",
+            "tag": "<div class=\"kpi-value text-success\">"
+        },
+        {
+            "file": "views\/Settings\/SecurityView.vue",
+            "tag": "<div class=\"kpi-subtext text-muted\">"
+        },
+        {
+            "file": "views\/Settings\/SecurityView.vue",
+            "tag": "<div class=\"card shadow-sm border-0 rounded-4 overflow-hidden h-100 main-log-card\">"
+        },
+        {
+            "file": "views\/Settings\/SecurityView.vue",
+            "tag": "<div class=\"card-header bg-white border-bottom p-3 p-md-4\">"
+        },
+        {
+            "file": "views\/Settings\/SecurityView.vue",
+            "tag": "<div class=\"card-body p-0\">"
+        },
+        {
+            "file": "views\/Settings\/SecurityView.vue",
+            "tag": "<div class=\"card-footer bg-white border-top p-3 d-flex justify-content-between align-items-center fl"
+        },
+        {
+            "file": "views\/Settings\/SecurityView.vue",
+            "tag": "<div class=\"card shadow-sm border-0 rounded-4 overflow-hidden side-panel-card\">"
+        },
+        {
+            "file": "views\/Settings\/SecurityView.vue",
+            "tag": "<div class=\"card-header bg-white border-bottom p-3 d-flex justify-content-between align-items-center"
+        },
+        {
+            "file": "views\/Settings\/SecurityView.vue",
+            "tag": "<div class=\"card-body p-3\">"
+        },
+        {
+            "file": "views\/Settings\/SecurityView.vue",
+            "tag": "<div class=\"card shadow-sm border-0 rounded-4 overflow-hidden side-panel-card\">"
+        },
+        {
+            "file": "views\/Settings\/SecurityView.vue",
+            "tag": "<div class=\"card-header bg-white border-bottom p-3 d-flex justify-content-between align-items-center"
+        },
+        {
+            "file": "views\/Settings\/SecurityView.vue",
+            "tag": "<div class=\"card-body p-3 d-flex flex-column gap-2.5\">"
+        },
+        {
+            "file": "views\/Settings\/SyncView.vue",
+            "tag": "<div class=\"card shadow-sm border-0 rounded-4 h-100 p-4 d-flex flex-column justify-content-between\">"
+        },
+        {
+            "file": "views\/Settings\/SyncView.vue",
+            "tag": "<div class=\"card shadow-sm border-0 rounded-4 h-100 p-3\">"
+        },
+        {
+            "file": "views\/Settings\/SyncView.vue",
+            "tag": "<div class=\"card shadow-sm border-0 rounded-4 h-100 p-3\">"
+        },
+        {
+            "file": "views\/Settings\/SyncView.vue",
+            "tag": "<div class=\"card shadow-sm border-0 rounded-4 h-100 p-3\">"
+        },
+        {
+            "file": "views\/Settings\/SyncView.vue",
+            "tag": "<div class=\"card shadow-sm border-0 rounded-4 h-100 p-3\">"
+        },
+        {
+            "file": "views\/Settings\/SyncView.vue",
+            "tag": "<div class=\"card shadow-sm border-0 rounded-4 h-100 p-4\">"
+        },
+        {
+            "file": "views\/Settings\/SyncView.vue",
+            "tag": "<div class=\"card shadow-sm border-0 rounded-4 h-100 p-4\">"
+        },
+        {
+            "file": "views\/Settings\/UsersView.vue",
+            "tag": "<div class=\"card shadow-sm border-0 rounded-4 p-3 bg-white h-100\">"
+        },
+        {
+            "file": "views\/Settings\/UsersView.vue",
+            "tag": "<div class=\"card shadow-sm border-0 rounded-4 p-3 bg-white h-100\">"
+        },
+        {
+            "file": "views\/Settings\/UsersView.vue",
+            "tag": "<div class=\"card shadow-sm border-0 rounded-4 p-3 bg-white h-100\">"
+        },
+        {
+            "file": "views\/Settings\/UsersView.vue",
+            "tag": "<div class=\"card shadow-sm border-0 rounded-4 p-3 bg-white h-100\">"
+        },
+        {
+            "file": "views\/Settings\/UsersView.vue",
+            "tag": "<div class=\"card shadow-sm border-0 rounded-4 overflow-hidden bg-white\">"
+        },
+        {
+            "file": "views\/Settings\/UsersView.vue",
+            "tag": "<div class=\"card-body p-4\">"
+        },
+        {
+            "file": "views\/Settings\/UsersView.vue",
+            "tag": "<div class=\"user-modal-header\">"
+        },
+        {
+            "file": "components\/ActionModalFactory.vue",
+            "tag": "<div class=\"modal-header bg-light border-0 px-4 py-3\">"
+        },
+        {
+            "file": "sync\/ExitGuardModal.vue",
+            "tag": "<div class=\"modal-header\">"
+        },
+        {
+            "file": "layouts\/MainLayout.vue",
+            "tag": "<div class=\"store-dropdown-header\">"
+        },
+        {
+            "file": "layouts\/SettingsLayout.vue",
+            "tag": "<div class=\"store-dropdown-header\">"
+        }
+    ],
+    "actions": [
+        {
+            "file": "views\/CustomerView.vue",
+            "handler": "openRecordPaymentModal",
+            "text": "Record Payment"
+        },
+        {
+            "file": "views\/CustomerView.vue",
+            "handler": "openAddModal",
+            "text": "Add Customer"
+        },
+        {
+            "file": "views\/CustomerView.vue",
+            "handler": "openViewModal(c)",
+            "text": ""
+        },
+        {
+            "file": "views\/CustomerView.vue",
+            "handler": "openEditModal(c)",
+            "text": ""
+        },
+        {
+            "file": "views\/CustomerView.vue",
+            "handler": "deleteCustomer(c.id)",
+            "text": ""
+        },
+        {
+            "file": "views\/CustomerView.vue",
+            "handler": "changePage(currentPage - 1)",
+            "text": ""
+        },
+        {
+            "file": "views\/CustomerView.vue",
+            "handler": "changePage(1)",
+            "text": "1"
+        },
+        {
+            "file": "views\/CustomerView.vue",
+            "handler": "changePage(p)",
+            "text": "{{ p }}"
+        },
+        {
+            "file": "views\/CustomerView.vue",
+            "handler": "changePage(totalPages)",
+            "text": "{{ totalPages }}"
+        },
+        {
+            "file": "views\/CustomerView.vue",
+            "handler": "changePage(currentPage + 1)",
+            "text": ""
+        },
+        {
+            "file": "views\/CustomerView.vue",
+            "handler": "closeModal('addCustomerModal')",
+            "text": ""
+        },
+        {
+            "file": "views\/CustomerView.vue",
+            "handler": "closeModal('addCustomerModal')",
+            "text": "Cancel"
+        },
+        {
+            "file": "views\/CustomerView.vue",
+            "handler": "saveNewCustomer",
+            "text": "Save Customer"
+        },
+        {
+            "file": "views\/CustomerView.vue",
+            "handler": "closeModal('editCustomerModal')",
+            "text": ""
+        },
+        {
+            "file": "views\/CustomerView.vue",
+            "handler": "closeModal('editCustomerModal')",
+            "text": "Cancel"
+        },
+        {
+            "file": "views\/CustomerView.vue",
+            "handler": "updateCustomer",
+            "text": "Update Customer"
+        },
+        {
+            "file": "views\/CustomerView.vue",
+            "handler": "closeModal('viewCustomerModal')",
+            "text": ""
+        },
+        {
+            "file": "views\/CustomerView.vue",
+            "handler": "closeModal('viewCustomerModal')",
+            "text": "Close"
+        },
+        {
+            "file": "views\/CustomerView.vue",
+            "handler": "closeModal('recordPaymentModal')",
+            "text": ""
+        },
+        {
+            "file": "views\/CustomerView.vue",
+            "handler": "$emit('open-purchase')",
+            "text": "New Purchase"
+        },
+        {
+            "file": "views\/CustomerView.vue",
+            "handler": "$emit('open-return-debt')",
+            "text": "Return Debt"
+        },
+        {
+            "file": "views\/CustomerView.vue",
+            "handler": "closeModal('recordPaymentModal')",
+            "text": "Cancel"
+        },
+        {
+            "file": "views\/CustomerView.vue",
+            "handler": "savePayment",
+            "text": "Record Payment"
+        },
+        {
+            "file": "views\/DashboardView.vue",
+            "handler": "handleNewSale",
+            "text": "New Sale"
+        },
+        {
+            "file": "views\/EmployeesView.vue",
+            "handler": "openAddModal",
+            "text": "Add Employee"
+        },
+        {
+            "file": "views\/EmployeesView.vue",
+            "handler": "openEditModal(emp)",
+            "text": ""
+        },
+        {
+            "file": "views\/EmployeesView.vue",
+            "handler": "deleteEmployee(emp.id)",
+            "text": ""
+        },
+        {
+            "file": "views\/EmployeesView.vue",
+            "handler": "closeAddModal",
+            "text": ""
+        },
+        {
+            "file": "views\/EmployeesView.vue",
+            "handler": "closeAddModal",
+            "text": "Cancel"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "handler": "successAlertMessage = ''",
+            "text": ""
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "handler": "errorAlertMessage = ''",
+            "text": ""
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "handler": "setTab('overview')",
+            "text": "Back to Expense List"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "handler": "openAddExpense",
+            "text": "Add Expense"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "handler": "setTab('overview')",
+            "text": "Cancel"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "handler": "searchQuery = ''",
+            "text": "\u2715"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "handler": "resetFilters",
+            "text": "Reset"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "handler": "openAddExpense",
+            "text": "Add New Expense"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "handler": "openEditExpense(expense)",
+            "text": ""
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "handler": "deleteExpense(expense.id)",
+            "text": ""
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "handler": "prevPage",
+            "text": "\u2039"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "handler": "nextPage",
+            "text": "\u203a"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "handler": "handleDeleteCategory(cat)",
+            "text": ""
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "handler": "exportExpenses",
+            "text": "Export Report"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "handler": "closeExpenseModal",
+            "text": "\u2715"
+        },
+        {
+            "file": "views\/ExpensesView.vue",
+            "handler": "closeExpenseModal",
+            "text": "Cancel"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "handler": "openAddProductModal",
+            "text": "Add New Product"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "handler": "resetAllColumnFilters",
+            "text": "Clear Filters"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "handler": "resetAllColumnFilters",
+            "text": "Reset"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "handler": "resetAllColumnFilters",
+            "text": "Clear Filters"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "handler": "openAddProductModal",
+            "text": "Add New Product"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "handler": "openProductDetails(product)",
+            "text": ""
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "handler": "openQuickRestock(product)",
+            "text": ""
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "handler": "openEditProductModal(product)",
+            "text": ""
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "handler": "deleteProductItem(product)",
+            "text": ""
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "handler": "categorySearchQuery = ''",
+            "text": ""
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "handler": "resetCategoryFilters",
+            "text": "Reset"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "handler": "openAddCategoryModal",
+            "text": "Add Category"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "handler": "viewCategoryItem(cat)",
+            "text": ""
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "handler": "editCategoryItem(cat)",
+            "text": ""
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "handler": "deleteCategoryItem(cat)",
+            "text": ""
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "handler": "openAddBrandModal",
+            "text": "Add New Brand"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "handler": "openAddBrandModal",
+            "text": "Add Brand"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "handler": "deleteBrandItem(b)",
+            "text": ""
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "handler": "closeProductModal",
+            "text": ""
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "handler": "addAttribute",
+            "text": "Add Attribute"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "handler": "removeAttribute(idx)",
+            "text": ""
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "handler": "closeProductModal",
+            "text": "Cancel"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "handler": "saveProduct",
+            "text": "{{ isEditingProduct ? 'Update Product' : 'Save Product' }}"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "handler": "showRestockModal = false",
+            "text": ""
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "handler": "showRestockModal = false",
+            "text": "Cancel"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "handler": "submitQuickRestock",
+            "text": "Confirm Restock"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "handler": "showViewCategoryModal = false",
+            "text": ""
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "handler": "showViewCategoryModal = false",
+            "text": "Close"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "handler": "handleEditFromViewModal",
+            "text": "Edit Category"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "handler": "showCategoryModal = false",
+            "text": ""
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "handler": "showCategoryModal = false",
+            "text": "Cancel"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "handler": "saveCategoryForm",
+            "text": "{{ categoryForm.isEdit ? 'Save Changes' : 'Create Category' }}"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "handler": "showBrandModal = false",
+            "text": ""
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "handler": "showBrandModal = false",
+            "text": "Cancel"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "handler": "saveBrand",
+            "text": "Save Brand"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "handler": "showDetailsModal = false",
+            "text": ""
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "handler": "showDetailsModal = false",
+            "text": "Close"
+        },
+        {
+            "file": "views\/InventryView.vue",
+            "handler": "showDetailsModal = false; openEditProductModal(selectedProductDetails)",
+            "text": "Edit Product"
+        },
+        {
+            "file": "views\/KhataView.vue",
+            "handler": "successAlertMessage = ''",
+            "text": ""
+        },
+        {
+            "file": "views\/KhataView.vue",
+            "handler": "errorAlertMessage = ''",
+            "text": ""
+        },
+        {
+            "file": "views\/KhataView.vue",
+            "handler": "openPaymentModal()",
+            "text": "Record Payment"
+        },
+        {
+            "file": "views\/KhataView.vue",
+            "handler": "searchQuery = ''",
+            "text": "\u2715"
+        },
+        {
+            "file": "views\/KhataView.vue",
+            "handler": "resetFilters",
+            "text": "Reset"
+        },
+        {
+            "file": "views\/KhataView.vue",
+            "handler": "resetFilters",
+            "text": "Reset Filters"
+        },
+        {
+            "file": "views\/KhataView.vue",
+            "handler": "openPaymentModal(c.name)",
+            "text": "Payment"
+        },
+        {
+            "file": "views\/KhataView.vue",
+            "handler": "closePaymentModal",
+            "text": "\u2715"
+        },
+        {
+            "file": "views\/KhataView.vue",
+            "handler": "closePaymentModal",
+            "text": "Cancel"
+        },
+        {
+            "file": "views\/KhataView.vue",
+            "handler": "closeAddCustomerModal",
+            "text": "\u2715"
+        },
+        {
+            "file": "views\/KhataView.vue",
+            "handler": "closeAddCustomerModal",
+            "text": "Cancel"
+        },
+        {
+            "file": "views\/KhataView.vue",
+            "handler": "saveNewCustomer",
+            "text": "Save Customer"
+        },
+        {
+            "file": "views\/LoginView.vue",
+            "handler": "showPassword = !showPassword",
+            "text": ""
+        },
+        {
+            "file": "views\/NotificationsView.vue",
+            "handler": "markAllAsRead",
+            "text": "Mark all as read"
+        },
+        {
+            "file": "views\/NotificationsView.vue",
+            "handler": "activeTab = tab",
+            "text": "{{ tab }}"
+        },
+        {
+            "file": "views\/NotificationsView.vue",
+            "handler": "selectedActionNotification = notification",
+            "text": "Take Action"
+        },
+        {
+            "file": "views\/NotificationsView.vue",
+            "handler": "markAsRead(notification.id)",
+            "text": "Mark as Read"
+        },
+        {
+            "file": "views\/NotificationsView.vue",
+            "handler": "dismissNotification(notification.id)",
+            "text": "Dismiss"
+        },
+        {
+            "file": "views\/PosSaleView.vue",
+            "handler": "selectCategory(cat)",
+            "text": "{{ cat }}"
+        },
+        {
+            "file": "views\/PosSaleView.vue",
+            "handler": "handleUpdateQuantity(item.cartItemId || item.id, item.quantity - 1)",
+            "text": "\u2212"
+        },
+        {
+            "file": "views\/PosSaleView.vue",
+            "handler": "handleUpdateQuantity(item.cartItemId || item.id, item.quantity + 1)",
+            "text": "+"
+        },
+        {
+            "file": "views\/PosSaleView.vue",
+            "handler": "handleRemoveItem(item.cartItemId || item.id)",
+            "text": ""
+        },
+        {
+            "file": "views\/PosSaleView.vue",
+            "handler": "paymentMethod = 'QR'",
+            "text": "QR"
+        },
+        {
+            "file": "views\/PosSaleView.vue",
+            "handler": "paymentMethod = 'Cash'",
+            "text": "Cash"
+        },
+        {
+            "file": "views\/PosSaleView.vue",
+            "handler": "paymentMethod = 'Wallet'",
+            "text": "Wallet"
+        },
+        {
+            "file": "views\/PosSaleView.vue",
+            "handler": "startNewSale",
+            "text": "Cancel"
+        },
+        {
+            "file": "views\/PosSaleView.vue",
+            "handler": "promptCustomerPhone",
+            "text": "Phone Number"
+        },
+        {
+            "file": "views\/PosSaleView.vue",
+            "handler": "handleCompleteSale",
+            "text": "{{ isProcessing ? 'Processing...' : 'Confirm Order' }}"
+        },
+        {
+            "file": "views\/PosSaleView.vue",
+            "handler": "printInvoice",
+            "text": "Print Receipt"
+        },
+        {
+            "file": "views\/PosSaleView.vue",
+            "handler": "shareWhatsApp",
+            "text": "{{ isGeneratingImage ? 'Generating Image...' : 'Share on WhatsApp' }}"
+        },
+        {
+            "file": "views\/PosSaleView.vue",
+            "handler": "startNewSale",
+            "text": "Start New Sale"
+        },
+        {
+            "file": "views\/ProductDetailsView.vue",
+            "handler": "router.push('\/inventory\/products')",
+            "text": "Back to Products"
+        },
+        {
+            "file": "views\/ProductDetailsView.vue",
+            "handler": "router.push(`\/inventory\/products\/${product.id}\/edit`)",
+            "text": "Edit Product"
+        },
+        {
+            "file": "views\/ProductEditView.vue",
+            "handler": "router.push(`\/inventory\/products\/${product.id}`)",
+            "text": "Cancel Edit"
+        },
+        {
+            "file": "views\/ProductEditView.vue",
+            "handler": "saveChanges",
+            "text": "Save Changes"
+        },
+        {
+            "file": "views\/ProductInvoiceView.vue",
+            "handler": "router.push('\/inventory\/products')",
+            "text": "View All Products"
+        },
+        {
+            "file": "views\/ProductInvoiceView.vue",
+            "handler": "router.push(`\/inventory\/products\/${product.id}`)",
+            "text": "View Product Details"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "showPage('details')",
+            "text": "Product Details"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "showPage('add')",
+            "text": "Add New Product"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "showPage('details', product.id)",
+            "text": ""
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "showPage('edit', product.id)",
+            "text": ""
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "deleteProduct(product.id)",
+            "text": ""
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "showPage('add')",
+            "text": "Add New Product"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "showPage('products')",
+            "text": "Cancel"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "generateSKU()",
+            "text": ""
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "addAttributePreset(form, 'Size')",
+            "text": "+ Size"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "addAttributePreset(form, 'Weight')",
+            "text": "+ Weight"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "addAttributePreset(form, 'Color')",
+            "text": "+ Color"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "addAttributePreset(form, 'Pack Type')",
+            "text": "+ Pack Type"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "removeAttribute(form, aIndex)",
+            "text": ""
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "addAttributeValue(form, aIndex)",
+            "text": "+ Add"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "addNewAttribute(form)",
+            "text": "Add Custom Attribute"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "generateVariationsFromAttributes(form)",
+            "text": "Regenerate"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "form.variations.splice(vIdx, 1)",
+            "text": ""
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "isModal ? emit('close') : showPage('products')",
+            "text": "Cancel"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "saveProduct()",
+            "text": "Save Product"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "showPage('products')",
+            "text": "Back to Products"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "showPage('edit', selectedProduct.id)",
+            "text": "Edit Product"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "showPage('products')",
+            "text": "Go to Products"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "showPage('edit', selectedProduct.id)",
+            "text": "Edit Product"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "deleteProduct(selectedProduct.id)",
+            "text": "Delete Product"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "showPage('products')",
+            "text": "Back to List"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "showPage('details', selectedProductId)",
+            "text": "Cancel"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "saveEdit()",
+            "text": "Update Product"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "showPage('products')",
+            "text": "Go to Products"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "addAttributePreset(editForm, 'Size')",
+            "text": "+ Size"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "addAttributePreset(editForm, 'Weight')",
+            "text": "+ Weight"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "addAttributePreset(editForm, 'Color')",
+            "text": "+ Color"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "addAttributePreset(editForm, 'Pack Type')",
+            "text": "+ Pack Type"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "removeAttribute(editForm, aIndex)",
+            "text": ""
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "addAttributeValue(editForm, aIndex)",
+            "text": "+ Add"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "addNewAttribute(editForm)",
+            "text": "Add Custom Attribute"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "generateVariationsFromAttributes(editForm)",
+            "text": "Regenerate"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "editForm.variations.splice(vIdx, 1)",
+            "text": ""
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "showPage('details', selectedProductId)",
+            "text": "Cancel"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "saveEdit()",
+            "text": "Update Product"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "openCategoryModal",
+            "text": "Add New Category"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "categorySearch = ''",
+            "text": ""
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "resetCategoryFilters",
+            "text": "Reset"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "openCategoryModal",
+            "text": "Add Category"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "viewCategoryItem(item)",
+            "text": ""
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "editCategoryItem(item)",
+            "text": ""
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "deleteCategoryItem(item)",
+            "text": ""
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "openCategoryModal",
+            "text": "Add New Category"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "openBrandModal",
+            "text": "Add New Brand"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "deleteBrandItem(brand)",
+            "text": ""
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "openBrandModal",
+            "text": "Add New Brand"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "closeBrandModal",
+            "text": ""
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "closeBrandModal",
+            "text": "Cancel"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "saveBrandForm",
+            "text": "{{ isSavingBrand ? 'Saving...' : 'Save Brand' }}"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "closeCategoryModal",
+            "text": ""
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "autoGenerateCode",
+            "text": "Auto-generate"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "closeCategoryModal",
+            "text": "Cancel"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "saveCategoryForm",
+            "text": "{{ isSavingCategory ? 'Saving...' : (categoryForm.isEdit ? 'Update Category' : 'Save Category') }}"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "closeViewCategoryModal",
+            "text": ""
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "closeViewCategoryModal",
+            "text": "Close"
+        },
+        {
+            "file": "views\/ProductView.vue",
+            "handler": "handleEditFromViewModal",
+            "text": "Edit Category"
+        },
+        {
+            "file": "views\/PurchaseView.vue",
+            "handler": "goToSupplier",
+            "text": "+ Add Supplier"
+        },
+        {
+            "file": "views\/PurchaseView.vue",
+            "handler": "showNewPurchase",
+            "text": "+ New Purchase"
+        },
+        {
+            "file": "views\/PurchaseView.vue",
+            "handler": "showPurchaseList",
+            "text": "\u2190"
+        },
+        {
+            "file": "views\/PurchaseView.vue",
+            "handler": "showPurchaseList",
+            "text": "Cancel"
+        },
+        {
+            "file": "views\/PurchaseView.vue",
+            "handler": "removePurchaseItem(index)",
+            "text": ""
+        },
+        {
+            "file": "views\/PurchaseView.vue",
+            "handler": "addCustomItem",
+            "text": "+ Add Custom Item"
+        },
+        {
+            "file": "views\/PurchaseView.vue",
+            "handler": "confirmPurchase",
+            "text": "{{ isSubmitting ? 'Confirming...' : 'Confirm Purchase' }}"
+        },
+        {
+            "file": "views\/PurchaseView.vue",
+            "handler": "showPurchaseList",
+            "text": "Cancel"
+        },
+        {
+            "file": "views\/RegisterView.vue",
+            "handler": "showPassword = !showPassword",
+            "text": ""
+        },
+        {
+            "file": "views\/RegisterView.vue",
+            "handler": "showPassword = !showPassword",
+            "text": ""
+        },
+        {
+            "file": "views\/ReportsView.vue",
+            "handler": "triggerCsvExport",
+            "text": "Export CSV"
+        },
+        {
+            "file": "views\/ReportsView.vue",
+            "handler": "changeTab('sales')",
+            "text": "Sales Report"
+        },
+        {
+            "file": "views\/ReportsView.vue",
+            "handler": "changeTab('inventory')",
+            "text": "Inventory Report"
+        },
+        {
+            "file": "views\/ReportsView.vue",
+            "handler": "changeTab('customers')",
+            "text": "Customer Khata"
+        },
+        {
+            "file": "views\/ReportsView.vue",
+            "handler": "changeTab('suppliers')",
+            "text": "Supplier Payables"
+        },
+        {
+            "file": "views\/ReportsView.vue",
+            "handler": "changeTab('expenses')",
+            "text": "Expense Audit"
+        },
+        {
+            "file": "views\/ReportsView.vue",
+            "handler": "changeTab('accounts')",
+            "text": "Financial Accounts"
+        },
+        {
+            "file": "views\/ReportsView.vue",
+            "handler": "changeTab('branches')",
+            "text": "Branch Comparison"
+        },
+        {
+            "file": "views\/ReturnDebtView.vue",
+            "handler": "$emit('close')",
+            "text": "Cancel"
+        },
+        {
+            "file": "views\/ReturnDebtView.vue",
+            "handler": "$emit('success')",
+            "text": "Confirm Return"
+        },
+        {
+            "file": "views\/SalesView.vue",
+            "handler": "fetchData",
+            "text": "Refresh"
+        },
+        {
+            "file": "views\/SupplierView.vue",
+            "handler": "successAlertMessage = ''",
+            "text": ""
+        },
+        {
+            "file": "views\/SupplierView.vue",
+            "handler": "openEditSupplierModal(selectedSupplier)",
+            "text": "Edit"
+        },
+        {
+            "file": "views\/SupplierView.vue",
+            "handler": "deleteSupplier(selectedSupplier.id)",
+            "text": ""
+        },
+        {
+            "file": "views\/SupplierView.vue",
+            "handler": "searchQuery = ''",
+            "text": "\u2715"
+        },
+        {
+            "file": "views\/SupplierView.vue",
+            "handler": "searchQuery = ''",
+            "text": "Reset"
+        },
+        {
+            "file": "views\/SupplierView.vue",
+            "handler": "openAddSupplierModal",
+            "text": "Add New Supplier"
+        },
+        {
+            "file": "views\/SupplierView.vue",
+            "handler": "selectSupplier(s)",
+            "text": ""
+        },
+        {
+            "file": "views\/SupplierView.vue",
+            "handler": "openEditSupplierModal(s)",
+            "text": ""
+        },
+        {
+            "file": "views\/SupplierView.vue",
+            "handler": "deleteSupplier(s.id)",
+            "text": ""
+        },
+        {
+            "file": "views\/SupplierView.vue",
+            "handler": "showSupplierModal = false",
+            "text": "\u2715"
+        },
+        {
+            "file": "views\/SupplierView.vue",
+            "handler": "showSupplierModal = false",
+            "text": "Cancel"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "handler": "successAlertMessage = ''",
+            "text": ""
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "handler": "openAddSupplierModal",
+            "text": "Add Supplier"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "handler": "searchQuery = ''",
+            "text": "\u2715"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "handler": "searchQuery = ''",
+            "text": "Reset"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "handler": "openAddSupplierModal",
+            "text": "Add Supplier"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "handler": "$router.push('\/supplier')",
+            "text": "View Profile"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "handler": "$router.push('\/purchase?new=true&from=supplier')",
+            "text": "Create Purchase Order"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "handler": "showSupplierModal = false",
+            "text": "\u2715"
+        },
+        {
+            "file": "views\/SupplierpayableView.vue",
+            "handler": "showSupplierModal = false",
+            "text": "Cancel"
+        },
+        {
+            "file": "views\/SupportView.vue",
+            "handler": "toggleQuestion(faq.id)",
+            "text": "{{ faq.question }}"
+        },
+        {
+            "file": "views\/reports1View.vue",
+            "handler": "selectPeriod(period)",
+            "text": "{{ period }}"
+        },
+        {
+            "file": "views\/reports1View.vue",
+            "handler": "applyCustomRange",
+            "text": "Apply Date Range"
+        },
+        {
+            "file": "views\/reports1View.vue",
+            "handler": "exportAnalytics",
+            "text": "Export Analytics"
+        },
+        {
+            "file": "views\/reports1View.vue",
+            "handler": "activeTab = tab.name",
+            "text": "{{ tab.name }}"
+        },
+        {
+            "file": "views\/reports1View.vue",
+            "handler": "activeTab = tab.name",
+            "text": "{{ tab.name }}"
+        },
+        {
+            "file": "views\/reports1View.vue",
+            "handler": "resetFilters",
+            "text": "Reset"
+        },
+        {
+            "file": "views\/reports1View.vue",
+            "handler": "applyFilters",
+            "text": "Apply"
+        },
+        {
+            "file": "views\/reports1View.vue",
+            "handler": "exportAnalytics",
+            "text": "Export Ledger"
+        },
+        {
+            "file": "views\/Settings\/CategoriesView.vue",
+            "handler": "openAddModal",
+            "text": "Add New Category"
+        },
+        {
+            "file": "views\/Settings\/CategoriesView.vue",
+            "handler": "viewCategory(cat)",
+            "text": ""
+        },
+        {
+            "file": "views\/Settings\/CategoriesView.vue",
+            "handler": "openEditModal(cat)",
+            "text": ""
+        },
+        {
+            "file": "views\/Settings\/CategoriesView.vue",
+            "handler": "deleteCategory(cat)",
+            "text": ""
+        },
+        {
+            "file": "views\/Settings\/CategoriesView.vue",
+            "handler": "showCategoryModal = false",
+            "text": ""
+        },
+        {
+            "file": "views\/Settings\/CategoriesView.vue",
+            "handler": "showCategoryModal = false",
+            "text": "Cancel"
+        },
+        {
+            "file": "views\/Settings\/CategoriesView.vue",
+            "handler": "saveCategory",
+            "text": "{{ categoryForm.isEdit ? 'Save Changes' : 'Create Category' }}"
+        },
+        {
+            "file": "views\/Settings\/CategoriesView.vue",
+            "handler": "showViewModal = false",
+            "text": ""
+        },
+        {
+            "file": "views\/Settings\/CategoriesView.vue",
+            "handler": "showViewModal = false",
+            "text": "Close"
+        },
+        {
+            "file": "views\/Settings\/CategoriesView.vue",
+            "handler": "handleEditFromView",
+            "text": "Edit Category"
+        },
+        {
+            "file": "views\/Settings\/ReceiptsView.vue",
+            "handler": "resetDefaults",
+            "text": "Reset Defaults"
+        },
+        {
+            "file": "views\/Settings\/ReceiptsView.vue",
+            "handler": "saveSettings",
+            "text": "{{ isSaving ? 'Saving...' : 'Save Settings' }}"
+        },
+        {
+            "file": "views\/Settings\/SecurityView.vue",
+            "handler": "loadLogs(1)",
+            "text": "Refresh Logs"
+        },
+        {
+            "file": "views\/Settings\/SecurityView.vue",
+            "handler": "filters.search = ''; loadLogs(1)",
+            "text": ""
+        },
+        {
+            "file": "views\/Settings\/SecurityView.vue",
+            "handler": "resetFilters",
+            "text": "Reset Filters"
+        },
+        {
+            "file": "views\/Settings\/SecurityView.vue",
+            "handler": "loadLogs(pagination.current_page - 1)",
+            "text": "Previous"
+        },
+        {
+            "file": "views\/Settings\/UsersView.vue",
+            "handler": "openAddUserModal",
+            "text": "ADD USER"
+        },
+        {
+            "file": "views\/Settings\/UsersView.vue",
+            "handler": "searchQuery = ''",
+            "text": ""
+        },
+        {
+            "file": "views\/Settings\/UsersView.vue",
+            "handler": "openEditUserModal(user)",
+            "text": "Edit"
+        },
+        {
+            "file": "views\/Settings\/UsersView.vue",
+            "handler": "toggleUserStatus(user)",
+            "text": "{{ user.is_active ? 'Deactivate' : 'Activate' }}"
+        },
+        {
+            "file": "views\/Settings\/UsersView.vue",
+            "handler": "closeUserModal",
+            "text": ""
+        },
+        {
+            "file": "views\/Settings\/UsersView.vue",
+            "handler": "closeUserModal",
+            "text": "Cancel"
+        },
+        {
+            "file": "components\/ActionModalFactory.vue",
+            "handler": "closeModal",
+            "text": ""
+        },
+        {
+            "file": "components\/ActionModalFactory.vue",
+            "handler": "closeModal",
+            "text": "Cancel"
+        },
+        {
+            "file": "components\/ActionModalFactory.vue",
+            "handler": "handleActionSubmit",
+            "text": "Confirm Action"
+        },
+        {
+            "file": "sync\/ExitGuardModal.vue",
+            "handler": "confirmShutdown",
+            "text": "\ud83d\udd12 Safe Application Exit"
+        },
+        {
+            "file": "layouts\/MainLayout.vue",
+            "handler": "toggleSidebar",
+            "text": ""
+        },
+        {
+            "file": "layouts\/MainLayout.vue",
+            "handler": "toggleSidebar",
+            "text": ""
+        },
+        {
+            "file": "layouts\/ProductLayout.vue",
+            "handler": "toggleSidebar",
+            "text": ""
+        },
+        {
+            "file": "layouts\/ProductLayout.vue",
+            "handler": "toggleSidebar",
+            "text": ""
+        },
+        {
+            "file": "layouts\/SettingsLayout.vue",
+            "handler": "toggleSidebar",
+            "text": ""
+        },
+        {
+            "file": "layouts\/SettingsLayout.vue",
+            "handler": "toggleSidebar",
+            "text": ""
+        }
+    ]
+}

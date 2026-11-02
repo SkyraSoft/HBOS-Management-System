@@ -1,0 +1,43 @@
+{
+    "metadata": {
+        "purpose": "Device Identity and Diagnostic Attribution",
+        "security_principle": "Diagnostic Only; Never replaces cryptographic Bearer Token authorization"
+    },
+    "parameters": {
+        "installation_id": {
+            "type": "UUIDv4",
+            "storage": "Client localStorage",
+            "purpose": "Unique install tracking across reinstalls"
+        },
+        "device_id": {
+            "type": "UUIDv4 \/ SHA256(Machine+User)",
+            "storage": "Client localStorage",
+            "purpose": "Hardware\/terminal identification"
+        },
+        "business_id": {
+            "type": "integer",
+            "storage": "X-Business-ID header",
+            "purpose": "Tenant context assertion (validated against memberships)"
+        },
+        "branch_id": {
+            "type": "integer",
+            "storage": "X-Branch-ID header \/ payload",
+            "purpose": "Operational branch assignment"
+        },
+        "app_version": {
+            "type": "semver string (e.g., 1.0.0)",
+            "storage": "X-App-Version header",
+            "purpose": "Client version handshake and update gating"
+        },
+        "platform_version": {
+            "type": "string (e.g., Windows 11 \/ Electron 30 \/ Web)",
+            "storage": "X-Platform header",
+            "purpose": "Telemetry and troubleshooting"
+        },
+        "last_sync_at": {
+            "type": "ISO8601 timestamp",
+            "storage": "Client DB \/ sync metadata",
+            "purpose": "Incremental catalog delta sync cursor"
+        }
+    }
+}

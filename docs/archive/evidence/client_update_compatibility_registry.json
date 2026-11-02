@@ -1,0 +1,31 @@
+{
+    "metadata": {
+        "update_lifecycle": "Multi-Tenant Distributed Client Release & Versioning Strategy",
+        "generated_at": "2026-10-02T19:35:34+00:00"
+    },
+    "versioning_scheme": {
+        "app_version": "1.0.0",
+        "api_version": "v1",
+        "sync_schema_version": 1,
+        "min_supported_client_version": "1.0.0"
+    },
+    "version_scenarios": {
+        "CLIENT_UP_TO_DATE": {
+            "condition": "client_version >= min_supported && client_version == latest",
+            "action": "Normal operation; no prompts"
+        },
+        "UPDATE_AVAILABLE_OPTIONAL": {
+            "condition": "client_version >= min_supported && client_version < latest",
+            "action": "Non-intrusive toast \/ notification banner in UI; continue normal POS and sync"
+        },
+        "UPDATE_REQUIRED_MANDATORY": {
+            "condition": "client_version < min_supported",
+            "action": "API returns HTTP 426 Upgrade Required with update_url; offline mode locks sync until client updated"
+        }
+    },
+    "offline_upgrade_safety_rules": {
+        "RULE_1_OUTBOX_PRESERVATION": "Application upgrade \/ packaging update must NEVER delete or truncate IndexedDB outbox queue.",
+        "RULE_2_INCREMENTAL_SCHEMA_MIGRATION": "Dexie\/IndexedDB version upgrades must preserve existing transaction records.",
+        "RULE_3_PAYLOAD_BACKWARD_COMPATIBILITY": "Backend bulk-transactions endpoint must accept older sync schemas within min_supported_version window."
+    }
+}

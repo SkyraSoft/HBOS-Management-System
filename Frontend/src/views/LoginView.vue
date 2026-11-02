@@ -11,6 +11,12 @@
                 <span>HBOS</span>
             </div>
             
+            <div class="top-nav-bar" style="display: flex; justify-content: flex-start; margin-bottom: 0.75rem;">
+                <router-link to="/welcome" class="back-link" style="color: #94a3b8; font-size: 0.85rem; text-decoration: none; display: flex; align-items: center; gap: 0.4rem;">
+                    <i class="fa-solid fa-arrow-left"></i> Back to Welcome
+                </router-link>
+            </div>
+            
             <div class="form-container">
                 <h2>Welcome back</h2>
                 <p class="form-description">

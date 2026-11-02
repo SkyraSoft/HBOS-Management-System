@@ -20,6 +20,15 @@ class SupplierController extends Controller
 
         $businessId = ResolveActiveBusiness::requireActiveBusinessId();
         $suppliers = Supplier::where('business_id', $businessId)
+            ->withSum(['purchases as total_purchases' => function ($q) {
+                $q->where('status', '!=', 'cancelled');
+            }], 'total')
+            ->withSum(['payments as total_payments' => function ($q) {
+                $q->where('status', '!=', 'reversed');
+            }], 'amount')
+            ->withCount(['purchases' => function ($q) {
+                $q->where('status', '!=', 'cancelled');
+            }])
             ->orderBy('name', 'asc')
             ->get();
 

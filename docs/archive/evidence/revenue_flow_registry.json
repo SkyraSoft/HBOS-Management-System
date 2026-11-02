@@ -1,0 +1,398 @@
+{
+    "FLOW-001": {
+        "flow_id": "FLOW-001",
+        "flow_name": "POS Direct Cash Sale (Fully Paid)",
+        "flow_family": "REVENUE",
+        "business_purpose": "Execute direct walk-in retail POS checkout with immediate full cash settlement, instant stock decrement, cash ledger entry, and receipt printing.",
+        "initiating_actor": "CASHIER / OPERATOR",
+        "entry_ui": "POS Interface (Frontend /views/pos/PosView.vue)",
+        "entry_route": "POST /api/v1/sales",
+        "primary_mutations": [
+            "MUTATION-029"
+        ],
+        "primary_entities": [
+            "ENTITY-020",
+            "ENTITY-021",
+            "ENTITY-018",
+            "ENTITY-019",
+            "ENTITY-037"
+        ],
+        "starting_state": "CART_OPEN",
+        "ending_state": "PAID",
+        "tables_written": [
+            "sales",
+            "sale_items",
+            "branch_inventories",
+            "inventory_movements",
+            "cash_ledgers",
+            "activity_log"
+        ],
+        "stock_effects": "DECREMENTS_QUANTITY_ON_HAND",
+        "inventory_ledger_effects": "POSTS_INVENTORY_MOVEMENT_TYPE_SALE",
+        "ar_effects": "NONE",
+        "customer_ledger_effects": "NONE",
+        "ap_effects": "NONE",
+        "supplier_ledger_effects": "NONE",
+        "financial_account_effects": "NONE",
+        "account_ledger_effects": "NONE",
+        "cash_effects": "POSTS_CASH_LEDGER_INFLOW",
+        "audit_effects": "LOGS_SALE_CREATION",
+        "print_document_effects": "THERMAL_RECEIPT_ESC_POS",
+        "sync_effects": "QUEUES_TRANSACTION_SYNC_RECORD",
+        "reversal_path": "FLOW-014 (Sale Cancellation) / FLOW-012 (Sale Return)",
+        "p1_references": [
+            "P1-GAP-005",
+            "P1-GAP-011"
+        ],
+        "p2_references": [
+            "P2-GAP-006"
+        ],
+        "p3_gap_ids": [
+            "P3-GAP-001"
+        ],
+        "source_evidence": "api/app/Http/Controllers/Api/V1/SaleController.php@store, api/app/Services/SaleService.php@createSale",
+        "verification_confidence": "SOURCE_VERIFIED_WITH_GAP",
+        "certification_status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "FLOW-002": {
+        "flow_id": "FLOW-002",
+        "flow_name": "POS Direct Bank / Digital Payment Sale",
+        "flow_family": "REVENUE",
+        "business_purpose": "Execute POS checkout with electronic bank/card settlement directly depositing into a selected financial account with stock decrement.",
+        "initiating_actor": "CASHIER / OPERATOR",
+        "entry_ui": "POS Interface (PaymentModal.vue)",
+        "entry_route": "POST /api/v1/sales",
+        "primary_mutations": [
+            "MUTATION-029"
+        ],
+        "primary_entities": [
+            "ENTITY-020",
+            "ENTITY-021",
+            "ENTITY-018",
+            "ENTITY-019",
+            "ENTITY-034",
+            "ENTITY-035"
+        ],
+        "starting_state": "CART_OPEN",
+        "ending_state": "PAID",
+        "tables_written": [
+            "sales",
+            "sale_items",
+            "branch_inventories",
+            "inventory_movements",
+            "financial_accounts",
+            "account_movements",
+            "activity_log"
+        ],
+        "stock_effects": "DECREMENTS_QUANTITY_ON_HAND",
+        "inventory_ledger_effects": "POSTS_INVENTORY_MOVEMENT_TYPE_SALE",
+        "ar_effects": "NONE",
+        "customer_ledger_effects": "NONE",
+        "ap_effects": "NONE",
+        "supplier_ledger_effects": "NONE",
+        "financial_account_effects": "INCREMENTS_FINANCIAL_ACCOUNT_BALANCE",
+        "account_ledger_effects": "POSTS_ACCOUNT_MOVEMENT_TYPE_SALE_PAYMENT",
+        "cash_effects": "NONE",
+        "audit_effects": "LOGS_SALE_CREATION",
+        "print_document_effects": "THERMAL_RECEIPT_ESC_POS",
+        "sync_effects": "QUEUES_TRANSACTION_SYNC_RECORD",
+        "reversal_path": "FLOW-014 (Sale Cancellation) / FLOW-012 (Sale Return)",
+        "p1_references": [
+            "P1-GAP-005"
+        ],
+        "p2_references": [
+            "P2-GAP-006"
+        ],
+        "p3_gap_ids": [
+            "P3-GAP-001"
+        ],
+        "source_evidence": "api/app/Http/Controllers/Api/V1/SaleController.php@store, api/app/Services/SaleService.php@createSale",
+        "verification_confidence": "SOURCE_VERIFIED_WITH_GAP",
+        "certification_status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "FLOW-003": {
+        "flow_id": "FLOW-003",
+        "flow_name": "POS Credit Sale on Customer Khata (Unpaid)",
+        "flow_family": "REVENUE",
+        "business_purpose": "Execute POS checkout on customer credit, decrementing stock and debiting customer Khata receivables balance without upfront payment.",
+        "initiating_actor": "CASHIER / MANAGER",
+        "entry_ui": "POS Interface (CustomerSelectModal.vue + PaymentModal.vue)",
+        "entry_route": "POST /api/v1/sales",
+        "primary_mutations": [
+            "MUTATION-029"
+        ],
+        "primary_entities": [
+            "ENTITY-020",
+            "ENTITY-021",
+            "ENTITY-018",
+            "ENTITY-019",
+            "ENTITY-024",
+            "ENTITY-025"
+        ],
+        "starting_state": "CART_OPEN",
+        "ending_state": "DUE",
+        "tables_written": [
+            "sales",
+            "sale_items",
+            "branch_inventories",
+            "inventory_movements",
+            "customers",
+            "khata_transactions",
+            "activity_log"
+        ],
+        "stock_effects": "DECREMENTS_QUANTITY_ON_HAND",
+        "inventory_ledger_effects": "POSTS_INVENTORY_MOVEMENT_TYPE_SALE",
+        "ar_effects": "INCREMENTS_CUSTOMER_RECEIVABLES_BALANCE",
+        "customer_ledger_effects": "POSTS_KHATA_TRANSACTION_TYPE_DEBIT",
+        "ap_effects": "NONE",
+        "supplier_ledger_effects": "NONE",
+        "financial_account_effects": "NONE",
+        "account_ledger_effects": "NONE",
+        "cash_effects": "NONE",
+        "audit_effects": "LOGS_CREDIT_SALE",
+        "print_document_effects": "A4_OR_THERMAL_CREDIT_INVOICE",
+        "sync_effects": "QUEUES_TRANSACTION_SYNC_RECORD",
+        "reversal_path": "FLOW-014 (Sale Cancellation) / FLOW-013 (Sale Return Credit)",
+        "p1_references": [
+            "P1-GAP-007"
+        ],
+        "p2_references": [
+            "P2-GAP-007"
+        ],
+        "p3_gap_ids": [
+            "P3-GAP-002"
+        ],
+        "source_evidence": "api/app/Http/Controllers/Api/V1/SaleController.php@store, api/app/Services/SaleService.php@createSale",
+        "verification_confidence": "SOURCE_VERIFIED_WITH_GAP",
+        "certification_status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "FLOW-004": {
+        "flow_id": "FLOW-004",
+        "flow_name": "POS Partially Paid Sale",
+        "flow_family": "REVENUE",
+        "business_purpose": "Execute POS checkout with partial cash/bank payment upfront, routing paid portion to liquid accounts and remainder to Customer Khata AR balance.",
+        "initiating_actor": "CASHIER / OPERATOR",
+        "entry_ui": "POS Interface (PaymentModal.vue)",
+        "entry_route": "POST /api/v1/sales",
+        "primary_mutations": [
+            "MUTATION-029"
+        ],
+        "primary_entities": [
+            "ENTITY-020",
+            "ENTITY-021",
+            "ENTITY-018",
+            "ENTITY-019",
+            "ENTITY-024",
+            "ENTITY-025",
+            "ENTITY-037"
+        ],
+        "starting_state": "CART_OPEN",
+        "ending_state": "PARTIAL",
+        "tables_written": [
+            "sales",
+            "sale_items",
+            "branch_inventories",
+            "inventory_movements",
+            "customers",
+            "khata_transactions",
+            "cash_ledgers",
+            "activity_log"
+        ],
+        "stock_effects": "DECREMENTS_QUANTITY_ON_HAND",
+        "inventory_ledger_effects": "POSTS_INVENTORY_MOVEMENT_TYPE_SALE",
+        "ar_effects": "INCREMENTS_CUSTOMER_RECEIVABLES_BY_DUE_PORTION",
+        "customer_ledger_effects": "POSTS_KHATA_TRANSACTION_FOR_DUE_PORTION",
+        "ap_effects": "NONE",
+        "supplier_ledger_effects": "NONE",
+        "financial_account_effects": "INCREMENTS_IF_PAID_DIGITALLY",
+        "account_ledger_effects": "POSTS_MOVEMENT_FOR_PAID_PORTION",
+        "cash_effects": "POSTS_CASH_DRAWER_INFLOW_FOR_PAID_CASH",
+        "audit_effects": "LOGS_PARTIAL_SALE",
+        "print_document_effects": "RECEIPT_WITH_DUE_BALANCE",
+        "sync_effects": "QUEUES_TRANSACTION_SYNC_RECORD",
+        "reversal_path": "FLOW-014 (Sale Cancellation)",
+        "p1_references": [
+            "P1-GAP-005",
+            "P1-GAP-007"
+        ],
+        "p2_references": [
+            "P2-GAP-006",
+            "P2-GAP-007"
+        ],
+        "p3_gap_ids": [
+            "P3-GAP-002"
+        ],
+        "source_evidence": "api/app/Http/Controllers/Api/V1/SaleController.php@store, api/app/Services/SaleService.php@createSale",
+        "verification_confidence": "SOURCE_VERIFIED_WITH_GAP",
+        "certification_status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "FLOW-005": {
+        "flow_id": "FLOW-005",
+        "flow_name": "POS Split-Tender / Multi-Payment Sale",
+        "flow_family": "REVENUE",
+        "business_purpose": "Execute POS checkout settled across multiple tender methods (e.g. Cash + Bank Card), splitting payments into respective ledger accounts.",
+        "initiating_actor": "CASHIER / OPERATOR",
+        "entry_ui": "POS Interface (SplitPaymentModal.vue)",
+        "entry_route": "POST /api/v1/sales",
+        "primary_mutations": [
+            "MUTATION-029"
+        ],
+        "primary_entities": [
+            "ENTITY-020",
+            "ENTITY-021",
+            "ENTITY-018",
+            "ENTITY-019",
+            "ENTITY-034",
+            "ENTITY-035",
+            "ENTITY-037"
+        ],
+        "starting_state": "CART_OPEN",
+        "ending_state": "PAID",
+        "tables_written": [
+            "sales",
+            "sale_items",
+            "branch_inventories",
+            "inventory_movements",
+            "financial_accounts",
+            "account_movements",
+            "cash_ledgers",
+            "activity_log"
+        ],
+        "stock_effects": "DECREMENTS_QUANTITY_ON_HAND",
+        "inventory_ledger_effects": "POSTS_INVENTORY_MOVEMENT_TYPE_SALE",
+        "ar_effects": "NONE",
+        "customer_ledger_effects": "NONE",
+        "ap_effects": "NONE",
+        "supplier_ledger_effects": "NONE",
+        "financial_account_effects": "INCREMENTS_BANK_ACCOUNT",
+        "account_ledger_effects": "POSTS_ACCOUNT_MOVEMENT",
+        "cash_effects": "POSTS_CASH_DRAWER_INFLOW",
+        "audit_effects": "LOGS_SPLIT_SALE",
+        "print_document_effects": "SPLIT_PAYMENT_RECEIPT",
+        "sync_effects": "QUEUES_TRANSACTION_SYNC_RECORD",
+        "reversal_path": "FLOW-014 (Sale Cancellation)",
+        "p1_references": [
+            "P1-GAP-005"
+        ],
+        "p2_references": [
+            "P2-GAP-006"
+        ],
+        "p3_gap_ids": [
+            "P3-GAP-003"
+        ],
+        "source_evidence": "api/app/Http/Controllers/Api/V1/SaleController.php@store, api/app/Services/SaleService.php@createSale",
+        "verification_confidence": "SOURCE_VERIFIED_WITH_GAP",
+        "certification_status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "FLOW-006": {
+        "flow_id": "FLOW-006",
+        "flow_name": "Post-Sale Customer Khata Payment Receipt",
+        "flow_family": "REVENUE",
+        "business_purpose": "Receive customer balance settlement for previous credit sales, depositing funds into cash/bank and crediting customer Khata AR balance.",
+        "initiating_actor": "CASHIER / ACCOUNTANT",
+        "entry_ui": "Customer Details / Khata Modal (CustomerPaymentModal.vue)",
+        "entry_route": "POST /api/v1/customer-payments",
+        "primary_mutations": [
+            "MUTATION-041"
+        ],
+        "primary_entities": [
+            "ENTITY-026",
+            "ENTITY-024",
+            "ENTITY-025",
+            "ENTITY-034",
+            "ENTITY-035",
+            "ENTITY-037"
+        ],
+        "starting_state": "PAYMENT_ENTRY",
+        "ending_state": "POSTED",
+        "tables_written": [
+            "customer_payments",
+            "customers",
+            "khata_transactions",
+            "financial_accounts",
+            "account_movements",
+            "cash_ledgers",
+            "activity_log"
+        ],
+        "stock_effects": "NONE",
+        "inventory_ledger_effects": "NONE",
+        "ar_effects": "DECREMENTS_CUSTOMER_RECEIVABLES_BALANCE",
+        "customer_ledger_effects": "POSTS_KHATA_TRANSACTION_TYPE_CREDIT",
+        "ap_effects": "NONE",
+        "supplier_ledger_effects": "NONE",
+        "financial_account_effects": "INCREMENTS_FINANCIAL_ACCOUNT_BALANCE",
+        "account_ledger_effects": "POSTS_ACCOUNT_MOVEMENT_INFLOW",
+        "cash_effects": "POSTS_CASH_DRAWER_INFLOW_IF_CASH",
+        "audit_effects": "LOGS_CUSTOMER_PAYMENT",
+        "print_document_effects": "PAYMENT_RECEIPT_VOUCHER",
+        "sync_effects": "SYNC_CUSTOMER_PAYMENT",
+        "reversal_path": "FLOW-015 (Customer Payment Reversal)",
+        "p1_references": [
+            "P1-GAP-007"
+        ],
+        "p2_references": [],
+        "p3_gap_ids": [],
+        "source_evidence": "api/app/Http/Controllers/Api/V1/CustomerPaymentController.php@store, api/app/Services/CustomerPaymentService.php@recordPayment",
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "FLOW-007": {
+        "flow_id": "FLOW-007",
+        "flow_name": "Offline POS Batch Sync Ingestion",
+        "flow_family": "REVENUE",
+        "business_purpose": "Ingest batches of sales and payments executed offline in browser/desktop Dexie database into server PostgreSQL database with UUID deduplication.",
+        "initiating_actor": "OFFLINE_POS_CLIENT / SYNC_WORKER",
+        "entry_ui": "Sync Engine Background Process (syncService.js)",
+        "entry_route": "POST /api/v1/sync/bulk-ingest",
+        "primary_mutations": [
+            "MUTATION-071"
+        ],
+        "primary_entities": [
+            "ENTITY-020",
+            "ENTITY-021",
+            "ENTITY-018",
+            "ENTITY-019",
+            "ENTITY-026",
+            "ENTITY-025",
+            "ENTITY-037"
+        ],
+        "starting_state": "QUEUED_LOCAL",
+        "ending_state": "INGESTED_SERVER",
+        "tables_written": [
+            "sales",
+            "sale_items",
+            "branch_inventories",
+            "inventory_movements",
+            "customer_payments",
+            "khata_transactions",
+            "cash_ledgers",
+            "activity_log"
+        ],
+        "stock_effects": "BATCH_DECREMENTS_BRANCH_STOCK",
+        "inventory_ledger_effects": "BATCH_POSTS_INVENTORY_MOVEMENTS",
+        "ar_effects": "BATCH_MUTATES_CUSTOMER_RECEIVABLES",
+        "customer_ledger_effects": "BATCH_POSTS_KHATA_ROWS",
+        "ap_effects": "NONE",
+        "supplier_ledger_effects": "NONE",
+        "financial_account_effects": "BATCH_POSTS_FINANCIAL_MOVEMENTS",
+        "account_ledger_effects": "BATCH_POSTS_ACCOUNT_MOVEMENTS",
+        "cash_effects": "BATCH_POSTS_CASH_DRAWER_MOVEMENTS",
+        "audit_effects": "LOGS_SYNC_BATCH",
+        "print_document_effects": "LOCAL_RECEIPT_PRINTED_AT_SALE_TIME",
+        "sync_effects": "CONFIRMS_INGEST_ACK",
+        "reversal_path": "INDIVIDUAL_TRANSACTION_REVERSALS",
+        "p1_references": [
+            "P1-GAP-005",
+            "P1-GAP-010"
+        ],
+        "p2_references": [
+            "P2-GAP-020"
+        ],
+        "p3_gap_ids": [
+            "P3-GAP-004"
+        ],
+        "source_evidence": "api/app/Http/Controllers/Api/V1/SyncController.php@bulkIngest, api/app/Services/BulkSyncService.php@ingestBulkTransactions",
+        "verification_confidence": "SOURCE_VERIFIED_WITH_GAP",
+        "certification_status": "CERTIFIED_WITH_KNOWN_GAP"
+    }
+}

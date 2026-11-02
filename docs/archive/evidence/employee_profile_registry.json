@@ -1,0 +1,82 @@
+[
+  {
+    "attribute": "name",
+    "table": "users",
+    "category": "IDENTITY",
+    "editable_by_self": true,
+    "editable_by_admin": true,
+    "description": "Full legal name of the employee."
+  },
+  {
+    "attribute": "email",
+    "table": "users",
+    "category": "AUTH",
+    "editable_by_self": false,
+    "editable_by_admin": true,
+    "description": "Login email address and password reset target."
+  },
+  {
+    "attribute": "phone",
+    "table": "users",
+    "category": "CONTACT",
+    "editable_by_self": true,
+    "editable_by_admin": true,
+    "description": "Mobile contact number."
+  },
+  {
+    "attribute": "role",
+    "table": "users / model_has_roles",
+    "category": "GOVERNANCE",
+    "editable_by_self": false,
+    "editable_by_admin": true,
+    "description": "Assigned organizational role (Owner, Manager, Salesperson, Accountant, Inventory Manager)."
+  },
+  {
+    "attribute": "branch_id",
+    "table": "users / branch_user",
+    "category": "ASSIGNMENT",
+    "editable_by_self": false,
+    "editable_by_admin": true,
+    "description": "Primary and secondary assigned retail branch locations."
+  },
+  {
+    "attribute": "salary_amount",
+    "table": "users",
+    "category": "HR_FINANCE",
+    "editable_by_self": false,
+    "editable_by_admin": true,
+    "description": "Contracted salary or compensation amount."
+  },
+  {
+    "attribute": "payment_cycle",
+    "table": "users",
+    "category": "HR_FINANCE",
+    "editable_by_self": false,
+    "editable_by_admin": true,
+    "description": "Payroll period cycle: daily, weekly, or monthly."
+  },
+  {
+    "attribute": "next_payment_date",
+    "table": "users",
+    "category": "HR_FINANCE",
+    "editable_by_self": false,
+    "editable_by_admin": true,
+    "description": "Upcoming scheduled disbursement date."
+  },
+  {
+    "attribute": "is_active",
+    "table": "users",
+    "category": "SECURITY",
+    "editable_by_self": false,
+    "editable_by_admin": true,
+    "description": "Account activation toggle; deactivation immediately revokes active session tokens."
+  },
+  {
+    "attribute": "last_login_at",
+    "table": "users",
+    "category": "SECURITY",
+    "editable_by_self": false,
+    "editable_by_admin": false,
+    "description": "Timestamp of most recent successful authentication."
+  }
+]

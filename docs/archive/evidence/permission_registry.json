@@ -1,0 +1,705 @@
+{
+    "PERM-001": {
+        "permission_id": "PERM-001",
+        "permission_name": "manage business settings",
+        "business_meaning": "Modify business profile, logo, timezone, currency, tax rules",
+        "domain": "Administration",
+        "affected_entity": "ENTITY-002 (Business)",
+        "affected_mutations": [
+            "MUTATION-005",
+            "MUTATION-006"
+        ],
+        "roles_granted": [
+            "Business Owner"
+        ],
+        "direct_user_grant_possible": true,
+        "tenant_scoped": true,
+        "branch_scoped": false,
+        "server_enforcement_location": "Spatie Permission Trait on User model & Service layer checks",
+        "frontend_visibility_location": "Sidebar menu and action button v-if guards",
+        "policy_gate_middleware": "ResolveActiveBusiness & EnsureUserIsActive",
+        "source_evidence": "api/database/seeders/RolesAndPermissionsSeeder.php:L20-L55",
+        "known_gaps": [],
+        "certification_status": "CERTIFIED_ENFORCED"
+    },
+    "PERM-002": {
+        "permission_id": "PERM-002",
+        "permission_name": "manage branches",
+        "business_meaning": "Create, edit, and deactivate store branch locations",
+        "domain": "Administration",
+        "affected_entity": "ENTITY-003 (Branch)",
+        "affected_mutations": [
+            "MUTATION-004"
+        ],
+        "roles_granted": [
+            "Business Owner"
+        ],
+        "direct_user_grant_possible": true,
+        "tenant_scoped": true,
+        "branch_scoped": false,
+        "server_enforcement_location": "Spatie Permission Trait on User model & Service layer checks",
+        "frontend_visibility_location": "Sidebar menu and action button v-if guards",
+        "policy_gate_middleware": "ResolveActiveBusiness & EnsureUserIsActive",
+        "source_evidence": "api/database/seeders/RolesAndPermissionsSeeder.php:L20-L55",
+        "known_gaps": [],
+        "certification_status": "CERTIFIED_ENFORCED"
+    },
+    "PERM-003": {
+        "permission_id": "PERM-003",
+        "permission_name": "manage users",
+        "business_meaning": "Create staff users, assign roles and branches, revoke sessions",
+        "domain": "Governance",
+        "affected_entity": "ENTITY-001 (User)",
+        "affected_mutations": [
+            "MUTATION-044",
+            "MUTATION-045"
+        ],
+        "roles_granted": [
+            "Business Owner"
+        ],
+        "direct_user_grant_possible": true,
+        "tenant_scoped": true,
+        "branch_scoped": false,
+        "server_enforcement_location": "Spatie Permission Trait on User model & Service layer checks",
+        "frontend_visibility_location": "Sidebar menu and action button v-if guards",
+        "policy_gate_middleware": "ResolveActiveBusiness & EnsureUserIsActive",
+        "source_evidence": "api/database/seeders/RolesAndPermissionsSeeder.php:L20-L55",
+        "known_gaps": [],
+        "certification_status": "CERTIFIED_ENFORCED"
+    },
+    "PERM-004": {
+        "permission_id": "PERM-004",
+        "permission_name": "view full reports",
+        "business_meaning": "View tenant-wide financial reports, P&L, and balance sheets",
+        "domain": "Reporting",
+        "affected_entity": "ENTITY-023 (Report)",
+        "affected_mutations": [],
+        "roles_granted": [
+            "Business Owner",
+            "Accountant"
+        ],
+        "direct_user_grant_possible": true,
+        "tenant_scoped": true,
+        "branch_scoped": false,
+        "server_enforcement_location": "Spatie Permission Trait on User model & Service layer checks",
+        "frontend_visibility_location": "Sidebar menu and action button v-if guards",
+        "policy_gate_middleware": "ResolveActiveBusiness & EnsureUserIsActive",
+        "source_evidence": "api/database/seeders/RolesAndPermissionsSeeder.php:L20-L55",
+        "known_gaps": [],
+        "certification_status": "CERTIFIED_ENFORCED"
+    },
+    "PERM-005": {
+        "permission_id": "PERM-005",
+        "permission_name": "manage branch settings",
+        "business_meaning": "Modify branch local preferences and registers",
+        "domain": "Administration",
+        "affected_entity": "ENTITY-003 (Branch)",
+        "affected_mutations": [
+            "MUTATION-004"
+        ],
+        "roles_granted": [
+            "Business Owner",
+            "Branch Manager"
+        ],
+        "direct_user_grant_possible": true,
+        "tenant_scoped": true,
+        "branch_scoped": false,
+        "server_enforcement_location": "Spatie Permission Trait on User model & Service layer checks",
+        "frontend_visibility_location": "Sidebar menu and action button v-if guards",
+        "policy_gate_middleware": "ResolveActiveBusiness & EnsureUserIsActive",
+        "source_evidence": "api/database/seeders/RolesAndPermissionsSeeder.php:L20-L55",
+        "known_gaps": [],
+        "certification_status": "CERTIFIED_ENFORCED"
+    },
+    "PERM-006": {
+        "permission_id": "PERM-006",
+        "permission_name": "manage local inventory",
+        "business_meaning": "Restock, adjust, and transfer inventory within branch",
+        "domain": "Inventory",
+        "affected_entity": "ENTITY-007 (BranchInventory)",
+        "affected_mutations": [
+            "MUTATION-009",
+            "MUTATION-010"
+        ],
+        "roles_granted": [
+            "Business Owner",
+            "Branch Manager",
+            "Inventory Manager"
+        ],
+        "direct_user_grant_possible": true,
+        "tenant_scoped": true,
+        "branch_scoped": false,
+        "server_enforcement_location": "Spatie Permission Trait on User model & Service layer checks",
+        "frontend_visibility_location": "Sidebar menu and action button v-if guards",
+        "policy_gate_middleware": "ResolveActiveBusiness & EnsureUserIsActive",
+        "source_evidence": "api/database/seeders/RolesAndPermissionsSeeder.php:L20-L55",
+        "known_gaps": [],
+        "certification_status": "CERTIFIED_ENFORCED"
+    },
+    "PERM-007": {
+        "permission_id": "PERM-007",
+        "permission_name": "view branch reports",
+        "business_meaning": "View branch sales, inventory valuation, and cash reports",
+        "domain": "Reporting",
+        "affected_entity": "ENTITY-023 (Report)",
+        "affected_mutations": [],
+        "roles_granted": [
+            "Business Owner",
+            "Branch Manager"
+        ],
+        "direct_user_grant_possible": true,
+        "tenant_scoped": true,
+        "branch_scoped": false,
+        "server_enforcement_location": "Spatie Permission Trait on User model & Service layer checks",
+        "frontend_visibility_location": "Sidebar menu and action button v-if guards",
+        "policy_gate_middleware": "ResolveActiveBusiness & EnsureUserIsActive",
+        "source_evidence": "api/database/seeders/RolesAndPermissionsSeeder.php:L20-L55",
+        "known_gaps": [],
+        "certification_status": "CERTIFIED_ENFORCED"
+    },
+    "PERM-008": {
+        "permission_id": "PERM-008",
+        "permission_name": "create sales",
+        "business_meaning": "Operate POS terminal, scan items, and commit sales checkouts",
+        "domain": "Sales",
+        "affected_entity": "ENTITY-009 (Sale)",
+        "affected_mutations": [
+            "MUTATION-015",
+            "MUTATION-016"
+        ],
+        "roles_granted": [
+            "Business Owner",
+            "Branch Manager",
+            "Salesperson"
+        ],
+        "direct_user_grant_possible": true,
+        "tenant_scoped": true,
+        "branch_scoped": false,
+        "server_enforcement_location": "Spatie Permission Trait on User model & Service layer checks",
+        "frontend_visibility_location": "Sidebar menu and action button v-if guards",
+        "policy_gate_middleware": "ResolveActiveBusiness & EnsureUserIsActive",
+        "source_evidence": "api/database/seeders/RolesAndPermissionsSeeder.php:L20-L55",
+        "known_gaps": [],
+        "certification_status": "CERTIFIED_ENFORCED"
+    },
+    "PERM-009": {
+        "permission_id": "PERM-009",
+        "permission_name": "view own sales",
+        "business_meaning": "View sales completed during current shift/cashier session",
+        "domain": "Sales",
+        "affected_entity": "ENTITY-009 (Sale)",
+        "affected_mutations": [],
+        "roles_granted": [
+            "Business Owner",
+            "Branch Manager",
+            "Salesperson"
+        ],
+        "direct_user_grant_possible": true,
+        "tenant_scoped": true,
+        "branch_scoped": false,
+        "server_enforcement_location": "Spatie Permission Trait on User model & Service layer checks",
+        "frontend_visibility_location": "Sidebar menu and action button v-if guards",
+        "policy_gate_middleware": "ResolveActiveBusiness & EnsureUserIsActive",
+        "source_evidence": "api/database/seeders/RolesAndPermissionsSeeder.php:L20-L55",
+        "known_gaps": [],
+        "certification_status": "CERTIFIED_ENFORCED"
+    },
+    "PERM-010": {
+        "permission_id": "PERM-010",
+        "permission_name": "create customers",
+        "business_meaning": "Register new customer profiles and credit limits",
+        "domain": "Customers",
+        "affected_entity": "ENTITY-015 (Customer)",
+        "affected_mutations": [
+            "MUTATION-031"
+        ],
+        "roles_granted": [
+            "Business Owner",
+            "Branch Manager",
+            "Salesperson"
+        ],
+        "direct_user_grant_possible": true,
+        "tenant_scoped": true,
+        "branch_scoped": false,
+        "server_enforcement_location": "Spatie Permission Trait on User model & Service layer checks",
+        "frontend_visibility_location": "Sidebar menu and action button v-if guards",
+        "policy_gate_middleware": "ResolveActiveBusiness & EnsureUserIsActive",
+        "source_evidence": "api/database/seeders/RolesAndPermissionsSeeder.php:L20-L55",
+        "known_gaps": [],
+        "certification_status": "CERTIFIED_ENFORCED"
+    },
+    "PERM-011": {
+        "permission_id": "PERM-011",
+        "permission_name": "view products",
+        "business_meaning": "Browse product catalog, prices, and stock counts",
+        "domain": "Catalog",
+        "affected_entity": "ENTITY-006 (Product)",
+        "affected_mutations": [],
+        "roles_granted": [
+            "Business Owner",
+            "Branch Manager",
+            "Salesperson",
+            "Inventory Manager"
+        ],
+        "direct_user_grant_possible": true,
+        "tenant_scoped": true,
+        "branch_scoped": false,
+        "server_enforcement_location": "Spatie Permission Trait on User model & Service layer checks",
+        "frontend_visibility_location": "Sidebar menu and action button v-if guards",
+        "policy_gate_middleware": "ResolveActiveBusiness & EnsureUserIsActive",
+        "source_evidence": "api/database/seeders/RolesAndPermissionsSeeder.php:L20-L55",
+        "known_gaps": [],
+        "certification_status": "CERTIFIED_ENFORCED"
+    },
+    "PERM-012": {
+        "permission_id": "PERM-012",
+        "permission_name": "manage products",
+        "business_meaning": "Create, edit, and delete products, costs, and selling prices",
+        "domain": "Catalog",
+        "affected_entity": "ENTITY-006 (Product)",
+        "affected_mutations": [
+            "MUTATION-007",
+            "MUTATION-008"
+        ],
+        "roles_granted": [
+            "Business Owner",
+            "Branch Manager",
+            "Inventory Manager"
+        ],
+        "direct_user_grant_possible": true,
+        "tenant_scoped": true,
+        "branch_scoped": false,
+        "server_enforcement_location": "Spatie Permission Trait on User model & Service layer checks",
+        "frontend_visibility_location": "Sidebar menu and action button v-if guards",
+        "policy_gate_middleware": "ResolveActiveBusiness & EnsureUserIsActive",
+        "source_evidence": "api/database/seeders/RolesAndPermissionsSeeder.php:L20-L55",
+        "known_gaps": [],
+        "certification_status": "CERTIFIED_ENFORCED"
+    },
+    "PERM-013": {
+        "permission_id": "PERM-013",
+        "permission_name": "view categories",
+        "business_meaning": "View category trees",
+        "domain": "Catalog",
+        "affected_entity": "ENTITY-004 (Category)",
+        "affected_mutations": [],
+        "roles_granted": [
+            "Business Owner",
+            "Branch Manager",
+            "Salesperson",
+            "Inventory Manager"
+        ],
+        "direct_user_grant_possible": true,
+        "tenant_scoped": true,
+        "branch_scoped": false,
+        "server_enforcement_location": "Spatie Permission Trait on User model & Service layer checks",
+        "frontend_visibility_location": "Sidebar menu and action button v-if guards",
+        "policy_gate_middleware": "ResolveActiveBusiness & EnsureUserIsActive",
+        "source_evidence": "api/database/seeders/RolesAndPermissionsSeeder.php:L20-L55",
+        "known_gaps": [],
+        "certification_status": "CERTIFIED_ENFORCED"
+    },
+    "PERM-014": {
+        "permission_id": "PERM-014",
+        "permission_name": "manage categories",
+        "business_meaning": "Create, edit, and delete product categories",
+        "domain": "Catalog",
+        "affected_entity": "ENTITY-004 (Category)",
+        "affected_mutations": [
+            "MUTATION-011",
+            "MUTATION-012"
+        ],
+        "roles_granted": [
+            "Business Owner",
+            "Branch Manager"
+        ],
+        "direct_user_grant_possible": true,
+        "tenant_scoped": true,
+        "branch_scoped": false,
+        "server_enforcement_location": "Spatie Permission Trait on User model & Service layer checks",
+        "frontend_visibility_location": "Sidebar menu and action button v-if guards",
+        "policy_gate_middleware": "ResolveActiveBusiness & EnsureUserIsActive",
+        "source_evidence": "api/database/seeders/RolesAndPermissionsSeeder.php:L20-L55",
+        "known_gaps": [],
+        "certification_status": "CERTIFIED_ENFORCED"
+    },
+    "PERM-015": {
+        "permission_id": "PERM-015",
+        "permission_name": "view brands",
+        "business_meaning": "View partner brands",
+        "domain": "Catalog",
+        "affected_entity": "ENTITY-005 (Brand)",
+        "affected_mutations": [],
+        "roles_granted": [
+            "Business Owner",
+            "Branch Manager",
+            "Salesperson",
+            "Inventory Manager"
+        ],
+        "direct_user_grant_possible": true,
+        "tenant_scoped": true,
+        "branch_scoped": false,
+        "server_enforcement_location": "Spatie Permission Trait on User model & Service layer checks",
+        "frontend_visibility_location": "Sidebar menu and action button v-if guards",
+        "policy_gate_middleware": "ResolveActiveBusiness & EnsureUserIsActive",
+        "source_evidence": "api/database/seeders/RolesAndPermissionsSeeder.php:L20-L55",
+        "known_gaps": [],
+        "certification_status": "CERTIFIED_ENFORCED"
+    },
+    "PERM-016": {
+        "permission_id": "PERM-016",
+        "permission_name": "manage brands",
+        "business_meaning": "Create, edit, and delete partner brands",
+        "domain": "Catalog",
+        "affected_entity": "ENTITY-005 (Brand)",
+        "affected_mutations": [
+            "MUTATION-013",
+            "MUTATION-014"
+        ],
+        "roles_granted": [
+            "Business Owner",
+            "Branch Manager"
+        ],
+        "direct_user_grant_possible": true,
+        "tenant_scoped": true,
+        "branch_scoped": false,
+        "server_enforcement_location": "Spatie Permission Trait on User model & Service layer checks",
+        "frontend_visibility_location": "Sidebar menu and action button v-if guards",
+        "policy_gate_middleware": "ResolveActiveBusiness & EnsureUserIsActive",
+        "source_evidence": "api/database/seeders/RolesAndPermissionsSeeder.php:L20-L55",
+        "known_gaps": [],
+        "certification_status": "CERTIFIED_ENFORCED"
+    },
+    "PERM-017": {
+        "permission_id": "PERM-017",
+        "permission_name": "view inventory",
+        "business_meaning": "View live stock levels across all branches",
+        "domain": "Inventory",
+        "affected_entity": "ENTITY-007 (BranchInventory)",
+        "affected_mutations": [],
+        "roles_granted": [
+            "Business Owner",
+            "Branch Manager",
+            "Inventory Manager",
+            "Accountant"
+        ],
+        "direct_user_grant_possible": true,
+        "tenant_scoped": true,
+        "branch_scoped": false,
+        "server_enforcement_location": "Spatie Permission Trait on User model & Service layer checks",
+        "frontend_visibility_location": "Sidebar menu and action button v-if guards",
+        "policy_gate_middleware": "ResolveActiveBusiness & EnsureUserIsActive",
+        "source_evidence": "api/database/seeders/RolesAndPermissionsSeeder.php:L20-L55",
+        "known_gaps": [],
+        "certification_status": "CERTIFIED_ENFORCED"
+    },
+    "PERM-018": {
+        "permission_id": "PERM-018",
+        "permission_name": "adjust inventory",
+        "business_meaning": "Perform manual inventory corrections and write-offs",
+        "domain": "Inventory",
+        "affected_entity": "ENTITY-008 (InventoryMovement)",
+        "affected_mutations": [
+            "MUTATION-009"
+        ],
+        "roles_granted": [
+            "Business Owner",
+            "Branch Manager",
+            "Inventory Manager"
+        ],
+        "direct_user_grant_possible": true,
+        "tenant_scoped": true,
+        "branch_scoped": false,
+        "server_enforcement_location": "Spatie Permission Trait on User model & Service layer checks",
+        "frontend_visibility_location": "Sidebar menu and action button v-if guards",
+        "policy_gate_middleware": "ResolveActiveBusiness & EnsureUserIsActive",
+        "source_evidence": "api/database/seeders/RolesAndPermissionsSeeder.php:L20-L55",
+        "known_gaps": [],
+        "certification_status": "CERTIFIED_ENFORCED"
+    },
+    "PERM-019": {
+        "permission_id": "PERM-019",
+        "permission_name": "transfer inventory",
+        "business_meaning": "Initiate and receive inter-branch stock transfers",
+        "domain": "Inventory",
+        "affected_entity": "ENTITY-008 (InventoryMovement)",
+        "affected_mutations": [
+            "MUTATION-010"
+        ],
+        "roles_granted": [
+            "Business Owner",
+            "Branch Manager",
+            "Inventory Manager"
+        ],
+        "direct_user_grant_possible": true,
+        "tenant_scoped": true,
+        "branch_scoped": false,
+        "server_enforcement_location": "Spatie Permission Trait on User model & Service layer checks",
+        "frontend_visibility_location": "Sidebar menu and action button v-if guards",
+        "policy_gate_middleware": "ResolveActiveBusiness & EnsureUserIsActive",
+        "source_evidence": "api/database/seeders/RolesAndPermissionsSeeder.php:L20-L55",
+        "known_gaps": [],
+        "certification_status": "CERTIFIED_ENFORCED"
+    },
+    "PERM-020": {
+        "permission_id": "PERM-020",
+        "permission_name": "view stock movements",
+        "business_meaning": "Audit historical stock movements ledger",
+        "domain": "Inventory",
+        "affected_entity": "ENTITY-008 (InventoryMovement)",
+        "affected_mutations": [],
+        "roles_granted": [
+            "Business Owner",
+            "Branch Manager",
+            "Inventory Manager",
+            "Accountant"
+        ],
+        "direct_user_grant_possible": true,
+        "tenant_scoped": true,
+        "branch_scoped": false,
+        "server_enforcement_location": "Spatie Permission Trait on User model & Service layer checks",
+        "frontend_visibility_location": "Sidebar menu and action button v-if guards",
+        "policy_gate_middleware": "ResolveActiveBusiness & EnsureUserIsActive",
+        "source_evidence": "api/database/seeders/RolesAndPermissionsSeeder.php:L20-L55",
+        "known_gaps": [],
+        "certification_status": "CERTIFIED_ENFORCED"
+    },
+    "PERM-021": {
+        "permission_id": "PERM-021",
+        "permission_name": "view suppliers",
+        "business_meaning": "Browse supplier directory and payables balances",
+        "domain": "Procurement",
+        "affected_entity": "ENTITY-014 (Supplier)",
+        "affected_mutations": [],
+        "roles_granted": [
+            "Business Owner",
+            "Branch Manager",
+            "Accountant"
+        ],
+        "direct_user_grant_possible": true,
+        "tenant_scoped": true,
+        "branch_scoped": false,
+        "server_enforcement_location": "Spatie Permission Trait on User model & Service layer checks",
+        "frontend_visibility_location": "Sidebar menu and action button v-if guards",
+        "policy_gate_middleware": "ResolveActiveBusiness & EnsureUserIsActive",
+        "source_evidence": "api/database/seeders/RolesAndPermissionsSeeder.php:L20-L55",
+        "known_gaps": [],
+        "certification_status": "CERTIFIED_ENFORCED"
+    },
+    "PERM-022": {
+        "permission_id": "PERM-022",
+        "permission_name": "manage suppliers",
+        "business_meaning": "Create, edit, and delete supplier profiles",
+        "domain": "Procurement",
+        "affected_entity": "ENTITY-014 (Supplier)",
+        "affected_mutations": [
+            "MUTATION-027",
+            "MUTATION-028"
+        ],
+        "roles_granted": [
+            "Business Owner",
+            "Branch Manager"
+        ],
+        "direct_user_grant_possible": true,
+        "tenant_scoped": true,
+        "branch_scoped": false,
+        "server_enforcement_location": "Spatie Permission Trait on User model & Service layer checks",
+        "frontend_visibility_location": "Sidebar menu and action button v-if guards",
+        "policy_gate_middleware": "ResolveActiveBusiness & EnsureUserIsActive",
+        "source_evidence": "api/database/seeders/RolesAndPermissionsSeeder.php:L20-L55",
+        "known_gaps": [],
+        "certification_status": "CERTIFIED_ENFORCED"
+    },
+    "PERM-023": {
+        "permission_id": "PERM-023",
+        "permission_name": "view purchases",
+        "business_meaning": "Browse purchase orders and goods receipt notes",
+        "domain": "Procurement",
+        "affected_entity": "ENTITY-012 (Purchase)",
+        "affected_mutations": [],
+        "roles_granted": [
+            "Business Owner",
+            "Branch Manager",
+            "Accountant"
+        ],
+        "direct_user_grant_possible": true,
+        "tenant_scoped": true,
+        "branch_scoped": false,
+        "server_enforcement_location": "Spatie Permission Trait on User model & Service layer checks",
+        "frontend_visibility_location": "Sidebar menu and action button v-if guards",
+        "policy_gate_middleware": "ResolveActiveBusiness & EnsureUserIsActive",
+        "source_evidence": "api/database/seeders/RolesAndPermissionsSeeder.php:L20-L55",
+        "known_gaps": [],
+        "certification_status": "CERTIFIED_ENFORCED"
+    },
+    "PERM-024": {
+        "permission_id": "PERM-024",
+        "permission_name": "manage purchases",
+        "business_meaning": "Create and confirm goods received notes (GRN)",
+        "domain": "Procurement",
+        "affected_entity": "ENTITY-012 (Purchase)",
+        "affected_mutations": [
+            "MUTATION-023"
+        ],
+        "roles_granted": [
+            "Business Owner",
+            "Branch Manager"
+        ],
+        "direct_user_grant_possible": true,
+        "tenant_scoped": true,
+        "branch_scoped": false,
+        "server_enforcement_location": "Spatie Permission Trait on User model & Service layer checks",
+        "frontend_visibility_location": "Sidebar menu and action button v-if guards",
+        "policy_gate_middleware": "ResolveActiveBusiness & EnsureUserIsActive",
+        "source_evidence": "api/database/seeders/RolesAndPermissionsSeeder.php:L20-L55",
+        "known_gaps": [],
+        "certification_status": "CERTIFIED_ENFORCED"
+    },
+    "PERM-025": {
+        "permission_id": "PERM-025",
+        "permission_name": "return purchases",
+        "business_meaning": "Cancel purchase orders and return goods to supplier",
+        "domain": "Procurement",
+        "affected_entity": "ENTITY-012 (Purchase)",
+        "affected_mutations": [
+            "MUTATION-025"
+        ],
+        "roles_granted": [
+            "Business Owner",
+            "Branch Manager"
+        ],
+        "direct_user_grant_possible": true,
+        "tenant_scoped": true,
+        "branch_scoped": false,
+        "server_enforcement_location": "Spatie Permission Trait on User model & Service layer checks",
+        "frontend_visibility_location": "Sidebar menu and action button v-if guards",
+        "policy_gate_middleware": "ResolveActiveBusiness & EnsureUserIsActive",
+        "source_evidence": "api/database/seeders/RolesAndPermissionsSeeder.php:L20-L55",
+        "known_gaps": [],
+        "certification_status": "CERTIFIED_ENFORCED"
+    },
+    "PERM-026": {
+        "permission_id": "PERM-026",
+        "permission_name": "record supplier payments",
+        "business_meaning": "Disburse payments against supplier bills",
+        "domain": "Procurement",
+        "affected_entity": "ENTITY-017 (SupplierPayment)",
+        "affected_mutations": [
+            "MUTATION-029",
+            "MUTATION-030"
+        ],
+        "roles_granted": [
+            "Business Owner",
+            "Accountant"
+        ],
+        "direct_user_grant_possible": true,
+        "tenant_scoped": true,
+        "branch_scoped": false,
+        "server_enforcement_location": "Spatie Permission Trait on User model & Service layer checks",
+        "frontend_visibility_location": "Sidebar menu and action button v-if guards",
+        "policy_gate_middleware": "ResolveActiveBusiness & EnsureUserIsActive",
+        "source_evidence": "api/database/seeders/RolesAndPermissionsSeeder.php:L20-L55",
+        "known_gaps": [
+            "P6-GAP-001"
+        ],
+        "certification_status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "PERM-027": {
+        "permission_id": "PERM-027",
+        "permission_name": "view sales",
+        "business_meaning": "Browse all completed sales invoices",
+        "domain": "Sales",
+        "affected_entity": "ENTITY-009 (Sale)",
+        "affected_mutations": [],
+        "roles_granted": [
+            "Business Owner",
+            "Branch Manager",
+            "Accountant",
+            "Salesperson"
+        ],
+        "direct_user_grant_possible": true,
+        "tenant_scoped": true,
+        "branch_scoped": false,
+        "server_enforcement_location": "Spatie Permission Trait on User model & Service layer checks",
+        "frontend_visibility_location": "Sidebar menu and action button v-if guards",
+        "policy_gate_middleware": "ResolveActiveBusiness & EnsureUserIsActive",
+        "source_evidence": "api/database/seeders/RolesAndPermissionsSeeder.php:L20-L55",
+        "known_gaps": [],
+        "certification_status": "CERTIFIED_ENFORCED"
+    },
+    "PERM-028": {
+        "permission_id": "PERM-028",
+        "permission_name": "manage sales",
+        "business_meaning": "Cancel, void, or edit completed sales invoices",
+        "domain": "Sales",
+        "affected_entity": "ENTITY-009 (Sale)",
+        "affected_mutations": [
+            "MUTATION-019"
+        ],
+        "roles_granted": [
+            "Business Owner",
+            "Branch Manager"
+        ],
+        "direct_user_grant_possible": true,
+        "tenant_scoped": true,
+        "branch_scoped": false,
+        "server_enforcement_location": "Spatie Permission Trait on User model & Service layer checks",
+        "frontend_visibility_location": "Sidebar menu and action button v-if guards",
+        "policy_gate_middleware": "ResolveActiveBusiness & EnsureUserIsActive",
+        "source_evidence": "api/database/seeders/RolesAndPermissionsSeeder.php:L20-L55",
+        "known_gaps": [
+            "P6-GAP-001"
+        ],
+        "certification_status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "PERM-029": {
+        "permission_id": "PERM-029",
+        "permission_name": "return sales",
+        "business_meaning": "Process customer returns and refund settlements",
+        "domain": "Sales",
+        "affected_entity": "ENTITY-011 (SaleReturn)",
+        "affected_mutations": [
+            "MUTATION-017",
+            "MUTATION-018"
+        ],
+        "roles_granted": [
+            "Business Owner",
+            "Branch Manager"
+        ],
+        "direct_user_grant_possible": true,
+        "tenant_scoped": true,
+        "branch_scoped": false,
+        "server_enforcement_location": "Spatie Permission Trait on User model & Service layer checks",
+        "frontend_visibility_location": "Sidebar menu and action button v-if guards",
+        "policy_gate_middleware": "ResolveActiveBusiness & EnsureUserIsActive",
+        "source_evidence": "api/database/seeders/RolesAndPermissionsSeeder.php:L20-L55",
+        "known_gaps": [
+            "P6-GAP-001"
+        ],
+        "certification_status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "PERM-030": {
+        "permission_id": "PERM-030",
+        "permission_name": "override sale price",
+        "business_meaning": "Manually change line item retail price at POS",
+        "domain": "Sales",
+        "affected_entity": "ENTITY-010 (SaleItem)",
+        "affected_mutations": [
+            "MUTATION-022"
+        ],
+        "roles_granted": [
+            "Business Owner"
+        ],
+        "direct_user_grant_possible": true,
+        "tenant_scoped": true,
+        "branch_scoped": false,
+        "server_enforcement_location": "Spatie Permission Trait on User model & Service layer checks",
+        "frontend_visibility_location": "Sidebar menu and action button v-if guards",
+        "policy_gate_middleware": "ResolveActiveBusiness & EnsureUserIsActive",
+        "source_evidence": "api/database/seeders/RolesAndPermissionsSeeder.php:L20-L55",
+        "known_gaps": [
+            "P6-GAP-001"
+        ],
+        "certification_status": "CERTIFIED_WITH_KNOWN_GAP"
+    }
+}

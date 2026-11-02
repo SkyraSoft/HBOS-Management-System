@@ -94,6 +94,50 @@ class SupplierBalanceService
     }
 
     /**
+     * Record a debit note from a supplier return, reducing supplier payable balance.
+     */
+    public function recordDebitNote(Supplier $supplier, float $amount): void
+    {
+        $amount = round($amount, 2);
+        if ($amount <= 0) {
+            throw new Exception("Debit note amount must be greater than zero.");
+        }
+
+        DB::transaction(function () use ($supplier, $amount) {
+            $lockedSupplier = Supplier::where('id', $supplier->id)->lockForUpdate()->first();
+            if (!$lockedSupplier) {
+                throw new Exception("Supplier not found.");
+            }
+
+            $currentBalance = round((float) $lockedSupplier->balance, 2);
+            $newBalance = round($currentBalance - $amount, 2);
+            $lockedSupplier->update(['balance' => $newBalance]);
+        });
+    }
+
+    /**
+     * Reverse a recorded supplier payment, restoring supplier payable balance.
+     */
+    public function reversePayment(Supplier $supplier, float $amount): void
+    {
+        $amount = round($amount, 2);
+        if ($amount <= 0) {
+            throw new Exception("Payment reversal amount must be greater than zero.");
+        }
+
+        DB::transaction(function () use ($supplier, $amount) {
+            $lockedSupplier = Supplier::where('id', $supplier->id)->lockForUpdate()->first();
+            if (!$lockedSupplier) {
+                throw new Exception("Supplier not found.");
+            }
+
+            $currentBalance = round((float) $lockedSupplier->balance, 2);
+            $newBalance = round($currentBalance + $amount, 2);
+            $lockedSupplier->update(['balance' => $newBalance]);
+        });
+    }
+
+    /**
      * Recompute expected supplier balance using Net Due formula:
      * opening_balance + SUM(received_purchases.due_amount) - SUM(standalone_payments.amount [where purchase_id IS NULL])
      */
@@ -105,8 +149,13 @@ class SupplierBalanceService
 
         $standalonePaymentsTotal = SupplierPayment::where('supplier_id', $supplier->id)
             ->whereNull('purchase_id')
+            ->where('status', '!=', 'reversed')
             ->sum('amount');
 
-        return round((float) $supplier->opening_balance + (float) $receivedPurchasesDue - (float) $standalonePaymentsTotal, 2);
+        $returnsTotal = \App\Models\SupplierReturn::where('supplier_id', $supplier->id)
+            ->where('status', 'completed')
+            ->sum('total_amount');
+
+        return round((float) $supplier->opening_balance + (float) $receivedPurchasesDue - (float) $standalonePaymentsTotal - (float) $returnsTotal, 2);
     }
 }

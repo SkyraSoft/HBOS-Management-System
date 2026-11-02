@@ -1,0 +1,529 @@
+{
+    "GAP-001": {
+        "gap_id": "GAP-001",
+        "title": "Sale Line Items Lack Barcode, SKU & Point-in-Time Cost Snapshot Persistence",
+        "test_types": [
+            "API",
+            "FEATURE",
+            "DATABASE_INVARIANT"
+        ],
+        "unit_test_required": true,
+        "feature_api_test_required": true,
+        "database_invariant_test_required": true,
+        "concurrency_test_required": false,
+        "offline_sync_test_required": false,
+        "security_test_required": false,
+        "acceptance_criteria": "When product master name/price is modified after sale, re-fetching sale details returns point-in-time snapshot unaltered.",
+        "verification_command": "php artisan test --filter=GAP001Test"
+    },
+    "GAP-002": {
+        "gap_id": "GAP-002",
+        "title": "Product Master Schema Lacks Authoritative Wholesale Pricing Tier Column",
+        "test_types": [
+            "API",
+            "FEATURE",
+            "DATABASE_INVARIANT"
+        ],
+        "unit_test_required": true,
+        "feature_api_test_required": true,
+        "database_invariant_test_required": true,
+        "concurrency_test_required": false,
+        "offline_sync_test_required": false,
+        "security_test_required": false,
+        "acceptance_criteria": "Creating or updating product with wholesale_price persists value and returns it in catalog API and POS cart.",
+        "verification_command": "php artisan test --filter=GAP002Test"
+    },
+    "GAP-003": {
+        "gap_id": "GAP-003",
+        "title": "Split-Tender Multi-Method Payment Allocations Lack Dedicated Breakdown Persistence",
+        "test_types": [
+            "API",
+            "FEATURE",
+            "DATABASE_INVARIANT"
+        ],
+        "unit_test_required": true,
+        "feature_api_test_required": true,
+        "database_invariant_test_required": true,
+        "concurrency_test_required": false,
+        "offline_sync_test_required": false,
+        "security_test_required": false,
+        "acceptance_criteria": "Split cash + card payment creates separate ledger entries in CashLedger and AccountMovement matching exact split amounts.",
+        "verification_command": "php artisan test --filter=GAP003Test"
+    },
+    "GAP-004": {
+        "gap_id": "GAP-004",
+        "title": "Inventory Physical Count Stock Adjustment Bypasses Valuation Adjustment Account",
+        "test_types": [
+            "API",
+            "FEATURE",
+            "DATABASE_INVARIANT"
+        ],
+        "unit_test_required": true,
+        "feature_api_test_required": true,
+        "database_invariant_test_required": false,
+        "concurrency_test_required": false,
+        "offline_sync_test_required": false,
+        "security_test_required": false,
+        "acceptance_criteria": "When stock quantity is reduced via adjustment, an AccountMovement record is created against Inventory Loss Account.",
+        "verification_command": "php artisan test --filter=GAP004Test"
+    },
+    "GAP-005": {
+        "gap_id": "GAP-005",
+        "title": "Purchase Freight & Landed Costs Not Capitalized Into Product Moving Average Cost",
+        "test_types": [
+            "API",
+            "FEATURE",
+            "DATABASE_INVARIANT"
+        ],
+        "unit_test_required": true,
+        "feature_api_test_required": true,
+        "database_invariant_test_required": true,
+        "concurrency_test_required": false,
+        "offline_sync_test_required": false,
+        "security_test_required": false,
+        "acceptance_criteria": "When freight amount is entered on purchase receiving, purchase_items.unit_cost reflects prorated cost + freight.",
+        "verification_command": "php artisan test --filter=GAP005Test"
+    },
+    "GAP-006": {
+        "gap_id": "GAP-006",
+        "title": "Purchase Cancellation Does Not Verify If Received Stock Has Already Been Sold",
+        "test_types": [
+            "API",
+            "FEATURE",
+            "DATABASE_INVARIANT"
+        ],
+        "unit_test_required": true,
+        "feature_api_test_required": true,
+        "database_invariant_test_required": false,
+        "concurrency_test_required": false,
+        "offline_sync_test_required": false,
+        "security_test_required": false,
+        "acceptance_criteria": "Attempting to cancel purchase when quantity_on_hand < received_quantity returns HTTP 422 with clear error message.",
+        "verification_command": "php artisan test --filter=GAP006Test"
+    },
+    "GAP-007": {
+        "gap_id": "GAP-007",
+        "title": "Inter-Branch Stock Transfer Operates Synchronously Without In-Transit Clearing State",
+        "test_types": [
+            "API",
+            "FEATURE",
+            "DATABASE_INVARIANT"
+        ],
+        "unit_test_required": true,
+        "feature_api_test_required": true,
+        "database_invariant_test_required": true,
+        "concurrency_test_required": false,
+        "offline_sync_test_required": false,
+        "security_test_required": false,
+        "acceptance_criteria": "Transfer creates IN_TRANSIT record; destination branch stock only increases after explicit receiveTransfer API call.",
+        "verification_command": "php artisan test --filter=GAP007Test"
+    },
+    "GAP-008": {
+        "gap_id": "GAP-008",
+        "title": "Modifying Customer ID on Posted Sale Creates Silent Khata Ledger Drift",
+        "test_types": [
+            "API",
+            "FEATURE",
+            "DATABASE_INVARIANT"
+        ],
+        "unit_test_required": true,
+        "feature_api_test_required": true,
+        "database_invariant_test_required": true,
+        "concurrency_test_required": false,
+        "offline_sync_test_required": false,
+        "security_test_required": false,
+        "acceptance_criteria": "Attempting to update customer_id on posted sale returns HTTP 422 Unprocessable Entity.",
+        "verification_command": "php artisan test --filter=GAP008Test"
+    },
+    "GAP-009": {
+        "gap_id": "GAP-009",
+        "title": "Customer Payment Reversal Lacks Guard Against Secondary Over-Collection Reversal Race",
+        "test_types": [
+            "API",
+            "FEATURE",
+            "DATABASE_INVARIANT"
+        ],
+        "unit_test_required": true,
+        "feature_api_test_required": true,
+        "database_invariant_test_required": false,
+        "concurrency_test_required": false,
+        "offline_sync_test_required": false,
+        "security_test_required": false,
+        "acceptance_criteria": "Repeated customer payment reversal requests reject duplicate execution with HTTP 409 Conflict.",
+        "verification_command": "php artisan test --filter=GAP009Test"
+    },
+    "GAP-010": {
+        "gap_id": "GAP-010",
+        "title": "Sale Return Workflow Lacks Granular Restock Condition / Scrap Decision Flag",
+        "test_types": [
+            "API",
+            "FEATURE",
+            "DATABASE_INVARIANT"
+        ],
+        "unit_test_required": true,
+        "feature_api_test_required": true,
+        "database_invariant_test_required": true,
+        "concurrency_test_required": false,
+        "offline_sync_test_required": false,
+        "security_test_required": false,
+        "acceptance_criteria": "When is_restockable is false, branch_inventories quantity_on_hand does not increase; item logged to inventory_movements as DAMAGED_SCRAP.",
+        "verification_command": "php artisan test --filter=GAP010Test"
+    },
+    "GAP-011": {
+        "gap_id": "GAP-011",
+        "title": "Missing Dedicated Supplier Return / Debit Note Workflow With Stock Reversal & AP Deduction",
+        "test_types": [
+            "API",
+            "FEATURE",
+            "DATABASE_INVARIANT"
+        ],
+        "unit_test_required": true,
+        "feature_api_test_required": true,
+        "database_invariant_test_required": true,
+        "concurrency_test_required": false,
+        "offline_sync_test_required": false,
+        "security_test_required": false,
+        "acceptance_criteria": "Creating supplier return decrements branch inventory and reduces supplier current_balance by exact return value.",
+        "verification_command": "php artisan test --filter=GAP011Test"
+    },
+    "GAP-012": {
+        "gap_id": "GAP-012",
+        "title": "Supplier Payment Mutation Lacks Automated Reversal Mechanism With AP Re-Accrual",
+        "test_types": [
+            "API",
+            "FEATURE",
+            "DATABASE_INVARIANT"
+        ],
+        "unit_test_required": true,
+        "feature_api_test_required": true,
+        "database_invariant_test_required": false,
+        "concurrency_test_required": false,
+        "offline_sync_test_required": false,
+        "security_test_required": false,
+        "acceptance_criteria": "POST /api/v1/supplier-payments/{id}/reverse marks payment REVERSED and re-accrues supplier AP balance.",
+        "verification_command": "php artisan test --filter=GAP012Test"
+    },
+    "GAP-013": {
+        "gap_id": "GAP-013",
+        "title": "Operating Expense Entry Allows Null Financial Account Creating Unallocated Cash Drift",
+        "test_types": [
+            "API",
+            "FEATURE",
+            "DATABASE_INVARIANT"
+        ],
+        "unit_test_required": true,
+        "feature_api_test_required": true,
+        "database_invariant_test_required": true,
+        "concurrency_test_required": false,
+        "offline_sync_test_required": false,
+        "security_test_required": false,
+        "acceptance_criteria": "Attempting to create expense without valid financial_account_id fails validation with HTTP 422.",
+        "verification_command": "php artisan test --filter=GAP013Test"
+    },
+    "GAP-014": {
+        "gap_id": "GAP-014",
+        "title": "Soft-Deleting Operating Expense Leaves Associated AccountMovement Row Active",
+        "test_types": [
+            "API",
+            "FEATURE",
+            "DATABASE_INVARIANT"
+        ],
+        "unit_test_required": true,
+        "feature_api_test_required": true,
+        "database_invariant_test_required": true,
+        "concurrency_test_required": false,
+        "offline_sync_test_required": false,
+        "security_test_required": false,
+        "acceptance_criteria": "When expense is deleted/voided, associated AccountMovement is reversed and financial account balance restored.",
+        "verification_command": "php artisan test --filter=GAP014Test"
+    },
+    "GAP-015": {
+        "gap_id": "GAP-015",
+        "title": "UI-Only Authorization for High-Risk Destructive Operations Lacks Backend Policy Enforcement",
+        "test_types": [
+            "API",
+            "FEATURE",
+            "DATABASE_INVARIANT"
+        ],
+        "unit_test_required": true,
+        "feature_api_test_required": true,
+        "database_invariant_test_required": false,
+        "concurrency_test_required": false,
+        "offline_sync_test_required": false,
+        "security_test_required": true,
+        "acceptance_criteria": "Salesperson attempting to cancel sale or void expense receives HTTP 403 Forbidden.",
+        "verification_command": "php artisan test --filter=GAP015Test"
+    },
+    "GAP-016": {
+        "gap_id": "GAP-016",
+        "title": "Implicit Route Model Binding Queries Records Across Tenants Before ResolveActiveBusiness Scope",
+        "test_types": [
+            "API",
+            "FEATURE",
+            "DATABASE_INVARIANT"
+        ],
+        "unit_test_required": true,
+        "feature_api_test_required": true,
+        "database_invariant_test_required": false,
+        "concurrency_test_required": false,
+        "offline_sync_test_required": false,
+        "security_test_required": true,
+        "acceptance_criteria": "Attempting to fetch resource ID belonging to another business returns HTTP 404 Not Found.",
+        "verification_command": "php artisan test --filter=GAP016Test"
+    },
+    "GAP-017": {
+        "gap_id": "GAP-017",
+        "title": "Sale Store Endpoint Accepts Arbitrary branch_id In Request Payload Without User Assignment Check",
+        "test_types": [
+            "API",
+            "FEATURE",
+            "DATABASE_INVARIANT"
+        ],
+        "unit_test_required": true,
+        "feature_api_test_required": true,
+        "database_invariant_test_required": false,
+        "concurrency_test_required": false,
+        "offline_sync_test_required": false,
+        "security_test_required": true,
+        "acceptance_criteria": "Sale creation strictly restricts branch_id to cashier assigned branch_id unless authorized as Business Owner.",
+        "verification_command": "php artisan test --filter=GAP017Test"
+    },
+    "GAP-018": {
+        "gap_id": "GAP-018",
+        "title": "Server Trusts Client-Calculated Sale Totals & Discounts Without Server Recalculation",
+        "test_types": [
+            "API",
+            "FEATURE",
+            "DATABASE_INVARIANT"
+        ],
+        "unit_test_required": true,
+        "feature_api_test_required": true,
+        "database_invariant_test_required": false,
+        "concurrency_test_required": false,
+        "offline_sync_test_required": false,
+        "security_test_required": false,
+        "acceptance_criteria": "Sale creation rejects payloads where sum(items.total) - discount + tax != total with HTTP 422.",
+        "verification_command": "php artisan test --filter=GAP018Test"
+    },
+    "GAP-019": {
+        "gap_id": "GAP-019",
+        "title": "Sale Return Refund Settlement Endpoint Lacks Client Request UUID Deduplication",
+        "test_types": [
+            "API",
+            "FEATURE",
+            "DATABASE_INVARIANT"
+        ],
+        "unit_test_required": true,
+        "feature_api_test_required": true,
+        "database_invariant_test_required": false,
+        "concurrency_test_required": true,
+        "offline_sync_test_required": false,
+        "security_test_required": false,
+        "acceptance_criteria": "Repeated refund settlement calls with same idempotency_key return identical single transaction response without double debit.",
+        "verification_command": "php artisan test --filter=GAP019Test"
+    },
+    "GAP-020": {
+        "gap_id": "GAP-020",
+        "title": "Purchase GRN Receiving Lacks Pessimistic Row Lock on branch_inventories",
+        "test_types": [
+            "API",
+            "FEATURE",
+            "DATABASE_INVARIANT"
+        ],
+        "unit_test_required": true,
+        "feature_api_test_required": true,
+        "database_invariant_test_required": false,
+        "concurrency_test_required": true,
+        "offline_sync_test_required": false,
+        "security_test_required": false,
+        "acceptance_criteria": "Parallel execution of 10 sales and 10 receipts on same product yields exact mathematical net balance.",
+        "verification_command": "php artisan test --filter=GAP020Test"
+    },
+    "GAP-021": {
+        "gap_id": "GAP-021",
+        "title": "POS Checkout Dispatches Thermal Receipt Printing Before Verified HTTP Commit Confirmation",
+        "test_types": [
+            "API",
+            "FEATURE",
+            "DATABASE_INVARIANT"
+        ],
+        "unit_test_required": true,
+        "feature_api_test_required": true,
+        "database_invariant_test_required": false,
+        "concurrency_test_required": false,
+        "offline_sync_test_required": false,
+        "security_test_required": false,
+        "acceptance_criteria": "Thermal print dispatch executes strictly inside .then() block after confirmed HTTP commit or localDb outbox write.",
+        "verification_command": "php artisan test --filter=GAP021Test"
+    },
+    "GAP-022": {
+        "gap_id": "GAP-022",
+        "title": "Offline POS Terminals Lack Distributed Stock Reservations Permitting Inventory Double-Spend",
+        "test_types": [
+            "API",
+            "FEATURE",
+            "DATABASE_INVARIANT"
+        ],
+        "unit_test_required": true,
+        "feature_api_test_required": true,
+        "database_invariant_test_required": false,
+        "concurrency_test_required": false,
+        "offline_sync_test_required": true,
+        "security_test_required": false,
+        "acceptance_criteria": "When bulk sync ingests sales causing stock < 0, an audit log entry event=inventory_oversold is created with notifications.",
+        "verification_command": "php artisan test --filter=GAP022Test"
+    },
+    "GAP-023": {
+        "gap_id": "GAP-023",
+        "title": "Offline Customer Khata Balance Projection Displays Stale Balance During Concurrent Online Settlements",
+        "test_types": [
+            "API",
+            "FEATURE",
+            "DATABASE_INVARIANT"
+        ],
+        "unit_test_required": true,
+        "feature_api_test_required": true,
+        "database_invariant_test_required": false,
+        "concurrency_test_required": false,
+        "offline_sync_test_required": true,
+        "security_test_required": false,
+        "acceptance_criteria": "When navigator.onLine is false, customer dropdown in POS displays warning badge with last synced timestamp.",
+        "verification_command": "php artisan test --filter=GAP023Test"
+    },
+    "GAP-024": {
+        "gap_id": "GAP-024",
+        "title": "Peer-to-Peer Device Pairing Service Lacks IP Address & Private Subnet Boundary Validation",
+        "test_types": [
+            "API",
+            "FEATURE",
+            "DATABASE_INVARIANT"
+        ],
+        "unit_test_required": true,
+        "feature_api_test_required": true,
+        "database_invariant_test_required": false,
+        "concurrency_test_required": false,
+        "offline_sync_test_required": false,
+        "security_test_required": false,
+        "acceptance_criteria": "Scanning QR with non-RFC1918 IP rejects connection with \"Invalid Local Subnet IP\" error toast.",
+        "verification_command": "php artisan test --filter=GAP024Test"
+    },
+    "GAP-025": {
+        "gap_id": "GAP-025",
+        "title": "Offline Quick Customer Creation Lacks Persistent Temp-to-Server ID Mapping Graph",
+        "test_types": [
+            "API",
+            "FEATURE",
+            "DATABASE_INVARIANT"
+        ],
+        "unit_test_required": true,
+        "feature_api_test_required": true,
+        "database_invariant_test_required": false,
+        "concurrency_test_required": false,
+        "offline_sync_test_required": true,
+        "security_test_required": false,
+        "acceptance_criteria": "Bulk sync payload containing new customer UUID and sale referencing same UUID ingests customer first and correctly links sale.",
+        "verification_command": "php artisan test --filter=GAP025Test"
+    },
+    "GAP-026": {
+        "gap_id": "GAP-026",
+        "title": "Critical Destructive Mutations Lack Explicit Modal Confirmation Dialogs",
+        "test_types": [
+            "API",
+            "FEATURE",
+            "DATABASE_INVARIANT"
+        ],
+        "unit_test_required": true,
+        "feature_api_test_required": true,
+        "database_invariant_test_required": false,
+        "concurrency_test_required": false,
+        "offline_sync_test_required": false,
+        "security_test_required": false,
+        "acceptance_criteria": "Clicking destructive action opens modal with Cancel and Confirm buttons; API call fires only upon Confirm.",
+        "verification_command": "php artisan test --filter=GAP026Test"
+    },
+    "GAP-027": {
+        "gap_id": "GAP-027",
+        "title": "POS Screen Lacks Persistent Active Operating Branch & Shift Indicator in Header",
+        "test_types": [
+            "API",
+            "FEATURE",
+            "DATABASE_INVARIANT"
+        ],
+        "unit_test_required": true,
+        "feature_api_test_required": true,
+        "database_invariant_test_required": false,
+        "concurrency_test_required": false,
+        "offline_sync_test_required": false,
+        "security_test_required": false,
+        "acceptance_criteria": "POS screen header prominently displays active branch name, active cashier, and connectivity badge at all times.",
+        "verification_command": "php artisan test --filter=GAP027Test"
+    },
+    "GAP-028": {
+        "gap_id": "GAP-028",
+        "title": "Legacy Unrouted ProductInvoiceView Component Creates Codebase Confusion",
+        "test_types": [
+            "API",
+            "FEATURE",
+            "DATABASE_INVARIANT"
+        ],
+        "unit_test_required": true,
+        "feature_api_test_required": true,
+        "database_invariant_test_required": false,
+        "concurrency_test_required": false,
+        "offline_sync_test_required": false,
+        "security_test_required": false,
+        "acceptance_criteria": "Unrouted invoice component replaced with standard printable preview modal integrated with printerService.js.",
+        "verification_command": "php artisan test --filter=GAP028Test"
+    },
+    "GAP-029": {
+        "gap_id": "GAP-029",
+        "title": "Employee HR Wage, Salary Amount & Payment Cycle Discarded Without Database Schema Persistence",
+        "test_types": [
+            "API",
+            "FEATURE",
+            "DATABASE_INVARIANT"
+        ],
+        "unit_test_required": true,
+        "feature_api_test_required": true,
+        "database_invariant_test_required": true,
+        "concurrency_test_required": false,
+        "offline_sync_test_required": false,
+        "security_test_required": true,
+        "acceptance_criteria": "Saving staff user with salary_amount and payment_cycle persists values and returns them on user profile API.",
+        "verification_command": "php artisan test --filter=GAP029Test"
+    },
+    "GAP-030": {
+        "gap_id": "GAP-030",
+        "title": "Customer Secondary Phone & Alternate Contact Number Discarded Without Schema Persistence",
+        "test_types": [
+            "API",
+            "FEATURE",
+            "DATABASE_INVARIANT"
+        ],
+        "unit_test_required": true,
+        "feature_api_test_required": true,
+        "database_invariant_test_required": true,
+        "concurrency_test_required": false,
+        "offline_sync_test_required": true,
+        "security_test_required": false,
+        "acceptance_criteria": "Creating or updating customer with secondary_phone persists value in database and IndexedDB cache.",
+        "verification_command": "php artisan test --filter=GAP030Test"
+    },
+    "GAP-031": {
+        "gap_id": "GAP-031",
+        "title": "Expense Category Monthly Budget Cap Limit Discarded Without Schema Persistence",
+        "test_types": [
+            "API",
+            "FEATURE",
+            "DATABASE_INVARIANT"
+        ],
+        "unit_test_required": true,
+        "feature_api_test_required": true,
+        "database_invariant_test_required": true,
+        "concurrency_test_required": false,
+        "offline_sync_test_required": false,
+        "security_test_required": false,
+        "acceptance_criteria": "Expense category creation with monthly_budget stores decimal value and displays budget cap on expense summary dashboard.",
+        "verification_command": "php artisan test --filter=GAP031Test"
+    }
+}

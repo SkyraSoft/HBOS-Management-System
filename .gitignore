@@ -39,3 +39,12 @@ Frontend/pnpm-debug.log
 /*.cjs
 /scratch/
 database_backups/
+
+scratch_*
+*.log
+
+# Desktop & Release Binaries
+desktop/target/
+*.msi
+Frontend/public/downloads/*.msi
+api/public/downloads/*.msi

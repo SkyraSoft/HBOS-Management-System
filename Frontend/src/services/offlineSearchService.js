@@ -1,7 +1,7 @@
 /**
- * HBOS 0ms In-Memory Indexed Search Engine
- * Provides instant sub-string matching, category filtering, and brand filtering
- * directly from local storage with < 5ms latency across 10,000+ products.
+ * HBOS Fast In-Memory Indexed Search Engine
+ * Provides instant substring matching, category filtering, and brand filtering
+ * directly from locally cached products in IndexedDB.
  */
 
 import { getStoreItems } from './localDb.js';
@@ -33,16 +33,37 @@ export async function searchLocalProducts({ query = '', categoryId = null, brand
       if (brandId && String(p.brand_id) !== String(brandId)) {
         return false;
       }
-      // 3. Search Query (Sub-string match on Name or SKU)
+      // 3. Search Query (Sub-string match on Name, SKU, Primary Barcode, or Alternate Barcodes)
       if (q.length > 0) {
         const nameMatch = p.name && p.name.toLowerCase().includes(q);
         const skuMatch = p.sku && p.sku.toLowerCase().includes(q);
         const barcodeMatch = p.barcode && p.barcode.toLowerCase().includes(q);
-        return nameMatch || skuMatch || barcodeMatch;
+        const altBarcodeMatch = Array.isArray(p.alternate_barcodes) && p.alternate_barcodes.some(b => String(b).toLowerCase().includes(q));
+        return nameMatch || skuMatch || barcodeMatch || altBarcodeMatch;
       }
       return true;
     })
     .slice(0, limit);
+}
+
+export async function findProductByBarcodeOffline(barcode) {
+  const products = await loadProductCatalogCache();
+  const bc = String(barcode).trim().toLowerCase();
+  if (!bc) return null;
+
+  // 1. Primary barcode match
+  const primaryMatch = products.find(p => p.barcode && String(p.barcode).trim().toLowerCase() === bc);
+  if (primaryMatch) return primaryMatch;
+
+  // 2. Alternate barcode match
+  const altMatch = products.find(p =>
+    Array.isArray(p.alternate_barcodes) &&
+    p.alternate_barcodes.some(b => String(b).trim().toLowerCase() === bc)
+  );
+  if (altMatch) return altMatch;
+
+  // 3. SKU match fallback
+  return products.find(p => p.sku && String(p.sku).trim().toLowerCase() === bc) || null;
 }
 
 export function invalidateSearchCache() {

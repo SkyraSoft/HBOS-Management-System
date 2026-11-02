@@ -147,11 +147,37 @@ class FinancialAccountService
      */
     public function getDefaultCashAccount(int $businessId, int $branchId): ?FinancialAccount
     {
-        return FinancialAccount::where('business_id', $businessId)
+        $account = FinancialAccount::where('business_id', $businessId)
             ->where('branch_id', $branchId)
             ->where('type', 'cash')
             ->where('is_default', true)
             ->where('status', 'active')
+            ->first();
+
+        if ($account) {
+            return $account;
+        }
+
+        // Fallback: If no cash account is explicitly flagged as default, pick the first active cash account for branch
+        $fallback = FinancialAccount::where('business_id', $businessId)
+            ->where('branch_id', $branchId)
+            ->where('type', 'cash')
+            ->where('status', 'active')
+            ->orderBy('id', 'asc')
+            ->first();
+
+        if ($fallback) {
+            $fallback->is_default = true;
+            $fallback->saveQuietly();
+            return $fallback;
+        }
+
+        // Secondary fallback across business: ONLY an unassigned business-level cash account (whereNull branch_id)
+        return FinancialAccount::where('business_id', $businessId)
+            ->whereNull('branch_id')
+            ->where('type', 'cash')
+            ->where('status', 'active')
+            ->orderBy('id', 'asc')
             ->first();
     }
 

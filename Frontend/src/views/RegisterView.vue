@@ -11,10 +11,16 @@
                 <span>HBOS</span>
             </div>
             
+            <div class="top-nav-bar" style="display: flex; justify-content: flex-start; margin-bottom: 0.75rem;">
+                <router-link to="/welcome" class="back-link" style="color: #94a3b8; font-size: 0.85rem; text-decoration: none; display: flex; align-items: center; gap: 0.4rem;">
+                    <i class="fa-solid fa-arrow-left"></i> Back to Welcome
+                </router-link>
+            </div>
+
             <div class="form-container">
-                <h2>Create an Account</h2>
+                <h2>Create My Business</h2>
                 <p class="form-description">
-                    Set up your business profile to get started.
+                    Set up your business profile to get started with a clean shop.
                 </p>
 
                 <form @submit.prevent="handleRegister" novalidate >
@@ -155,7 +161,7 @@ const handleRegister = async () => {
       password_confirmation: form.password_confirmation
     });
     
-    router.push('/');
+    router.push('/businesssetup1');
   } catch (error) {
     if (error.response?.data?.errors) {
       const serverErrors = error.response.data.errors;
@@ -593,7 +599,8 @@ const handleRegister = async () => {
            SIGN IN BUTTON
         ================================= */
 
-        .signin-button {
+        .signin-button,
+        .create-btn {
             width: 100%;
             height: 49px;
 
@@ -605,7 +612,7 @@ const handleRegister = async () => {
 
             font-family: inherit;
             font-size: 14px;
-            font-weight: 500;
+            font-weight: 600;
 
             cursor: pointer;
 
@@ -615,18 +622,22 @@ const handleRegister = async () => {
                 box-shadow 0.2s ease;
         }
 
-        .signin-button:hover {
+        .signin-button:hover,
+        .create-btn:hover {
             background: #064fbe;
             box-shadow: 0 4px 12px rgba(7, 91, 220, 0.16);
         }
 
-        .signin-button:active {
+        .signin-button:active,
+        .create-btn:active {
             transform: translateY(1px);
         }
 
-        .signin-button.loading {
+        .signin-button.loading,
+        .create-btn:disabled {
             pointer-events: none;
             opacity: 0.8;
+            cursor: not-allowed;
         }
 
         /* ================================
@@ -659,17 +670,20 @@ const handleRegister = async () => {
         ================================= */
 
         .error-message {
-            display: none;
+            display: block;
 
-            margin-top: -17px;
-            margin-bottom: 17px;
+            margin-top: 4px;
+            margin-bottom: 12px;
 
             color: #dc3545;
             font-size: 12px;
+            font-weight: 500;
         }
 
+        .input-group-custom.has-error .form-control-custom,
         .form-control-custom.invalid {
             border-color: #dc3545;
+            background-color: #fff8f8;
         }
 
         .form-control-custom.invalid:focus {

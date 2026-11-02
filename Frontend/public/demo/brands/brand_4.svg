@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 200" width="260" height="200">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#E0F7FA"/>
+      <stop offset="100%" stop-color="#FFFFFF"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="3" stdDeviation="3" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+  <rect width="260" height="200" rx="16" fill="url(#bgGrad)" stroke="#006064" stroke-width="2" stroke-opacity="0.2"/>
+  <g filter="url(#shadow)">
+    <circle cx="100" cy="80" r="38" fill="#00ACC1" opacity="0.2"/>
+               <path d="M100 45 L125 55 V85 C125 105 100 120 100 120 C100 120 75 105 75 85 V55 Z" fill="#00838F"/>
+               <path d="M100 52 L118 60 V82 C118 97 100 110 100 110 C100 110 82 97 82 82 V60 Z" fill="#00ACC1"/>
+               <polygon points="100,65 103,75 113,75 105,81 108,91 100,85 92,91 95,81 87,75 97,75" fill="#FFFFFF"/>
+               <circle cx="70" cy="65" r="5" fill="#4DD0E1"/>
+               <circle cx="130" cy="70" r="7" fill="#4DD0E1"/>
+  </g>
+  <text x="130" y="152" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="15" font-weight="800" text-anchor="middle" fill="#006064" letter-spacing="0.5">PakClean & Care</text>
+  <text x="130" y="172" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="10.5" font-weight="600" text-anchor="middle" fill="#00ACC1" letter-spacing="0.8">CLEAN LIVING & HYGIENE</text>
+</svg>

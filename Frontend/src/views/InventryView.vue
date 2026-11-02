@@ -86,33 +86,33 @@ const kpiTotalProducts = computed(() => products.value.length)
 
 // 2. Total Stock Units
 const kpiTotalStockUnits = computed(() => {
-  return products.value.reduce((sum, p) => sum + (parseInt(p.stock) || 0), 0)
+  return products.value.reduce((sum, p) => sum + (parseFloat(p.stock) || 0), 0)
 })
 
 // 3. In Stock Items
 const kpiInStock = computed(() => {
-  return products.value.filter(p => (parseInt(p.stock) || 0) > (parseInt(p.minStock) || 10)).length
+  return products.value.filter(p => (parseFloat(p.stock) || 0) > (parseFloat(p.minStock) || 10)).length
 })
 
 // 4. Low Stock Alerts
 const kpiLowStock = computed(() => {
   return products.value.filter(p => {
-    const s = parseInt(p.stock) || 0
-    const min = parseInt(p.minStock) || 10
+    const s = parseFloat(p.stock) || 0
+    const min = parseFloat(p.minStock) || 10
     return s > 0 && s <= min
   }).length
 })
 
 // 5. Out of Stock
 const kpiOutOfStock = computed(() => {
-  return products.value.filter(p => (parseInt(p.stock) || 0) === 0).length
+  return products.value.filter(p => (parseFloat(p.stock) || 0) === 0).length
 })
 
 // 6. Total Asset Value (Cost Valuation)
 const kpiTotalAssetValue = computed(() => {
   return products.value.reduce((sum, p) => {
     const cost = parseFloat(p.cost || p.purchasePrice) || 0
-    const qty = parseInt(p.stock) || 0
+    const qty = parseFloat(p.stock) || 0
     return sum + (cost * qty)
   }, 0)
 })
@@ -121,7 +121,7 @@ const kpiTotalAssetValue = computed(() => {
 const kpiRetailPotentialValue = computed(() => {
   return products.value.reduce((sum, p) => {
     const price = parseFloat(p.price || p.sellingPrice) || 0
-    const qty = parseInt(p.stock) || 0
+    const qty = parseFloat(p.stock) || 0
     return sum + (price * qty)
   }, 0)
 })
@@ -191,8 +191,8 @@ const filteredProducts = computed(() => {
   // 7. Stock quantity filter
   if (colFilters.stockRange) {
     list = list.filter(p => {
-      const s = parseInt(p.stock) || 0
-      const min = parseInt(p.minStock) || 10
+      const s = parseFloat(p.stock) || 0
+      const min = parseFloat(p.minStock) || 10
       if (colFilters.stockRange === 'in_stock') return s > min
       if (colFilters.stockRange === 'low_stock') return s > 0 && s <= min
       if (colFilters.stockRange === 'out_of_stock') return s === 0
@@ -204,11 +204,13 @@ const filteredProducts = computed(() => {
   // 8. Status column filter
   if (colFilters.status) {
     list = list.filter(p => {
-      const s = parseInt(p.stock) || 0
-      const min = parseInt(p.minStock) || 10
+      const s = parseFloat(p.stock) || 0
+      const min = parseFloat(p.minStock) || 10
       if (colFilters.status === 'in_stock') return s > min
       if (colFilters.status === 'low_stock') return s > 0 && s <= min
       if (colFilters.status === 'out_of_stock') return s === 0
+      if (colFilters.status === 'active') return p.active !== false && p.is_active !== false
+      if (colFilters.status === 'inactive') return p.active === false || p.is_active === false
       return true
     })
   }
@@ -344,14 +346,38 @@ const productForm = reactive({
   stock: 0,
   minStock: 10,
   expectedSellDate: '',
-  unit: 'Piece',
+  unit: 'Piece (pcs)',
   description: '',
   image: null,
   imagePreview: '',
+  active: true,
+  allowFractional: false,
+  saleUnit: '',
+  conversionFactor: 1.0,
+  newAlternateBarcode: '',
+  alternateBarcodes: [],
   hasVariations: false,
   attributes: [],
   variations: []
 })
+
+const addAlternateBarcode = () => {
+  const bc = (productForm.newAlternateBarcode || '').trim()
+  if (!bc) return
+  if (!productForm.alternateBarcodes) productForm.alternateBarcodes = []
+  if (productForm.alternateBarcodes.includes(bc)) {
+    showToast(`Barcode ${bc} already added.`)
+    return
+  }
+  productForm.alternateBarcodes.push(bc)
+  productForm.newAlternateBarcode = ''
+}
+
+const removeAlternateBarcode = (idx) => {
+  if (productForm.alternateBarcodes) {
+    productForm.alternateBarcodes.splice(idx, 1)
+  }
+}
 
 const openAddProductModal = () => {
   isEditingProduct.value = false
@@ -364,10 +390,16 @@ const openAddProductModal = () => {
   productForm.subcategory = ''
   productForm.purchasePrice = 0
   productForm.sellingPrice = 0
-  productForm.stock = 10
+  productForm.stock = 0
   productForm.minStock = 5
+  productForm.active = true
+  productForm.allowFractional = false
+  productForm.saleUnit = ''
+  productForm.conversionFactor = 1.0
+  productForm.newAlternateBarcode = ''
+  productForm.alternateBarcodes = []
   productForm.expectedSellDate = ''
-  productForm.unit = 'Piece'
+  productForm.unit = 'Piece (pcs)'
   productForm.description = ''
   productForm.image = null
   productForm.imagePreview = ''
@@ -386,12 +418,22 @@ const openEditProductModal = (product) => {
   productForm.brand = product.brand || ''
   productForm.category = product.category || ''
   productForm.subcategory = product.subcategory || ''
-  productForm.purchasePrice = product.cost || product.purchasePrice || 0
-  productForm.sellingPrice = product.price || product.sellingPrice || 0
-  productForm.stock = product.stock || 0
-  productForm.minStock = product.minStock || 5
+  productForm.purchasePrice = product.cost !== undefined ? product.cost : (product.purchasePrice || 0)
+  productForm.sellingPrice = product.price !== undefined ? product.price : (product.sellingPrice || 0)
+  productForm.stock = product.stock !== undefined && product.stock !== null ? parseFloat(product.stock) : 0
+  productForm.minStock = product.minStock !== undefined && product.minStock !== null ? parseFloat(product.minStock) : 5
+  productForm.active = product.is_active !== undefined ? Boolean(product.is_active) : (product.active !== undefined ? Boolean(product.active) : true)
+  productForm.allowFractional = Boolean(product.allow_fractional || product.allowFractional)
+  productForm.saleUnit = product.sale_unit || product.saleUnit || ''
+  productForm.conversionFactor = product.conversion_factor ? parseFloat(product.conversion_factor) : (product.conversionFactor ? parseFloat(product.conversionFactor) : 1.0)
+  productForm.newAlternateBarcode = ''
+  productForm.alternateBarcodes = Array.isArray(product.alternateBarcodes) 
+    ? [...product.alternateBarcodes] 
+    : (Array.isArray(product.alternate_barcodes) 
+      ? [...product.alternate_barcodes] 
+      : (product.barcodes ? product.barcodes.filter(b => b.barcode_type === 'ALTERNATE' || b.barcode_type === 'alternate').map(b => b.barcode) : []))
   productForm.expectedSellDate = product.expected_sell_date || ''
-  productForm.unit = product.unit || 'Piece'
+  productForm.unit = product.unit || 'Piece (pcs)'
   productForm.description = product.description || ''
   productForm.image = null
   productForm.imagePreview = product.image || ''
@@ -412,7 +454,6 @@ const handleProductImageUpload = (e) => {
   reader.readAsDataURL(file)
 }
 
-
 const saveProduct = async () => {
   if (!productForm.name.trim() || !productForm.sku.trim() || !productForm.sellingPrice) {
     showToast('Please fill Product Name, SKU, and Selling Price.')
@@ -430,13 +471,26 @@ const saveProduct = async () => {
     sellingPrice: parseFloat(productForm.sellingPrice) || 0,
     cost: parseFloat(productForm.purchasePrice) || 0,
     price: parseFloat(productForm.sellingPrice) || 0,
-    stock: parseInt(productForm.stock) || 0,
-    minStock: parseInt(productForm.minStock) || 5,
+    cost_price: parseFloat(productForm.purchasePrice) || 0,
+    selling_price: parseFloat(productForm.sellingPrice) || 0,
+    stock: parseFloat(productForm.stock) || 0,
+    minStock: parseFloat(productForm.minStock) || 0,
+    min_stock: parseFloat(productForm.minStock) || 0,
+    allowFractional: Boolean(productForm.allowFractional),
+    allow_fractional: productForm.allowFractional ? 1 : 0,
+    saleUnit: productForm.saleUnit || null,
+    sale_unit: productForm.saleUnit || null,
+    conversionFactor: parseFloat(productForm.conversionFactor) || 1.0,
+    conversion_factor: parseFloat(productForm.conversionFactor) || 1.0,
+    alternateBarcodes: productForm.alternateBarcodes || [],
+    alternate_barcodes: productForm.alternateBarcodes || [],
     expected_sell_date: productForm.expectedSellDate || null,
     unit: productForm.unit,
     description: productForm.description,
     imageFile: productForm.image,
-    image_url: productForm.imagePreview || ''
+    image_url: productForm.imagePreview || '',
+    active: Boolean(productForm.active),
+    is_active: Boolean(productForm.active)
   }
   
   if (productForm.hasVariations) {
@@ -453,17 +507,26 @@ const saveProduct = async () => {
   }
 
   try {
+    let res
     if (isEditingProduct.value && productForm.id) {
-      await store.updateProduct(productForm.id, payload)
+      res = await store.updateProduct(productForm.id, payload)
+      if (res && res.success === false) {
+        showToast(res.message || 'Error updating product.')
+        return
+      }
       showToast('Product updated successfully!')
     } else {
-      await store.addProduct(payload)
+      res = await store.addProduct(payload)
+      if (res && res.success === false) {
+        showToast(res.message || 'Error saving product.')
+        return
+      }
       showToast('Product added to inventory successfully!')
     }
     closeProductModal()
   } catch (e) {
     console.error(e)
-    showToast('Error saving product.')
+    showToast(e.response?.data?.message || 'Error saving product.')
   }
 }
 
@@ -474,6 +537,9 @@ const resolveProductImage = (img, name = '') => {
     if (trimmed.startsWith('http://') || trimmed.startsWith('https://') || trimmed.startsWith('data:') || trimmed.startsWith('blob:')) {
       return trimmed;
     }
+    if (trimmed.startsWith('/demo/')) {
+      return trimmed;
+    }
     if (trimmed.startsWith('/storage/')) {
       return `http://localhost:8000${trimmed}`;
     }
@@ -481,11 +547,11 @@ const resolveProductImage = (img, name = '') => {
       return `http://localhost:8000/${trimmed}`;
     }
     if (trimmed.startsWith('/')) {
-      return `http://localhost:8000${trimmed}`;
+      return trimmed;
     }
     return `http://localhost:8000/storage/${trimmed}`;
   }
-  return getFallbackImage(name);
+  return '/demo/products/prod_01.webp';
 };
 
 const getFallbackImage = (name) => {
@@ -872,6 +938,8 @@ const handleEditFromViewModal = () => {
 // 7. BRAND DIRECTORY
 // ====================================================
 const showBrandModal = ref(false)
+const isEditingBrand = ref(false)
+const editingBrandId = ref(null)
 const brandForm = reactive({
   name: '',
   description: '',
@@ -880,10 +948,22 @@ const brandForm = reactive({
 })
 
 const openAddBrandModal = () => {
+  isEditingBrand.value = false
+  editingBrandId.value = null
   brandForm.name = ''
   brandForm.description = ''
   brandForm.imageFile = null
   brandForm.imagePreview = ''
+  showBrandModal.value = true
+}
+
+const openEditBrandModal = (brand) => {
+  isEditingBrand.value = true
+  editingBrandId.value = brand.id
+  brandForm.name = brand.name || ''
+  brandForm.description = brand.description || ''
+  brandForm.imageFile = null
+  brandForm.imagePreview = brand.image || ''
   showBrandModal.value = true
 }
 
@@ -904,13 +984,30 @@ const saveBrand = async () => {
     return
   }
 
-  const formData = new FormData()
-  formData.append('name', brandForm.name.trim())
-  if (brandForm.description) formData.append('description', brandForm.description)
-  if (brandForm.imageFile) formData.append('image', brandForm.imageFile)
+  if (isEditingBrand.value && editingBrandId.value) {
+    if (brandForm.imageFile) {
+      const formData = new FormData()
+      formData.append('name', brandForm.name.trim())
+      if (brandForm.description) formData.append('description', brandForm.description)
+      formData.append('image', brandForm.imageFile)
+      await store.updateBrand(editingBrandId.value, formData)
+    } else {
+      await store.updateBrand(editingBrandId.value, {
+        name: brandForm.name.trim(),
+        description: brandForm.description,
+        image: brandForm.imagePreview
+      })
+    }
+    showToast('Brand updated successfully!')
+  } else {
+    const formData = new FormData()
+    formData.append('name', brandForm.name.trim())
+    if (brandForm.description) formData.append('description', brandForm.description)
+    if (brandForm.imageFile) formData.append('image', brandForm.imageFile)
 
-  await store.addBrand(formData)
-  showToast('Brand added successfully!')
+    await store.addBrand(formData)
+    showToast('Brand added successfully!')
+  }
   showBrandModal.value = false
 }
 
@@ -1164,6 +1261,8 @@ const showToast = (msg) => {
                   <option value="in_stock">In Stock</option>
                   <option value="low_stock">Low Stock</option>
                   <option value="out_of_stock">Out of Stock</option>
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
                 </select>
               </th>
 
@@ -1234,16 +1333,24 @@ const showToast = (msg) => {
               </td>
 
               <td>
-                <div class="fw-bold" :class="(product.stock || 0) <= (product.minStock || 10) ? 'text-danger' : 'text-dark'">
-                  {{ product.stock || 0 }} <span class="text-muted small fw-normal">{{ product.unit || 'pcs' }}</span>
+                <div class="fw-bold" :class="(parseFloat(product.stock) || 0) <= (parseFloat(product.minStock) || 10) ? 'text-danger' : 'text-dark'">
+                  {{ parseFloat(product.stock || 0) }} <span class="text-muted small fw-normal">{{ product.unit || 'pcs' }}</span>
                 </div>
               </td>
 
               <td>
-                <span class="stock-pill" :class="getStockBadgeClass(product.stock, product.minStock)">
-                  <span class="pill-dot"></span>
-                  {{ getStockStatusText(product.stock, product.minStock) }}
-                </span>
+                <div class="d-flex flex-column gap-1">
+                  <span class="stock-pill" :class="getStockBadgeClass(product.stock, product.minStock)">
+                    <span class="pill-dot"></span>
+                    {{ getStockStatusText(product.stock, product.minStock) }}
+                  </span>
+                  <span v-if="product.active === false || product.is_active === false" class="badge bg-secondary-subtle text-secondary border px-1.5 py-0.5" style="font-size: 10px; width: fit-content;">
+                    <i class="bi bi-pause-circle me-1"></i>Inactive
+                  </span>
+                  <span v-else class="badge bg-success-subtle text-success border px-1.5 py-0.5" style="font-size: 10px; width: fit-content;">
+                    <i class="bi bi-check-circle me-1"></i>Active
+                  </span>
+                </div>
               </td>
 
               <td style="text-align: right;">
@@ -1360,7 +1467,8 @@ const showToast = (msg) => {
               <td>
                 <div class="d-flex align-items-center gap-2" :style="{ paddingLeft: cat.level * 20 + 'px' }">
                   <div class="cat-icon-badge" :class="cat.isParent ? 'bg-primary-subtle text-primary' : 'bg-light text-secondary'">
-                    <i :class="cat.isParent ? 'bi bi-folder2-open' : 'bi bi-tag'"></i>
+                    <img v-if="cat.image" :src="cat.image" style="width: 22px; height: 22px; object-fit: contain; border-radius: 4px;" />
+                    <i v-else :class="cat.isParent ? 'bi bi-folder2-open' : 'bi bi-tag'"></i>
                   </div>
                   <span :class="cat.isParent ? 'fw-bold text-dark fs-6' : 'fw-medium text-secondary'">
                     {{ cat.displayName }}
@@ -1446,6 +1554,9 @@ const showToast = (msg) => {
             </div>
 
             <div class="d-flex justify-content-end gap-1 mt-3 pt-2 border-top">
+              <button class="btn btn-sm btn-light text-primary p-1 px-2 rounded-2" @click="openEditBrandModal(b)" title="Edit Brand">
+                <i class="bi bi-pencil"></i>
+              </button>
               <button class="btn btn-sm btn-light text-danger p-1 px-2 rounded-2" @click="deleteBrandItem(b)" title="Delete Brand">
                 <i class="bi bi-trash"></i>
               </button>
@@ -1521,32 +1632,77 @@ const showToast = (msg) => {
                 </div>
               </div>
 
-              <div class="row g-3 mb-4">
-                <div class="col-md-4">
-                  <label class="form-label small fw-semibold text-secondary">Initial Stock</label>
-                  <input v-model.number="productForm.stock" type="number" class="form-control rounded-3" placeholder="0" />
-                </div>
-                
-                <div class="col-md-4">
-                  <label class="form-label small fw-semibold text-secondary">Min Reorder Alert</label>
-                  <input v-model.number="productForm.minStock" type="number" class="form-control rounded-3" placeholder="5" />
-                </div>
-                
-                <div class="col-md-4">
-                  <label class="form-label small fw-semibold text-secondary">Expected Sell Date (Batch Limit)</label>
-                  <input v-model="productForm.expectedSellDate" type="date" class="form-control rounded-3" />
-                </div>
+              <div class="col-md-4">
+                <label class="form-label small fw-semibold text-secondary">Initial Stock</label>
+                <input v-model.number="productForm.stock" type="number" step="0.001" class="form-control rounded-3" placeholder="0.000" />
               </div>
-
+              
+              <div class="col-md-4">
+                <label class="form-label small fw-semibold text-secondary">Min Reorder Alert</label>
+                <input v-model.number="productForm.minStock" type="number" step="0.001" class="form-control rounded-3" placeholder="5" />
+              </div>
+              
               <div class="col-md-4">
                 <label class="form-label small fw-semibold text-secondary">Unit of Measure</label>
                 <select v-model="productForm.unit" class="form-select rounded-3">
-                  <option value="Piece">Piece (pcs)</option>
-                  <option value="Box">Box</option>
+                  <option value="Piece (pcs)">Piece (pcs)</option>
+                  <option value="Kilogram (kg)">Kilogram (kg)</option>
                   <option value="Kg">Kg</option>
-                  <option value="Liter">Liter</option>
+                  <option value="Liter (ltr)">Liter (ltr)</option>
+                  <option value="Box">Box</option>
                   <option value="Pack">Pack</option>
+                  <option value="Dozen">Dozen</option>
                 </select>
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-label small fw-semibold text-secondary">Product Status</label>
+                <select v-model="productForm.active" class="form-select rounded-3" id="productStatusAdd">
+                  <option :value="true">Active</option>
+                  <option :value="false">Inactive</option>
+                </select>
+              </div>
+
+              <div class="col-md-8">
+                <label class="form-label small fw-semibold text-secondary">Expected Sell Date (Batch Limit)</label>
+                <input v-model="productForm.expectedSellDate" type="date" class="form-control rounded-3" />
+              </div>
+
+              <!-- LOOSE / FRACTIONAL SALES (SRT-GAP-012, C4-P1-001) -->
+              <div class="col-12 mt-2 p-3 bg-light rounded-3 border">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <div class="fw-bold small text-dark"><i class="bi bi-pie-chart me-1 text-primary"></i> Fractional / Loose Item Sales</div>
+                  <div class="form-check form-switch m-0">
+                    <input class="form-check-input" type="checkbox" id="allowFractionalAdd" v-model="productForm.allowFractional">
+                    <label class="form-check-label small fw-semibold text-dark" for="allowFractionalAdd">Allow Fractional Quantities (e.g. 0.5 kg)</label>
+                  </div>
+                </div>
+                <div v-if="productForm.allowFractional" class="row g-2 mt-1">
+                  <div class="col-md-6">
+                    <label class="form-label small fw-semibold text-secondary">Fractional Sale Unit</label>
+                    <input type="text" class="form-control form-control-sm rounded-2" v-model="productForm.saleUnit" placeholder="e.g. kg, meter, liter, gm" />
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label small fw-semibold text-secondary">Conversion Factor</label>
+                    <input type="number" step="0.001" class="form-control form-control-sm rounded-2" v-model.number="productForm.conversionFactor" placeholder="1.000" />
+                  </div>
+                </div>
+              </div>
+
+              <!-- ALTERNATE BARCODES (SRT-GAP-012, C4-P1-001) -->
+              <div class="col-12 mt-2 p-3 bg-light rounded-3 border">
+                <div class="fw-bold small text-dark mb-2"><i class="bi bi-upc-scan me-1 text-primary"></i> Alternate Barcodes</div>
+                <div class="d-flex gap-2 mb-2">
+                  <input type="text" class="form-control form-control-sm rounded-2" v-model="productForm.newAlternateBarcode" placeholder="Enter alternate barcode..." @keydown.enter.prevent="addAlternateBarcode" />
+                  <button type="button" class="btn btn-sm btn-outline-primary px-3 text-nowrap rounded-2" @click="addAlternateBarcode">+ Add Barcode</button>
+                </div>
+                <div v-if="productForm.alternateBarcodes && productForm.alternateBarcodes.length > 0" class="d-flex flex-wrap gap-1">
+                  <span v-for="(bc, bIdx) in productForm.alternateBarcodes" :key="bIdx" class="badge bg-white text-dark border d-flex align-items-center gap-1 px-2 py-1">
+                    <code>{{ bc }}</code>
+                    <i class="bi bi-x text-danger" style="cursor: pointer;" @click="removeAlternateBarcode(bIdx)"></i>
+                  </span>
+                </div>
+                <div v-else class="text-muted small" style="font-size: 11px;">No alternate barcodes added. Product primary SKU/barcode will be indexed automatically.</div>
               </div>
 
               <div class="col-12">
@@ -1778,7 +1934,7 @@ const showToast = (msg) => {
       <div class="modal-dialog modal-dialog-centered" style="max-width: 440px;">
         <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
           <div class="modal-header border-0 bg-light px-4 py-3">
-            <h5 class="modal-title fw-bold text-dark m-0">Add New Brand</h5>
+            <h5 class="modal-title fw-bold text-dark m-0">{{ isEditingBrand ? 'Edit Brand Partner' : 'Add New Partner Brand' }}</h5>
             <button type="button" class="btn-close" @click="showBrandModal = false"></button>
           </div>
           <div class="modal-body px-4 py-3">
@@ -1800,7 +1956,7 @@ const showToast = (msg) => {
           </div>
           <div class="modal-footer border-0 bg-light px-4 py-2.5">
             <button type="button" class="btn btn-light rounded-3" @click="showBrandModal = false">Cancel</button>
-            <button type="button" class="btn btn-primary rounded-3" @click="saveBrand">Save Brand</button>
+            <button type="button" class="btn btn-primary rounded-3" @click="saveBrand">{{ isEditingBrand ? 'Update Brand' : 'Save Brand' }}</button>
           </div>
         </div>
       </div>

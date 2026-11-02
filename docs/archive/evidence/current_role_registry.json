@@ -1,0 +1,47 @@
+[
+  {
+    "role_id": 1,
+    "role_name": "Business Owner",
+    "purpose": "Full root administrative control over the business tenant, all branches, settings, and staff.",
+    "tenant_scope": "SINGLE_TENANT_ALL_BRANCHES",
+    "branch_scope": "GLOBAL_ACROSS_BUSINESS_BRANCHES",
+    "permissions_count": 30,
+    "pages_accessible": "ALL",
+    "menus_accessible": "ALL",
+    "dashboard": "Executive / Business Overview (DashboardView)",
+    "profile_type": "OWNER_PROFILE",
+    "creation_method": "AUTOMATIC_AT_SIGNUP",
+    "assignment_method": "SIGNUP_OR_OWNER_PROMOTION",
+    "current_problems": "Lacks cross-branch comparative analytics, consolidated vs single-branch toggle, and safe View-As preview mode."
+  },
+  {
+    "role_id": 2,
+    "role_name": "Branch Manager",
+    "purpose": "Operational management of an assigned branch (sales, local inventory, local staff, purchases).",
+    "tenant_scope": "SINGLE_TENANT_BRANCH_SCOPED",
+    "branch_scope": "ASSIGNED_BRANCH_ONLY",
+    "permissions_count": 21,
+    "pages_accessible": "BRANCH_OPERATIONAL_PAGES",
+    "menus_accessible": "BRANCH_OPERATIONAL_MENUS",
+    "dashboard": "Branch Operational Dashboard (DashboardView filtered)",
+    "profile_type": "STAFF_PROFILE",
+    "creation_method": "SEEDER_OR_GOVERNANCE_SERVICE",
+    "assignment_method": "OWNER_ASSIGNMENT",
+    "current_problems": "Frontend does not dynamically scope navigation menus or dashboard KPIs by assigned branch."
+  },
+  {
+    "role_id": 3,
+    "role_name": "Salesperson",
+    "purpose": "Front-counter cashier and POS sales operations within assigned branch.",
+    "tenant_scope": "SINGLE_TENANT_BRANCH_SCOPED",
+    "branch_scope": "ASSIGNED_BRANCH_ONLY",
+    "permissions_count": 8,
+    "pages_accessible": "POS, OWN_SALES, PRODUCTS, CUSTOMERS",
+    "menus_accessible": "POS_AND_CATALOG",
+    "dashboard": "POS Direct Landing (PosSaleView)",
+    "profile_type": "STAFF_PROFILE",
+    "creation_method": "SEEDER_OR_GOVERNANCE_SERVICE",
+    "assignment_method": "OWNER_OR_MANAGER_ASSIGNMENT",
+    "current_problems": "Router defaults salesperson to generic dashboard instead of POS; navigation guard does not enforce role-specific landing."
+  }
+]

@@ -1,0 +1,42 @@
+{
+    "form_interaction_patterns": {
+        "FULL_PAGE_FORM": 10,
+        "DEDICATED_PAGE": 2,
+        "MODAL_FORM": 22,
+        "WIZARD": 2,
+        "DRAWER": 1,
+        "INLINE_EDIT": 1
+    },
+    "form_total": 38,
+    "non_form_interaction_surfaces": {
+        "TABLE_ROW_ACTION": {
+            "count": 6,
+            "description": "Row action buttons and dropdown options on data tables"
+        },
+        "CONFIRMATION_MODAL": {
+            "count": 4,
+            "description": "Explicit dialog guards for irreversible mutations (Void, Delete, Reversal)"
+        },
+        "PRINT_PREVIEW": {
+            "count": 5,
+            "description": "Thermal and A4 document render canvas overlays"
+        },
+        "BACKGROUND_ACTION": {
+            "count": 2,
+            "description": "CSV exports and background cloud synchronization jobs"
+        },
+        "INLINE_ACTION": {
+            "count": 12,
+            "description": "Interactive UI triggers (toggles, steppers, touch product cards, barcode lookup)"
+        },
+        "DROPDOWN_ACTION_MENU": {
+            "count": 2,
+            "description": "Header branch switcher and user profile/logout menus"
+        },
+        "SEARCHABLE_SELECT": {
+            "count": 1,
+            "description": "Supplier master selection trigger"
+        }
+    },
+    "non_form_total": 32
+}

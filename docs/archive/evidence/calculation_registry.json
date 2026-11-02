@@ -1,0 +1,1573 @@
+{
+    "CALC-001": {
+        "calc_id": "CALC-001",
+        "calculation_name": "POS Sale Line Item Subtotal",
+        "business_meaning": "Calculates the gross pre-discount line monetary amount for a single sold product line based on quantity and unit selling price.",
+        "business_domain": "SALES_POS",
+        "trigger": "Product scanned/added to cart or quantity modified in POS",
+        "inputs": [
+            "quantity",
+            "unit_price"
+        ],
+        "input_authorities": {
+            "quantity": "UI_INPUT",
+            "unit_price": "DBCOL-111 (products.selling_price)"
+        },
+        "formula": "line_subtotal = quantity * unit_price",
+        "rounding_rule": "ROUND_HALF_UP",
+        "precision": 2,
+        "currency_handling": "BASE_STORE_CURRENCY",
+        "null_handling": "Default quantity to 1, unit_price to 0.00 if null",
+        "negative_value_handling": "Negative quantity prohibited; throws validation error",
+        "boundary_conditions": "quantity >= 0.01, unit_price >= 0.00",
+        "frontend_implementation": "Frontend/src/views/PosSaleView.vue (computed line subtotal)",
+        "backend_implementation": "api/app/Services/SaleService.php@createSale",
+        "database_persisted_representation": "DBCOL-195 (sale_items.subtotal)",
+        "report_implementation": "api/app/Services/ReportService.php@getSalesReport",
+        "dashboard_implementation": "api/app/Services/DashboardService.php@calculateSalesMetrics",
+        "print_implementation": "Frontend/src/views/Settings/ReceiptsView.vue (ESC/POS line render)",
+        "export_implementation": "api/app/Services/ReportService.php@exportToCsv",
+        "ledger_usage": "NONE",
+        "dependent_calculations": [
+            "CALC-002",
+            "CALC-005",
+            "CALC-010"
+        ],
+        "flows_using_it": [
+            "FLOW-001",
+            "FLOW-002",
+            "FLOW-003",
+            "FLOW-004",
+            "FLOW-005",
+            "FLOW-007"
+        ],
+        "mutations_using_it": [
+            "MUTATION-029"
+        ],
+        "stored_or_derived": "STORED_AND_DERIVED",
+        "authoritative_implementation": "BACKEND_TRANSACTION_AUTHORITY",
+        "conflict_status": "CONSISTENT",
+        "gap_ids": [],
+        "source_evidence": "api/app/Services/SaleService.php:88, Frontend/src/views/PosSaleView.vue:512",
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "CALC-002": {
+        "calc_id": "CALC-002",
+        "calculation_name": "Sale Aggregate Subtotal",
+        "business_meaning": "Sum of all line item subtotals for an entire sale transaction prior to order-level discount and tax.",
+        "business_domain": "SALES_POS",
+        "trigger": "Cart item change, checkout initiation",
+        "inputs": [
+            "sale_items.*.subtotal"
+        ],
+        "input_authorities": {
+            "sale_items.*.subtotal": "CALC-001"
+        },
+        "formula": "subtotal = SUM(sale_items.subtotal)",
+        "rounding_rule": "ROUND_HALF_UP",
+        "precision": 2,
+        "currency_handling": "BASE_STORE_CURRENCY",
+        "null_handling": "Empty cart returns 0.00",
+        "negative_value_handling": "Prohibited (minimum 0.00)",
+        "boundary_conditions": "subtotal >= 0.00",
+        "frontend_implementation": "Frontend/src/views/PosSaleView.vue (cartSubtotal)",
+        "backend_implementation": "api/app/Services/SaleService.php:94",
+        "database_persisted_representation": "DBCOL-177 (sales.subtotal)",
+        "report_implementation": "api/app/Services/ReportService.php:48",
+        "dashboard_implementation": "api/app/Services/DashboardService.php:112",
+        "print_implementation": "Receipt subtotal line",
+        "export_implementation": "Sales CSV subtotal column",
+        "ledger_usage": "NONE",
+        "dependent_calculations": [
+            "CALC-005",
+            "CALC-009"
+        ],
+        "flows_using_it": [
+            "FLOW-001",
+            "FLOW-002",
+            "FLOW-003",
+            "FLOW-004",
+            "FLOW-005",
+            "FLOW-007"
+        ],
+        "mutations_using_it": [
+            "MUTATION-029"
+        ],
+        "stored_or_derived": "STORED_AND_DERIVED",
+        "authoritative_implementation": "BACKEND_TRANSACTION_AUTHORITY",
+        "conflict_status": "CONSISTENT",
+        "gap_ids": [],
+        "source_evidence": "api/app/Services/SaleService.php:94, Frontend/src/views/PosSaleView.vue:530",
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "CALC-003": {
+        "calc_id": "CALC-003",
+        "calculation_name": "Sale Order-Level Discount Allocation",
+        "business_meaning": "Computes the absolute monetary discount deducted from the sale subtotal based on fixed amount or percentage.",
+        "business_domain": "SALES_POS",
+        "trigger": "Operator inputs discount value or percentage in POS modal",
+        "inputs": [
+            "subtotal",
+            "discount_type",
+            "discount_value"
+        ],
+        "input_authorities": {
+            "subtotal": "CALC-002",
+            "discount_type": "UI_SELECT",
+            "discount_value": "UI_INPUT"
+        },
+        "formula": "discount_amount = (discount_type == \"percentage\") ? (subtotal * discount_value / 100) : discount_value",
+        "rounding_rule": "ROUND_HALF_UP",
+        "precision": 2,
+        "currency_handling": "BASE_STORE_CURRENCY",
+        "null_handling": "Null discount treated as 0.00",
+        "negative_value_handling": "Negative discount rejected by validator",
+        "boundary_conditions": "0 <= discount_amount <= subtotal",
+        "frontend_implementation": "Frontend/src/views/PosSaleView.vue (calculatedDiscount)",
+        "backend_implementation": "api/app/Services/SaleService.php:98",
+        "database_persisted_representation": "DBCOL-178 (sales.discount_amount)",
+        "report_implementation": "api/app/Services/ReportService.php:52",
+        "dashboard_implementation": "api/app/Services/DashboardService.php:118",
+        "print_implementation": "Receipt Discount row",
+        "export_implementation": "Sales CSV discount column",
+        "ledger_usage": "NONE",
+        "dependent_calculations": [
+            "CALC-005",
+            "CALC-009"
+        ],
+        "flows_using_it": [
+            "FLOW-001",
+            "FLOW-002",
+            "FLOW-003",
+            "FLOW-004",
+            "FLOW-005"
+        ],
+        "mutations_using_it": [
+            "MUTATION-029"
+        ],
+        "stored_or_derived": "STORED_AND_DERIVED",
+        "authoritative_implementation": "BACKEND_TRANSACTION_AUTHORITY",
+        "conflict_status": "PRESENTATION_EQUIVALENT",
+        "gap_ids": [],
+        "source_evidence": "api/app/Services/SaleService.php:98, Frontend/src/views/PosSaleView.vue:545",
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "CALC-004": {
+        "calc_id": "CALC-004",
+        "calculation_name": "Sale Order-Level Tax Computation",
+        "business_meaning": "Calculates government tax liability added to the discounted taxable base of the sale.",
+        "business_domain": "SALES_POS",
+        "trigger": "Checkout calculation cycle",
+        "inputs": [
+            "subtotal",
+            "discount_amount",
+            "tax_rate"
+        ],
+        "input_authorities": {
+            "subtotal": "CALC-002",
+            "discount_amount": "CALC-003",
+            "tax_rate": "DBCOL-032 (business_settings.tax_rate)"
+        },
+        "formula": "tax_amount = (subtotal - discount_amount) * (tax_rate / 100)",
+        "rounding_rule": "ROUND_HALF_UP",
+        "precision": 2,
+        "currency_handling": "BASE_STORE_CURRENCY",
+        "null_handling": "Null tax rate treated as 0%",
+        "negative_value_handling": "Negative tax prohibited",
+        "boundary_conditions": "tax_amount >= 0.00",
+        "frontend_implementation": "Frontend/src/views/PosSaleView.vue (calculatedTax)",
+        "backend_implementation": "api/app/Services/SaleService.php:102",
+        "database_persisted_representation": "DBCOL-179 (sales.tax_amount)",
+        "report_implementation": "api/app/Services/ReportService.php:54",
+        "dashboard_implementation": "api/app/Services/DashboardService.php:120",
+        "print_implementation": "Receipt Tax row",
+        "export_implementation": "Sales CSV tax column",
+        "ledger_usage": "NONE",
+        "dependent_calculations": [
+            "CALC-005"
+        ],
+        "flows_using_it": [
+            "FLOW-001",
+            "FLOW-002",
+            "FLOW-003",
+            "FLOW-004",
+            "FLOW-005"
+        ],
+        "mutations_using_it": [
+            "MUTATION-029"
+        ],
+        "stored_or_derived": "STORED_AND_DERIVED",
+        "authoritative_implementation": "BACKEND_TRANSACTION_AUTHORITY",
+        "conflict_status": "CONSISTENT",
+        "gap_ids": [],
+        "source_evidence": "api/app/Services/SaleService.php:102",
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "CALC-005": {
+        "calc_id": "CALC-005",
+        "calculation_name": "Sale Grand Total Amount",
+        "business_meaning": "Final net payable monetary amount for the sale invoice after discount deduction and tax addition.",
+        "business_domain": "SALES_POS",
+        "trigger": "Cart finalize, checkout submit",
+        "inputs": [
+            "subtotal",
+            "discount_amount",
+            "tax_amount"
+        ],
+        "input_authorities": {
+            "subtotal": "CALC-002",
+            "discount_amount": "CALC-003",
+            "tax_amount": "CALC-004"
+        },
+        "formula": "total_amount = subtotal - discount_amount + tax_amount",
+        "rounding_rule": "ROUND_HALF_UP",
+        "precision": 2,
+        "currency_handling": "BASE_STORE_CURRENCY",
+        "null_handling": "Treated as 0.00",
+        "negative_value_handling": "Prohibited (minimum 0.00)",
+        "boundary_conditions": "total_amount >= 0.00",
+        "frontend_implementation": "Frontend/src/views/PosSaleView.vue (grandTotal)",
+        "backend_implementation": "api/app/Services/SaleService.php:106",
+        "database_persisted_representation": "DBCOL-180 (sales.total_amount)",
+        "report_implementation": "api/app/Services/ReportService.php:58",
+        "dashboard_implementation": "api/app/Services/DashboardService.php:124",
+        "print_implementation": "Receipt Grand Total row",
+        "export_implementation": "Sales CSV total_amount column",
+        "ledger_usage": "NONE",
+        "dependent_calculations": [
+            "CALC-006",
+            "CALC-007",
+            "CALC-009"
+        ],
+        "flows_using_it": [
+            "FLOW-001",
+            "FLOW-002",
+            "FLOW-003",
+            "FLOW-004",
+            "FLOW-005",
+            "FLOW-007"
+        ],
+        "mutations_using_it": [
+            "MUTATION-029"
+        ],
+        "stored_or_derived": "STORED_AND_DERIVED",
+        "authoritative_implementation": "BACKEND_TRANSACTION_AUTHORITY",
+        "conflict_status": "CONSISTENT",
+        "gap_ids": [],
+        "source_evidence": "api/app/Services/SaleService.php:106, Frontend/src/views/PosSaleView.vue:560",
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "CALC-006": {
+        "calc_id": "CALC-006",
+        "calculation_name": "Sale Due / Outstanding Amount",
+        "business_meaning": "Unpaid residual balance on a sale transaction that is posted to customer accounts receivable (Khata).",
+        "business_domain": "SALES_POS",
+        "trigger": "Payment settlement calculation",
+        "inputs": [
+            "total_amount",
+            "paid_amount"
+        ],
+        "input_authorities": {
+            "total_amount": "CALC-005",
+            "paid_amount": "DBCOL-181 (sales.paid_amount)"
+        },
+        "formula": "due_amount = MAX(total_amount - paid_amount, 0.00)",
+        "rounding_rule": "ROUND_HALF_UP",
+        "precision": 2,
+        "currency_handling": "BASE_STORE_CURRENCY",
+        "null_handling": "paid_amount null treated as 0.00",
+        "negative_value_handling": "Capped at 0.00 (change returned separately)",
+        "boundary_conditions": "0.00 <= due_amount <= total_amount",
+        "frontend_implementation": "Frontend/src/views/PosSaleView.vue (remainingDue)",
+        "backend_implementation": "api/app/Services/SaleService.php:112",
+        "database_persisted_representation": "DBCOL-182 (sales.due_amount)",
+        "report_implementation": "api/app/Services/ReportService.php:62",
+        "dashboard_implementation": "api/app/Services/DashboardService.php:128",
+        "print_implementation": "Receipt Balance Due row",
+        "export_implementation": "Sales CSV due_amount column",
+        "ledger_usage": "Khata debit addition",
+        "dependent_calculations": [
+            "CALC-021",
+            "CALC-022"
+        ],
+        "flows_using_it": [
+            "FLOW-003",
+            "FLOW-004",
+            "FLOW-005"
+        ],
+        "mutations_using_it": [
+            "MUTATION-029",
+            "MUTATION-031"
+        ],
+        "stored_or_derived": "STORED_AND_DERIVED",
+        "authoritative_implementation": "BACKEND_TRANSACTION_AUTHORITY",
+        "conflict_status": "CONSISTENT",
+        "gap_ids": [],
+        "source_evidence": "api/app/Services/SaleService.php:112",
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "CALC-007": {
+        "calc_id": "CALC-007",
+        "calculation_name": "POS Cash Tender Change Returned",
+        "business_meaning": "Physical cash currency returned to customer when tendered cash exceeds sale grand total.",
+        "business_domain": "SALES_POS",
+        "trigger": "Operator inputs tendered cash in payment modal",
+        "inputs": [
+            "tendered_cash",
+            "total_amount"
+        ],
+        "input_authorities": {
+            "tendered_cash": "UI_INPUT",
+            "total_amount": "CALC-005"
+        },
+        "formula": "change_amount = MAX(tendered_cash - total_amount, 0.00)",
+        "rounding_rule": "ROUND_HALF_UP",
+        "precision": 2,
+        "currency_handling": "BASE_STORE_CURRENCY",
+        "null_handling": "Treated as 0.00",
+        "negative_value_handling": "Capped at 0.00",
+        "boundary_conditions": "change_amount >= 0.00",
+        "frontend_implementation": "Frontend/src/views/PosSaleView.vue (changeReturned)",
+        "backend_implementation": "NONE (Transient Presentation Value)",
+        "database_persisted_representation": "NOT_PERSISTED_IN_DATABASE",
+        "report_implementation": "NONE",
+        "dashboard_implementation": "NONE",
+        "print_implementation": "Receipt Change Returned row",
+        "export_implementation": "NONE",
+        "ledger_usage": "NONE",
+        "dependent_calculations": [],
+        "flows_using_it": [
+            "FLOW-001"
+        ],
+        "mutations_using_it": [],
+        "stored_or_derived": "DERIVED_TRANSIENT",
+        "authoritative_implementation": "FRONTEND_PREVIEW_ONLY",
+        "conflict_status": "PRESENTATION_EQUIVALENT",
+        "gap_ids": [],
+        "source_evidence": "Frontend/src/views/PosSaleView.vue:582, Frontend/src/views/Settings/ReceiptsView.vue:112",
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "CALC-008": {
+        "calc_id": "CALC-008",
+        "calculation_name": "Sale Line Item Cost of Goods Sold (COGS)",
+        "business_meaning": "Cost basis of goods sold on a transaction line based on historical product unit cost at time of sale.",
+        "business_domain": "SALES_POS",
+        "trigger": "Sale creation line persistence",
+        "inputs": [
+            "quantity",
+            "cost_price"
+        ],
+        "input_authorities": {
+            "quantity": "UI_INPUT",
+            "cost_price": "DBCOL-110 (products.cost_price)"
+        },
+        "formula": "line_cogs = quantity * cost_price",
+        "rounding_rule": "ROUND_HALF_UP",
+        "precision": 2,
+        "currency_handling": "BASE_STORE_CURRENCY",
+        "null_handling": "Null cost_price treated as 0.00",
+        "negative_value_handling": "Prohibited",
+        "boundary_conditions": "line_cogs >= 0.00",
+        "frontend_implementation": "NONE",
+        "backend_implementation": "api/app/Services/SaleService.php:124",
+        "database_persisted_representation": "DBCOL-196 (sale_items.cost_price snapshot * qty)",
+        "report_implementation": "api/app/Services/ReportService.php:82",
+        "dashboard_implementation": "api/app/Services/DashboardService.php:145",
+        "print_implementation": "NONE (Hidden from customer receipts)",
+        "export_implementation": "Sales Profit CSV",
+        "ledger_usage": "NONE",
+        "dependent_calculations": [
+            "CALC-009",
+            "CALC-010"
+        ],
+        "flows_using_it": [
+            "FLOW-001",
+            "FLOW-002",
+            "FLOW-003",
+            "FLOW-004",
+            "FLOW-005"
+        ],
+        "mutations_using_it": [
+            "MUTATION-029"
+        ],
+        "stored_or_derived": "STORED_AND_DERIVED",
+        "authoritative_implementation": "BACKEND_TRANSACTION_AUTHORITY",
+        "conflict_status": "CONSISTENT",
+        "gap_ids": [],
+        "source_evidence": "api/app/Services/SaleService.php:124",
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "CALC-009": {
+        "calc_id": "CALC-009",
+        "calculation_name": "Sale Gross Profit Margin",
+        "business_meaning": "Gross monetary profit generated by a sale transaction after deducting total COGS from net sales revenue.",
+        "business_domain": "SALES_POS",
+        "trigger": "Sale completion, profit reporting",
+        "inputs": [
+            "total_amount",
+            "tax_amount",
+            "total_cogs"
+        ],
+        "input_authorities": {
+            "total_amount": "CALC-005",
+            "tax_amount": "CALC-004",
+            "total_cogs": "SUM(CALC-008)"
+        },
+        "formula": "gross_profit = (total_amount - tax_amount) - total_cogs",
+        "rounding_rule": "ROUND_HALF_UP",
+        "precision": 2,
+        "currency_handling": "BASE_STORE_CURRENCY",
+        "null_handling": "Treated as 0.00",
+        "negative_value_handling": "Negative profit permitted (loss on sale)",
+        "boundary_conditions": "Can be negative if sold below cost",
+        "frontend_implementation": "Frontend/src/views/reports1View.vue (profitColumn)",
+        "backend_implementation": "api/app/Services/ReportService.php:92",
+        "database_persisted_representation": "DERIVED_ON_THE_FLY",
+        "report_implementation": "api/app/Services/ReportService.php:92",
+        "dashboard_implementation": "api/app/Services/DashboardService.php:152",
+        "print_implementation": "NONE",
+        "export_implementation": "Profit Report CSV export",
+        "ledger_usage": "NONE",
+        "dependent_calculations": [
+            "CALC-010",
+            "CALC-030"
+        ],
+        "flows_using_it": [
+            "FLOW-001",
+            "FLOW-002",
+            "FLOW-003",
+            "FLOW-004",
+            "FLOW-005"
+        ],
+        "mutations_using_it": [],
+        "stored_or_derived": "DERIVED_REPORT_METRIC",
+        "authoritative_implementation": "REPORT_DERIVED_AUTHORITY",
+        "conflict_status": "CONSISTENT",
+        "gap_ids": [],
+        "source_evidence": "api/app/Services/ReportService.php:92, api/app/Services/DashboardService.php:152",
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "CALC-010": {
+        "calc_id": "CALC-010",
+        "calculation_name": "Product Gross Margin Percentage",
+        "business_meaning": "Markup percentage of gross profit relative to selling price.",
+        "business_domain": "PRODUCTS_PRICING",
+        "trigger": "Product master edit, pricing review",
+        "inputs": [
+            "selling_price",
+            "cost_price"
+        ],
+        "input_authorities": {
+            "selling_price": "DBCOL-111",
+            "cost_price": "DBCOL-110"
+        },
+        "formula": "margin_percentage = (selling_price > 0) ? (((selling_price - cost_price) / selling_price) * 100) : 0.00",
+        "rounding_rule": "ROUND_HALF_UP",
+        "precision": 2,
+        "currency_handling": "PERCENTAGE_RATIO",
+        "null_handling": "0.00% if selling_price is 0",
+        "negative_value_handling": "Negative percentage permitted (loss)",
+        "boundary_conditions": "margin_percentage <= 100%",
+        "frontend_implementation": "Frontend/src/views/ProductView.vue:320",
+        "backend_implementation": "api/app/Models/Product.php (getMarginAttribute)",
+        "database_persisted_representation": "DERIVED_MODEL_ACCESSOR",
+        "report_implementation": "api/app/Services/ReportService.php:128",
+        "dashboard_implementation": "api/app/Services/DashboardService.php:210",
+        "print_implementation": "NONE",
+        "export_implementation": "Product Catalog CSV export",
+        "ledger_usage": "NONE",
+        "dependent_calculations": [],
+        "flows_using_it": [],
+        "mutations_using_it": [
+            "MUTATION-014"
+        ],
+        "stored_or_derived": "DERIVED_ON_THE_FLY",
+        "authoritative_implementation": "MASTER_RECORD_AUTHORITY",
+        "conflict_status": "CONSISTENT",
+        "gap_ids": [],
+        "source_evidence": "Frontend/src/views/ProductView.vue:320, api/app/Models/Product.php:48",
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "CALC-011": {
+        "calc_id": "CALC-011",
+        "calculation_name": "Purchase Bill Line Item Subtotal",
+        "business_meaning": "Gross procurement amount for a single purchase bill item before purchase discount and tax.",
+        "business_domain": "PROCUREMENT",
+        "trigger": "Purchase line entry",
+        "inputs": [
+            "quantity",
+            "unit_cost"
+        ],
+        "input_authorities": {
+            "quantity": "UI_INPUT",
+            "unit_cost": "UI_INPUT / DBCOL-110"
+        },
+        "formula": "purchase_line_subtotal = quantity * unit_cost",
+        "rounding_rule": "ROUND_HALF_UP",
+        "precision": 2,
+        "currency_handling": "BASE_STORE_CURRENCY",
+        "null_handling": "Treated as 0.00",
+        "negative_value_handling": "Prohibited",
+        "boundary_conditions": "quantity >= 1, unit_cost >= 0.00",
+        "frontend_implementation": "Frontend/src/views/PurchaseView.vue:245",
+        "backend_implementation": "api/app/Services/PurchaseService.php:48",
+        "database_persisted_representation": "DBCOL-275 (purchase_items.subtotal)",
+        "report_implementation": "api/app/Services/ReportService.php:140",
+        "dashboard_implementation": "NONE",
+        "print_implementation": "Purchase Order PDF item row",
+        "export_implementation": "Purchase CSV export",
+        "ledger_usage": "NONE",
+        "dependent_calculations": [
+            "CALC-012",
+            "CALC-015",
+            "CALC-017"
+        ],
+        "flows_using_it": [
+            "FLOW-008",
+            "FLOW-009",
+            "FLOW-010"
+        ],
+        "mutations_using_it": [
+            "MUTATION-039"
+        ],
+        "stored_or_derived": "STORED_AND_DERIVED",
+        "authoritative_implementation": "BACKEND_TRANSACTION_AUTHORITY",
+        "conflict_status": "CONSISTENT",
+        "gap_ids": [],
+        "source_evidence": "api/app/Services/PurchaseService.php:48, Frontend/src/views/PurchaseView.vue:245",
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "CALC-012": {
+        "calc_id": "CALC-012",
+        "calculation_name": "Purchase Aggregate Subtotal",
+        "business_meaning": "Sum of all purchase line item subtotals for an entire inbound shipment bill.",
+        "business_domain": "PROCUREMENT",
+        "trigger": "Purchase bill entry change",
+        "inputs": [
+            "purchase_items.*.subtotal"
+        ],
+        "input_authorities": {
+            "purchase_items.*.subtotal": "CALC-011"
+        },
+        "formula": "purchase_subtotal = SUM(purchase_items.subtotal)",
+        "rounding_rule": "ROUND_HALF_UP",
+        "precision": 2,
+        "currency_handling": "BASE_STORE_CURRENCY",
+        "null_handling": "0.00 if no items",
+        "negative_value_handling": "Prohibited",
+        "boundary_conditions": "purchase_subtotal >= 0.00",
+        "frontend_implementation": "Frontend/src/views/PurchaseView.vue:260",
+        "backend_implementation": "api/app/Services/PurchaseService.php:54",
+        "database_persisted_representation": "DBCOL-257 (purchases.subtotal)",
+        "report_implementation": "api/app/Services/ReportService.php:144",
+        "dashboard_implementation": "NONE",
+        "print_implementation": "Purchase Order subtotal line",
+        "export_implementation": "Purchase CSV export",
+        "ledger_usage": "NONE",
+        "dependent_calculations": [
+            "CALC-015"
+        ],
+        "flows_using_it": [
+            "FLOW-008",
+            "FLOW-009",
+            "FLOW-010"
+        ],
+        "mutations_using_it": [
+            "MUTATION-039"
+        ],
+        "stored_or_derived": "STORED_AND_DERIVED",
+        "authoritative_implementation": "BACKEND_TRANSACTION_AUTHORITY",
+        "conflict_status": "CONSISTENT",
+        "gap_ids": [],
+        "source_evidence": "api/app/Services/PurchaseService.php:54",
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "CALC-013": {
+        "calc_id": "CALC-013",
+        "calculation_name": "Purchase Inbound Freight / Shipping Charge",
+        "business_meaning": "Transportation and delivery charges billed on the purchase invoice.",
+        "business_domain": "PROCUREMENT",
+        "trigger": "Operator enters freight cost in purchase creation form",
+        "inputs": [
+            "shipping_cost"
+        ],
+        "input_authorities": {
+            "shipping_cost": "UI_INPUT"
+        },
+        "formula": "shipping_cost = shipping_cost",
+        "rounding_rule": "ROUND_HALF_UP",
+        "precision": 2,
+        "currency_handling": "BASE_STORE_CURRENCY",
+        "null_handling": "Default to 0.00 if null",
+        "negative_value_handling": "Prohibited",
+        "boundary_conditions": "shipping_cost >= 0.00",
+        "frontend_implementation": "Frontend/src/views/PurchaseView.vue:280",
+        "backend_implementation": "api/app/Services/PurchaseService.php:62",
+        "database_persisted_representation": "DBCOL-260 (purchases.shipping_cost)",
+        "report_implementation": "api/app/Services/ReportService.php:148",
+        "dashboard_implementation": "NONE",
+        "print_implementation": "Purchase Order freight line",
+        "export_implementation": "Purchase CSV export",
+        "ledger_usage": "NONE",
+        "dependent_calculations": [
+            "CALC-015",
+            "CALC-017"
+        ],
+        "flows_using_it": [
+            "FLOW-008",
+            "FLOW-009",
+            "FLOW-010"
+        ],
+        "mutations_using_it": [
+            "MUTATION-039"
+        ],
+        "stored_or_derived": "STORED_DIRECT",
+        "authoritative_implementation": "BACKEND_TRANSACTION_AUTHORITY",
+        "conflict_status": "FORMULA_CONFLICT",
+        "gap_ids": [
+            "P4-GAP-005"
+        ],
+        "source_evidence": "api/app/Services/PurchaseService.php:62, api/app/Services/InventoryService.php:180",
+        "verification_confidence": "SOURCE_VERIFIED_WITH_GAP",
+        "certification_status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "CALC-014": {
+        "calc_id": "CALC-014",
+        "calculation_name": "Purchase Order Tax & Discount Computations",
+        "business_meaning": "Computes vendor discount deductions and applicable purchase taxes on procurement bill.",
+        "business_domain": "PROCUREMENT",
+        "trigger": "Purchase bill calculation",
+        "inputs": [
+            "subtotal",
+            "discount_amount",
+            "tax_amount"
+        ],
+        "input_authorities": {
+            "subtotal": "CALC-012",
+            "discount_amount": "UI_INPUT",
+            "tax_amount": "UI_INPUT"
+        },
+        "formula": "net_tax_discount = -discount_amount + tax_amount",
+        "rounding_rule": "ROUND_HALF_UP",
+        "precision": 2,
+        "currency_handling": "BASE_STORE_CURRENCY",
+        "null_handling": "Treated as 0.00",
+        "negative_value_handling": "Prohibited",
+        "boundary_conditions": "discount_amount <= subtotal",
+        "frontend_implementation": "Frontend/src/views/PurchaseView.vue:292",
+        "backend_implementation": "api/app/Services/PurchaseService.php:68",
+        "database_persisted_representation": "DBCOL-258, DBCOL-259",
+        "report_implementation": "api/app/Services/ReportService.php:152",
+        "dashboard_implementation": "NONE",
+        "print_implementation": "Purchase Order tax/discount rows",
+        "export_implementation": "Purchase CSV export",
+        "ledger_usage": "NONE",
+        "dependent_calculations": [
+            "CALC-015"
+        ],
+        "flows_using_it": [
+            "FLOW-008",
+            "FLOW-009",
+            "FLOW-010"
+        ],
+        "mutations_using_it": [
+            "MUTATION-039"
+        ],
+        "stored_or_derived": "STORED_AND_DERIVED",
+        "authoritative_implementation": "BACKEND_TRANSACTION_AUTHORITY",
+        "conflict_status": "CONSISTENT",
+        "gap_ids": [],
+        "source_evidence": "api/app/Services/PurchaseService.php:68",
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "CALC-015": {
+        "calc_id": "CALC-015",
+        "calculation_name": "Purchase Grand Total Payable",
+        "business_meaning": "Total gross obligation owed to supplier for the purchase bill including freight and taxes after discounts.",
+        "business_domain": "PROCUREMENT",
+        "trigger": "Purchase bill submit",
+        "inputs": [
+            "subtotal",
+            "discount_amount",
+            "tax_amount",
+            "shipping_cost"
+        ],
+        "input_authorities": {
+            "subtotal": "CALC-012",
+            "discount_amount": "CALC-014",
+            "tax_amount": "CALC-014",
+            "shipping_cost": "CALC-013"
+        },
+        "formula": "purchase_total = subtotal - discount_amount + tax_amount + shipping_cost",
+        "rounding_rule": "ROUND_HALF_UP",
+        "precision": 2,
+        "currency_handling": "BASE_STORE_CURRENCY",
+        "null_handling": "Treated as 0.00",
+        "negative_value_handling": "Prohibited",
+        "boundary_conditions": "purchase_total >= 0.00",
+        "frontend_implementation": "Frontend/src/views/PurchaseView.vue:310",
+        "backend_implementation": "api/app/Services/PurchaseService.php:74",
+        "database_persisted_representation": "DBCOL-261 (purchases.total_amount)",
+        "report_implementation": "api/app/Services/ReportService.php:156",
+        "dashboard_implementation": "api/app/Services/DashboardService.php:180",
+        "print_implementation": "Purchase Order Grand Total row",
+        "export_implementation": "Purchase CSV total column",
+        "ledger_usage": "Supplier liability credit addition",
+        "dependent_calculations": [
+            "CALC-016",
+            "CALC-023",
+            "CALC-024"
+        ],
+        "flows_using_it": [
+            "FLOW-008",
+            "FLOW-009",
+            "FLOW-010"
+        ],
+        "mutations_using_it": [
+            "MUTATION-039"
+        ],
+        "stored_or_derived": "STORED_AND_DERIVED",
+        "authoritative_implementation": "BACKEND_TRANSACTION_AUTHORITY",
+        "conflict_status": "CONSISTENT",
+        "gap_ids": [],
+        "source_evidence": "api/app/Services/PurchaseService.php:74, Frontend/src/views/PurchaseView.vue:310",
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "CALC-016": {
+        "calc_id": "CALC-016",
+        "calculation_name": "Purchase Due / Outstanding AP Balance",
+        "business_meaning": "Unpaid residual supplier liability on a purchase bill added to accounts payable.",
+        "business_domain": "PROCUREMENT",
+        "trigger": "Purchase bill payment settlement",
+        "inputs": [
+            "purchase_total",
+            "paid_amount"
+        ],
+        "input_authorities": {
+            "purchase_total": "CALC-015",
+            "paid_amount": "DBCOL-262 (purchases.paid_amount)"
+        },
+        "formula": "purchase_due = MAX(purchase_total - paid_amount, 0.00)",
+        "rounding_rule": "ROUND_HALF_UP",
+        "precision": 2,
+        "currency_handling": "BASE_STORE_CURRENCY",
+        "null_handling": "paid_amount null treated as 0.00",
+        "negative_value_handling": "Capped at 0.00",
+        "boundary_conditions": "0.00 <= purchase_due <= purchase_total",
+        "frontend_implementation": "Frontend/src/views/PurchaseView.vue:325",
+        "backend_implementation": "api/app/Services/PurchaseService.php:80",
+        "database_persisted_representation": "DBCOL-263 (purchases.due_amount)",
+        "report_implementation": "api/app/Services/ReportService.php:160",
+        "dashboard_implementation": "api/app/Services/DashboardService.php:184",
+        "print_implementation": "Purchase Order balance due row",
+        "export_implementation": "Purchase CSV due column",
+        "ledger_usage": "Supplier balance calculation",
+        "dependent_calculations": [
+            "CALC-023",
+            "CALC-024"
+        ],
+        "flows_using_it": [
+            "FLOW-008",
+            "FLOW-010"
+        ],
+        "mutations_using_it": [
+            "MUTATION-039",
+            "MUTATION-041"
+        ],
+        "stored_or_derived": "STORED_AND_DERIVED",
+        "authoritative_implementation": "BACKEND_TRANSACTION_AUTHORITY",
+        "conflict_status": "CONSISTENT",
+        "gap_ids": [],
+        "source_evidence": "api/app/Services/PurchaseService.php:80",
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "CALC-017": {
+        "calc_id": "CALC-017",
+        "calculation_name": "Product Moving Average Unit Cost Price",
+        "business_meaning": "Perpetual weighted-average inventory acquisition cost updated upon receiving new inventory batches.",
+        "business_domain": "INVENTORY_VALUATION",
+        "trigger": "Inbound stock receipt (Purchase GRN)",
+        "inputs": [
+            "existing_stock",
+            "existing_cost",
+            "received_qty",
+            "received_unit_cost"
+        ],
+        "input_authorities": {
+            "existing_stock": "SUM(branch_inventories.quantity_on_hand)",
+            "existing_cost": "DBCOL-110 (products.cost_price)",
+            "received_qty": "purchase_items.quantity",
+            "received_unit_cost": "purchase_items.unit_cost"
+        },
+        "formula": "new_cost_price = ((existing_stock * existing_cost) + (received_qty * received_unit_cost)) / (existing_stock + received_qty)",
+        "rounding_rule": "ROUND_HALF_UP",
+        "precision": 2,
+        "currency_handling": "BASE_STORE_CURRENCY",
+        "null_handling": "If (existing_stock + received_qty) <= 0, new_cost_price = received_unit_cost",
+        "negative_value_handling": "Negative stock defaults to received_unit_cost",
+        "boundary_conditions": "new_cost_price >= 0.00",
+        "frontend_implementation": "NONE",
+        "backend_implementation": "api/app/Services/InventoryService.php@receiveStock",
+        "database_persisted_representation": "DBCOL-110 (products.cost_price)",
+        "report_implementation": "api/app/Services/ReportService.php:175",
+        "dashboard_implementation": "api/app/Services/DashboardService.php:198",
+        "print_implementation": "NONE",
+        "export_implementation": "Inventory Valuation CSV export",
+        "ledger_usage": "Sets cost basis for subsequent inventory_movements and COGS",
+        "dependent_calculations": [
+            "CALC-008",
+            "CALC-010",
+            "CALC-018"
+        ],
+        "flows_using_it": [
+            "FLOW-008",
+            "FLOW-009",
+            "FLOW-010"
+        ],
+        "mutations_using_it": [
+            "MUTATION-039",
+            "MUTATION-014"
+        ],
+        "stored_or_derived": "STORED_MASTER_STATE",
+        "authoritative_implementation": "BACKEND_TRANSACTION_AUTHORITY",
+        "conflict_status": "FORMULA_CONFLICT",
+        "gap_ids": [
+            "P4-GAP-005"
+        ],
+        "source_evidence": "api/app/Services/InventoryService.php:185",
+        "verification_confidence": "SOURCE_VERIFIED_WITH_GAP",
+        "certification_status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "CALC-018": {
+        "calc_id": "CALC-018",
+        "calculation_name": "Branch Total Inventory Asset Valuation",
+        "business_meaning": "Monetary value of inventory stock on hand at cost price for a specific branch or whole business.",
+        "business_domain": "INVENTORY_VALUATION",
+        "trigger": "Inventory dashboard / valuation report generation",
+        "inputs": [
+            "branch_inventories.quantity_on_hand",
+            "products.cost_price"
+        ],
+        "input_authorities": {
+            "quantity_on_hand": "DBCOL-130",
+            "cost_price": "DBCOL-110"
+        },
+        "formula": "inventory_valuation = SUM(branch_inventories.quantity_on_hand * products.cost_price)",
+        "rounding_rule": "ROUND_HALF_UP",
+        "precision": 2,
+        "currency_handling": "BASE_STORE_CURRENCY",
+        "null_handling": "Treated as 0.00",
+        "negative_value_handling": "Negative stock treated as 0 in valuation or negative value",
+        "boundary_conditions": "inventory_valuation >= 0.00",
+        "frontend_implementation": "Frontend/src/views/InventryView.vue:450",
+        "backend_implementation": "api/app/Services/DashboardService.php@calculateInventoryMetrics",
+        "database_persisted_representation": "DERIVED_ON_THE_FLY",
+        "report_implementation": "api/app/Services/ReportService.php@getInventoryReport",
+        "dashboard_implementation": "api/app/Services/DashboardService.php:204",
+        "print_implementation": "NONE",
+        "export_implementation": "Inventory Valuation CSV",
+        "ledger_usage": "NONE",
+        "dependent_calculations": [],
+        "flows_using_it": [],
+        "mutations_using_it": [],
+        "stored_or_derived": "DERIVED_REPORT_METRIC",
+        "authoritative_implementation": "REPORT_DERIVED_AUTHORITY",
+        "conflict_status": "CONSISTENT",
+        "gap_ids": [],
+        "source_evidence": "api/app/Services/DashboardService.php:204, api/app/Services/ReportService.php:180",
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "CALC-019": {
+        "calc_id": "CALC-019",
+        "calculation_name": "Sale Return Line Refund Amount",
+        "business_meaning": "Monetary refund credit for a single returned item line based on returned quantity and original sale unit price.",
+        "business_domain": "RETURNS_REFUNDS",
+        "trigger": "Sale return line item entry",
+        "inputs": [
+            "return_quantity",
+            "original_unit_price"
+        ],
+        "input_authorities": {
+            "return_quantity": "UI_INPUT",
+            "original_unit_price": "DBCOL-194 (sale_items.unit_price)"
+        },
+        "formula": "return_line_amount = return_quantity * original_unit_price",
+        "rounding_rule": "ROUND_HALF_UP",
+        "precision": 2,
+        "currency_handling": "BASE_STORE_CURRENCY",
+        "null_handling": "Treated as 0.00",
+        "negative_value_handling": "Prohibited",
+        "boundary_conditions": "0 < return_quantity <= original_sold_quantity",
+        "frontend_implementation": "Frontend/src/views/ReturnDebtView.vue:120",
+        "backend_implementation": "api/app/Services/SaleService.php@processReturn",
+        "database_persisted_representation": "DBCOL-205 (sale_return_items.subtotal)",
+        "report_implementation": "api/app/Services/ReportService.php:195",
+        "dashboard_implementation": "NONE",
+        "print_implementation": "Return Receipt item line",
+        "export_implementation": "Returns CSV export",
+        "ledger_usage": "NONE",
+        "dependent_calculations": [
+            "CALC-020"
+        ],
+        "flows_using_it": [
+            "FLOW-012",
+            "FLOW-013"
+        ],
+        "mutations_using_it": [
+            "MUTATION-030"
+        ],
+        "stored_or_derived": "STORED_AND_DERIVED",
+        "authoritative_implementation": "BACKEND_TRANSACTION_AUTHORITY",
+        "conflict_status": "CONSISTENT",
+        "gap_ids": [],
+        "source_evidence": "api/app/Services/SaleService.php:210, Frontend/src/views/ReturnDebtView.vue:120",
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "CALC-020": {
+        "calc_id": "CALC-020",
+        "calculation_name": "Sale Return Grand Total Refund",
+        "business_meaning": "Sum of all return line refund amounts refunded to customer via cash or Khata store credit.",
+        "business_domain": "RETURNS_REFUNDS",
+        "trigger": "Sale return submit",
+        "inputs": [
+            "sale_return_items.*.subtotal"
+        ],
+        "input_authorities": {
+            "sale_return_items.*.subtotal": "CALC-019"
+        },
+        "formula": "total_refund_amount = SUM(sale_return_items.subtotal)",
+        "rounding_rule": "ROUND_HALF_UP",
+        "precision": 2,
+        "currency_handling": "BASE_STORE_CURRENCY",
+        "null_handling": "0.00 if empty",
+        "negative_value_handling": "Prohibited",
+        "boundary_conditions": "0.00 <= total_refund_amount <= original_sale.total_amount",
+        "frontend_implementation": "Frontend/src/views/ReturnDebtView.vue:145",
+        "backend_implementation": "api/app/Services/SaleService.php:224",
+        "database_persisted_representation": "DBCOL-201 (sale_returns.total_amount)",
+        "report_implementation": "api/app/Services/ReportService.php:202",
+        "dashboard_implementation": "api/app/Services/DashboardService.php:220",
+        "print_implementation": "Return Receipt Grand Total",
+        "export_implementation": "Returns CSV export",
+        "ledger_usage": "Cash drawer outflow or Khata credit adjustment",
+        "dependent_calculations": [
+            "CALC-021",
+            "CALC-022",
+            "CALC-026"
+        ],
+        "flows_using_it": [
+            "FLOW-012",
+            "FLOW-013"
+        ],
+        "mutations_using_it": [
+            "MUTATION-030"
+        ],
+        "stored_or_derived": "STORED_AND_DERIVED",
+        "authoritative_implementation": "BACKEND_TRANSACTION_AUTHORITY",
+        "conflict_status": "CONSISTENT",
+        "gap_ids": [],
+        "source_evidence": "api/app/Services/SaleService.php:224",
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "CALC-021": {
+        "calc_id": "CALC-021",
+        "calculation_name": "Customer Outstanding Receivable Balance",
+        "business_meaning": "Cumulative net monetary amount owed by a customer across all credit sales, payments, and returns.",
+        "business_domain": "CUSTOMER_KHATA_AR",
+        "trigger": "Credit sale, customer payment voucher, return credit, manual adjustment",
+        "inputs": [
+            "opening_balance",
+            "SUM(debit_khata_transactions)",
+            "SUM(credit_khata_transactions)"
+        ],
+        "input_authorities": {
+            "opening_balance": "DBCOL-209 (initial state)",
+            "debit_khata_transactions": "DBCOL-221 (khata_transactions where type=\"debit\")",
+            "credit_khata_transactions": "DBCOL-221 (khata_transactions where type=\"credit\")"
+        },
+        "formula": "customer_balance = opening_balance + SUM(debit_amount) - SUM(credit_amount)",
+        "rounding_rule": "ROUND_HALF_UP",
+        "precision": 2,
+        "currency_handling": "BASE_STORE_CURRENCY",
+        "null_handling": "Treated as 0.00",
+        "negative_value_handling": "Negative balance indicates customer in advance credit",
+        "boundary_conditions": "customer_balance <= customer.credit_limit",
+        "frontend_implementation": "Frontend/src/views/KhataView.vue:310",
+        "backend_implementation": "api/app/Services/CustomerAccountService.php@calculateOutstanding",
+        "database_persisted_representation": "DBCOL-209 (customers.balance)",
+        "report_implementation": "api/app/Services/ReportService.php@getCustomerReport",
+        "dashboard_implementation": "api/app/Services/DashboardService.php@calculateCustomerReceivables",
+        "print_implementation": "Customer Statement Outstanding Balance",
+        "export_implementation": "Customer Ledger CSV export",
+        "ledger_usage": "Materialized cache verified against khata_transactions ledger",
+        "dependent_calculations": [
+            "CALC-022",
+            "CALC-029"
+        ],
+        "flows_using_it": [
+            "FLOW-003",
+            "FLOW-004",
+            "FLOW-006",
+            "FLOW-013",
+            "FLOW-015"
+        ],
+        "mutations_using_it": [
+            "MUTATION-029",
+            "MUTATION-031",
+            "MUTATION-030",
+            "MUTATION-034"
+        ],
+        "stored_or_derived": "MATERIALIZED_CACHE_WITH_LEDGER",
+        "authoritative_implementation": "LEDGER_AUTHORITY",
+        "conflict_status": "CONSISTENT",
+        "gap_ids": [
+            "P4-GAP-002"
+        ],
+        "source_evidence": "api/app/Services/CustomerAccountService.php:52, api/app/Models/Customer.php:68",
+        "verification_confidence": "SOURCE_VERIFIED_WITH_GAP",
+        "certification_status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "CALC-022": {
+        "calc_id": "CALC-022",
+        "calculation_name": "Customer Available Credit Limit Margin",
+        "business_meaning": "Remaining borrowing capacity for a customer before reaching maximum credit threshold.",
+        "business_domain": "CUSTOMER_KHATA_AR",
+        "trigger": "Customer checkout in POS",
+        "inputs": [
+            "credit_limit",
+            "customer_balance"
+        ],
+        "input_authorities": {
+            "credit_limit": "DBCOL-210 (customers.credit_limit)",
+            "customer_balance": "CALC-021"
+        },
+        "formula": "available_credit = (credit_limit > 0) ? MAX(credit_limit - customer_balance, 0.00) : UNLIMITED",
+        "rounding_rule": "ROUND_HALF_UP",
+        "precision": 2,
+        "currency_handling": "BASE_STORE_CURRENCY",
+        "null_handling": "credit_limit 0 or null treated as unlimited",
+        "negative_value_handling": "0.00 if balance exceeds limit",
+        "boundary_conditions": "available_credit >= 0.00",
+        "frontend_implementation": "Frontend/src/views/PosSaleView.vue:640",
+        "backend_implementation": "api/app/Services/CustomerAccountService.php:88",
+        "database_persisted_representation": "DERIVED_ON_THE_FLY",
+        "report_implementation": "api/app/Services/ReportService.php:215",
+        "dashboard_implementation": "NONE",
+        "print_implementation": "NONE",
+        "export_implementation": "Customer Aging CSV",
+        "ledger_usage": "NONE",
+        "dependent_calculations": [],
+        "flows_using_it": [
+            "FLOW-003",
+            "FLOW-004"
+        ],
+        "mutations_using_it": [
+            "MUTATION-029"
+        ],
+        "stored_or_derived": "DERIVED_ON_THE_FLY",
+        "authoritative_implementation": "BACKEND_TRANSACTION_AUTHORITY",
+        "conflict_status": "CONSISTENT",
+        "gap_ids": [],
+        "source_evidence": "api/app/Services/CustomerAccountService.php:88, Frontend/src/views/PosSaleView.vue:640",
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "CALC-023": {
+        "calc_id": "CALC-023",
+        "calculation_name": "Supplier Outstanding Accounts Payable (AP) Balance",
+        "business_meaning": "Cumulative net monetary liability owed to a vendor across all credit purchases, payments, and cancellations.",
+        "business_domain": "SUPPLIER_AP",
+        "trigger": "Credit purchase, supplier payment voucher, purchase cancel",
+        "inputs": [
+            "opening_balance",
+            "SUM(credit_purchase_due)",
+            "SUM(supplier_payments)"
+        ],
+        "input_authorities": {
+            "opening_balance": "DBCOL-250 (initial state)",
+            "credit_purchase_due": "DBCOL-263 (purchases.due_amount)",
+            "supplier_payments": "DBCOL-284 (supplier_payments.amount)"
+        },
+        "formula": "supplier_balance = opening_balance + SUM(purchase_due) - SUM(payment_amount)",
+        "rounding_rule": "ROUND_HALF_UP",
+        "precision": 2,
+        "currency_handling": "BASE_STORE_CURRENCY",
+        "null_handling": "Treated as 0.00",
+        "negative_value_handling": "Negative balance indicates advance payment made to supplier",
+        "boundary_conditions": "supplier_balance is signed currency",
+        "frontend_implementation": "Frontend/src/views/SupplierpayableView.vue:210",
+        "backend_implementation": "api/app/Services/SupplierBalanceService.php@reconcileBalance",
+        "database_persisted_representation": "DBCOL-250 (suppliers.balance)",
+        "report_implementation": "api/app/Services/ReportService.php@getSupplierReport",
+        "dashboard_implementation": "api/app/Services/DashboardService.php@calculateSupplierPayables",
+        "print_implementation": "Supplier Statement Balance Due",
+        "export_implementation": "Supplier AP CSV export",
+        "ledger_usage": "Materialized cache updated upon purchase and payment mutations",
+        "dependent_calculations": [
+            "CALC-024",
+            "CALC-031"
+        ],
+        "flows_using_it": [
+            "FLOW-008",
+            "FLOW-010",
+            "FLOW-011",
+            "FLOW-016"
+        ],
+        "mutations_using_it": [
+            "MUTATION-039",
+            "MUTATION-041",
+            "MUTATION-040"
+        ],
+        "stored_or_derived": "MATERIALIZED_CACHE_WITH_TRANSACTIONS",
+        "authoritative_implementation": "BACKEND_TRANSACTION_AUTHORITY",
+        "conflict_status": "CONSISTENT",
+        "gap_ids": [
+            "P4-GAP-007"
+        ],
+        "source_evidence": "api/app/Services/SupplierBalanceService.php:44, api/app/Models/Supplier.php:52",
+        "verification_confidence": "SOURCE_VERIFIED_WITH_GAP",
+        "certification_status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "CALC-024": {
+        "calc_id": "CALC-024",
+        "calculation_name": "Supplier Payment Voucher Allocation to Unpaid Purchases",
+        "business_meaning": "Applies a supplier payment voucher to open purchase bills, reducing individual purchase due amounts.",
+        "business_domain": "SUPPLIER_AP",
+        "trigger": "Supplier payment voucher submit",
+        "inputs": [
+            "payment_amount",
+            "purchases.*.due_amount"
+        ],
+        "input_authorities": {
+            "payment_amount": "DBCOL-284",
+            "purchases.*.due_amount": "CALC-016"
+        },
+        "formula": "Allocated FIFO: purchase[i].due = MAX(purchase[i].due - allocated_payment, 0.00)",
+        "rounding_rule": "ROUND_HALF_UP",
+        "precision": 2,
+        "currency_handling": "BASE_STORE_CURRENCY",
+        "null_handling": "Treated as 0.00",
+        "negative_value_handling": "Prohibited",
+        "boundary_conditions": "SUM(allocated_purchases) <= payment_amount",
+        "frontend_implementation": "Frontend/src/views/SupplierPaymentView.vue:180",
+        "backend_implementation": "api/app/Services/SupplierBalanceService.php@recordPayment",
+        "database_persisted_representation": "DBCOL-262, DBCOL-263 updated on purchases",
+        "report_implementation": "api/app/Services/ReportService.php:230",
+        "dashboard_implementation": "NONE",
+        "print_implementation": "Payment Voucher Allocation receipt",
+        "export_implementation": "Supplier Payment Allocation CSV",
+        "ledger_usage": "Updates purchase statuses to PAID or PARTIAL",
+        "dependent_calculations": [
+            "CALC-023"
+        ],
+        "flows_using_it": [
+            "FLOW-011"
+        ],
+        "mutations_using_it": [
+            "MUTATION-041"
+        ],
+        "stored_or_derived": "STORED_AND_DERIVED",
+        "authoritative_implementation": "BACKEND_TRANSACTION_AUTHORITY",
+        "conflict_status": "CONSISTENT",
+        "gap_ids": [],
+        "source_evidence": "api/app/Services/SupplierBalanceService.php:72, Frontend/src/views/SupplierPaymentView.vue:180",
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "CALC-025": {
+        "calc_id": "CALC-025",
+        "calculation_name": "Financial Account Perpetual Balance",
+        "business_meaning": "Real-time monetary ledger balance of a bank or electronic financial account derived from cumulative debits and credits.",
+        "business_domain": "BANKING_FINANCE",
+        "trigger": "Sale deposit, customer payment, purchase disbursement, supplier payment, expense, transfer, capital movement",
+        "inputs": [
+            "opening_balance",
+            "SUM(account_movements.credit_amount)",
+            "SUM(account_movements.debit_amount)"
+        ],
+        "input_authorities": {
+            "opening_balance": "DBCOL-332 (initial state)",
+            "credit_amount": "DBCOL-341 (account_movements where credit_amount > 0)",
+            "debit_amount": "DBCOL-340 (account_movements where debit_amount > 0)"
+        },
+        "formula": "account_balance = opening_balance + SUM(credit_amount) - SUM(debit_amount)",
+        "rounding_rule": "ROUND_HALF_UP",
+        "precision": 2,
+        "currency_handling": "BASE_STORE_CURRENCY",
+        "null_handling": "Treated as 0.00",
+        "negative_value_handling": "Negative balance indicates bank overdraft",
+        "boundary_conditions": "account_balance is signed currency",
+        "frontend_implementation": "Frontend/src/views/Settings/InformationView.vue:190",
+        "backend_implementation": "api/app/Services/AccountMovementService.php@calculateBalance",
+        "database_persisted_representation": "DBCOL-332 (financial_accounts.balance)",
+        "report_implementation": "api/app/Services/ReportService.php@getFinancialAccountReport",
+        "dashboard_implementation": "api/app/Services/DashboardService.php@calculateCashAndBank",
+        "print_implementation": "Bank Account Statement",
+        "export_implementation": "Financial Account Ledger CSV",
+        "ledger_usage": "Materialized balance verified against account_movements ledger",
+        "dependent_calculations": [
+            "CALC-027",
+            "CALC-032"
+        ],
+        "flows_using_it": [
+            "FLOW-002",
+            "FLOW-005",
+            "FLOW-006",
+            "FLOW-009",
+            "FLOW-011",
+            "FLOW-017",
+            "FLOW-018",
+            "FLOW-021",
+            "FLOW-022",
+            "FLOW-023"
+        ],
+        "mutations_using_it": [
+            "MUTATION-058",
+            "MUTATION-059",
+            "MUTATION-060",
+            "MUTATION-061",
+            "MUTATION-062",
+            "MUTATION-063",
+            "MUTATION-064"
+        ],
+        "stored_or_derived": "MATERIALIZED_CACHE_WITH_LEDGER",
+        "authoritative_implementation": "LEDGER_AUTHORITY",
+        "conflict_status": "CONSISTENT",
+        "gap_ids": [
+            "P4-GAP-003"
+        ],
+        "source_evidence": "api/app/Services/AccountMovementService.php:38, api/app/Models/FinancialAccount.php:45",
+        "verification_confidence": "SOURCE_VERIFIED_WITH_GAP",
+        "certification_status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "CALC-026": {
+        "calc_id": "CALC-026",
+        "calculation_name": "Cash Drawer Ledger Balance Calculation",
+        "business_meaning": "Running cash balance for a store branch computed from cumulative cash ledger inflows and outflows.",
+        "business_domain": "CASH_MANAGEMENT",
+        "trigger": "Cash sale, cash return refund, cash expense, manual cash adjustment",
+        "inputs": [
+            "opening_balance",
+            "SUM(cash_inflows)",
+            "SUM(cash_outflows)"
+        ],
+        "input_authorities": {
+            "opening_balance": "DBCOL-373 (initial baseline)",
+            "cash_inflows": "DBCOL-372 (cash_ledgers where type=\"inflow\")",
+            "cash_outflows": "DBCOL-372 (cash_ledgers where type=\"outflow\")"
+        },
+        "formula": "cash_balance = opening_balance + SUM(inflow_amount) - SUM(outflow_amount)",
+        "rounding_rule": "ROUND_HALF_UP",
+        "precision": 2,
+        "currency_handling": "BASE_STORE_CURRENCY",
+        "null_handling": "Treated as 0.00",
+        "negative_value_handling": "Prohibited (drawer cannot physically hold negative cash)",
+        "boundary_conditions": "cash_balance >= 0.00",
+        "frontend_implementation": "Frontend/src/views/PosSaleView.vue:710",
+        "backend_implementation": "api/app/Services/CashLedgerService.php@recordInflow",
+        "database_persisted_representation": "DBCOL-373 (cash_ledgers.balance)",
+        "report_implementation": "api/app/Services/ReportService.php:260",
+        "dashboard_implementation": "api/app/Services/DashboardService.php:165",
+        "print_implementation": "Shift Summary Receipt",
+        "export_implementation": "Cash Ledger CSV",
+        "ledger_usage": "Derived directly from cash_ledgers table",
+        "dependent_calculations": [
+            "CALC-027",
+            "CALC-032"
+        ],
+        "flows_using_it": [
+            "FLOW-001",
+            "FLOW-005",
+            "FLOW-006",
+            "FLOW-012",
+            "FLOW-014",
+            "FLOW-023"
+        ],
+        "mutations_using_it": [
+            "MUTATION-065",
+            "MUTATION-066",
+            "MUTATION-067"
+        ],
+        "stored_or_derived": "EVENT_DERIVED_LEDGER",
+        "authoritative_implementation": "LEDGER_AUTHORITY",
+        "conflict_status": "CONSISTENT",
+        "gap_ids": [],
+        "source_evidence": "api/app/Services/CashLedgerService.php:42, api/app/Models/CashLedger.php:35",
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "CALC-027": {
+        "calc_id": "CALC-027",
+        "calculation_name": "Cash Shift Count Variance",
+        "business_meaning": "Variance between physical cash counted by cashier and the expected running cash balance.",
+        "business_domain": "CASH_MANAGEMENT",
+        "trigger": "Operator cash count review",
+        "inputs": [
+            "counted_cash",
+            "expected_cash_balance"
+        ],
+        "input_authorities": {
+            "counted_cash": "UI_INPUT",
+            "expected_cash_balance": "CALC-026"
+        },
+        "formula": "variance = counted_cash - expected_cash_balance",
+        "rounding_rule": "ROUND_HALF_UP",
+        "precision": 2,
+        "currency_handling": "BASE_STORE_CURRENCY",
+        "null_handling": "Treated as 0.00",
+        "negative_value_handling": "Negative indicates shortage; positive indicates surplus",
+        "boundary_conditions": "Signed variance",
+        "frontend_implementation": "Frontend/src/views/PosSaleView.vue:740",
+        "backend_implementation": "api/app/Services/CashLedgerService.php@recordAdjustment",
+        "database_persisted_representation": "DBCOL-374 (cash_ledgers.notes captures variance)",
+        "report_implementation": "api/app/Services/ReportService.php:275",
+        "dashboard_implementation": "NONE",
+        "print_implementation": "Cash Variance Receipt Line",
+        "export_implementation": "Shift Audit CSV export",
+        "ledger_usage": "NONE",
+        "dependent_calculations": [],
+        "flows_using_it": [],
+        "mutations_using_it": [
+            "MUTATION-066"
+        ],
+        "stored_or_derived": "STORED_AND_DERIVED",
+        "authoritative_implementation": "BACKEND_TRANSACTION_AUTHORITY",
+        "conflict_status": "CONSISTENT",
+        "gap_ids": [],
+        "source_evidence": "api/app/Services/CashLedgerService.php:68",
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "CALC-028": {
+        "calc_id": "CALC-028",
+        "calculation_name": "Direct Operating Expense Total Amount",
+        "business_meaning": "Disbursed monetary amount for store operations categorized under specific expense category.",
+        "business_domain": "EXPENSES",
+        "trigger": "Expense creation",
+        "inputs": [
+            "amount",
+            "tax_rate"
+        ],
+        "input_authorities": {
+            "amount": "UI_INPUT",
+            "tax_rate": "UI_INPUT / 0"
+        },
+        "formula": "expense_total = amount",
+        "rounding_rule": "ROUND_HALF_UP",
+        "precision": 2,
+        "currency_handling": "BASE_STORE_CURRENCY",
+        "null_handling": "Prohibited",
+        "negative_value_handling": "Prohibited",
+        "boundary_conditions": "amount > 0.00",
+        "frontend_implementation": "Frontend/src/views/ExpensesView.vue:180",
+        "backend_implementation": "api/app/Services/ExpenseService.php@createExpense",
+        "database_persisted_representation": "DBCOL-306 (expenses.amount)",
+        "report_implementation": "api/app/Services/ReportService.php@getExpenseReport",
+        "dashboard_implementation": "api/app/Services/DashboardService.php@calculateExpenses",
+        "print_implementation": "Expense Voucher PDF",
+        "export_implementation": "Expenses CSV export",
+        "ledger_usage": "Deducts from financial account or cash drawer",
+        "dependent_calculations": [
+            "CALC-025",
+            "CALC-026",
+            "CALC-030"
+        ],
+        "flows_using_it": [
+            "FLOW-023"
+        ],
+        "mutations_using_it": [
+            "MUTATION-056"
+        ],
+        "stored_or_derived": "STORED_DIRECT",
+        "authoritative_implementation": "BACKEND_TRANSACTION_AUTHORITY",
+        "conflict_status": "CONSISTENT",
+        "gap_ids": [],
+        "source_evidence": "api/app/Services/ExpenseService.php:42, Frontend/src/views/ExpensesView.vue:180",
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "CALC-029": {
+        "calc_id": "CALC-029",
+        "calculation_name": "Dashboard Period Net Revenue Metric",
+        "business_meaning": "Total gross sales minus discounts, taxes, and customer returns within a specified reporting time window.",
+        "business_domain": "REPORTING_DASHBOARD",
+        "trigger": "Dashboard page load / date filter selection",
+        "inputs": [
+            "SUM(sales.total_amount)",
+            "SUM(sale_returns.total_amount)"
+        ],
+        "input_authorities": {
+            "sales.total_amount": "DBCOL-180",
+            "sale_returns.total_amount": "DBCOL-201"
+        },
+        "formula": "net_revenue = SUM(sales.total_amount) - SUM(sale_returns.total_amount)",
+        "rounding_rule": "ROUND_HALF_UP",
+        "precision": 2,
+        "currency_handling": "BASE_STORE_CURRENCY",
+        "null_handling": "Treated as 0.00",
+        "negative_value_handling": "Can be negative if returns exceed sales in narrow window",
+        "boundary_conditions": "Signed currency",
+        "frontend_implementation": "Frontend/src/views/DashboardView.vue:110",
+        "backend_implementation": "api/app/Services/DashboardService.php@calculateSalesMetrics",
+        "database_persisted_representation": "DERIVED_ON_THE_FLY",
+        "report_implementation": "api/app/Services/ReportService.php:80",
+        "dashboard_implementation": "api/app/Services/DashboardService.php:125",
+        "print_implementation": "Management Daily Summary PDF",
+        "export_implementation": "Executive KPI CSV",
+        "ledger_usage": "NONE",
+        "dependent_calculations": [
+            "CALC-030"
+        ],
+        "flows_using_it": [],
+        "mutations_using_it": [],
+        "stored_or_derived": "DERIVED_REPORT_METRIC",
+        "authoritative_implementation": "DATABASE_QUERY_AUTHORITY",
+        "conflict_status": "CONSISTENT",
+        "gap_ids": [],
+        "source_evidence": "api/app/Services/DashboardService.php:125, Frontend/src/views/DashboardView.vue:110",
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "CALC-030": {
+        "calc_id": "CALC-030",
+        "calculation_name": "Dashboard Period Net Operating Profit Metric",
+        "business_meaning": "Bottom-line operational profit computed as Gross Profit minus Operating Expenses within the reporting timeframe.",
+        "business_domain": "REPORTING_DASHBOARD",
+        "trigger": "Dashboard load, financial summary report",
+        "inputs": [
+            "gross_profit",
+            "SUM(expenses.amount)"
+        ],
+        "input_authorities": {
+            "gross_profit": "CALC-009",
+            "expenses.amount": "DBCOL-306"
+        },
+        "formula": "net_operating_profit = gross_profit - SUM(expenses.amount)",
+        "rounding_rule": "ROUND_HALF_UP",
+        "precision": 2,
+        "currency_handling": "BASE_STORE_CURRENCY",
+        "null_handling": "Treated as 0.00",
+        "negative_value_handling": "Negative indicates net operating loss",
+        "boundary_conditions": "Signed currency",
+        "frontend_implementation": "Frontend/src/views/DashboardView.vue:135",
+        "backend_implementation": "api/app/Services/DashboardService.php@getOwnerDashboard",
+        "database_persisted_representation": "DERIVED_ON_THE_FLY",
+        "report_implementation": "api/app/Services/ReportService.php:110",
+        "dashboard_implementation": "api/app/Services/DashboardService.php:160",
+        "print_implementation": "P&L Statement PDF",
+        "export_implementation": "P&L Summary CSV",
+        "ledger_usage": "NONE",
+        "dependent_calculations": [],
+        "flows_using_it": [],
+        "mutations_using_it": [],
+        "stored_or_derived": "DERIVED_REPORT_METRIC",
+        "authoritative_implementation": "REPORT_DERIVED_AUTHORITY",
+        "conflict_status": "CONSISTENT",
+        "gap_ids": [],
+        "source_evidence": "api/app/Services/DashboardService.php:160",
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "CALC-031": {
+        "calc_id": "CALC-031",
+        "calculation_name": "Dashboard Total Accounts Payable & Receivable Aggregates",
+        "business_meaning": "Company-wide cumulative outstanding liabilities owed to suppliers and outstanding assets owed by customers.",
+        "business_domain": "REPORTING_DASHBOARD",
+        "trigger": "Dashboard refresh",
+        "inputs": [
+            "SUM(customers.balance)",
+            "SUM(suppliers.balance)"
+        ],
+        "input_authorities": {
+            "customers.balance": "DBCOL-209",
+            "suppliers.balance": "DBCOL-250"
+        },
+        "formula": "total_ar = SUM(customers.balance); total_ap = SUM(suppliers.balance)",
+        "rounding_rule": "ROUND_HALF_UP",
+        "precision": 2,
+        "currency_handling": "BASE_STORE_CURRENCY",
+        "null_handling": "Treated as 0.00",
+        "negative_value_handling": "Signed",
+        "boundary_conditions": "Signed currency",
+        "frontend_implementation": "Frontend/src/views/DashboardView.vue:150",
+        "backend_implementation": "api/app/Services/DashboardService.php@calculateCustomerReceivables",
+        "database_persisted_representation": "DERIVED_ON_THE_FLY",
+        "report_implementation": "api/app/Services/ReportService.php:240",
+        "dashboard_implementation": "api/app/Services/DashboardService.php:175",
+        "print_implementation": "Executive Balance Sheet Summary",
+        "export_implementation": "AR/AP Summary CSV",
+        "ledger_usage": "NONE",
+        "dependent_calculations": [],
+        "flows_using_it": [],
+        "mutations_using_it": [],
+        "stored_or_derived": "DERIVED_REPORT_METRIC",
+        "authoritative_implementation": "DATABASE_QUERY_AUTHORITY",
+        "conflict_status": "CONSISTENT",
+        "gap_ids": [],
+        "source_evidence": "api/app/Services/DashboardService.php:175, Frontend/src/views/DashboardView.vue:150",
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "CALC-032": {
+        "calc_id": "CALC-032",
+        "calculation_name": "Period Net Cash & Liquid Capital Movement",
+        "business_meaning": "Net change in liquid capital across physical cash drawers and bank accounts over a specified period.",
+        "business_domain": "REPORTING_DASHBOARD",
+        "trigger": "Cash flow report generation",
+        "inputs": [
+            "SUM(cash_inflows)",
+            "SUM(cash_outflows)",
+            "SUM(bank_credits)",
+            "SUM(bank_debits)"
+        ],
+        "input_authorities": {
+            "cash_inflows": "DBCOL-372",
+            "cash_outflows": "DBCOL-372",
+            "bank_credits": "DBCOL-341",
+            "bank_debits": "DBCOL-340"
+        },
+        "formula": "net_cash_flow = (SUM(cash_inflow) + SUM(bank_credit)) - (SUM(cash_outflow) + SUM(bank_debit))",
+        "rounding_rule": "ROUND_HALF_UP",
+        "precision": 2,
+        "currency_handling": "BASE_STORE_CURRENCY",
+        "null_handling": "Treated as 0.00",
+        "negative_value_handling": "Negative indicates net cash contraction",
+        "boundary_conditions": "Signed currency",
+        "frontend_implementation": "Frontend/src/views/DashboardView.vue:170",
+        "backend_implementation": "api/app/Services/DashboardService.php@calculatePeriodCashMovement",
+        "database_persisted_representation": "DERIVED_ON_THE_FLY",
+        "report_implementation": "api/app/Services/ReportService.php:265",
+        "dashboard_implementation": "api/app/Services/DashboardService.php:190",
+        "print_implementation": "Cash Flow Statement PDF",
+        "export_implementation": "Cash Movement CSV",
+        "ledger_usage": "NONE",
+        "dependent_calculations": [],
+        "flows_using_it": [],
+        "mutations_using_it": [],
+        "stored_or_derived": "DERIVED_REPORT_METRIC",
+        "authoritative_implementation": "DATABASE_QUERY_AUTHORITY",
+        "conflict_status": "CONSISTENT",
+        "gap_ids": [],
+        "source_evidence": "api/app/Services/DashboardService.php:190",
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    }
+}

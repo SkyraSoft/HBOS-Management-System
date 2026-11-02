@@ -1,0 +1,2430 @@
+{
+    "GAP-001": {
+        "gap_id": "GAP-001",
+        "title": "Sale Line Items Lack Barcode, SKU & Point-in-Time Cost Snapshot Persistence",
+        "root_cause": "sale_items table only stores product_id, quantity, unit_price, and total without capturing barcode, sku, product_name, or unit_cost at transaction time.",
+        "domain": "DATA_MODEL",
+        "subdomain": "HISTORICAL_SNAPSHOT",
+        "defect_type": "MISSING_PERSISTENCE",
+        "current_behavior": "Reprints, reports, and COGS calculations must dynamically join current products table, showing altered SKUs/names if master changes.",
+        "expected_behavior": "sale_items stores immutable snapshot of barcode, sku, product_name, and unit_cost at exact sale timestamp.",
+        "affected_fields": [
+            "FIELD-045",
+            "FIELD-046",
+            "FIELD-047"
+        ],
+        "affected_dbcols": [
+            "sale_items.product_id",
+            "sale_items.unit_price"
+        ],
+        "affected_entities": [
+            "ENTITY-019",
+            "ENTITY-020"
+        ],
+        "affected_mutations": [
+            "MUTATION-029",
+            "MUTATION-071"
+        ],
+        "affected_flows": [
+            "FLOW-001"
+        ],
+        "affected_calculations": [
+            "CALC-001",
+            "CALC-006"
+        ],
+        "affected_rules": [
+            "RULE-001"
+        ],
+        "affected_ui_routes": [
+            "ROUTE-011",
+            "ROUTE-012"
+        ],
+        "affected_apis": [
+            "API-042",
+            "API-140"
+        ],
+        "offline_sync_impact": "Offline carts do not transmit item name/sku snapshot in bulk replay payload.",
+        "print_hardware_impact": "Thermal and A4 invoice reprints display current master name rather than historical name.",
+        "tenant_impact": "TENANT_SCOPED",
+        "branch_impact": "BRANCH_SCOPED",
+        "financial_impact": "Gross profit margins and COGS analytics distorted by retroactive master cost updates.",
+        "inventory_impact": "NONE",
+        "historical_integrity_impact": "CRITICAL_AUDIT_TRAIL_LOSS",
+        "security_impact": "NONE",
+        "operator_impact": "Inability to reproduce exact historical invoice text.",
+        "failure_scenario": "Product name changed from \"A\" to \"B\". Customer reprints 6-month-old invoice; document shows \"B\" instead of \"A\".",
+        "existing_data_risk": "HISTORICAL_SNAPSHOTS_MISSING_IN_OLD_ROWS",
+        "source_phase_findings": [
+            "P1-GAP-004",
+            "P2-GAP-001",
+            "P3-GAP-001"
+        ],
+        "source_evidence": "api/database/migrations/create_sales_table.php, api/app/Services/SaleService.php",
+        "dependency_gap_ids": [],
+        "blocking_gap_ids": [
+            "GAP-021"
+        ],
+        "severity": "HIGH",
+        "likelihood": "FREQUENT",
+        "detectability": "REPORT_VISIBLE",
+        "data_repair_required": true,
+        "schema_migration_required": true,
+        "backend_change_required": true,
+        "frontend_change_required": true,
+        "sync_change_required": true,
+        "hardware_print_change_required": true,
+        "test_requirement": "API & Migration snapshot verification tests",
+        "phase_9_wave": "WAVE_1",
+        "rollback_requirement": "SAFE_COLUMN_RETAIN",
+        "acceptance_criteria": "When product master name/price is modified after sale, re-fetching sale details returns point-in-time snapshot unaltered.",
+        "status": "OPEN_READY_FOR_REMEDIATION",
+        "foundation_blocker": true,
+        "implementation_wave": "WAVE_1",
+        "source_findings": [
+            "P1-GAP-004",
+            "P2-GAP-001",
+            "P3-GAP-001"
+        ]
+    },
+    "GAP-002": {
+        "gap_id": "GAP-002",
+        "title": "Product Master Schema Lacks Authoritative Wholesale Pricing Tier Column",
+        "root_cause": "products table lacks wholesale_price column despite UI exposing wholesale price inputs.",
+        "domain": "MASTER_DATA",
+        "subdomain": "PRICING_TIERS",
+        "defect_type": "MISSING_SCHEMA_CAPABILITY",
+        "current_behavior": "Frontend wholesale price input is discarded on submit; POS offline cart cannot reliably apply wholesale tier.",
+        "expected_behavior": "products table includes nullable wholesale_price column; POS automatically selects wholesale price when customer type is WHOLESALE.",
+        "affected_fields": [
+            "FIELD-035"
+        ],
+        "affected_dbcols": [
+            "products.selling_price"
+        ],
+        "affected_entities": [
+            "ENTITY-017"
+        ],
+        "affected_mutations": [
+            "MUTATION-024",
+            "MUTATION-025"
+        ],
+        "affected_flows": [
+            "FLOW-002"
+        ],
+        "affected_calculations": [
+            "CALC-002"
+        ],
+        "affected_rules": [
+            "RULE-002"
+        ],
+        "affected_ui_routes": [
+            "ROUTE-005",
+            "ROUTE-006",
+            "ROUTE-011"
+        ],
+        "affected_apis": [
+            "API-022",
+            "API-024"
+        ],
+        "offline_sync_impact": "Catalog delta sync omits wholesale price in IndexedDB product store.",
+        "print_hardware_impact": "NONE",
+        "tenant_impact": "TENANT_SCOPED",
+        "branch_impact": "TENANT_WIDE",
+        "financial_impact": "Wholesale customers incorrectly billed at standard retail price.",
+        "inventory_impact": "NONE",
+        "historical_integrity_impact": "NONE",
+        "security_impact": "NONE",
+        "operator_impact": "Cashier must manually override line item unit price on every wholesale checkout.",
+        "failure_scenario": "Operator enters wholesale price Rs. 85 in product form; upon save, value vanishes and defaults to Rs. 100 retail.",
+        "existing_data_risk": "NULL_WHOLESALE_PRICE_ON_EXISTING_PRODUCTS",
+        "source_phase_findings": [
+            "P1-GAP-001",
+            "P3-GAP-014",
+            "P5-GAP-001"
+        ],
+        "source_evidence": "api/database/migrations/create_products_table.php, Frontend/src/views/PosSaleView.vue",
+        "dependency_gap_ids": [],
+        "blocking_gap_ids": [],
+        "severity": "HIGH",
+        "likelihood": "FREQUENT",
+        "detectability": "IMMEDIATE_OPERATOR_VISIBLE",
+        "data_repair_required": false,
+        "schema_migration_required": true,
+        "backend_change_required": true,
+        "frontend_change_required": true,
+        "sync_change_required": true,
+        "hardware_print_change_required": false,
+        "test_requirement": "FormRequest validation & product CRUD feature tests",
+        "phase_9_wave": "WAVE_1",
+        "rollback_requirement": "DROP_COLUMN_MIGRATION",
+        "acceptance_criteria": "Creating or updating product with wholesale_price persists value and returns it in catalog API and POS cart.",
+        "status": "OPEN_READY_FOR_REMEDIATION",
+        "foundation_blocker": true,
+        "implementation_wave": "WAVE_1",
+        "source_findings": [
+            "P1-GAP-001",
+            "P3-GAP-014",
+            "P5-GAP-001"
+        ]
+    },
+    "GAP-003": {
+        "gap_id": "GAP-003",
+        "title": "Split-Tender Multi-Method Payment Allocations Lack Dedicated Breakdown Persistence",
+        "root_cause": "sales table only stores single payment_type string (e.g. CASH, BANK, KHATA) without a 1-to-many sale_payments breakdown table.",
+        "domain": "SALES_POS",
+        "subdomain": "SPLIT_TENDER",
+        "defect_type": "MISSING_PERSISTENCE",
+        "current_behavior": "When sale is paid partially in Cash (Rs. 2000) and Bank (Rs. 3000), single column collapses payment into generic MULTI or primary tender.",
+        "expected_behavior": "Dedicated sale_payments table records distinct payment method, amount, financial_account_id, and transaction reference per split tender.",
+        "affected_fields": [
+            "FIELD-052",
+            "FIELD-053"
+        ],
+        "affected_dbcols": [
+            "sales.payment_type",
+            "sales.paid_amount"
+        ],
+        "affected_entities": [
+            "ENTITY-019",
+            "ENTITY-034"
+        ],
+        "affected_mutations": [
+            "MUTATION-029",
+            "MUTATION-071"
+        ],
+        "affected_flows": [
+            "FLOW-001",
+            "FLOW-015"
+        ],
+        "affected_calculations": [
+            "CALC-003"
+        ],
+        "affected_rules": [
+            "RULE-003"
+        ],
+        "affected_ui_routes": [
+            "ROUTE-011"
+        ],
+        "affected_apis": [
+            "API-042",
+            "API-140"
+        ],
+        "offline_sync_impact": "Offline bulk sync collapses split tenders into single payment method.",
+        "print_hardware_impact": "Thermal receipt cannot print separate Cash Paid vs Card Paid lines.",
+        "tenant_impact": "TENANT_SCOPED",
+        "branch_impact": "BRANCH_SCOPED",
+        "financial_impact": "Bank account ledger deposits do not reconcile with actual card payments.",
+        "inventory_impact": "NONE",
+        "historical_integrity_impact": "LOSS_OF_TENDER_ALLOCATION_AUDIT",
+        "security_impact": "NONE",
+        "operator_impact": "Cash drawer count does not match register closing report.",
+        "failure_scenario": "Cashier accepts Rs. 1000 cash and Rs. 4000 card for Rs. 5000 sale; register closing shows Rs. 5000 cash overage.",
+        "existing_data_risk": "LEGACY_SALES_HAVE_SINGLE_TENDER_ONLY",
+        "source_phase_findings": [
+            "P1-GAP-002",
+            "P1-GAP-006",
+            "P3-GAP-003",
+            "P3-GAP-010",
+            "P5-GAP-002"
+        ],
+        "source_evidence": "api/database/migrations/create_sales_table.php, Frontend/src/views/PosSaleView.vue",
+        "dependency_gap_ids": [
+            "GAP-013"
+        ],
+        "blocking_gap_ids": [
+            "GAP-021"
+        ],
+        "severity": "CRITICAL",
+        "likelihood": "FREQUENT",
+        "detectability": "RECONCILIATION_REQUIRED",
+        "data_repair_required": true,
+        "schema_migration_required": true,
+        "backend_change_required": true,
+        "frontend_change_required": true,
+        "sync_change_required": true,
+        "hardware_print_change_required": true,
+        "test_requirement": "Split tender accounting ledger invariant tests",
+        "phase_9_wave": "WAVE_1",
+        "rollback_requirement": "BACKWARD_COMPATIBLE_VIEW",
+        "acceptance_criteria": "Split cash + card payment creates separate ledger entries in CashLedger and AccountMovement matching exact split amounts.",
+        "status": "OPEN_READY_FOR_REMEDIATION",
+        "foundation_blocker": true,
+        "implementation_wave": "WAVE_1",
+        "source_findings": [
+            "P1-GAP-002",
+            "P1-GAP-006",
+            "P3-GAP-003",
+            "P3-GAP-010",
+            "P5-GAP-002"
+        ]
+    },
+    "GAP-004": {
+        "gap_id": "GAP-004",
+        "title": "Inventory Physical Count Stock Adjustment Bypasses Valuation Adjustment Account",
+        "root_cause": "InventoryService@adjust updates branch_inventories and logs inventory_movements but creates no financial entry in financial_accounts.",
+        "domain": "INVENTORY_VALUATION",
+        "subdomain": "STOCK_ADJUSTMENT",
+        "defect_type": "LEDGER_BYPASS",
+        "current_behavior": "Adjusting stock quantity on hand writes off or creates stock without adjusting total balance sheet inventory asset value.",
+        "expected_behavior": "Stock adjustments post debit/credit movement to designated Inventory Valuation / Stock Loss Account.",
+        "affected_fields": [
+            "FIELD-078",
+            "FIELD-079"
+        ],
+        "affected_dbcols": [
+            "branch_inventories.quantity_on_hand",
+            "inventory_movements.quantity"
+        ],
+        "affected_entities": [
+            "ENTITY-018",
+            "ENTITY-034"
+        ],
+        "affected_mutations": [
+            "MUTATION-027"
+        ],
+        "affected_flows": [
+            "FLOW-003"
+        ],
+        "affected_calculations": [
+            "CALC-005"
+        ],
+        "affected_rules": [
+            "RULE-005"
+        ],
+        "affected_ui_routes": [
+            "ROUTE-008"
+        ],
+        "affected_apis": [
+            "API-039"
+        ],
+        "offline_sync_impact": "Offline bulk adjustments skip valuation entries during ingest.",
+        "print_hardware_impact": "NONE",
+        "tenant_impact": "TENANT_SCOPED",
+        "branch_impact": "BRANCH_SCOPED",
+        "financial_impact": "Discrepancy between physical inventory valuation and general ledger asset accounts.",
+        "inventory_impact": "VALUATION_DRIFT",
+        "historical_integrity_impact": "INCOMPLETE_ACCOUNTING_TRAIL",
+        "security_impact": "NONE",
+        "operator_impact": "Loss/theft write-offs not visible in financial P&L reporting.",
+        "failure_scenario": "Rs. 50,000 worth of damaged goods written off; P&L shows zero inventory shrinkage expense.",
+        "existing_data_risk": "HISTORICAL_ADJUSTMENTS_HAVE_NO_VALUATION_LINK",
+        "source_phase_findings": [
+            "P2-GAP-006",
+            "P3-GAP-011",
+            "P4-GAP-005"
+        ],
+        "source_evidence": "api/app/Services/InventoryService.php@adjustStock",
+        "dependency_gap_ids": [
+            "GAP-013"
+        ],
+        "blocking_gap_ids": [],
+        "severity": "HIGH",
+        "likelihood": "OCCASIONAL",
+        "detectability": "REPORT_VISIBLE",
+        "data_repair_required": false,
+        "schema_migration_required": false,
+        "backend_change_required": true,
+        "frontend_change_required": false,
+        "sync_change_required": true,
+        "hardware_print_change_required": false,
+        "test_requirement": "InventoryService stock adjustment valuation unit & feature tests",
+        "phase_9_wave": "WAVE_2",
+        "rollback_requirement": "NONE",
+        "acceptance_criteria": "When stock quantity is reduced via adjustment, an AccountMovement record is created against Inventory Loss Account.",
+        "status": "OPEN_READY_FOR_REMEDIATION",
+        "foundation_blocker": false,
+        "implementation_wave": "WAVE_2",
+        "source_findings": [
+            "P2-GAP-006",
+            "P3-GAP-011",
+            "P4-GAP-005"
+        ]
+    },
+    "GAP-005": {
+        "gap_id": "GAP-005",
+        "title": "Purchase Freight & Landed Costs Not Capitalized Into Product Moving Average Cost",
+        "root_cause": "PurchaseService creates purchase orders and receiving notes without prorating freight/shipping costs into purchase_items.unit_cost.",
+        "domain": "PROCUREMENT",
+        "subdomain": "LANDED_COST",
+        "defect_type": "VALUATION_ERROR",
+        "current_behavior": "Freight charges posted as generic expense rather than capitalized into inventory unit asset valuation.",
+        "expected_behavior": "Purchase receiving workflow allows optional freight charge allocation, prorating freight over received item quantities to compute true Landed Unit Cost.",
+        "affected_fields": [
+            "FIELD-061",
+            "FIELD-062"
+        ],
+        "affected_dbcols": [
+            "purchases.total_amount",
+            "purchase_items.unit_price"
+        ],
+        "affected_entities": [
+            "ENTITY-021",
+            "ENTITY-022",
+            "ENTITY-017"
+        ],
+        "affected_mutations": [
+            "MUTATION-046"
+        ],
+        "affected_flows": [
+            "FLOW-009"
+        ],
+        "affected_calculations": [
+            "CALC-006"
+        ],
+        "affected_rules": [
+            "RULE-006"
+        ],
+        "affected_ui_routes": [
+            "ROUTE-013",
+            "ROUTE-014"
+        ],
+        "affected_apis": [
+            "API-056"
+        ],
+        "offline_sync_impact": "NONE",
+        "print_hardware_impact": "GRN Voucher does not display Landed Cost breakdown.",
+        "tenant_impact": "TENANT_SCOPED",
+        "branch_impact": "BRANCH_SCOPED",
+        "financial_impact": "Understatement of inventory valuation and overstatement of gross profit margin on sales.",
+        "inventory_impact": "COST_BASIS_UNDERVALUATION",
+        "historical_integrity_impact": "NONE",
+        "security_impact": "NONE",
+        "operator_impact": "Inaccurate cost price displayed on pricing screens.",
+        "failure_scenario": "Imported goods cost Rs. 100/unit + Rs. 20 freight/unit; product cost saved as Rs. 100, causing Rs. 20 profit over-reporting per item sold.",
+        "existing_data_risk": "HISTORICAL_PURCHASE_COSTS_EXCLUDE_FREIGHT",
+        "source_phase_findings": [
+            "P3-GAP-005",
+            "P4-GAP-016"
+        ],
+        "source_evidence": "api/app/Services/PurchaseService.php, Frontend/src/views/Purchases/PurchaseCreateView.vue",
+        "dependency_gap_ids": [],
+        "blocking_gap_ids": [],
+        "severity": "MEDIUM",
+        "likelihood": "OCCASIONAL",
+        "detectability": "REPORT_VISIBLE",
+        "data_repair_required": false,
+        "schema_migration_required": true,
+        "backend_change_required": true,
+        "frontend_change_required": true,
+        "sync_change_required": false,
+        "hardware_print_change_required": true,
+        "test_requirement": "Landed cost proration algorithm unit tests",
+        "phase_9_wave": "WAVE_3",
+        "rollback_requirement": "REVERT_FORMULA",
+        "acceptance_criteria": "When freight amount is entered on purchase receiving, purchase_items.unit_cost reflects prorated cost + freight.",
+        "status": "OPEN_READY_FOR_REMEDIATION",
+        "foundation_blocker": false,
+        "implementation_wave": "WAVE_3",
+        "source_findings": [
+            "P3-GAP-005",
+            "P4-GAP-016"
+        ]
+    },
+    "GAP-006": {
+        "gap_id": "GAP-006",
+        "title": "Purchase Cancellation Does Not Verify If Received Stock Has Already Been Sold",
+        "root_cause": "PurchaseController@cancel decrements branch_inventories by received quantity without checking quantity_on_hand availability.",
+        "domain": "PROCUREMENT",
+        "subdomain": "PURCHASE_CANCELLATION",
+        "defect_type": "STATE_GUARD_GAP",
+        "current_behavior": "Cancelling a purchase of 10 units when only 2 units remain on hand decrements stock to negative 8 units.",
+        "expected_behavior": "Purchase cancellation verifies quantity_on_hand >= received_quantity; rejects cancellation if stock has been consumed or sold.",
+        "affected_fields": [
+            "FIELD-060"
+        ],
+        "affected_dbcols": [
+            "purchases.status",
+            "branch_inventories.quantity_on_hand"
+        ],
+        "affected_entities": [
+            "ENTITY-021",
+            "ENTITY-018"
+        ],
+        "affected_mutations": [
+            "MUTATION-047"
+        ],
+        "affected_flows": [
+            "FLOW-010"
+        ],
+        "affected_calculations": [
+            "CALC-007"
+        ],
+        "affected_rules": [
+            "RULE-007"
+        ],
+        "affected_ui_routes": [
+            "ROUTE-013"
+        ],
+        "affected_apis": [
+            "API-060"
+        ],
+        "offline_sync_impact": "NONE",
+        "print_hardware_impact": "NONE",
+        "tenant_impact": "TENANT_SCOPED",
+        "branch_impact": "BRANCH_SCOPED",
+        "financial_impact": "Accounts payable cancelled for goods that have already generated cash sales.",
+        "inventory_impact": "NEGATIVE_INVENTORY_ON_HAND",
+        "historical_integrity_impact": "CORRUPTED_INVENTORY_LEDGER",
+        "security_impact": "NONE",
+        "operator_impact": "Operator accidentally creates negative stock and ledger anomaly.",
+        "failure_scenario": "Purchase of 100 units received; 90 units sold; manager clicks Cancel Purchase; stock becomes -90.",
+        "existing_data_risk": "NONE",
+        "source_phase_findings": [
+            "P2-GAP-008",
+            "P3-GAP-009",
+            "P6-GAP-009"
+        ],
+        "source_evidence": "api/app/Http/Controllers/Api/V1/PurchaseController.php@cancel",
+        "dependency_gap_ids": [],
+        "blocking_gap_ids": [],
+        "severity": "HIGH",
+        "likelihood": "OCCASIONAL",
+        "detectability": "IMMEDIATE_OPERATOR_VISIBLE",
+        "data_repair_required": false,
+        "schema_migration_required": false,
+        "backend_change_required": true,
+        "frontend_change_required": true,
+        "sync_change_required": false,
+        "hardware_print_change_required": false,
+        "test_requirement": "Purchase cancellation state guard feature tests",
+        "phase_9_wave": "WAVE_2",
+        "rollback_requirement": "NONE",
+        "acceptance_criteria": "Attempting to cancel purchase when quantity_on_hand < received_quantity returns HTTP 422 with clear error message.",
+        "status": "OPEN_READY_FOR_REMEDIATION",
+        "foundation_blocker": false,
+        "implementation_wave": "WAVE_2",
+        "source_findings": [
+            "P2-GAP-008",
+            "P3-GAP-009",
+            "P6-GAP-009"
+        ]
+    },
+    "GAP-007": {
+        "gap_id": "GAP-007",
+        "title": "Inter-Branch Stock Transfer Operates Synchronously Without In-Transit Clearing State",
+        "root_cause": "InventoryController@transfer immediately decrements source branch and increments destination branch in single call.",
+        "domain": "INVENTORY",
+        "subdomain": "TRANSFERS",
+        "defect_type": "INCOMPLETE_BUSINESS_FLOW",
+        "current_behavior": "Stock disappears from Branch A and instantly appears at Branch B before physical vehicle delivery or driver receiving.",
+        "expected_behavior": "Two-step transfer flow: Dispatch creates IN_TRANSIT status; Destination Branch Manager confirms receiving before stock increments.",
+        "affected_fields": [
+            "FIELD-083",
+            "FIELD-084"
+        ],
+        "affected_dbcols": [
+            "branch_inventories.quantity_on_hand",
+            "inventory_movements.movement_type"
+        ],
+        "affected_entities": [
+            "ENTITY-018",
+            "ENTITY-003"
+        ],
+        "affected_mutations": [
+            "MUTATION-028"
+        ],
+        "affected_flows": [
+            "FLOW-004"
+        ],
+        "affected_calculations": [
+            "CALC-008"
+        ],
+        "affected_rules": [
+            "RULE-008"
+        ],
+        "affected_ui_routes": [
+            "ROUTE-008",
+            "ROUTE-009"
+        ],
+        "affected_apis": [
+            "API-040"
+        ],
+        "offline_sync_impact": "NONE",
+        "print_hardware_impact": "Transfer Dispatch Note lacks receiving sign-off slip.",
+        "tenant_impact": "TENANT_SCOPED",
+        "branch_impact": "MULTI_BRANCH",
+        "financial_impact": "Inventory shrinkage during transit cannot be isolated to carrier or branch.",
+        "inventory_impact": "PREMATURE_DESTINATION_STOCK_INFLATION",
+        "historical_integrity_impact": "LACKS_TRANSIT_AUDIT_TRAIL",
+        "security_impact": "NONE",
+        "operator_impact": "Destination branch cashier sees stock online and promises customer items not yet physically arrived.",
+        "failure_scenario": "Branch A transfers 20 items to Branch B; truck lost in transit; Branch B system shows 20 items available for sale.",
+        "existing_data_risk": "NONE",
+        "source_phase_findings": [
+            "P2-GAP-018",
+            "P3-GAP-012"
+        ],
+        "source_evidence": "api/app/Http/Controllers/Api/V1/InventoryController.php@transfer",
+        "dependency_gap_ids": [],
+        "blocking_gap_ids": [],
+        "severity": "MEDIUM",
+        "likelihood": "OCCASIONAL",
+        "detectability": "REPORT_VISIBLE",
+        "data_repair_required": false,
+        "schema_migration_required": true,
+        "backend_change_required": true,
+        "frontend_change_required": true,
+        "sync_change_required": false,
+        "hardware_print_change_required": true,
+        "test_requirement": "Inter-branch transit workflow feature tests",
+        "phase_9_wave": "WAVE_3",
+        "rollback_requirement": "NONE",
+        "acceptance_criteria": "Transfer creates IN_TRANSIT record; destination branch stock only increases after explicit receiveTransfer API call.",
+        "status": "OPEN_READY_FOR_REMEDIATION",
+        "foundation_blocker": false,
+        "implementation_wave": "WAVE_3",
+        "source_findings": [
+            "P2-GAP-018",
+            "P3-GAP-012"
+        ]
+    },
+    "GAP-008": {
+        "gap_id": "GAP-008",
+        "title": "Modifying Customer ID on Posted Sale Creates Silent Khata Ledger Drift",
+        "root_cause": "SaleController@update allows updating customer_id on posted credit sales without reconciling Khata transactions.",
+        "domain": "CUSTOMER_AR",
+        "subdomain": "KHATA_INTEGRITY",
+        "defect_type": "BALANCE_DRIFT",
+        "current_behavior": "Editing sale customer changes sales.customer_id, leaving khata_transactions attached to old customer, desynchronizing balances.",
+        "expected_behavior": "customer_id on posted sales is immutable; corrections must execute through reversal and new sale creation.",
+        "affected_fields": [
+            "FIELD-042"
+        ],
+        "affected_dbcols": [
+            "sales.customer_id",
+            "khata_transactions.customer_id"
+        ],
+        "affected_entities": [
+            "ENTITY-019",
+            "ENTITY-023",
+            "ENTITY-024"
+        ],
+        "affected_mutations": [
+            "MUTATION-030"
+        ],
+        "affected_flows": [
+            "FLOW-001",
+            "FLOW-007"
+        ],
+        "affected_calculations": [
+            "CALC-009"
+        ],
+        "affected_rules": [
+            "RULE-009"
+        ],
+        "affected_ui_routes": [
+            "ROUTE-011",
+            "ROUTE-015"
+        ],
+        "affected_apis": [
+            "API-044"
+        ],
+        "offline_sync_impact": "NONE",
+        "print_hardware_impact": "NONE",
+        "tenant_impact": "TENANT_SCOPED",
+        "branch_impact": "TENANT_WIDE",
+        "financial_impact": "Customer A billed for Customer B's purchases; ledger audit totals mismatch.",
+        "inventory_impact": "NONE",
+        "historical_integrity_impact": "AR_LEDGER_CORRUPTION",
+        "security_impact": "NONE",
+        "operator_impact": "Customer disputes statement containing wrong invoices.",
+        "failure_scenario": "Sale of Rs. 10,000 changed from Customer X to Customer Y in edit modal; Customer X statement still includes Rs. 10,000 debt.",
+        "existing_data_risk": "ORPHAN_KHATA_ENTRIES_ON_PREVIOUSLY_EDITED_SALES",
+        "source_phase_findings": [
+            "P2-GAP-007",
+            "P3-GAP-002",
+            "P5-GAP-007"
+        ],
+        "source_evidence": "api/app/Http/Controllers/Api/V1/SaleController.php@update",
+        "dependency_gap_ids": [],
+        "blocking_gap_ids": [],
+        "severity": "HIGH",
+        "likelihood": "OCCASIONAL",
+        "detectability": "RECONCILIATION_REQUIRED",
+        "data_repair_required": true,
+        "schema_migration_required": false,
+        "backend_change_required": true,
+        "frontend_change_required": true,
+        "sync_change_required": false,
+        "hardware_print_change_required": false,
+        "test_requirement": "Posted sale immutability API policy tests",
+        "phase_9_wave": "WAVE_2",
+        "rollback_requirement": "NONE",
+        "acceptance_criteria": "Attempting to update customer_id on posted sale returns HTTP 422 Unprocessable Entity.",
+        "status": "OPEN_READY_FOR_REMEDIATION",
+        "foundation_blocker": false,
+        "implementation_wave": "WAVE_2",
+        "source_findings": [
+            "P2-GAP-007",
+            "P3-GAP-002",
+            "P5-GAP-007"
+        ]
+    },
+    "GAP-009": {
+        "gap_id": "GAP-009",
+        "title": "Customer Payment Reversal Lacks Guard Against Secondary Over-Collection Reversal Race",
+        "root_cause": "CustomerPaymentController@reverse does not verify if subsequent payments or adjustments have altered net receivable balance.",
+        "domain": "CUSTOMER_AR",
+        "subdomain": "PAYMENT_REVERSAL",
+        "defect_type": "STATE_GUARD_GAP",
+        "current_behavior": "Reversing a payment when customer balance is near zero or in credit creates negative balance without validation.",
+        "expected_behavior": "CustomerPayment reversal executes within DB transaction, verifies resulting balance validity, and logs compensating Khata event.",
+        "affected_fields": [
+            "FIELD-093"
+        ],
+        "affected_dbcols": [
+            "customer_payments.status",
+            "customers.balance"
+        ],
+        "affected_entities": [
+            "ENTITY-025",
+            "ENTITY-023"
+        ],
+        "affected_mutations": [
+            "MUTATION-042"
+        ],
+        "affected_flows": [
+            "FLOW-008"
+        ],
+        "affected_calculations": [
+            "CALC-010"
+        ],
+        "affected_rules": [
+            "RULE-010"
+        ],
+        "affected_ui_routes": [
+            "ROUTE-015",
+            "ROUTE-016"
+        ],
+        "affected_apis": [
+            "API-074"
+        ],
+        "offline_sync_impact": "NONE",
+        "print_hardware_impact": "NONE",
+        "tenant_impact": "TENANT_SCOPED",
+        "branch_impact": "TENANT_WIDE",
+        "financial_impact": "Double debiting of customer account upon repeated reversal click.",
+        "inventory_impact": "NONE",
+        "historical_integrity_impact": "NONE",
+        "security_impact": "NONE",
+        "operator_impact": "Cashier double-clicks reverse button creating duplicate debt reversals.",
+        "failure_scenario": "Operator clicks reverse twice rapidly; two reversal transactions created, doubling customer receivable debt.",
+        "existing_data_risk": "NONE",
+        "source_phase_findings": [
+            "P2-GAP-015",
+            "P3-GAP-015"
+        ],
+        "source_evidence": "api/app/Http/Controllers/Api/V1/CustomerPaymentController.php@reverse",
+        "dependency_gap_ids": [
+            "GAP-019"
+        ],
+        "blocking_gap_ids": [],
+        "severity": "HIGH",
+        "likelihood": "OCCASIONAL",
+        "detectability": "IMMEDIATE_OPERATOR_VISIBLE",
+        "data_repair_required": false,
+        "schema_migration_required": false,
+        "backend_change_required": true,
+        "frontend_change_required": true,
+        "sync_change_required": false,
+        "hardware_print_change_required": false,
+        "test_requirement": "Idempotent payment reversal concurrency tests",
+        "phase_9_wave": "WAVE_2",
+        "rollback_requirement": "NONE",
+        "acceptance_criteria": "Repeated customer payment reversal requests reject duplicate execution with HTTP 409 Conflict.",
+        "status": "OPEN_READY_FOR_REMEDIATION",
+        "foundation_blocker": false,
+        "implementation_wave": "WAVE_2",
+        "source_findings": [
+            "P2-GAP-015",
+            "P3-GAP-015"
+        ]
+    },
+    "GAP-010": {
+        "gap_id": "GAP-010",
+        "title": "Sale Return Workflow Lacks Granular Restock Condition / Scrap Decision Flag",
+        "root_cause": "SaleController@returns automatically increments branch inventory for all returned items without restock condition check.",
+        "domain": "RETURNS_REFUNDS",
+        "subdomain": "SALE_RETURNS",
+        "defect_type": "INCOMPLETE_BUSINESS_FLOW",
+        "current_behavior": "Damaged/expired items returned by customers automatically put back into sellable inventory on hand.",
+        "expected_behavior": "Sale return line item accepts is_restockable boolean and return_reason; non-restockable items route to Scrap/Damage Ledger.",
+        "affected_fields": [
+            "FIELD-055",
+            "FIELD-056"
+        ],
+        "affected_dbcols": [
+            "sale_returns.status",
+            "sale_return_items.quantity"
+        ],
+        "affected_entities": [
+            "ENTITY-037",
+            "ENTITY-038",
+            "ENTITY-018"
+        ],
+        "affected_mutations": [
+            "MUTATION-033"
+        ],
+        "affected_flows": [
+            "FLOW-006"
+        ],
+        "affected_calculations": [
+            "CALC-011"
+        ],
+        "affected_rules": [
+            "RULE-011"
+        ],
+        "affected_ui_routes": [
+            "ROUTE-011",
+            "ROUTE-012"
+        ],
+        "affected_apis": [
+            "API-046"
+        ],
+        "offline_sync_impact": "NONE",
+        "print_hardware_impact": "Return receipt does not indicate item condition.",
+        "tenant_impact": "TENANT_SCOPED",
+        "branch_impact": "BRANCH_SCOPED",
+        "financial_impact": "Damaged scrap goods counted as sellable balance sheet assets.",
+        "inventory_impact": "SELLABLE_STOCK_CONTAMINATION",
+        "historical_integrity_impact": "NONE",
+        "security_impact": "NONE",
+        "operator_impact": "Damaged returned item resold to next customer causing complaint.",
+        "failure_scenario": "Customer returns broken glass jar; system puts jar back into active stock; cashier sells broken jar to another buyer.",
+        "existing_data_risk": "NONE",
+        "source_phase_findings": [
+            "P2-GAP-013",
+            "P3-GAP-008"
+        ],
+        "source_evidence": "api/app/Http/Controllers/Api/V1/SaleController.php@returns",
+        "dependency_gap_ids": [
+            "GAP-004"
+        ],
+        "blocking_gap_ids": [],
+        "severity": "MEDIUM",
+        "likelihood": "OCCASIONAL",
+        "detectability": "IMMEDIATE_OPERATOR_VISIBLE",
+        "data_repair_required": false,
+        "schema_migration_required": true,
+        "backend_change_required": true,
+        "frontend_change_required": true,
+        "sync_change_required": false,
+        "hardware_print_change_required": true,
+        "test_requirement": "Sale return restock vs scrap branch inventory tests",
+        "phase_9_wave": "WAVE_2",
+        "rollback_requirement": "NONE",
+        "acceptance_criteria": "When is_restockable is false, branch_inventories quantity_on_hand does not increase; item logged to inventory_movements as DAMAGED_SCRAP.",
+        "status": "OPEN_READY_FOR_REMEDIATION",
+        "foundation_blocker": false,
+        "implementation_wave": "WAVE_2",
+        "source_findings": [
+            "P2-GAP-013",
+            "P3-GAP-008"
+        ]
+    },
+    "GAP-011": {
+        "gap_id": "GAP-011",
+        "title": "Missing Dedicated Supplier Return / Debit Note Workflow With Stock Reversal & AP Deduction",
+        "root_cause": "HBOS lacks a supplier_returns table and dedicated controller for returning defective goods to suppliers.",
+        "domain": "PROCUREMENT",
+        "subdomain": "SUPPLIER_RETURNS",
+        "defect_type": "MISSING_BUSINESS_CAPABILITY",
+        "current_behavior": "Operator must manually adjust inventory down and manually edit supplier balance without audit linkage.",
+        "expected_behavior": "Formal Supplier Return / Debit Note workflow decrements inventory, creates supplier AP debit entry, and generates printable Debit Note.",
+        "affected_fields": [
+            "FIELD-063"
+        ],
+        "affected_dbcols": [
+            "suppliers.current_balance",
+            "branch_inventories.quantity_on_hand"
+        ],
+        "affected_entities": [
+            "ENTITY-021",
+            "ENTITY-027"
+        ],
+        "affected_mutations": [
+            "MUTATION-048"
+        ],
+        "affected_flows": [
+            "FLOW-011"
+        ],
+        "affected_calculations": [
+            "CALC-012"
+        ],
+        "affected_rules": [
+            "RULE-012"
+        ],
+        "affected_ui_routes": [
+            "ROUTE-013",
+            "ROUTE-017"
+        ],
+        "affected_apis": [
+            "API-058"
+        ],
+        "offline_sync_impact": "NONE",
+        "print_hardware_impact": "Missing Supplier Debit Note voucher print template.",
+        "tenant_impact": "TENANT_SCOPED",
+        "branch_impact": "BRANCH_SCOPED",
+        "financial_impact": "Supplier overpaid for returned defective goods due to missing AP debit note.",
+        "inventory_impact": "UNTRACKED_SUPPLIER_STOCK_DISPATCH",
+        "historical_integrity_impact": "MISSING_AUDIT_TRAIL",
+        "security_impact": "NONE",
+        "operator_impact": "Manual workarounds cause accounting disputes with vendors.",
+        "failure_scenario": "Store returns Rs. 20,000 defective batch to supplier; no debit note created; accountant pays full invoice.",
+        "existing_data_risk": "NONE",
+        "source_phase_findings": [
+            "P2-GAP-005",
+            "P3-GAP-006"
+        ],
+        "source_evidence": "api/routes/api.php, Frontend/src/views/Purchases/PurchasesListView.vue",
+        "dependency_gap_ids": [
+            "GAP-012"
+        ],
+        "blocking_gap_ids": [],
+        "severity": "HIGH",
+        "likelihood": "OCCASIONAL",
+        "detectability": "REPORT_VISIBLE",
+        "data_repair_required": false,
+        "schema_migration_required": true,
+        "backend_change_required": true,
+        "frontend_change_required": true,
+        "sync_change_required": false,
+        "hardware_print_change_required": true,
+        "test_requirement": "Supplier return debit note integration tests",
+        "phase_9_wave": "WAVE_3",
+        "rollback_requirement": "NONE",
+        "acceptance_criteria": "Creating supplier return decrements branch inventory and reduces supplier current_balance by exact return value.",
+        "status": "OPEN_READY_FOR_REMEDIATION",
+        "foundation_blocker": false,
+        "implementation_wave": "WAVE_3",
+        "source_findings": [
+            "P2-GAP-005",
+            "P3-GAP-006"
+        ]
+    },
+    "GAP-012": {
+        "gap_id": "GAP-012",
+        "title": "Supplier Payment Mutation Lacks Automated Reversal Mechanism With AP Re-Accrual",
+        "root_cause": "SupplierPaymentController lacks a reversal endpoint to void bounced checks or misallocated disbursements.",
+        "domain": "SUPPLIER_AP",
+        "subdomain": "PAYMENT_REVERSAL",
+        "defect_type": "MISSING_REVERSAL",
+        "current_behavior": "Bounced or erroneous supplier payments cannot be reversed; requires manual database intervention.",
+        "expected_behavior": "SupplierPaymentController@reverse marks payment REVERSED, restores supplier payable balance, and credits back financial account.",
+        "affected_fields": [
+            "FIELD-098"
+        ],
+        "affected_dbcols": [
+            "supplier_payments.status",
+            "suppliers.current_balance"
+        ],
+        "affected_entities": [
+            "ENTITY-028",
+            "ENTITY-027",
+            "ENTITY-034"
+        ],
+        "affected_mutations": [
+            "MUTATION-050"
+        ],
+        "affected_flows": [
+            "FLOW-011"
+        ],
+        "affected_calculations": [
+            "CALC-013"
+        ],
+        "affected_rules": [
+            "RULE-013"
+        ],
+        "affected_ui_routes": [
+            "ROUTE-017",
+            "ROUTE-018"
+        ],
+        "affected_apis": [
+            "API-078"
+        ],
+        "offline_sync_impact": "NONE",
+        "print_hardware_impact": "NONE",
+        "tenant_impact": "TENANT_SCOPED",
+        "branch_impact": "TENANT_WIDE",
+        "financial_impact": "Bank cash disbursed without corresponding active supplier payment record.",
+        "inventory_impact": "NONE",
+        "historical_integrity_impact": "INCOMPLETE_AP_LIFECYCLE",
+        "security_impact": "NONE",
+        "operator_impact": "Accountant unable to undo wrong disbursement entry.",
+        "failure_scenario": "Supplier check bounces; accountant unable to reverse payment record; supplier ledger shows paid.",
+        "existing_data_risk": "NONE",
+        "source_phase_findings": [
+            "P1-GAP-005",
+            "P2-GAP-015",
+            "P3-GAP-007"
+        ],
+        "source_evidence": "api/app/Http/Controllers/Api/V1/SupplierPaymentController.php",
+        "dependency_gap_ids": [
+            "GAP-013"
+        ],
+        "blocking_gap_ids": [],
+        "severity": "HIGH",
+        "likelihood": "OCCASIONAL",
+        "detectability": "IMMEDIATE_OPERATOR_VISIBLE",
+        "data_repair_required": false,
+        "schema_migration_required": false,
+        "backend_change_required": true,
+        "frontend_change_required": true,
+        "sync_change_required": false,
+        "hardware_print_change_required": false,
+        "test_requirement": "Supplier payment reversal AP balance restore tests",
+        "phase_9_wave": "WAVE_3",
+        "rollback_requirement": "NONE",
+        "acceptance_criteria": "POST /api/v1/supplier-payments/{id}/reverse marks payment REVERSED and re-accrues supplier AP balance.",
+        "status": "OPEN_READY_FOR_REMEDIATION",
+        "foundation_blocker": false,
+        "implementation_wave": "WAVE_3",
+        "source_findings": [
+            "P1-GAP-005",
+            "P2-GAP-015",
+            "P3-GAP-007"
+        ]
+    },
+    "GAP-013": {
+        "gap_id": "GAP-013",
+        "title": "Operating Expense Entry Allows Null Financial Account Creating Unallocated Cash Drift",
+        "root_cause": "expenses table and ExpenseRequest permit financial_account_id to be NULL or unassigned.",
+        "domain": "EXPENSES",
+        "subdomain": "FINANCIAL_ALLOCATION",
+        "defect_type": "LEDGER_BYPASS",
+        "current_behavior": "Expenses logged without financial_account_id create expense records without deducting from Cash Drawer or Bank Account.",
+        "expected_behavior": "financial_account_id is strictly required on all expense entries, posting mandatory debit to Expense and credit to FinancialAccount.",
+        "affected_fields": [
+            "FIELD-105"
+        ],
+        "affected_dbcols": [
+            "expenses.financial_account_id"
+        ],
+        "affected_entities": [
+            "ENTITY-029",
+            "ENTITY-034"
+        ],
+        "affected_mutations": [
+            "MUTATION-056"
+        ],
+        "affected_flows": [
+            "FLOW-012"
+        ],
+        "affected_calculations": [
+            "CALC-014"
+        ],
+        "affected_rules": [
+            "RULE-014"
+        ],
+        "affected_ui_routes": [
+            "ROUTE-019",
+            "ROUTE-020"
+        ],
+        "affected_apis": [
+            "API-092"
+        ],
+        "offline_sync_impact": "Offline expense outbox permits null account.",
+        "print_hardware_impact": "Expense payment voucher lacks paying account name.",
+        "tenant_impact": "TENANT_SCOPED",
+        "branch_impact": "BRANCH_SCOPED",
+        "financial_impact": "Financial account balance statement overstates actual cash on hand.",
+        "inventory_impact": "NONE",
+        "historical_integrity_impact": "UNALLOCATED_CASH_OUTFLOWS",
+        "security_impact": "NONE",
+        "operator_impact": "Cashier records expense but physical drawer cash does not reconcile with bank ledger.",
+        "failure_scenario": "Cashier pays utility bill Rs. 5,000 from cash drawer with null account; financial accounts show Rs. 5,000 cash that does not exist.",
+        "existing_data_risk": "HISTORICAL_EXPENSES_WITH_NULL_FINANCIAL_ACCOUNT",
+        "source_phase_findings": [
+            "P2-GAP-016",
+            "P3-GAP-013",
+            "P5-GAP-008"
+        ],
+        "source_evidence": "api/database/migrations/create_expenses_table.php, api/app/Http/Requests/ExpenseRequest.php",
+        "dependency_gap_ids": [],
+        "blocking_gap_ids": [
+            "GAP-003",
+            "GAP-004",
+            "GAP-012"
+        ],
+        "severity": "CRITICAL",
+        "likelihood": "FREQUENT",
+        "detectability": "RECONCILIATION_REQUIRED",
+        "data_repair_required": true,
+        "schema_migration_required": true,
+        "backend_change_required": true,
+        "frontend_change_required": true,
+        "sync_change_required": true,
+        "hardware_print_change_required": true,
+        "test_requirement": "Expense creation mandatory financial account FormRequest tests",
+        "phase_9_wave": "WAVE_1",
+        "rollback_requirement": "NULLABLE_FALLBACK",
+        "acceptance_criteria": "Attempting to create expense without valid financial_account_id fails validation with HTTP 422.",
+        "status": "OPEN_READY_FOR_REMEDIATION",
+        "foundation_blocker": true,
+        "implementation_wave": "WAVE_1",
+        "source_findings": [
+            "P2-GAP-016",
+            "P3-GAP-013",
+            "P5-GAP-008"
+        ]
+    },
+    "GAP-014": {
+        "gap_id": "GAP-014",
+        "title": "Soft-Deleting Operating Expense Leaves Associated AccountMovement Row Active",
+        "root_cause": "ExpenseController@destroy soft deletes expense row but does not reverse or delete corresponding AccountMovement.",
+        "domain": "EXPENSES",
+        "subdomain": "EXPENSE_DELETION",
+        "defect_type": "SOURCE_OF_TRUTH_CONFLICT",
+        "current_behavior": "Deleting an expense keeps the cash/bank deduction active in financial accounts, causing permanent balance distortion.",
+        "expected_behavior": "Voiding or deleting expense triggers atomic reversal of AccountMovement within same DB transaction.",
+        "affected_fields": [
+            "FIELD-106"
+        ],
+        "affected_dbcols": [
+            "expenses.deleted_at",
+            "account_movements.amount"
+        ],
+        "affected_entities": [
+            "ENTITY-029",
+            "ENTITY-035"
+        ],
+        "affected_mutations": [
+            "MUTATION-059"
+        ],
+        "affected_flows": [
+            "FLOW-012"
+        ],
+        "affected_calculations": [
+            "CALC-015"
+        ],
+        "affected_rules": [
+            "RULE-015"
+        ],
+        "affected_ui_routes": [
+            "ROUTE-019"
+        ],
+        "affected_apis": [
+            "API-100"
+        ],
+        "offline_sync_impact": "NONE",
+        "print_hardware_impact": "NONE",
+        "tenant_impact": "TENANT_SCOPED",
+        "branch_impact": "BRANCH_SCOPED",
+        "financial_impact": "Bank/cash account understated by deleted expense amount.",
+        "inventory_impact": "NONE",
+        "historical_integrity_impact": "ORPHAN_ACCOUNT_MOVEMENTS",
+        "security_impact": "NONE",
+        "operator_impact": "Operator deletes accidental expense entry but cash balance fails to return to actual drawer count.",
+        "failure_scenario": "Typo expense of Rs. 50,000 entered and immediately deleted; cash account permanently depleted by Rs. 50,000.",
+        "existing_data_risk": "ORPHAN_ACCOUNT_MOVEMENTS_FROM_PREVIOUSLY_DELETED_EXPENSES",
+        "source_phase_findings": [
+            "P2-GAP-017"
+        ],
+        "source_evidence": "api/app/Http/Controllers/Api/V1/ExpenseController.php@destroy",
+        "dependency_gap_ids": [
+            "GAP-013"
+        ],
+        "blocking_gap_ids": [],
+        "severity": "HIGH",
+        "likelihood": "OCCASIONAL",
+        "detectability": "RECONCILIATION_REQUIRED",
+        "data_repair_required": true,
+        "schema_migration_required": false,
+        "backend_change_required": true,
+        "frontend_change_required": false,
+        "sync_change_required": false,
+        "hardware_print_change_required": false,
+        "test_requirement": "Expense deletion cascading movement reversal unit tests",
+        "phase_9_wave": "WAVE_2",
+        "rollback_requirement": "NONE",
+        "acceptance_criteria": "When expense is deleted/voided, associated AccountMovement is reversed and financial account balance restored.",
+        "status": "OPEN_READY_FOR_REMEDIATION",
+        "foundation_blocker": false,
+        "implementation_wave": "WAVE_2",
+        "source_findings": [
+            "P2-GAP-017"
+        ]
+    },
+    "GAP-015": {
+        "gap_id": "GAP-015",
+        "title": "UI-Only Authorization for High-Risk Destructive Operations Lacks Backend Policy Enforcement",
+        "root_cause": "Voiding sales and voiding expenses are hidden in Vue UI for non-owners, but backend controllers lack Gate::authorize or FormRequest role check.",
+        "domain": "SECURITY_RBAC",
+        "subdomain": "AUTHORIZATION",
+        "defect_type": "AUTHORIZATION_GAP",
+        "current_behavior": "A Salesperson with valid Sanctum token can directly POST to /api/v1/sales/{id}/cancel or /api/v1/expenses/{id}/void via cURL.",
+        "expected_behavior": "Backend controllers enforce Gate::authorize('cancel', $sale) verifying user has Business Owner or Branch Manager role.",
+        "affected_fields": [
+            "FIELD-008",
+            "FIELD-009"
+        ],
+        "affected_dbcols": [
+            "roles.name",
+            "permissions.name"
+        ],
+        "affected_entities": [
+            "ENTITY-002",
+            "ENTITY-010"
+        ],
+        "affected_mutations": [
+            "MUTATION-031",
+            "MUTATION-059"
+        ],
+        "affected_flows": [
+            "FLOW-005",
+            "FLOW-012"
+        ],
+        "affected_calculations": [
+            "CALC-016"
+        ],
+        "affected_rules": [
+            "RULE-016"
+        ],
+        "affected_ui_routes": [
+            "ROUTE-011",
+            "ROUTE-019"
+        ],
+        "affected_apis": [
+            "API-045",
+            "API-100"
+        ],
+        "offline_sync_impact": "NONE",
+        "print_hardware_impact": "NONE",
+        "tenant_impact": "TENANT_SCOPED",
+        "branch_impact": "TENANT_WIDE",
+        "financial_impact": "Unauthorized deletion of revenue sales by rogue staff.",
+        "inventory_impact": "FRAUDULENT_STOCK_MANIPULATION",
+        "historical_integrity_impact": "SECURITY_POLICY_VIOLATION",
+        "security_impact": "PRIVILEGE_ESCALATION_RISK",
+        "operator_impact": "Cashier voids sale and pockets cash without manager oversight.",
+        "failure_scenario": "Cashier calls cancel sale API directly, voiding customer invoice and pocketing Rs. 10,000 cash.",
+        "existing_data_risk": "NONE",
+        "source_phase_findings": [
+            "P6-GAP-001"
+        ],
+        "source_evidence": "api/app/Http/Controllers/Api/V1/SaleController.php@cancel",
+        "dependency_gap_ids": [],
+        "blocking_gap_ids": [],
+        "severity": "CRITICAL",
+        "likelihood": "LIKELY",
+        "detectability": "SILENT_UNTIL_LATER",
+        "data_repair_required": false,
+        "schema_migration_required": false,
+        "backend_change_required": true,
+        "frontend_change_required": false,
+        "sync_change_required": false,
+        "hardware_print_change_required": false,
+        "test_requirement": "Role authorization HTTP 403 regression security tests",
+        "phase_9_wave": "WAVE_1",
+        "rollback_requirement": "NONE",
+        "acceptance_criteria": "Salesperson attempting to cancel sale or void expense receives HTTP 403 Forbidden.",
+        "status": "OPEN_READY_FOR_REMEDIATION",
+        "foundation_blocker": true,
+        "implementation_wave": "WAVE_1",
+        "source_findings": [
+            "P6-GAP-001"
+        ]
+    },
+    "GAP-016": {
+        "gap_id": "GAP-016",
+        "title": "Implicit Route Model Binding Queries Records Across Tenants Before ResolveActiveBusiness Scope",
+        "root_cause": "Laravel implicit route model binding (e.g. {sale}) resolves model ID globally before ResolveActiveBusiness global scope applies.",
+        "domain": "SECURITY_RBAC",
+        "subdomain": "TENANT_ISOLATION",
+        "defect_type": "TENANT_SCOPE_GAP",
+        "current_behavior": "Querying an existing record ID from another tenant triggers 403 rather than 404, leaking ID existence across tenant boundaries.",
+        "expected_behavior": "All route model bindings scope automatically to active business_id, returning HTTP 404 for records outside active tenant.",
+        "affected_fields": [
+            "FIELD-001"
+        ],
+        "affected_dbcols": [
+            "businesses.id"
+        ],
+        "affected_entities": [
+            "ENTITY-001"
+        ],
+        "affected_mutations": [
+            "MUTATION-002"
+        ],
+        "affected_flows": [
+            "FLOW-001",
+            "FLOW-009"
+        ],
+        "affected_calculations": [
+            "CALC-017"
+        ],
+        "affected_rules": [
+            "RULE-017"
+        ],
+        "affected_ui_routes": [
+            "ROUTE-001"
+        ],
+        "affected_apis": [
+            "API-043",
+            "API-057"
+        ],
+        "offline_sync_impact": "NONE",
+        "print_hardware_impact": "NONE",
+        "tenant_impact": "CROSS_TENANT",
+        "branch_impact": "TENANT_WIDE",
+        "financial_impact": "NONE",
+        "inventory_impact": "NONE",
+        "historical_integrity_impact": "NONE",
+        "security_impact": "CROSS_TENANT_METADATA_DISCLOSURE",
+        "operator_impact": "NONE",
+        "failure_scenario": "Tenant A probes GET /api/v1/sales/500 and discovers Tenant B has reached 500 sales invoices.",
+        "existing_data_risk": "NONE",
+        "source_phase_findings": [
+            "P6-GAP-002"
+        ],
+        "source_evidence": "api/app/Http/Middleware/ResolveActiveBusiness.php, api/routes/api.php",
+        "dependency_gap_ids": [],
+        "blocking_gap_ids": [],
+        "severity": "HIGH",
+        "likelihood": "LIKELY",
+        "detectability": "DIFFICULT_TO_DETECT",
+        "data_repair_required": false,
+        "schema_migration_required": false,
+        "backend_change_required": true,
+        "frontend_change_required": false,
+        "sync_change_required": false,
+        "hardware_print_change_required": false,
+        "test_requirement": "Cross-tenant route model binding HTTP 404 security tests",
+        "phase_9_wave": "WAVE_1",
+        "rollback_requirement": "NONE",
+        "acceptance_criteria": "Attempting to fetch resource ID belonging to another business returns HTTP 404 Not Found.",
+        "status": "OPEN_READY_FOR_REMEDIATION",
+        "foundation_blocker": true,
+        "implementation_wave": "WAVE_1",
+        "source_findings": [
+            "P6-GAP-002"
+        ]
+    },
+    "GAP-017": {
+        "gap_id": "GAP-017",
+        "title": "Sale Store Endpoint Accepts Arbitrary branch_id In Request Payload Without User Assignment Check",
+        "root_cause": "SaleController@store takes branch_id directly from request payload without validating if authenticated user is assigned to that branch.",
+        "domain": "SECURITY_RBAC",
+        "subdomain": "BRANCH_ISOLATION",
+        "defect_type": "BRANCH_SCOPE_GAP",
+        "current_behavior": "Cashier assigned to Branch 1 can post sale under Branch 2, deducting inventory and posting revenue to wrong branch.",
+        "expected_behavior": "SaleService forces branch_id to user->branch_id unless user has Business Owner role with explicit multi-branch override permission.",
+        "affected_fields": [
+            "FIELD-016",
+            "FIELD-041"
+        ],
+        "affected_dbcols": [
+            "sales.branch_id",
+            "branch_user.branch_id"
+        ],
+        "affected_entities": [
+            "ENTITY-003",
+            "ENTITY-019"
+        ],
+        "affected_mutations": [
+            "MUTATION-029"
+        ],
+        "affected_flows": [
+            "FLOW-001"
+        ],
+        "affected_calculations": [
+            "CALC-018"
+        ],
+        "affected_rules": [
+            "RULE-018"
+        ],
+        "affected_ui_routes": [
+            "ROUTE-011"
+        ],
+        "affected_apis": [
+            "API-042"
+        ],
+        "offline_sync_impact": "Offline bulk sync injects user branch_id if missing, but allows arbitrary branch_id if payload contains it.",
+        "print_hardware_impact": "Receipt prints wrong branch name and address.",
+        "tenant_impact": "TENANT_SCOPED",
+        "branch_impact": "MULTI_BRANCH",
+        "financial_impact": "Branch revenue allocations and sales commissions credited to wrong branch.",
+        "inventory_impact": "INVENTORY_DEDUCTED_FROM_WRONG_BRANCH",
+        "historical_integrity_impact": "BRANCH_LEDGER_MISALLOCATION",
+        "security_impact": "BRANCH_BOUNDARY_VIOLATION",
+        "operator_impact": "Operator posts sale against wrong branch.",
+        "failure_scenario": "Cashier in Lahore branch changes branch_id to 2 in payload; Karachi branch stock decremented by 5 units.",
+        "existing_data_risk": "NONE",
+        "source_phase_findings": [
+            "P6-GAP-003"
+        ],
+        "source_evidence": "api/app/Http/Controllers/Api/V1/SaleController.php@store",
+        "dependency_gap_ids": [],
+        "blocking_gap_ids": [],
+        "severity": "HIGH",
+        "likelihood": "OCCASIONAL",
+        "detectability": "RECONCILIATION_REQUIRED",
+        "data_repair_required": false,
+        "schema_migration_required": false,
+        "backend_change_required": true,
+        "frontend_change_required": false,
+        "sync_change_required": true,
+        "hardware_print_change_required": false,
+        "test_requirement": "Branch assignment authorization unit & feature tests",
+        "phase_9_wave": "WAVE_1",
+        "rollback_requirement": "NONE",
+        "acceptance_criteria": "Sale creation strictly restricts branch_id to cashier assigned branch_id unless authorized as Business Owner.",
+        "status": "OPEN_READY_FOR_REMEDIATION",
+        "foundation_blocker": true,
+        "implementation_wave": "WAVE_1",
+        "source_findings": [
+            "P6-GAP-003"
+        ]
+    },
+    "GAP-018": {
+        "gap_id": "GAP-018",
+        "title": "Server Trusts Client-Calculated Sale Totals & Discounts Without Server Recalculation",
+        "root_cause": "SaleService trusts total_amount and discount submitted in client payload rather than computing total from verified line items.",
+        "domain": "VALIDATION",
+        "subdomain": "SERVER_VERIFICATION",
+        "defect_type": "VALIDATION_GAP",
+        "current_behavior": "Client can submit line items totaling Rs. 10,000 with a client-supplied total of Rs. 1,000, which server writes to DB.",
+        "expected_behavior": "SaleService recalculates line item subtotal, applies tax/discount rules server-side, and validates client total matches server total.",
+        "affected_fields": [
+            "FIELD-048",
+            "FIELD-049",
+            "FIELD-050",
+            "FIELD-051"
+        ],
+        "affected_dbcols": [
+            "sales.subtotal",
+            "sales.total",
+            "sales.discount"
+        ],
+        "affected_entities": [
+            "ENTITY-019"
+        ],
+        "affected_mutations": [
+            "MUTATION-029",
+            "MUTATION-071"
+        ],
+        "affected_flows": [
+            "FLOW-001"
+        ],
+        "affected_calculations": [
+            "CALC-001",
+            "CALC-003"
+        ],
+        "affected_rules": [
+            "RULE-001"
+        ],
+        "affected_ui_routes": [
+            "ROUTE-011"
+        ],
+        "affected_apis": [
+            "API-042",
+            "API-140"
+        ],
+        "offline_sync_impact": "Offline bulk sync ingests client-calculated totals blindly.",
+        "print_hardware_impact": "NONE",
+        "tenant_impact": "TENANT_SCOPED",
+        "branch_impact": "BRANCH_SCOPED",
+        "financial_impact": "Severe revenue leakage from tampered client total calculations.",
+        "inventory_impact": "NONE",
+        "historical_integrity_impact": "MATHEMATICALLY_INCONSISTENT_INVOICES",
+        "security_impact": "INPUT_TAMPERING_EXPOSURE",
+        "operator_impact": "NONE",
+        "failure_scenario": "Malicious or buggy mobile client sends 10 items @ Rs. 1000 each with total = Rs. 100; customer pays Rs. 100.",
+        "existing_data_risk": "NONE",
+        "source_phase_findings": [
+            "P6-GAP-004"
+        ],
+        "source_evidence": "api/app/Services/SaleService.php@createSale",
+        "dependency_gap_ids": [],
+        "blocking_gap_ids": [],
+        "severity": "CRITICAL",
+        "likelihood": "OCCASIONAL",
+        "detectability": "RECONCILIATION_REQUIRED",
+        "data_repair_required": false,
+        "schema_migration_required": false,
+        "backend_change_required": true,
+        "frontend_change_required": false,
+        "sync_change_required": true,
+        "hardware_print_change_required": false,
+        "test_requirement": "Server-side arithmetic invariant verification tests",
+        "phase_9_wave": "WAVE_1",
+        "rollback_requirement": "NONE",
+        "acceptance_criteria": "Sale creation rejects payloads where sum(items.total) - discount + tax != total with HTTP 422.",
+        "status": "OPEN_READY_FOR_REMEDIATION",
+        "foundation_blocker": true,
+        "implementation_wave": "WAVE_1",
+        "source_findings": [
+            "P6-GAP-004"
+        ]
+    },
+    "GAP-019": {
+        "gap_id": "GAP-019",
+        "title": "Sale Return Refund Settlement Endpoint Lacks Client Request UUID Deduplication",
+        "root_cause": "SaleReturnRefundController@settleRefund does not check for request UUID / idempotency_key.",
+        "domain": "CONCURRENCY",
+        "subdomain": "IDEMPOTENCY",
+        "defect_type": "IDEMPOTENCY_GAP",
+        "current_behavior": "Network drop or double-click on \"Settle Refund\" executes settleRefund twice, disbursing double cash refund from financial account.",
+        "expected_behavior": "settleRefund requires idempotency_key header or UUID, rejecting repeated requests with HTTP 409 or returning cached result.",
+        "affected_fields": [
+            "FIELD-058"
+        ],
+        "affected_dbcols": [
+            "sale_returns.refund_status",
+            "account_movements.amount"
+        ],
+        "affected_entities": [
+            "ENTITY-037",
+            "ENTITY-034"
+        ],
+        "affected_mutations": [
+            "MUTATION-034"
+        ],
+        "affected_flows": [
+            "FLOW-006"
+        ],
+        "affected_calculations": [
+            "CALC-019"
+        ],
+        "affected_rules": [
+            "RULE-019"
+        ],
+        "affected_ui_routes": [
+            "ROUTE-011",
+            "ROUTE-012"
+        ],
+        "affected_apis": [
+            "API-048"
+        ],
+        "offline_sync_impact": "NONE",
+        "print_hardware_impact": "NONE",
+        "tenant_impact": "TENANT_SCOPED",
+        "branch_impact": "BRANCH_SCOPED",
+        "financial_impact": "Double cash refund disbursed to customer.",
+        "inventory_impact": "NONE",
+        "historical_integrity_impact": "DUPLICATE_FINANCIAL_MOVEMENTS",
+        "security_impact": "NONE",
+        "operator_impact": "Cashier double clicks button on slow connection.",
+        "failure_scenario": "Cashier clicks Settle Refund Rs. 3,000 twice; two bank withdrawals of Rs. 3,000 executed (total Rs. 6,000 lost).",
+        "existing_data_risk": "NONE",
+        "source_phase_findings": [
+            "P6-GAP-007"
+        ],
+        "source_evidence": "api/app/Http/Controllers/Api/V1/SaleReturnRefundController.php@settleRefund",
+        "dependency_gap_ids": [],
+        "blocking_gap_ids": [
+            "GAP-009"
+        ],
+        "severity": "HIGH",
+        "likelihood": "LIKELY",
+        "detectability": "IMMEDIATE_OPERATOR_VISIBLE",
+        "data_repair_required": false,
+        "schema_migration_required": false,
+        "backend_change_required": true,
+        "frontend_change_required": true,
+        "sync_change_required": false,
+        "hardware_print_change_required": false,
+        "test_requirement": "Refund idempotency concurrency stress tests",
+        "phase_9_wave": "WAVE_1",
+        "rollback_requirement": "NONE",
+        "acceptance_criteria": "Repeated refund settlement calls with same idempotency_key return identical single transaction response without double debit.",
+        "status": "OPEN_READY_FOR_REMEDIATION",
+        "foundation_blocker": true,
+        "implementation_wave": "WAVE_1",
+        "source_findings": [
+            "P6-GAP-007"
+        ]
+    },
+    "GAP-020": {
+        "gap_id": "GAP-020",
+        "title": "Purchase GRN Receiving Lacks Pessimistic Row Lock on branch_inventories",
+        "root_cause": "PurchaseService@receivePurchase updates branch_inventories without using DB lockForUpdate().",
+        "domain": "CONCURRENCY",
+        "subdomain": "RACE_CONDITIONS",
+        "defect_type": "CONCURRENCY_RACE",
+        "current_behavior": "Concurrent POS checkout and purchase receiving on same product can cause lost update on quantity_on_hand.",
+        "expected_behavior": "All inventory mutations lock target branch_inventories row with lockForUpdate() during transaction.",
+        "affected_fields": [
+            "FIELD-076"
+        ],
+        "affected_dbcols": [
+            "branch_inventories.quantity_on_hand"
+        ],
+        "affected_entities": [
+            "ENTITY-018"
+        ],
+        "affected_mutations": [
+            "MUTATION-046"
+        ],
+        "affected_flows": [
+            "FLOW-009"
+        ],
+        "affected_calculations": [
+            "CALC-020"
+        ],
+        "affected_rules": [
+            "RULE-020"
+        ],
+        "affected_ui_routes": [
+            "ROUTE-013"
+        ],
+        "affected_apis": [
+            "API-056"
+        ],
+        "offline_sync_impact": "NONE",
+        "print_hardware_impact": "NONE",
+        "tenant_impact": "TENANT_SCOPED",
+        "branch_impact": "BRANCH_SCOPED",
+        "financial_impact": "Stock quantity divergence causes wrong inventory asset valuation.",
+        "inventory_impact": "LOST_UPDATE_INVENTORY_COUNT",
+        "historical_integrity_impact": "STOCK_ON_HAND_MISMATCH",
+        "security_impact": "NONE",
+        "operator_impact": "Physical stock count does not match system quantity.",
+        "failure_scenario": "Cashier sells 1 unit while receiving dock adds 10 units at exact same millisecond; final stock becomes +10 instead of +9.",
+        "existing_data_risk": "NONE",
+        "source_phase_findings": [
+            "P6-GAP-006"
+        ],
+        "source_evidence": "api/app/Services/PurchaseService.php, api/app/Services/InventoryService.php",
+        "dependency_gap_ids": [],
+        "blocking_gap_ids": [],
+        "severity": "HIGH",
+        "likelihood": "OCCASIONAL",
+        "detectability": "SILENT_UNTIL_LATER",
+        "data_repair_required": false,
+        "schema_migration_required": false,
+        "backend_change_required": true,
+        "frontend_change_required": false,
+        "sync_change_required": false,
+        "hardware_print_change_required": false,
+        "test_requirement": "Parallel concurrency stock update integration tests",
+        "phase_9_wave": "WAVE_1",
+        "rollback_requirement": "NONE",
+        "acceptance_criteria": "Parallel execution of 10 sales and 10 receipts on same product yields exact mathematical net balance.",
+        "status": "OPEN_READY_FOR_REMEDIATION",
+        "foundation_blocker": true,
+        "implementation_wave": "WAVE_1",
+        "source_findings": [
+            "P6-GAP-006"
+        ]
+    },
+    "GAP-021": {
+        "gap_id": "GAP-021",
+        "title": "POS Checkout Dispatches Thermal Receipt Printing Before Verified HTTP Commit Confirmation",
+        "root_cause": "PosSaleView.vue triggers printerService.printReceipt() immediately upon form submit before await api.post() returns.",
+        "domain": "PRINT",
+        "subdomain": "EXECUTION_ORDER",
+        "defect_type": "PRINT_ORDERING_GAP",
+        "current_behavior": "Paper receipt prints in cashier hands even if backend rejects transaction due to validation or server crash.",
+        "expected_behavior": "Printing is triggered ONLY after HTTP 200/201 response is received (or after confirmed local IndexedDB outbox commit in offline mode).",
+        "affected_fields": [
+            "FIELD-044"
+        ],
+        "affected_dbcols": [
+            "sales.invoice_number"
+        ],
+        "affected_entities": [
+            "ENTITY-019"
+        ],
+        "affected_mutations": [
+            "MUTATION-029",
+            "MUTATION-071"
+        ],
+        "affected_flows": [
+            "FLOW-001"
+        ],
+        "affected_calculations": [
+            "CALC-021"
+        ],
+        "affected_rules": [
+            "RULE-021"
+        ],
+        "affected_ui_routes": [
+            "ROUTE-011"
+        ],
+        "affected_apis": [
+            "API-042",
+            "API-140"
+        ],
+        "offline_sync_impact": "In offline mode, receipt must carry clear \"OFFLINE PENDING SYNC\" indicator.",
+        "print_hardware_impact": "Prevents printing phantom receipts for failed transactions.",
+        "tenant_impact": "TENANT_SCOPED",
+        "branch_impact": "BRANCH_SCOPED",
+        "financial_impact": "Customer leaves store with physical proof of purchase for uncommitted transaction.",
+        "inventory_impact": "PHYSICAL_STOCK_LEAVES_STORE_WITHOUT_SALE_RECORD",
+        "historical_integrity_impact": "UNCOMMITTED_INVOICE_NUMBERS_ON_PAPER",
+        "security_impact": "NONE",
+        "operator_impact": "Cashier assumes transaction succeeded because receipt came out of printer.",
+        "failure_scenario": "Credit limit exceeded; server returns HTTP 422; printer prints receipt; cashier hands items to customer.",
+        "existing_data_risk": "NONE",
+        "source_phase_findings": [
+            "P6-GAP-008",
+            "P7-GAP-001"
+        ],
+        "source_evidence": "Frontend/src/views/PosSaleView.vue, Frontend/src/services/printerService.js",
+        "dependency_gap_ids": [
+            "GAP-001",
+            "GAP-003"
+        ],
+        "blocking_gap_ids": [],
+        "severity": "HIGH",
+        "likelihood": "FREQUENT",
+        "detectability": "IMMEDIATE_OPERATOR_VISIBLE",
+        "data_repair_required": false,
+        "schema_migration_required": false,
+        "backend_change_required": false,
+        "frontend_change_required": true,
+        "sync_change_required": false,
+        "hardware_print_change_required": true,
+        "test_requirement": "POS checkout print dispatch ordering component tests",
+        "phase_9_wave": "WAVE_4",
+        "rollback_requirement": "NONE",
+        "acceptance_criteria": "Thermal print dispatch executes strictly inside .then() block after confirmed HTTP commit or localDb outbox write.",
+        "status": "OPEN_READY_FOR_REMEDIATION",
+        "foundation_blocker": false,
+        "implementation_wave": "WAVE_4",
+        "source_findings": [
+            "P6-GAP-008",
+            "P7-GAP-001"
+        ]
+    },
+    "GAP-022": {
+        "gap_id": "GAP-022",
+        "title": "Offline POS Terminals Lack Distributed Stock Reservations Permitting Inventory Double-Spend",
+        "root_cause": "BulkSyncService accepts offline sales blindly during ingest without checking if cached stock was concurrently depleted by another lane.",
+        "domain": "OFFLINE",
+        "subdomain": "STOCK_DOUBLE_SPEND",
+        "defect_type": "OFFLINE_CONSISTENCY",
+        "current_behavior": "Two disconnected counters sell 5 available units each; on sync, server accepts both and drops stock to -5.",
+        "expected_behavior": "Server ingests offline sales into inventory movement ledger, flags NEGATIVE_STOCK_DEFICIT audit alert, and notifies store manager.",
+        "affected_fields": [
+            "FIELD-076"
+        ],
+        "affected_dbcols": [
+            "branch_inventories.quantity_on_hand"
+        ],
+        "affected_entities": [
+            "ENTITY-018",
+            "ENTITY-019"
+        ],
+        "affected_mutations": [
+            "MUTATION-071"
+        ],
+        "affected_flows": [
+            "FLOW-001"
+        ],
+        "affected_calculations": [
+            "CALC-022"
+        ],
+        "affected_rules": [
+            "RULE-022"
+        ],
+        "affected_ui_routes": [
+            "ROUTE-011"
+        ],
+        "affected_apis": [
+            "API-140"
+        ],
+        "offline_sync_impact": "Bulk ingest flags over-sold inventory movements with explicit warning status.",
+        "print_hardware_impact": "NONE",
+        "tenant_impact": "TENANT_SCOPED",
+        "branch_impact": "BRANCH_SCOPED",
+        "financial_impact": "Revenue collected for physical inventory that cannot be fulfilled.",
+        "inventory_impact": "NEGATIVE_INVENTORY_OVERSOLD",
+        "historical_integrity_impact": "NONE",
+        "security_impact": "NONE",
+        "operator_impact": "Store manager receives automated notification to restock deficit items.",
+        "failure_scenario": "Two offline lanes sell last 5 bags of cement simultaneously; total 10 bags sold; store physically lacks 5 bags.",
+        "existing_data_risk": "NONE",
+        "source_phase_findings": [
+            "P7-GAP-002"
+        ],
+        "source_evidence": "api/app/Services/BulkSyncService.php, api/app/Services/SaleService.php",
+        "dependency_gap_ids": [],
+        "blocking_gap_ids": [],
+        "severity": "HIGH",
+        "likelihood": "OCCASIONAL",
+        "detectability": "REPORT_VISIBLE",
+        "data_repair_required": false,
+        "schema_migration_required": false,
+        "backend_change_required": true,
+        "frontend_change_required": false,
+        "sync_change_required": true,
+        "hardware_print_change_required": false,
+        "test_requirement": "Bulk sync inventory deficit audit logging tests",
+        "phase_9_wave": "WAVE_4",
+        "rollback_requirement": "NONE",
+        "acceptance_criteria": "When bulk sync ingests sales causing stock < 0, an audit log entry event=inventory_oversold is created with notifications.",
+        "status": "OPEN_READY_FOR_REMEDIATION",
+        "foundation_blocker": false,
+        "implementation_wave": "WAVE_4",
+        "source_findings": [
+            "P7-GAP-002"
+        ]
+    },
+    "GAP-023": {
+        "gap_id": "GAP-023",
+        "title": "Offline Customer Khata Balance Projection Displays Stale Balance During Concurrent Online Settlements",
+        "root_cause": "IndexedDB customers store is only refreshed on delta sync; offline POS displays cached balance without staleness warning.",
+        "domain": "OFFLINE",
+        "subdomain": "BALANCE_STALENESS",
+        "defect_type": "SYNC_CONFLICT",
+        "current_behavior": "Customer settles debt at main branch; offline counter still displays old debt and denies credit sale.",
+        "expected_behavior": "POS UI displays \"Offline Snapshot: Balance as of [timestamp]\" warning when operating disconnected.",
+        "affected_fields": [
+            "FIELD-088"
+        ],
+        "affected_dbcols": [
+            "customers.balance"
+        ],
+        "affected_entities": [
+            "ENTITY-023"
+        ],
+        "affected_mutations": [
+            "MUTATION-071"
+        ],
+        "affected_flows": [
+            "FLOW-008"
+        ],
+        "affected_calculations": [
+            "CALC-023"
+        ],
+        "affected_rules": [
+            "RULE-023"
+        ],
+        "affected_ui_routes": [
+            "ROUTE-011",
+            "ROUTE-015"
+        ],
+        "affected_apis": [
+            "API-139"
+        ],
+        "offline_sync_impact": "Client shows clear visual indicator that balance is offline estimate.",
+        "print_hardware_impact": "Thermal receipt marks customer balance as \"Estimated Offline Balance\".",
+        "tenant_impact": "TENANT_SCOPED",
+        "branch_impact": "TENANT_WIDE",
+        "financial_impact": "Risk of incorrect credit denial or over-extension.",
+        "inventory_impact": "NONE",
+        "historical_integrity_impact": "NONE",
+        "security_impact": "NONE",
+        "operator_impact": "Cashier informed that customer balance may have changed online.",
+        "failure_scenario": "Customer cleared balance 10 mins ago online; cashier refuses sale claiming customer has unpaid debt.",
+        "existing_data_risk": "NONE",
+        "source_phase_findings": [
+            "P6-GAP-010",
+            "P7-GAP-003"
+        ],
+        "source_evidence": "Frontend/src/sync/SyncCoordinator.js, Frontend/src/views/PosSaleView.vue",
+        "dependency_gap_ids": [],
+        "blocking_gap_ids": [],
+        "severity": "MEDIUM",
+        "likelihood": "LIKELY",
+        "detectability": "IMMEDIATE_OPERATOR_VISIBLE",
+        "data_repair_required": false,
+        "schema_migration_required": false,
+        "backend_change_required": false,
+        "frontend_change_required": true,
+        "sync_change_required": false,
+        "hardware_print_change_required": true,
+        "test_requirement": "Offline customer balance staleness indicator UI tests",
+        "phase_9_wave": "WAVE_4",
+        "rollback_requirement": "NONE",
+        "acceptance_criteria": "When navigator.onLine is false, customer dropdown in POS displays warning badge with last synced timestamp.",
+        "status": "OPEN_READY_FOR_REMEDIATION",
+        "foundation_blocker": false,
+        "implementation_wave": "WAVE_4",
+        "source_findings": [
+            "P6-GAP-010",
+            "P7-GAP-003"
+        ]
+    },
+    "GAP-024": {
+        "gap_id": "GAP-024",
+        "title": "Peer-to-Peer Device Pairing Service Lacks IP Address & Private Subnet Boundary Validation",
+        "root_cause": "devicePairingService.js accepts any local_ip and port from QR payload without validating RFC 1918 private subnet ranges.",
+        "domain": "HARDWARE",
+        "subdomain": "DEVICE_PAIRING",
+        "defect_type": "HARDWARE_VALIDATION_GAP",
+        "current_behavior": "Mobile app will attempt to connect to public or malicious IP addresses if presented with a fraudulent QR code.",
+        "expected_behavior": "devicePairingService validates IP matches 192.168.x.x, 10.x.x.x, or 172.16-31.x.x before initiating fetch handshake.",
+        "affected_fields": [
+            "FIELD-140"
+        ],
+        "affected_dbcols": [
+            "settings.value"
+        ],
+        "affected_entities": [
+            "ENTITY-036"
+        ],
+        "affected_mutations": [
+            "MUTATION-068"
+        ],
+        "affected_flows": [
+            "FLOW-022"
+        ],
+        "affected_calculations": [
+            "CALC-024"
+        ],
+        "affected_rules": [
+            "RULE-024"
+        ],
+        "affected_ui_routes": [
+            "ROUTE-027"
+        ],
+        "affected_apis": [
+            "API-134"
+        ],
+        "offline_sync_impact": "P2P asset sync restricted strictly to safe LAN boundaries.",
+        "print_hardware_impact": "NONE",
+        "tenant_impact": "TENANT_SCOPED",
+        "branch_impact": "BRANCH_SCOPED",
+        "financial_impact": "NONE",
+        "inventory_impact": "NONE",
+        "historical_integrity_impact": "NONE",
+        "security_impact": "SSRF_AND_TOKEN_LEAK_RISK",
+        "operator_impact": "Clear error message when scanning QR from outside local store Wi-Fi network.",
+        "failure_scenario": "Operator scans QR containing public IP; mobile app attempts HTTP request leaking ephemeral pairing token.",
+        "existing_data_risk": "NONE",
+        "source_phase_findings": [
+            "P2-GAP-019",
+            "P7-GAP-004"
+        ],
+        "source_evidence": "Frontend/src/services/devicePairingService.js:25-60",
+        "dependency_gap_ids": [],
+        "blocking_gap_ids": [],
+        "severity": "MEDIUM",
+        "likelihood": "RARE",
+        "detectability": "IMMEDIATE_OPERATOR_VISIBLE",
+        "data_repair_required": false,
+        "schema_migration_required": false,
+        "backend_change_required": false,
+        "frontend_change_required": true,
+        "sync_change_required": false,
+        "hardware_print_change_required": false,
+        "test_requirement": "IP subnet validation unit tests in devicePairingService",
+        "phase_9_wave": "WAVE_4",
+        "rollback_requirement": "NONE",
+        "acceptance_criteria": "Scanning QR with non-RFC1918 IP rejects connection with \"Invalid Local Subnet IP\" error toast.",
+        "status": "OPEN_READY_FOR_REMEDIATION",
+        "foundation_blocker": false,
+        "implementation_wave": "WAVE_4",
+        "source_findings": [
+            "P2-GAP-019",
+            "P7-GAP-004"
+        ]
+    },
+    "GAP-025": {
+        "gap_id": "GAP-025",
+        "title": "Offline Quick Customer Creation Lacks Persistent Temp-to-Server ID Mapping Graph",
+        "root_cause": "When customer is created offline in POS modal, temporary UUID is assigned locally but sale payload links raw temp ID.",
+        "domain": "OFFLINE",
+        "subdomain": "TEMP_ID_REMAPPING",
+        "defect_type": "TEMP_ID_GAP",
+        "current_behavior": "If offline sale references an offline-created customer, BulkSyncService fails foreign key customer_id lookup if order is wrong.",
+        "expected_behavior": "BulkSyncService supports customers batch ingest in bulk-transactions payload, creating customer first and remapping temporary UUID to server customer ID for sales.",
+        "affected_fields": [
+            "FIELD-085",
+            "FIELD-086"
+        ],
+        "affected_dbcols": [
+            "customers.id",
+            "sales.customer_id"
+        ],
+        "affected_entities": [
+            "ENTITY-023",
+            "ENTITY-019"
+        ],
+        "affected_mutations": [
+            "MUTATION-071"
+        ],
+        "affected_flows": [
+            "FLOW-001",
+            "FLOW-007"
+        ],
+        "affected_calculations": [
+            "CALC-025"
+        ],
+        "affected_rules": [
+            "RULE-025"
+        ],
+        "affected_ui_routes": [
+            "ROUTE-011"
+        ],
+        "affected_apis": [
+            "API-140"
+        ],
+        "offline_sync_impact": "Enables seamless offline creation of customer followed immediately by credit sale on same tablet.",
+        "print_hardware_impact": "Receipt displays newly created customer name properly.",
+        "tenant_impact": "TENANT_SCOPED",
+        "branch_impact": "TENANT_WIDE",
+        "financial_impact": "Credit sale correctly attached to new customer Khata rather than defaulting to walk-in.",
+        "inventory_impact": "NONE",
+        "historical_integrity_impact": "PREVENTS_ORPHAN_CREDIT_SALES",
+        "security_impact": "NONE",
+        "operator_impact": "Cashier can add new customer and charge sale on credit without internet.",
+        "failure_scenario": "Cashier adds new customer offline and sells Rs. 10,000 on credit; on sync, customer is missing on server and sale fails or defaults to walk-in.",
+        "existing_data_risk": "NONE",
+        "source_phase_findings": [
+            "P7-GAP-005"
+        ],
+        "source_evidence": "Frontend/src/views/PosSaleView.vue, api/app/Services/BulkSyncService.php",
+        "dependency_gap_ids": [],
+        "blocking_gap_ids": [],
+        "severity": "HIGH",
+        "likelihood": "OCCASIONAL",
+        "detectability": "IMMEDIATE_OPERATOR_VISIBLE",
+        "data_repair_required": false,
+        "schema_migration_required": false,
+        "backend_change_required": true,
+        "frontend_change_required": true,
+        "sync_change_required": true,
+        "hardware_print_change_required": false,
+        "test_requirement": "Bulk sync parent-child customer temp-ID remapping tests",
+        "phase_9_wave": "WAVE_4",
+        "rollback_requirement": "NONE",
+        "acceptance_criteria": "Bulk sync payload containing new customer UUID and sale referencing same UUID ingests customer first and correctly links sale.",
+        "status": "OPEN_READY_FOR_REMEDIATION",
+        "foundation_blocker": false,
+        "implementation_wave": "WAVE_4",
+        "source_findings": [
+            "P7-GAP-005"
+        ]
+    },
+    "GAP-026": {
+        "gap_id": "GAP-026",
+        "title": "Critical Destructive Mutations Lack Explicit Modal Confirmation Dialogs",
+        "root_cause": "UI buttons for voiding expenses, deleting suppliers, and deactivating branches trigger actions with simple single-click.",
+        "domain": "UI_UX",
+        "subdomain": "OPERATOR_SAFETY",
+        "defect_type": "UI_OPERATOR_RISK",
+        "current_behavior": "Accidental click on \"Void\" or \"Delete\" immediately dispatches mutation without confirmation prompt.",
+        "expected_behavior": "All destructive mutations trigger a standardized ConfirmActionModal requiring operator confirmation.",
+        "affected_fields": [
+            "FIELD-106"
+        ],
+        "affected_dbcols": [],
+        "affected_entities": [
+            "ENTITY-029",
+            "ENTITY-027",
+            "ENTITY-003"
+        ],
+        "affected_mutations": [
+            "MUTATION-059",
+            "MUTATION-054",
+            "MUTATION-014"
+        ],
+        "affected_flows": [
+            "FLOW-012",
+            "FLOW-011"
+        ],
+        "affected_calculations": [
+            "CALC-026"
+        ],
+        "affected_rules": [
+            "RULE-026"
+        ],
+        "affected_ui_routes": [
+            "ROUTE-017",
+            "ROUTE-019"
+        ],
+        "affected_apis": [
+            "API-096",
+            "API-100"
+        ],
+        "offline_sync_impact": "NONE",
+        "print_hardware_impact": "NONE",
+        "tenant_impact": "TENANT_SCOPED",
+        "branch_impact": "BRANCH_SCOPED",
+        "financial_impact": "Accidental cancellation of valid financial disbursements.",
+        "inventory_impact": "NONE",
+        "historical_integrity_impact": "ACCIDENTAL_DESTRUCTION_OF_RECORDS",
+        "security_impact": "NONE",
+        "operator_impact": "Operator slips on touchscreen and voids wrong expense.",
+        "failure_scenario": "Cashier accidentally taps trash can icon next to Rs. 100,000 rent expense; expense instantly voided.",
+        "existing_data_risk": "NONE",
+        "source_phase_findings": [
+            "P5-GAP-006"
+        ],
+        "source_evidence": "Frontend/src/views/Expenses/ExpensesListView.vue",
+        "dependency_gap_ids": [],
+        "blocking_gap_ids": [],
+        "severity": "MEDIUM",
+        "likelihood": "LIKELY",
+        "detectability": "IMMEDIATE_OPERATOR_VISIBLE",
+        "data_repair_required": false,
+        "schema_migration_required": false,
+        "backend_change_required": false,
+        "frontend_change_required": true,
+        "sync_change_required": false,
+        "hardware_print_change_required": false,
+        "test_requirement": "Modal confirmation UI component interaction tests",
+        "phase_9_wave": "WAVE_4",
+        "rollback_requirement": "NONE",
+        "acceptance_criteria": "Clicking destructive action opens modal with Cancel and Confirm buttons; API call fires only upon Confirm.",
+        "status": "OPEN_READY_FOR_REMEDIATION",
+        "foundation_blocker": false,
+        "implementation_wave": "WAVE_4",
+        "source_findings": [
+            "P5-GAP-006"
+        ]
+    },
+    "GAP-027": {
+        "gap_id": "GAP-027",
+        "title": "POS Screen Lacks Persistent Active Operating Branch & Shift Indicator in Header",
+        "root_cause": "PosSaleView.vue header displays store name but omits active branch name and active cashier shift identifier.",
+        "domain": "UI_UX",
+        "subdomain": "OPERATOR_CONTEXT",
+        "defect_type": "UI_OPERATOR_RISK",
+        "current_behavior": "Operator with access to multiple branches cannot verify which branch stock and cash drawer they are operating in.",
+        "expected_behavior": "POS top navigation persistently displays Branch Badge, Current User Name, and Online/Offline Sync Indicator.",
+        "affected_fields": [
+            "FIELD-016"
+        ],
+        "affected_dbcols": [
+            "branches.name",
+            "users.name"
+        ],
+        "affected_entities": [
+            "ENTITY-003",
+            "ENTITY-002"
+        ],
+        "affected_mutations": [
+            "MUTATION-029"
+        ],
+        "affected_flows": [
+            "FLOW-001"
+        ],
+        "affected_calculations": [
+            "CALC-027"
+        ],
+        "affected_rules": [
+            "RULE-027"
+        ],
+        "affected_ui_routes": [
+            "ROUTE-011"
+        ],
+        "affected_apis": [
+            "API-004"
+        ],
+        "offline_sync_impact": "Operator clearly sees whether POS is in Offline Mode.",
+        "print_hardware_impact": "NONE",
+        "tenant_impact": "TENANT_SCOPED",
+        "branch_impact": "BRANCH_SCOPED",
+        "financial_impact": "Operator rings up sales under wrong branch account.",
+        "inventory_impact": "NONE",
+        "historical_integrity_impact": "NONE",
+        "security_impact": "NONE",
+        "operator_impact": "Operator ambiguity during multi-branch shifts.",
+        "failure_scenario": "Manager switches to branch B to check stock, then forgets and rings up sales at branch A counter.",
+        "existing_data_risk": "NONE",
+        "source_phase_findings": [
+            "P5-GAP-005"
+        ],
+        "source_evidence": "Frontend/src/views/PosSaleView.vue",
+        "dependency_gap_ids": [],
+        "blocking_gap_ids": [],
+        "severity": "LOW",
+        "likelihood": "OCCASIONAL",
+        "detectability": "IMMEDIATE_OPERATOR_VISIBLE",
+        "data_repair_required": false,
+        "schema_migration_required": false,
+        "backend_change_required": false,
+        "frontend_change_required": true,
+        "sync_change_required": false,
+        "hardware_print_change_required": false,
+        "test_requirement": "POS header branch context rendering tests",
+        "phase_9_wave": "WAVE_4",
+        "rollback_requirement": "NONE",
+        "acceptance_criteria": "POS screen header prominently displays active branch name, active cashier, and connectivity badge at all times.",
+        "status": "OPEN_READY_FOR_REMEDIATION",
+        "foundation_blocker": false,
+        "implementation_wave": "WAVE_4",
+        "source_findings": [
+            "P5-GAP-005"
+        ]
+    },
+    "GAP-028": {
+        "gap_id": "GAP-028",
+        "title": "Legacy Unrouted ProductInvoiceView Component Creates Codebase Confusion",
+        "root_cause": "Frontend/src/views/Invoices/ProductInvoiceView.vue is an unrouted prototype component superseded by printerService.js.",
+        "domain": "UI_UX",
+        "subdomain": "DEAD_CODE",
+        "defect_type": "OTHER_SOURCE_PROVEN",
+        "current_behavior": "Component exists in repo but is not referenced in router/index.js, causing developer ambiguity on active invoice pipeline.",
+        "expected_behavior": "ProductInvoiceView.vue is either formally integrated as A4 preview modal or marked deprecated/removed.",
+        "affected_fields": [],
+        "affected_dbcols": [],
+        "affected_entities": [
+            "ENTITY-019"
+        ],
+        "affected_mutations": [],
+        "affected_flows": [
+            "FLOW-001"
+        ],
+        "affected_calculations": [
+            "CALC-028"
+        ],
+        "affected_rules": [
+            "RULE-028"
+        ],
+        "affected_ui_routes": [
+            "ROUTE-033"
+        ],
+        "affected_apis": [],
+        "offline_sync_impact": "NONE",
+        "print_hardware_impact": "Clarifies that printerService.js is authoritative print engine.",
+        "tenant_impact": "TENANT_SCOPED",
+        "branch_impact": "TENANT_WIDE",
+        "financial_impact": "NONE",
+        "inventory_impact": "NONE",
+        "historical_integrity_impact": "NONE",
+        "security_impact": "NONE",
+        "operator_impact": "NONE",
+        "failure_scenario": "Developer updates styling in ProductInvoiceView.vue expecting print layout to change, with zero actual effect.",
+        "existing_data_risk": "NONE",
+        "source_phase_findings": [
+            "P5-GAP-010"
+        ],
+        "source_evidence": "Frontend/src/views/Invoices/ProductInvoiceView.vue, Frontend/src/router/index.js",
+        "dependency_gap_ids": [],
+        "blocking_gap_ids": [],
+        "severity": "LOW",
+        "likelihood": "RARE",
+        "detectability": "IMMEDIATE_OPERATOR_VISIBLE",
+        "data_repair_required": false,
+        "schema_migration_required": false,
+        "backend_change_required": false,
+        "frontend_change_required": true,
+        "sync_change_required": false,
+        "hardware_print_change_required": false,
+        "test_requirement": "Router dead code audit verification tests",
+        "phase_9_wave": "WAVE_4",
+        "rollback_requirement": "NONE",
+        "acceptance_criteria": "Unrouted invoice component replaced with standard printable preview modal integrated with printerService.js.",
+        "status": "OPEN_READY_FOR_REMEDIATION",
+        "foundation_blocker": false,
+        "implementation_wave": "WAVE_4",
+        "source_findings": [
+            "P5-GAP-010"
+        ]
+    },
+    "GAP-029": {
+        "gap_id": "GAP-029",
+        "title": "Employee HR Wage, Salary Amount & Payment Cycle Discarded Without Database Schema Persistence",
+        "root_cause": "StaffModal.vue captures salary_amount, payment_cycle, and next_payment_date (FIELD-150, 151, 152), but users table lacks salary/payroll columns and Employee model does not exist in schema.",
+        "domain": "MASTER_DATA",
+        "subdomain": "PAYROLL_HR",
+        "defect_type": "MISSING_SCHEMA_CAPABILITY",
+        "current_behavior": "Operator enters employee salary and pay cycle in Staff Modal; data is discarded upon save and omitted from backend database.",
+        "expected_behavior": "Add salary_amount, payment_cycle, and next_payment_date columns to users table (or dedicated employees table), persisting staff payroll terms.",
+        "affected_fields": [
+            "FIELD-150",
+            "FIELD-151",
+            "FIELD-152"
+        ],
+        "affected_dbcols": [
+            "users.name",
+            "users.email"
+        ],
+        "affected_entities": [
+            "ENTITY-002"
+        ],
+        "affected_mutations": [
+            "MUTATION-004",
+            "MUTATION-005"
+        ],
+        "affected_flows": [
+            "FLOW-020"
+        ],
+        "affected_calculations": [
+            "CALC-029"
+        ],
+        "affected_rules": [
+            "RULE-029"
+        ],
+        "affected_ui_routes": [
+            "ROUTE-021"
+        ],
+        "affected_apis": [
+            "API-128",
+            "API-130"
+        ],
+        "offline_sync_impact": "NONE",
+        "print_hardware_impact": "Salary slip print template cannot read employee contractual pay.",
+        "tenant_impact": "TENANT_SCOPED",
+        "branch_impact": "BRANCH_SCOPED",
+        "financial_impact": "Payroll forecasting and upcoming wage liability reporting non-functional.",
+        "inventory_impact": "NONE",
+        "historical_integrity_impact": "DISCARDED_HR_TERMS",
+        "security_impact": "NONE",
+        "operator_impact": "HR operator re-enters employee salary repeatedly with zero persistence.",
+        "failure_scenario": "Manager configures cashier salary as Rs. 35,000/month; upon refresh, salary is blank.",
+        "existing_data_risk": "HISTORICAL_USERS_HAVE_NULL_SALARY",
+        "source_findings": [
+            "P1-GAP-014"
+        ],
+        "source_evidence": "docs/HBOS_PHASE_1_CERTIFICATION.md:L562, Frontend/src/views/Users/StaffModal.vue",
+        "dependency_gap_ids": [],
+        "blocking_gap_ids": [],
+        "severity": "MEDIUM",
+        "likelihood": "FREQUENT",
+        "detectability": "IMMEDIATE_OPERATOR_VISIBLE",
+        "data_repair_required": false,
+        "schema_migration_required": true,
+        "backend_change_required": true,
+        "frontend_change_required": true,
+        "sync_change_required": false,
+        "hardware_print_change_required": false,
+        "test_requirement": "User governance payroll fields FormRequest & CRUD tests",
+        "implementation_wave": "WAVE_3",
+        "phase_9_wave": "WAVE_3",
+        "foundation_blocker": false,
+        "rollback_requirement": "DROP_COLUMNS",
+        "acceptance_criteria": "Saving staff user with salary_amount and payment_cycle persists values and returns them on user profile API.",
+        "status": "OPEN_READY_FOR_REMEDIATION"
+    },
+    "GAP-030": {
+        "gap_id": "GAP-030",
+        "title": "Customer Secondary Phone & Alternate Contact Number Discarded Without Schema Persistence",
+        "root_cause": "CustomerModal.vue captures secondary_phone (FIELD-093), but customers table only contains single phone column.",
+        "domain": "CUSTOMER_AR",
+        "subdomain": "CUSTOMER_DIRECTORY",
+        "defect_type": "MISSING_SCHEMA_CAPABILITY",
+        "current_behavior": "Customer secondary phone number entered in UI form is discarded on submit.",
+        "expected_behavior": "customers table contains nullable secondary_phone column to store alternate customer contact.",
+        "affected_fields": [
+            "FIELD-093"
+        ],
+        "affected_dbcols": [
+            "customers.phone"
+        ],
+        "affected_entities": [
+            "ENTITY-023"
+        ],
+        "affected_mutations": [
+            "MUTATION-036",
+            "MUTATION-037"
+        ],
+        "affected_flows": [
+            "FLOW-007"
+        ],
+        "affected_calculations": [
+            "CALC-030"
+        ],
+        "affected_rules": [
+            "RULE-030"
+        ],
+        "affected_ui_routes": [
+            "ROUTE-015"
+        ],
+        "affected_apis": [
+            "API-072",
+            "API-074"
+        ],
+        "offline_sync_impact": "Customer sync payload carries secondary phone.",
+        "print_hardware_impact": "NONE",
+        "tenant_impact": "TENANT_SCOPED",
+        "branch_impact": "TENANT_WIDE",
+        "financial_impact": "NONE",
+        "inventory_impact": "NONE",
+        "historical_integrity_impact": "LOST_CONTACT_INFORMATION",
+        "security_impact": "NONE",
+        "operator_impact": "Operator cannot contact customer when primary phone is unreachable.",
+        "failure_scenario": "Operator adds customer secondary mobile number for Khata recovery; number vanishes after saving.",
+        "existing_data_risk": "NULL_SECONDARY_PHONE_FOR_EXISTING_CUSTOMERS",
+        "source_findings": [
+            "P1-GAP-015"
+        ],
+        "source_evidence": "docs/HBOS_PHASE_1_CERTIFICATION.md:L563, Frontend/src/views/Customers/CustomerModal.vue",
+        "dependency_gap_ids": [],
+        "blocking_gap_ids": [],
+        "severity": "LOW",
+        "likelihood": "OCCASIONAL",
+        "detectability": "IMMEDIATE_OPERATOR_VISIBLE",
+        "data_repair_required": false,
+        "schema_migration_required": true,
+        "backend_change_required": true,
+        "frontend_change_required": true,
+        "sync_change_required": true,
+        "hardware_print_change_required": false,
+        "test_requirement": "Customer secondary_phone validation & CRUD feature tests",
+        "implementation_wave": "WAVE_4",
+        "phase_9_wave": "WAVE_4",
+        "foundation_blocker": false,
+        "rollback_requirement": "DROP_COLUMN",
+        "acceptance_criteria": "Creating or updating customer with secondary_phone persists value in database and IndexedDB cache.",
+        "status": "OPEN_READY_FOR_REMEDIATION"
+    },
+    "GAP-031": {
+        "gap_id": "GAP-031",
+        "title": "Expense Category Monthly Budget Cap Limit Discarded Without Schema Persistence",
+        "root_cause": "ExpenseCategoryModal.vue captures monthly_budget (FIELD-140), but expense_categories table lacks monthly_budget column.",
+        "domain": "EXPENSES",
+        "subdomain": "BUDGETING",
+        "defect_type": "MISSING_SCHEMA_CAPABILITY",
+        "current_behavior": "Monthly budget limit entered in Expense Category form is discarded on submit.",
+        "expected_behavior": "expense_categories table contains nullable monthly_budget decimal column, enabling Budget vs Actual reporting.",
+        "affected_fields": [
+            "FIELD-140"
+        ],
+        "affected_dbcols": [
+            "expense_categories.name"
+        ],
+        "affected_entities": [
+            "ENTITY-030"
+        ],
+        "affected_mutations": [
+            "MUTATION-057",
+            "MUTATION-058"
+        ],
+        "affected_flows": [
+            "FLOW-012"
+        ],
+        "affected_calculations": [
+            "CALC-031"
+        ],
+        "affected_rules": [
+            "RULE-031"
+        ],
+        "affected_ui_routes": [
+            "ROUTE-019"
+        ],
+        "affected_apis": [
+            "API-101",
+            "API-102"
+        ],
+        "offline_sync_impact": "NONE",
+        "print_hardware_impact": "NONE",
+        "tenant_impact": "TENANT_SCOPED",
+        "branch_impact": "TENANT_WIDE",
+        "financial_impact": "Budget variance tracking and over-budget alert notifications impossible.",
+        "inventory_impact": "NONE",
+        "historical_integrity_impact": "NONE",
+        "security_impact": "NONE",
+        "operator_impact": "Store owner cannot enforce departmental budget ceilings.",
+        "failure_scenario": "Owner sets monthly utility budget to Rs. 50,000; value is not saved and no over-budget warnings trigger.",
+        "existing_data_risk": "NULL_MONTHLY_BUDGET_FOR_EXISTING_CATEGORIES",
+        "source_findings": [
+            "P1-GAP-016"
+        ],
+        "source_evidence": "docs/HBOS_PHASE_1_CERTIFICATION.md:L564, Frontend/src/views/Expenses/ExpenseCategoryModal.vue",
+        "dependency_gap_ids": [],
+        "blocking_gap_ids": [],
+        "severity": "LOW",
+        "likelihood": "OCCASIONAL",
+        "detectability": "IMMEDIATE_OPERATOR_VISIBLE",
+        "data_repair_required": false,
+        "schema_migration_required": true,
+        "backend_change_required": true,
+        "frontend_change_required": true,
+        "sync_change_required": false,
+        "hardware_print_change_required": false,
+        "test_requirement": "Expense category monthly_budget FormRequest & model tests",
+        "implementation_wave": "WAVE_4",
+        "phase_9_wave": "WAVE_4",
+        "foundation_blocker": false,
+        "rollback_requirement": "DROP_COLUMN",
+        "acceptance_criteria": "Expense category creation with monthly_budget stores decimal value and displays budget cap on expense summary dashboard.",
+        "status": "OPEN_READY_FOR_REMEDIATION"
+    }
+}

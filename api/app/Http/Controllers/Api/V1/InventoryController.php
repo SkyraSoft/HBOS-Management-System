@@ -37,6 +37,13 @@ class InventoryController extends Controller
         $userBranchId = $request->user() ? $request->user()->branch_id : null;
         $isOwner = $request->user() && $request->user()->hasRole('Business Owner');
 
+        // SRT-GAP-014 Stock intelligence endpoint integration
+        if ($request->has('intelligence') || $request->get('action') === 'intelligence' || $request->boolean('reorder_analytics')) {
+            $branchScope = (!$isOwner && $userBranchId) ? $userBranchId : ($request->has('branch_id') ? intval($request->branch_id) : null);
+            $days = $request->has('days') ? intval($request->days) : 30;
+            return response()->json(app(\App\Services\StockIntelligenceService::class)->getStockIntelligenceSummary($businessId, $branchScope, $days));
+        }
+
         $query = BranchInventory::with(['product', 'branch']);
 
         if ($businessId) {
@@ -121,7 +128,7 @@ class InventoryController extends Controller
             'branch_id' => 'required|integer',
             'product_id' => 'required|integer',
             'type' => 'required|string|in:adjustment_in,adjustment_out,damage',
-            'quantity' => 'required|integer|min:1',
+            'quantity' => 'required|numeric|min:0.001',
             'notes' => 'required|string|min:3',
             'unit_cost' => 'nullable|numeric',
         ]);
@@ -135,12 +142,18 @@ class InventoryController extends Controller
                 return response()->json(['message' => 'Cannot adjust inventory for a branch you are not assigned to.'], 403);
             }
 
+            $quantity = round(floatval($request->quantity), 3);
+            $product = \App\Models\Product::where('business_id', $businessId)->find($request->product_id);
+            if ($product && !$product->allow_fractional && floor($quantity) != $quantity) {
+                return response()->json(['error' => "Product '{$product->name}' is a discrete item and cannot have fractional adjustments."], 422);
+            }
+
             $movement = $this->inventoryService->adjustStock([
                 'business_id' => $businessId,
                 'branch_id' => intval($request->branch_id),
                 'product_id' => intval($request->product_id),
                 'type' => $request->type,
-                'quantity' => intval($request->quantity),
+                'quantity' => $quantity,
                 'notes' => $request->notes,
                 'unit_cost' => $request->unit_cost,
                 'performed_by' => $request->user() ? $request->user()->id : null,
@@ -149,14 +162,14 @@ class InventoryController extends Controller
             app(\App\Services\AuditService::class)->log(
                 logName: 'inventory',
                 event: 'updated',
-                description: "Stock adjustment ({$request->type}) of qty {$request->quantity} on product #{$request->product_id}",
+                description: "Stock adjustment ({$request->type}) of qty {$quantity} on product #{$request->product_id}",
                 subject: $movement,
                 properties: [
                     'action' => 'inventory_adjustment',
                     'product_id' => (int) $request->product_id,
                     'branch_id' => (int) $request->branch_id,
                     'type' => $request->type,
-                    'quantity' => (int) $request->quantity,
+                    'quantity' => $quantity,
                     'notes' => $request->notes,
                 ],
                 branchId: (int) $request->branch_id,

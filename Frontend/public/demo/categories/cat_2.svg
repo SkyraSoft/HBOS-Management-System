@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <rect width="128" height="128" rx="20" fill="#FFF3E0" stroke="#E65100" stroke-width="2" stroke-opacity="0.3"/>
+  <g transform="translate(0, 0)">
+    <path d="M40 50 L88 50 L84 95 C84 98 80 102 76 102 L52 102 C48 102 44 98 44 95 Z" fill="#FFE0B2" stroke="#E65100" stroke-width="3"/>
+             <path d="M38 50 Q64 42 90 50 L88 58 Q64 50 40 58 Z" fill="#FFB74D"/>
+             <circle cx="64" cy="76" r="14" fill="#FFFFFF" opacity="0.8"/>
+             <text x="64" y="81" font-family="sans-serif" font-size="12" font-weight="900" text-anchor="middle" fill="#E65100">ATTA</text>
+  </g>
+</svg>

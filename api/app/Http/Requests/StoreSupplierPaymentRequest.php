@@ -19,6 +19,7 @@ class StoreSupplierPaymentRequest extends FormRequest
             'payment_method' => 'nullable|string|max:50',
             'notes' => 'nullable|string',
             'financial_account_id' => 'nullable|integer',
+            'purchase_id' => 'nullable|integer',
             'idempotency_key' => 'nullable|string|max:100',
         ];
     }

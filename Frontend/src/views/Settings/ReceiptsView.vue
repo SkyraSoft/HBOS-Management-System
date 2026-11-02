@@ -1,6 +1,9 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import api from '../../api'
+import { useRetailStore } from '@/stores/retail'
+
+const retailStore = useRetailStore()
 
 const settings = ref({
   storeName: 'HBOS RETAIL STORE',
@@ -13,13 +16,21 @@ const settings = ref({
   showBarcode: true,
   showCashier: true,
   showSku: true,
-  footerNote: 'Thank you for your business! Goods once sold can be exchanged within 7 days with valid receipt.',
+  receiptFooter: '',
+  footerNote: '',
+  returnPolicy: '',
   whatsappTemplate: 'Thank you for shopping with {store_name}!\n\nInvoice: #{invoice_number}\nDate: {date}\nItems: {item_count} items\nTotal: {total_amount}\n\nFor support, call {phone}.'
 })
 
 const isSaving = ref(false)
 const toastMsg = ref('')
 const isToastOpen = ref(false)
+
+// Barcode Label Sheet Generator State
+const selectedLabelProduct = ref(null)
+const labelQuantity = ref(24)
+const labelGridDensity = ref(24)
+const generatedLabels = ref([])
 
 const showToast = (msg) => {
   toastMsg.value = msg
@@ -29,29 +40,42 @@ const showToast = (msg) => {
 
 const loadSettings = async () => {
   try {
+    const localPaper = localStorage.getItem('hbos_receipt_paper_size')
+    if (localPaper) settings.value.paperSize = localPaper
+
     const res = await api.get('/settings')
     const data = res.data
     if (data.receipt_settings && typeof data.receipt_settings === 'object') {
       settings.value = { ...settings.value, ...data.receipt_settings }
     }
     if (data.receipt_header) settings.value.storeTagline = data.receipt_header
-    if (data.receipt_footer) settings.value.footerNote = data.receipt_footer
+    if (data.receipt_footer) {
+      settings.value.footerNote = data.receipt_footer
+      settings.value.receiptFooter = data.receipt_footer
+    }
   } catch (e) {
     console.error('Failed to load server settings:', e)
   }
 }
 
-onMounted(() => {
-  loadSettings()
+onMounted(async () => {
+  await retailStore.fetchProducts()
+  await loadSettings()
+  if (retailStore.products.length > 0 && !selectedLabelProduct.value) {
+    selectedLabelProduct.value = retailStore.products[0].id
+    generateLabelSheet()
+  }
 })
 
 const saveSettings = async () => {
   isSaving.value = true
   try {
+    localStorage.setItem('hbos_receipt_paper_size', settings.value.paperSize || '80mm')
+    localStorage.removeItem('hbos_receipt_return_policy')
     await api.post('/settings', {
       settings: {
         receipt_header: settings.value.storeTagline || settings.value.storeName,
-        receipt_footer: settings.value.footerNote,
+        receipt_footer: settings.value.returnPolicy || settings.value.receiptFooter || settings.value.footerNote || '',
         show_tax_number: !!settings.value.taxNumber,
         receipt_settings: settings.value
       }
@@ -77,11 +101,43 @@ const resetDefaults = () => {
       showBarcode: true,
       showCashier: true,
       showSku: true,
-      footerNote: 'Thank you for your business! Goods once sold can be exchanged within 7 days with valid receipt.',
+      receiptFooter: '',
+      footerNote: '',
+      returnPolicy: '',
       whatsappTemplate: 'Thank you for shopping with {store_name}!\n\nInvoice: #{invoice_number}\nDate: {date}\nItems: {item_count} items\nTotal: {total_amount}\n\nFor support, call {phone}.'
     }
     saveSettings()
   }
+}
+
+const generateLabelSheet = () => {
+  if (!selectedLabelProduct.value) return
+  const prod = retailStore.products.find(p => String(p.id) === String(selectedLabelProduct.value))
+  if (!prod) return
+  const qty = Math.max(1, parseInt(labelQuantity.value, 10) || 1)
+  const labels = []
+  for (let i = 0; i < qty; i++) {
+    labels.push({
+      id: `${prod.id}_${i}`,
+      name: prod.name,
+      sku: prod.sku || `SKU-${prod.id}`,
+      barcode: prod.barcode || prod.sku || `PROD-${prod.id}`,
+      price: prod.price || 0
+    })
+  }
+  generatedLabels.value = labels
+}
+
+const printLabelSheet = () => {
+  window.print()
+}
+
+const generateBarcodeSvg = (code) => {
+  if (!code) return ''
+  return `<svg viewBox="0 0 120 28" width="100%" height="24" xmlns="http://www.w3.org/2000/svg">
+    <rect x="0" y="0" width="120" height="28" fill="transparent"/>
+    <path d="M4 2h2v24H4zM8 2h1v24H8zM11 2h3v24H11zM16 2h2v24H16zM20 2h1v24H20zM23 2h3v24H23zM28 2h2v24H28zM32 2h1v24H32zM35 2h3v24H35zM40 2h2v24H40zM44 2h1v24H44zM47 2h3v24H47zM52 2h2v24H52zM56 2h1v24H56zM59 2h3v24H59zM64 2h2v24H64zM68 2h1v24H68zM71 2h3v24H71zM76 2h2v24H76zM80 2h1v24H80zM83 2h3v24H83zM88 2h2v24H88zM92 2h1v24H92zM95 2h3v24H95zM100 2h2v24H100zM104 2h1v24H104zM107 2h3v24H107zM112 2h2v24H112z" fill="#000"/>
+  </svg>`
 }
 </script>
 
@@ -186,6 +242,56 @@ const resetDefaults = () => {
             <div class="col-12">
               <label class="form-label small fw-semibold text-secondary">Return / Exchange Policy Text</label>
               <textarea v-model="settings.returnPolicy" rows="2" class="form-control form-control-sm rounded-3"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- BARCODE LABEL SHEET GENERATOR (PHASE 4 SRT-GAP-011) -->
+        <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h2 class="fs-6 fw-bold text-dark m-0 d-flex align-items-center gap-2">
+              <i class="bi bi-upc-scan text-primary"></i> Barcode Label Sheet Generator
+            </h2>
+            <button class="btn btn-outline-primary btn-sm rounded-3 fw-semibold" @click="printLabelSheet" :disabled="generatedLabels.length === 0" type="button">
+              <i class="bi bi-printer me-1"></i> Print Label Sheet
+            </button>
+          </div>
+          <p class="text-muted small mb-3">Generate printable sticker label sheets for shelf or product tagging using existing catalog barcodes.</p>
+
+          <div class="row g-3 align-items-end mb-3">
+            <div class="col-md-6">
+              <label class="form-label small fw-semibold text-secondary">Select Product from Catalog</label>
+              <select v-model="selectedLabelProduct" @change="generateLabelSheet" class="form-select form-select-sm rounded-3">
+                <option :value="null" disabled>Choose a product...</option>
+                <option v-for="prod in retailStore.products" :key="prod.id" :value="prod.id">
+                  {{ prod.name }} (SKU: {{ prod.sku || 'N/A' }}) - Rs. {{ Number(prod.price || 0).toLocaleString() }}
+                </option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label small fw-semibold text-secondary">Label Quantity</label>
+              <input type="number" min="1" max="100" v-model.number="labelQuantity" @input="generateLabelSheet" class="form-control form-control-sm rounded-3" />
+            </div>
+            <div class="col-md-3">
+              <button class="btn btn-primary btn-sm w-100 rounded-3 fw-semibold" @click="generateLabelSheet" type="button">
+                <i class="bi bi-grid-3x3 me-1"></i> Generate Grid
+              </button>
+            </div>
+          </div>
+
+          <!-- Label Sheet Preview Grid -->
+          <div v-if="generatedLabels.length > 0" class="label-sheet-container border rounded-3 p-3 bg-light">
+            <div class="d-flex justify-content-between align-items-center small fw-semibold text-secondary mb-2">
+              <span>Sticker Sheet Preview ({{ generatedLabels.length }} Labels):</span>
+              <span class="badge bg-secondary-subtle text-secondary">A4 Compatible Grid</span>
+            </div>
+            <div class="label-grid-preview" id="labelPrintArea">
+              <div v-for="lbl in generatedLabels" :key="lbl.id" class="barcode-sticker-card bg-white border rounded-2 p-2 text-center shadow-xs">
+                <div class="sticker-product-name fw-bold text-truncate" :title="lbl.name" style="font-size: 11px;">{{ lbl.name }}</div>
+                <div class="sticker-price fw-bold text-primary" style="font-size: 11px;">Rs. {{ Number(lbl.price).toLocaleString('en-PK') }}</div>
+                <div class="sticker-barcode-svg my-1" v-html="generateBarcodeSvg(lbl.barcode)"></div>
+                <div class="sticker-barcode-text font-monospace text-muted" style="font-size: 9.5px; letter-spacing: 1px;">{{ lbl.barcode }}</div>
+              </div>
             </div>
           </div>
         </div>
@@ -347,5 +453,41 @@ const resetDefaults = () => {
 .toast-custom-show {
   transform: translateY(0);
   opacity: 1;
+}
+
+.label-grid-preview {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 10px;
+  max-height: 380px;
+  overflow-y: auto;
+  padding: 4px;
+}
+
+.barcode-sticker-card {
+  min-height: 90px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #labelPrintArea, #labelPrintArea * {
+    visibility: visible;
+  }
+  #labelPrintArea {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    padding: 10mm;
+  }
 }
 </style>

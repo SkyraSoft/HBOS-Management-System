@@ -649,12 +649,11 @@ const formatMoney = (val) => {
 
 // DYNAMIC COMPUTED KPIS
 const salesCount = computed(() => {
-  return rawSales.value.length || 142;
+  return rawSales.value.length;
 });
 
 const kpiTotalSales = computed(() => {
-  const sum = rawSales.value.reduce((acc, s) => acc + (Number(s.total_amount || s.total || s.net_total || 0)), 0);
-  return sum > 0 ? sum : 2850000;
+  return rawSales.value.reduce((acc, s) => acc + (Number(s.total_amount || s.total || s.net_total || 0)), 0);
 });
 
 const kpiGrossProfit = computed(() => {
@@ -662,8 +661,7 @@ const kpiGrossProfit = computed(() => {
 });
 
 const kpiTotalExpenses = computed(() => {
-  const sum = rawExpenses.value.reduce((acc, e) => acc + (Number(e.amount || 0)), 0);
-  return sum > 0 ? sum : 185400;
+  return rawExpenses.value.reduce((acc, e) => acc + (Number(e.amount || 0)), 0);
 });
 
 const kpiNetProfit = computed(() => {
@@ -671,11 +669,11 @@ const kpiNetProfit = computed(() => {
 });
 
 const grossMarginPercentage = computed(() => {
-  return kpiTotalSales.value > 0 ? ((kpiGrossProfit.value / kpiTotalSales.value) * 100).toFixed(1) : '21.9';
+  return kpiTotalSales.value > 0 ? ((kpiGrossProfit.value / kpiTotalSales.value) * 100).toFixed(1) : '0.0';
 });
 
 const expenseRatio = computed(() => {
-  return kpiTotalSales.value > 0 ? ((kpiTotalExpenses.value / kpiTotalSales.value) * 100).toFixed(1) : '6.5';
+  return kpiTotalSales.value > 0 ? ((kpiTotalExpenses.value / kpiTotalSales.value) * 100).toFixed(1) : '0.0';
 });
 
 const netMarginPercentage = computed(() => {

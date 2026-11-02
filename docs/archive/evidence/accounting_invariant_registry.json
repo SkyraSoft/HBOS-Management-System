@@ -1,0 +1,427 @@
+{
+    "INV-001": {
+        "invariant_id": "INV-001",
+        "name": "Sale Grand Total Arithmetic Invariant",
+        "domain": "SALES_POS",
+        "equation": "sales.total_amount = sales.subtotal - sales.discount_amount + sales.tax_amount",
+        "affected_entities": [
+            "ENTITY-020"
+        ],
+        "affected_flows": [
+            "FLOW-001",
+            "FLOW-002",
+            "FLOW-003",
+            "FLOW-004",
+            "FLOW-005",
+            "FLOW-007"
+        ],
+        "authoritative_data": "BACKEND_SERVICE (SaleService)",
+        "materialized_cache": "DBCOL-180 (sales.total_amount)",
+        "verification_method": "SQL Assertion: SELECT count(*) FROM sales WHERE ABS(total_amount - (subtotal - discount_amount + tax_amount)) > 0.01",
+        "current_result": "HOLDS_BY_IMPLEMENTATION",
+        "violation_mechanism": "None under normal controller flow; guarded by atomic backend calculation",
+        "related_p1_gap": null,
+        "related_p2_gap": null,
+        "related_p3_gap": null,
+        "p4_gap": null,
+        "evidence": "api/app/Services/SaleService.php:106",
+        "certification": "CERTIFIED_COMPLETE"
+    },
+    "INV-002": {
+        "invariant_id": "INV-002",
+        "name": "Sale Settlement Balance Invariant",
+        "domain": "SALES_POS",
+        "equation": "sales.total_amount = sales.paid_amount + sales.due_amount",
+        "affected_entities": [
+            "ENTITY-020"
+        ],
+        "affected_flows": [
+            "FLOW-001",
+            "FLOW-002",
+            "FLOW-003",
+            "FLOW-004",
+            "FLOW-005"
+        ],
+        "authoritative_data": "BACKEND_SERVICE (SaleService)",
+        "materialized_cache": "DBCOL-181, DBCOL-182",
+        "verification_method": "SQL Assertion: SELECT count(*) FROM sales WHERE ABS(total_amount - (paid_amount + due_amount)) > 0.01",
+        "current_result": "HOLDS_BY_IMPLEMENTATION",
+        "violation_mechanism": "None in standard creation",
+        "related_p1_gap": null,
+        "related_p2_gap": null,
+        "related_p3_gap": null,
+        "p4_gap": null,
+        "evidence": "api/app/Services/SaleService.php:112",
+        "certification": "CERTIFIED_COMPLETE"
+    },
+    "INV-003": {
+        "invariant_id": "INV-003",
+        "name": "Customer Receivable Ledger Reconciliation Invariant",
+        "domain": "CUSTOMER_KHATA_AR",
+        "equation": "customers.balance = opening_balance + SUM(khata_debits) - SUM(khata_credits)",
+        "affected_entities": [
+            "ENTITY-025",
+            "ENTITY-026"
+        ],
+        "affected_flows": [
+            "FLOW-003",
+            "FLOW-004",
+            "FLOW-006",
+            "FLOW-013",
+            "FLOW-015"
+        ],
+        "authoritative_data": "khata_transactions event history",
+        "materialized_cache": "DBCOL-209 (customers.balance)",
+        "verification_method": "CustomerAccountService@recalculateBalance",
+        "current_result": "CAN_DRIFT",
+        "violation_mechanism": "Modifying customer_id on posted sale updates sale header but skips Khata ledger compensation (P3-GAP-002 / P4-GAP-002)",
+        "related_p1_gap": "P1-GAP-003",
+        "related_p2_gap": "P2-GAP-006",
+        "related_p3_gap": "P3-GAP-002",
+        "p4_gap": "P4-GAP-002",
+        "evidence": "api/app/Services/CustomerAccountService.php:52, api/app/Http/Controllers/Api/V1/SaleController.php@update",
+        "certification": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "INV-004": {
+        "invariant_id": "INV-004",
+        "name": "Supplier Payable Reconciliation Invariant",
+        "domain": "SUPPLIER_AP",
+        "equation": "suppliers.balance = opening_balance + SUM(purchases.due_amount) - SUM(supplier_payments.amount)",
+        "affected_entities": [
+            "ENTITY-027",
+            "ENTITY-028",
+            "ENTITY-030"
+        ],
+        "affected_flows": [
+            "FLOW-008",
+            "FLOW-010",
+            "FLOW-011",
+            "FLOW-016"
+        ],
+        "authoritative_data": "purchases and supplier_payments event records",
+        "materialized_cache": "DBCOL-250 (suppliers.balance)",
+        "verification_method": "SupplierBalanceService@reconcileBalance",
+        "current_result": "HOLDS_WITH_LIMITATIONS",
+        "violation_mechanism": "Direct database edits or opening balance modifications without creating supplier payment event rows",
+        "related_p1_gap": "P1-GAP-008",
+        "related_p2_gap": "P2-GAP-015",
+        "related_p3_gap": "P3-GAP-007",
+        "p4_gap": "P4-GAP-007",
+        "evidence": "api/app/Services/SupplierBalanceService.php:44",
+        "certification": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "INV-005": {
+        "invariant_id": "INV-005",
+        "name": "Financial Account Perpetual Ledger Reconciliation",
+        "domain": "BANKING_FINANCE",
+        "equation": "financial_accounts.balance = opening_balance + SUM(account_movements.credit) - SUM(account_movements.debit)",
+        "affected_entities": [
+            "ENTITY-034",
+            "ENTITY-035"
+        ],
+        "affected_flows": [
+            "FLOW-002",
+            "FLOW-005",
+            "FLOW-006",
+            "FLOW-009",
+            "FLOW-011",
+            "FLOW-017",
+            "FLOW-018",
+            "FLOW-021",
+            "FLOW-022",
+            "FLOW-023"
+        ],
+        "authoritative_data": "account_movements ledger records",
+        "materialized_cache": "DBCOL-332 (financial_accounts.balance)",
+        "verification_method": "AccountMovementService@recalculateBalance",
+        "current_result": "HOLDS_WITH_LIMITATIONS",
+        "violation_mechanism": "Expense creation allowing null financial_account_id creates unallocated cash disbursal; bank sale void missing reverse debit movement",
+        "related_p1_gap": "P1-GAP-012",
+        "related_p2_gap": "P2-GAP-016",
+        "related_p3_gap": "P3-GAP-010",
+        "p4_gap": "P4-GAP-003",
+        "evidence": "api/app/Services/AccountMovementService.php:38",
+        "certification": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "INV-006": {
+        "invariant_id": "INV-006",
+        "name": "Branch Inventory Stock Ledger Consistency Invariant",
+        "domain": "INVENTORY",
+        "equation": "branch_inventories.quantity_on_hand = SUM(inventory_movements.quantity_change)",
+        "affected_entities": [
+            "ENTITY-018",
+            "ENTITY-019"
+        ],
+        "affected_flows": [
+            "FLOW-001",
+            "FLOW-002",
+            "FLOW-003",
+            "FLOW-008",
+            "FLOW-012",
+            "FLOW-014",
+            "FLOW-016",
+            "FLOW-019",
+            "FLOW-020"
+        ],
+        "authoritative_data": "inventory_movements ledger rows",
+        "materialized_cache": "DBCOL-130 (branch_inventories.quantity_on_hand)",
+        "verification_method": "InventoryService@getBranchBalance",
+        "current_result": "CAN_DRIFT",
+        "violation_mechanism": "Direct stock quantity mutations on product master can bypass inventory_movements ledger posting",
+        "related_p1_gap": "P1-GAP-002",
+        "related_p2_gap": "P2-GAP-004",
+        "related_p3_gap": "P3-GAP-011",
+        "p4_gap": null,
+        "evidence": "api/app/Services/InventoryService.php:64, api/app/Http/Controllers/Api/V1/ProductController.php",
+        "certification": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "INV-007": {
+        "invariant_id": "INV-007",
+        "name": "Inter-Account Transfer Balanced Dual-Sided Invariant",
+        "domain": "BANKING_FINANCE",
+        "equation": "source_account.debit_amount = destination_account.credit_amount",
+        "affected_entities": [
+            "ENTITY-034",
+            "ENTITY-035"
+        ],
+        "affected_flows": [
+            "FLOW-018"
+        ],
+        "authoritative_data": "account_movements where movement_type=\"transfer\"",
+        "materialized_cache": "DBCOL-332 on both financial accounts",
+        "verification_method": "SQL Assertion: SELECT count(*) FROM account_movements t1 JOIN account_movements t2 ON t1.reference_id = t2.reference_id WHERE t1.movement_type = \"transfer\" AND t1.debit_amount != t2.credit_amount",
+        "current_result": "HOLDS_BY_IMPLEMENTATION",
+        "violation_mechanism": "None; posted atomically within DB transaction",
+        "related_p1_gap": null,
+        "related_p2_gap": null,
+        "related_p3_gap": null,
+        "p4_gap": null,
+        "evidence": "api/app/Services/AccountMovementService.php:84",
+        "certification": "CERTIFIED_COMPLETE"
+    },
+    "INV-008": {
+        "invariant_id": "INV-008",
+        "name": "Sale Return Quantity Upper Bound Invariant",
+        "domain": "RETURNS_REFUNDS",
+        "equation": "SUM(sale_return_items.quantity) <= sale_items.quantity",
+        "affected_entities": [
+            "ENTITY-021",
+            "ENTITY-023"
+        ],
+        "affected_flows": [
+            "FLOW-012",
+            "FLOW-013"
+        ],
+        "authoritative_data": "sale_items original sold quantity",
+        "materialized_cache": "NONE",
+        "verification_method": "SaleService@processReturn validation guard",
+        "current_result": "HOLDS_BY_IMPLEMENTATION",
+        "violation_mechanism": "Guarded by backend check: remaining_returnable_qty >= requested_return_qty",
+        "related_p1_gap": null,
+        "related_p2_gap": "P2-GAP-008",
+        "related_p3_gap": "P3-GAP-008",
+        "p4_gap": null,
+        "evidence": "api/app/Services/SaleService.php:218",
+        "certification": "CERTIFIED_COMPLETE"
+    },
+    "INV-009": {
+        "invariant_id": "INV-009",
+        "name": "Purchase Bill Arithmetic Invariant",
+        "domain": "PROCUREMENT",
+        "equation": "purchases.total_amount = purchases.subtotal - purchases.discount_amount + purchases.tax_amount + purchases.shipping_cost",
+        "affected_entities": [
+            "ENTITY-028"
+        ],
+        "affected_flows": [
+            "FLOW-008",
+            "FLOW-009",
+            "FLOW-010"
+        ],
+        "authoritative_data": "BACKEND_SERVICE (PurchaseService)",
+        "materialized_cache": "DBCOL-261 (purchases.total_amount)",
+        "verification_method": "SQL Assertion: SELECT count(*) FROM purchases WHERE ABS(total_amount - (subtotal - discount_amount + tax_amount + shipping_cost)) > 0.01",
+        "current_result": "HOLDS_BY_IMPLEMENTATION",
+        "violation_mechanism": "None in standard flow",
+        "related_p1_gap": null,
+        "related_p2_gap": null,
+        "related_p3_gap": null,
+        "p4_gap": null,
+        "evidence": "api/app/Services/PurchaseService.php:74",
+        "certification": "CERTIFIED_COMPLETE"
+    },
+    "INV-010": {
+        "invariant_id": "INV-010",
+        "name": "Purchase Freight Landed Cost Incorporation Invariant",
+        "domain": "INVENTORY_VALUATION",
+        "equation": "inventory_unit_cost = purchase_item.unit_cost + (purchases.shipping_cost / total_quantity)",
+        "affected_entities": [
+            "ENTITY-014",
+            "ENTITY-028",
+            "ENTITY-029"
+        ],
+        "affected_flows": [
+            "FLOW-008",
+            "FLOW-009",
+            "FLOW-010"
+        ],
+        "authoritative_data": "purchases.shipping_cost & purchase_items lines",
+        "materialized_cache": "DBCOL-110 (products.cost_price)",
+        "verification_method": "Compare products.cost_price with landed unit acquisition cost",
+        "current_result": "KNOWN_VIOLATION_PATH",
+        "violation_mechanism": "InventoryService calculates product cost price strictly from purchase_items.unit_cost, ignoring shipping_cost (P3-GAP-005 / P4-GAP-005)",
+        "related_p1_gap": "P1-GAP-006",
+        "related_p2_gap": "P2-GAP-009",
+        "related_p3_gap": "P3-GAP-005",
+        "p4_gap": "P4-GAP-005",
+        "evidence": "api/app/Services/InventoryService.php:185",
+        "certification": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "INV-011": {
+        "invariant_id": "INV-011",
+        "name": "Cash Ledger Running Balance Invariant",
+        "domain": "CASH_MANAGEMENT",
+        "equation": "cash_ledgers.balance = opening_balance + SUM(cash_ledgers.inflow) - SUM(cash_ledgers.outflow)",
+        "affected_entities": [
+            "ENTITY-037"
+        ],
+        "affected_flows": [
+            "FLOW-001",
+            "FLOW-005",
+            "FLOW-006",
+            "FLOW-012"
+        ],
+        "authoritative_data": "cash_ledgers event history",
+        "materialized_cache": "DBCOL-373 (cash_ledgers.balance)",
+        "verification_method": "CashLedgerService@getExpectedBalance",
+        "current_result": "HOLDS_BY_IMPLEMENTATION",
+        "violation_mechanism": "None under standard cash drawer mutations",
+        "related_p1_gap": null,
+        "related_p2_gap": null,
+        "related_p3_gap": null,
+        "p4_gap": null,
+        "evidence": "api/app/Services/CashLedgerService.php:42",
+        "certification": "CERTIFIED_COMPLETE"
+    },
+    "INV-012": {
+        "invariant_id": "INV-012",
+        "name": "Non-Negative Inventory Stock Constraint",
+        "domain": "INVENTORY",
+        "equation": "branch_inventories.quantity_on_hand >= 0",
+        "affected_entities": [
+            "ENTITY-018"
+        ],
+        "affected_flows": [
+            "FLOW-001",
+            "FLOW-016",
+            "FLOW-019"
+        ],
+        "authoritative_data": "Physical stock count",
+        "materialized_cache": "DBCOL-130",
+        "verification_method": "SQL Assertion: SELECT count(*) FROM branch_inventories WHERE quantity_on_hand < 0",
+        "current_result": "CAN_DRIFT",
+        "violation_mechanism": "Purchase cancellation decrements stock even if units were already sold via POS (P3-GAP-009 / P4-GAP-009)",
+        "related_p1_gap": null,
+        "related_p2_gap": "P2-GAP-014",
+        "related_p3_gap": "P3-GAP-009",
+        "p4_gap": "P4-GAP-009",
+        "evidence": "api/app/Services/PurchaseService.php:145",
+        "certification": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "INV-013": {
+        "invariant_id": "INV-013",
+        "name": "Customer Credit Limit Enforcement Invariant",
+        "domain": "CUSTOMER_KHATA_AR",
+        "equation": "customers.balance <= customers.credit_limit (when credit_limit > 0)",
+        "affected_entities": [
+            "ENTITY-025"
+        ],
+        "affected_flows": [
+            "FLOW-003",
+            "FLOW-004"
+        ],
+        "authoritative_data": "customers.credit_limit parameter",
+        "materialized_cache": "DBCOL-209 vs DBCOL-210",
+        "verification_method": "CustomerAccountService credit check",
+        "current_result": "HOLDS_WITH_LIMITATIONS",
+        "violation_mechanism": "Offline POS transactions bypass real-time customer balance lookup and can exceed credit limit",
+        "related_p1_gap": null,
+        "related_p2_gap": "P2-GAP-001",
+        "related_p3_gap": "P3-GAP-014",
+        "p4_gap": "P4-GAP-014",
+        "evidence": "api/app/Services/CustomerAccountService.php:88, src/sync/syncEngine.js:140",
+        "certification": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "INV-014": {
+        "invariant_id": "INV-014",
+        "name": "Sale Void Inventory Reversal Invariant",
+        "domain": "SALES_POS",
+        "equation": "restored_stock_quantity = original_sale_item.quantity",
+        "affected_entities": [
+            "ENTITY-018",
+            "ENTITY-019",
+            "ENTITY-020"
+        ],
+        "affected_flows": [
+            "FLOW-014"
+        ],
+        "authoritative_data": "sale_items lines",
+        "materialized_cache": "DBCOL-130",
+        "verification_method": "SaleService@cancelSale inventory movement check",
+        "current_result": "HOLDS_BY_IMPLEMENTATION",
+        "violation_mechanism": "None; stock is restored with movement_type=\"sale_cancel\"",
+        "related_p1_gap": null,
+        "related_p2_gap": null,
+        "related_p3_gap": null,
+        "p4_gap": null,
+        "evidence": "api/app/Services/SaleService.php:180",
+        "certification": "CERTIFIED_COMPLETE"
+    },
+    "INV-015": {
+        "invariant_id": "INV-015",
+        "name": "Expense Financial Allocation Invariant",
+        "domain": "EXPENSES",
+        "equation": "expenses.amount = account_movements.debit_amount (or cash_ledgers.outflow)",
+        "affected_entities": [
+            "ENTITY-031",
+            "ENTITY-034",
+            "ENTITY-035"
+        ],
+        "affected_flows": [
+            "FLOW-023"
+        ],
+        "authoritative_data": "expenses.amount",
+        "materialized_cache": "financial_accounts.balance",
+        "verification_method": "SQL Assertion check on unallocated expenses",
+        "current_result": "CAN_DRIFT",
+        "violation_mechanism": "Nullable financial_account_id on cash expense creates unallocated expense record (P3-GAP-013 / P4-GAP-013)",
+        "related_p1_gap": "P1-GAP-012",
+        "related_p2_gap": "P2-GAP-016",
+        "related_p3_gap": "P3-GAP-013",
+        "p4_gap": "P4-GAP-013",
+        "evidence": "api/app/Services/ExpenseService.php:54",
+        "certification": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "INV-016": {
+        "invariant_id": "INV-016",
+        "name": "Split-Tender Payment Allocation Completeness Invariant",
+        "domain": "SALES_POS",
+        "equation": "sales.paid_amount = SUM(tender_allocations.amount)",
+        "affected_entities": [
+            "ENTITY-020"
+        ],
+        "affected_flows": [
+            "FLOW-005"
+        ],
+        "authoritative_data": "POS tender breakdown modal",
+        "materialized_cache": "sales.paid_amount",
+        "verification_method": "Tender breakdown persistence audit",
+        "current_result": "CAN_DRIFT",
+        "violation_mechanism": "Backend stores aggregate paid_amount without child payment rows linking exact split values to cash drawer vs bank account (P3-GAP-003 / P4-GAP-003)",
+        "related_p1_gap": "P1-GAP-005",
+        "related_p2_gap": "P2-GAP-006",
+        "related_p3_gap": "P3-GAP-003",
+        "p4_gap": "P4-GAP-003",
+        "evidence": "api/app/Services/SaleService.php:108",
+        "certification": "CERTIFIED_WITH_KNOWN_GAP"
+    }
+}

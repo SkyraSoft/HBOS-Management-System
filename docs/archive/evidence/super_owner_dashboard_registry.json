@@ -1,0 +1,58 @@
+[
+  {
+    "widget_id": "CONSOLIDATED_REVENUE_KPIS",
+    "scope_filter": "ALL_BRANCHES OR SELECTED_BRANCH",
+    "metrics": [
+      "Total Gross Sales",
+      "Net Sales (after returns)",
+      "Total Cost of Goods Sold (COGS)",
+      "Gross Profit Margin (%)",
+      "Net Profit (after operating expenses)"
+    ],
+    "time_periods": ["Today", "Yesterday", "This Week", "This Month", "Last Month", "Custom Date Range"]
+  },
+  {
+    "widget_id": "BRANCH_COMPARISON_MATRIX",
+    "scope_filter": "ALL_BRANCHES",
+    "metrics": [
+      "Branch Revenue Ranking",
+      "Average Transaction Value (ATV)",
+      "Sales Volume (Ticket Count)",
+      "Branch Profit Contribution (%)"
+    ],
+    "visualization": "Comparative Bar Chart and Performance Table"
+  },
+  {
+    "widget_id": "CONSOLIDATED_INVENTORY_EXPOSURE",
+    "scope_filter": "ALL_BRANCHES OR SELECTED_BRANCH",
+    "metrics": [
+      "Total Stock Valuation (Cost & Retail)",
+      "Critical Low Stock Count across all branches",
+      "Out of Stock SKU Count",
+      "Inter-branch Stock Discrepancies"
+    ],
+    "action_link": "/inventory"
+  },
+  {
+    "widget_id": "FINANCIAL_AND_EXPOSURE_SUMMARY",
+    "scope_filter": "BUSINESS_TENANT_WIDE",
+    "metrics": [
+      "Total Khata Receivables Outstanding",
+      "Total Supplier Payables Outstanding",
+      "Total Liquid Cash & Bank Balances across accounts",
+      "Net Working Capital"
+    ],
+    "action_link": "/khata and /supplierpayable"
+  },
+  {
+    "widget_id": "WORKFORCE_AND_ACTIVITY_FEED",
+    "scope_filter": "ALL_BRANCHES",
+    "metrics": [
+      "Active Logged-in Staff Count",
+      "Recent High-Value Sales",
+      "Recent Returns & Cancellations",
+      "Recent Stock Adjustments & Voids"
+    ],
+    "action_link": "/settings?tab=audit"
+  }
+]

@@ -12,28 +12,32 @@ use Illuminate\Validation\ValidationException;
 class AccountMovementService
 {
     /**
-     * Calculate authoritative raw account balance:
+     * Calculate authoritative raw account balance using fixed-decimal BCMath:
      * opening_balance + SUM(posted inflows) - SUM(posted outflows)
      */
-    public function calculateBalance(FinancialAccount $account): float
+    public function calculateBalance(FinancialAccount $account): string
     {
-        $inflows = (float) AccountMovement::where('account_id', $account->id)
+        $inflows = AccountMovement::where('account_id', $account->id)
             ->where('status', 'posted')
             ->where('type', 'inflow')
             ->sum('amount');
 
-        $outflows = (float) AccountMovement::where('account_id', $account->id)
+        $outflows = AccountMovement::where('account_id', $account->id)
             ->where('status', 'posted')
             ->where('type', 'outflow')
             ->sum('amount');
 
-        return (float) ($account->opening_balance + $inflows - $outflows);
+        $opening = (string) ($account->opening_balance ?? '0.00');
+        $inflowsStr = (string) ($inflows ?? '0.00');
+        $outflowsStr = (string) ($outflows ?? '0.00');
+
+        return bcsub(bcadd($opening, $inflowsStr, 2), $outflowsStr, 2);
     }
 
     /**
-     * Recalculate and update cached balance on financial_accounts record.
+     * Recalculate and update cached balance on financial_accounts record using fixed-decimal BCMath.
      */
-    public function recalculateBalance(FinancialAccount $account): float
+    public function recalculateBalance(FinancialAccount $account): string
     {
         $calculated = $this->calculateBalance($account);
 
@@ -50,108 +54,128 @@ class AccountMovementService
     }
 
     /**
-     * Post an inflow movement.
+     * Post an inflow movement with strict row-lock serialization for Day Close concurrency.
      */
     public function postInflow(FinancialAccount $account, array $data): AccountMovement
     {
-        $amount = (float) ($data['amount'] ?? 0);
-        if ($amount <= 0) {
+        $amountStr = (string) ($data['amount'] ?? '0');
+        if (bccomp($amountStr, '0.00', 2) <= 0) {
             throw ValidationException::withMessages([
                 'amount' => ['Inflow amount must be greater than zero.'],
             ]);
         }
 
-        // Idempotency check if key provided
-        if (!empty($data['idempotency_key'])) {
-            $existing = AccountMovement::where('business_id', $account->business_id)
-                ->where('idempotency_key', $data['idempotency_key'])
-                ->first();
-            if ($existing) {
-                return $existing;
+        return DB::transaction(function () use ($account, $data, $amountStr) {
+            // Lock account row for concurrent write serialization with Day Close
+            $lockedAccount = FinancialAccount::where('id', $account->id)->lockForUpdate()->first();
+            if (!$lockedAccount) {
+                throw ValidationException::withMessages([
+                    'account_id' => ['Financial account not found.'],
+                ]);
             }
-        }
 
-        $movement = AccountMovement::create([
-            'business_id' => $account->business_id,
-            'branch_id' => $data['branch_id'] ?? $account->branch_id,
-            'account_id' => $account->id,
-            'type' => 'inflow',
-            'movement_category' => $data['movement_category'],
-            'reference_type' => $data['reference_type'] ?? null,
-            'reference_id' => $data['reference_id'] ?? null,
-            'amount' => $amount,
-            'date' => $data['date'] ?? now()->toDateString(),
-            'description' => $data['description'] ?? null,
-            'user_id' => $data['user_id'] ?? null,
-            'idempotency_key' => $data['idempotency_key'] ?? null,
-            'status' => 'posted',
-        ]);
+            // Idempotency check if key provided
+            if (!empty($data['idempotency_key'])) {
+                $existing = AccountMovement::where('business_id', $lockedAccount->business_id)
+                    ->where('idempotency_key', $data['idempotency_key'])
+                    ->first();
+                if ($existing) {
+                    return $existing;
+                }
+            }
 
-        $this->recalculateBalance($account);
+            $movement = AccountMovement::create([
+                'business_id' => $lockedAccount->business_id,
+                'branch_id' => $data['branch_id'] ?? $lockedAccount->branch_id,
+                'account_id' => $lockedAccount->id,
+                'type' => 'inflow',
+                'movement_category' => $data['movement_category'],
+                'reference_type' => $data['reference_type'] ?? null,
+                'reference_id' => $data['reference_id'] ?? null,
+                'amount' => $amountStr,
+                'date' => $data['date'] ?? now()->toDateString(),
+                'description' => $data['description'] ?? null,
+                'user_id' => $data['user_id'] ?? null,
+                'idempotency_key' => $data['idempotency_key'] ?? null,
+                'status' => 'posted',
+            ]);
 
-        return $movement;
+            $this->recalculateBalance($lockedAccount);
+            $account->balance = $lockedAccount->balance;
+
+            return $movement;
+        });
     }
 
     /**
-     * Post an outflow movement with strict negative-balance rejection.
+     * Post an outflow movement with strict negative-balance rejection and row locking.
      */
     public function postOutflow(FinancialAccount $account, array $data): AccountMovement
     {
-        $amount = (float) ($data['amount'] ?? 0);
-        if ($amount <= 0) {
+        $amountStr = (string) ($data['amount'] ?? '0');
+        if (bccomp($amountStr, '0.00', 2) <= 0) {
             throw ValidationException::withMessages([
                 'amount' => ['Outflow amount must be greater than zero.'],
             ]);
         }
 
-        // Lock account row for concurrent available balance validation
-        $lockedAccount = FinancialAccount::where('id', $account->id)->lockForUpdate()->first();
-        $currentBalance = $this->calculateBalance($lockedAccount);
-
-        if ($amount > $currentBalance) {
-            throw ValidationException::withMessages([
-                'amount' => ["Insufficient account balance. Available: {$currentBalance}, requested outflow: {$amount}"],
-            ]);
-        }
-
-        // Idempotency check if key provided
-        if (!empty($data['idempotency_key'])) {
-            $existing = AccountMovement::where('business_id', $account->business_id)
-                ->where('idempotency_key', $data['idempotency_key'])
-                ->first();
-            if ($existing) {
-                return $existing;
+        return DB::transaction(function () use ($account, $data, $amountStr) {
+            // Lock account row for concurrent available balance validation
+            $lockedAccount = FinancialAccount::where('id', $account->id)->lockForUpdate()->first();
+            if (!$lockedAccount) {
+                throw ValidationException::withMessages([
+                    'account_id' => ['Financial account not found.'],
+                ]);
             }
-        }
 
-        $movement = AccountMovement::create([
-            'business_id' => $account->business_id,
-            'branch_id' => $data['branch_id'] ?? $account->branch_id,
-            'account_id' => $account->id,
-            'type' => 'outflow',
-            'movement_category' => $data['movement_category'],
-            'reference_type' => $data['reference_type'] ?? null,
-            'reference_id' => $data['reference_id'] ?? null,
-            'amount' => $amount,
-            'date' => $data['date'] ?? now()->toDateString(),
-            'description' => $data['description'] ?? null,
-            'user_id' => $data['user_id'] ?? null,
-            'idempotency_key' => $data['idempotency_key'] ?? null,
-            'status' => 'posted',
-        ]);
+            $currentBalance = $this->calculateBalance($lockedAccount);
 
-        $this->recalculateBalance($account);
+            if (bccomp($amountStr, $currentBalance, 2) > 0) {
+                throw ValidationException::withMessages([
+                    'amount' => ["Insufficient account balance. Available: {$currentBalance}, requested outflow: {$amountStr}"],
+                ]);
+            }
 
-        return $movement;
+            // Idempotency check if key provided
+            if (!empty($data['idempotency_key'])) {
+                $existing = AccountMovement::where('business_id', $lockedAccount->business_id)
+                    ->where('idempotency_key', $data['idempotency_key'])
+                    ->first();
+                if ($existing) {
+                    return $existing;
+                }
+            }
+
+            $movement = AccountMovement::create([
+                'business_id' => $lockedAccount->business_id,
+                'branch_id' => $data['branch_id'] ?? $lockedAccount->branch_id,
+                'account_id' => $lockedAccount->id,
+                'type' => 'outflow',
+                'movement_category' => $data['movement_category'],
+                'reference_type' => $data['reference_type'] ?? null,
+                'reference_id' => $data['reference_id'] ?? null,
+                'amount' => $amountStr,
+                'date' => $data['date'] ?? now()->toDateString(),
+                'description' => $data['description'] ?? null,
+                'user_id' => $data['user_id'] ?? null,
+                'idempotency_key' => $data['idempotency_key'] ?? null,
+                'status' => 'posted',
+            ]);
+
+            $this->recalculateBalance($lockedAccount);
+            $account->balance = $lockedAccount->balance;
+
+            return $movement;
+        });
     }
 
     /**
-     * Perform cross-account transfer atomically.
+     * Perform cross-account transfer atomically with deterministic lock ordering.
      */
     public function transfer(
         FinancialAccount $source,
         FinancialAccount $destination,
-        float $amount,
+        float|string $amount,
         string $date,
         ?string $notes = null,
         ?int $userId = null,
@@ -175,7 +199,8 @@ class AccountMovementService
             ]);
         }
 
-        if ($amount <= 0) {
+        $amountStr = (string) $amount;
+        if (bccomp($amountStr, '0.00', 2) <= 0) {
             throw ValidationException::withMessages([
                 'amount' => ['Transfer amount must be greater than zero.'],
             ]);
@@ -189,7 +214,7 @@ class AccountMovementService
                 if (
                     (int) $existingTransfer->source_account_id !== (int) $source->id ||
                     (int) $existingTransfer->destination_account_id !== (int) $destination->id ||
-                    abs((float) $existingTransfer->amount - (float) $amount) > 0.001
+                    bccomp((string) $existingTransfer->amount, $amountStr, 2) !== 0
                 ) {
                     throw ValidationException::withMessages([
                         'idempotency_key' => ['Idempotency key has already been used with different transfer parameters.'],
@@ -199,7 +224,7 @@ class AccountMovementService
             }
         }
 
-        return DB::transaction(function () use ($source, $destination, $amount, $date, $notes, $userId, $idempotencyKey) {
+        return DB::transaction(function () use ($source, $destination, $amountStr, $date, $notes, $userId, $idempotencyKey) {
             // Lock in deterministic ID order to prevent deadlocks
             $firstId = min($source->id, $destination->id);
             $secondId = max($source->id, $destination->id);
@@ -208,9 +233,9 @@ class AccountMovementService
             FinancialAccount::where('id', $secondId)->lockForUpdate()->first();
 
             $sourceBalance = $this->calculateBalance($source);
-            if ($amount > $sourceBalance) {
+            if (bccomp($amountStr, $sourceBalance, 2) > 0) {
                 throw ValidationException::withMessages([
-                    'amount' => ["Insufficient account balance for transfer. Available: {$sourceBalance}, requested: {$amount}"],
+                    'amount' => ["Insufficient account balance for transfer. Available: {$sourceBalance}, requested: {$amountStr}"],
                 ]);
             }
 
@@ -218,7 +243,7 @@ class AccountMovementService
                 'business_id' => $source->business_id,
                 'source_account_id' => $source->id,
                 'destination_account_id' => $destination->id,
-                'amount' => $amount,
+                'amount' => $amountStr,
                 'date' => $date,
                 'notes' => $notes,
                 'user_id' => $userId,
@@ -231,7 +256,7 @@ class AccountMovementService
                 'movement_category' => 'transfer_out',
                 'reference_type' => AccountTransfer::class,
                 'reference_id' => $transfer->id,
-                'amount' => $amount,
+                'amount' => $amountStr,
                 'date' => $date,
                 'description' => "Transfer out to {$destination->name}",
                 'user_id' => $userId,
@@ -242,7 +267,7 @@ class AccountMovementService
                 'movement_category' => 'transfer_in',
                 'reference_type' => AccountTransfer::class,
                 'reference_id' => $transfer->id,
-                'amount' => $amount,
+                'amount' => $amountStr,
                 'date' => $date,
                 'description' => "Transfer in from {$source->name}",
                 'user_id' => $userId,
@@ -259,7 +284,7 @@ class AccountMovementService
     public function settleSaleReturnRefund(
         SaleReturn $saleReturn,
         FinancialAccount $account,
-        float $amount,
+        float|string $amount,
         string $date,
         ?int $userId = null,
         ?string $idempotencyKey = null
@@ -276,10 +301,11 @@ class AccountMovementService
             ]);
         }
 
-        $refundExposure = (float) $saleReturn->refund_amount;
-        if ($amount > $refundExposure) {
+        $refundExposure = (string) $saleReturn->refund_amount;
+        $amountStr = (string) $amount;
+        if (bccomp($amountStr, $refundExposure, 2) > 0) {
             throw ValidationException::withMessages([
-                'amount' => ["Refund settlement amount ({$amount}) cannot exceed SaleReturn refund exposure ({$refundExposure})."],
+                'amount' => ["Refund settlement amount ({$amountStr}) cannot exceed SaleReturn refund exposure ({$refundExposure})."],
             ]);
         }
 
@@ -297,12 +323,12 @@ class AccountMovementService
             ]);
         }
 
-        return DB::transaction(function () use ($saleReturn, $account, $amount, $date, $userId, $idempotencyKey) {
+        return DB::transaction(function () use ($saleReturn, $account, $amountStr, $date, $userId, $idempotencyKey) {
             return $this->postOutflow($account, [
                 'movement_category' => 'refund',
                 'reference_type' => get_class($saleReturn),
                 'reference_id' => $saleReturn->id,
-                'amount' => $amount,
+                'amount' => $amountStr,
                 'date' => $date,
                 'description' => "Refund settlement for SaleReturn #{$saleReturn->id}",
                 'user_id' => $userId,
@@ -355,8 +381,10 @@ class AccountMovementService
                 'reversal_reason' => $reason,
             ]);
 
-            $account = FinancialAccount::findOrFail($movement->account_id);
-            $this->recalculateBalance($account);
+            $account = FinancialAccount::where('id', $movement->account_id)->lockForUpdate()->first();
+            if ($account) {
+                $this->recalculateBalance($account);
+            }
 
             return $movement;
         });
@@ -381,15 +409,15 @@ class AccountMovementService
 
         $movements = $query->get();
 
-        $runningBalance = (float) $account->opening_balance;
+        $runningBalance = (string) ($account->opening_balance ?? '0.00');
         $items = [];
 
         foreach ($movements as $m) {
             if ($m->status === 'posted') {
                 if ($m->type === 'inflow') {
-                    $runningBalance += (float) $m->amount;
+                    $runningBalance = bcadd($runningBalance, (string) $m->amount, 2);
                 } else {
-                    $runningBalance -= (float) $m->amount;
+                    $runningBalance = bcsub($runningBalance, (string) $m->amount, 2);
                 }
             }
 
@@ -401,7 +429,7 @@ class AccountMovementService
                 'amount' => (float) $m->amount,
                 'status' => $m->status,
                 'description' => $m->description,
-                'running_balance' => round($runningBalance, 2),
+                'running_balance' => (float) $runningBalance,
                 'created_at' => $m->created_at->toIso8601String(),
             ];
         }
@@ -412,7 +440,7 @@ class AccountMovementService
                 'name' => $account->name,
                 'type' => $account->type,
                 'opening_balance' => (float) $account->opening_balance,
-                'current_balance' => $this->calculateBalance($account),
+                'current_balance' => (float) $this->calculateBalance($account),
             ],
             'statement_baseline' => (float) $account->opening_balance,
             'movements' => $items,

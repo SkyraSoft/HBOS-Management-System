@@ -25,7 +25,8 @@ class ExpenseCategoryController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255'
+            'name' => 'required|string|max:255',
+            'monthly_budget' => 'nullable|numeric|min:0',
         ]);
 
         $businessId = $this->getActiveBusinessId($request);
@@ -44,6 +45,7 @@ class ExpenseCategoryController extends Controller
         $category = ExpenseCategory::create([
             'business_id' => $businessId,
             'name' => $cleanName, // Preserve clean display casing
+            'monthly_budget' => $request->monthly_budget ?? null,
         ]);
 
         return response()->json($category, 201);
@@ -62,7 +64,8 @@ class ExpenseCategoryController extends Controller
         $category = ExpenseCategory::where('business_id', $businessId)->findOrFail($id);
         
         $request->validate([
-            'name' => 'required|string|max:255'
+            'name' => 'required|string|max:255',
+            'monthly_budget' => 'nullable|numeric|min:0',
         ]);
 
         $cleanName = trim($request->name);
@@ -79,9 +82,12 @@ class ExpenseCategoryController extends Controller
             ]);
         }
 
-        $category->update([
-            'name' => $cleanName
-        ]);
+        $updateData = ['name' => $cleanName];
+        if ($request->has('monthly_budget')) {
+            $updateData['monthly_budget'] = $request->monthly_budget;
+        }
+
+        $category->update($updateData);
 
         return response()->json($category);
     }

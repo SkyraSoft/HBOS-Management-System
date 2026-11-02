@@ -1,5 +1,5 @@
 import localDb from './localDb.js';
-import imageStorageService from './imageStorageService.js';
+import { saveImageLocally } from './imageStorageService.js';
 
 /**
  * HBOS Local Device Pairing & Peer-to-Peer Asset Sync Service
@@ -43,6 +43,10 @@ class DevicePairingService {
       const rawB64 = qrDataUrl.replace('hbos-pair://', '');
       const pairingPayload = JSON.parse(atob(rawB64));
       
+      if (!this.validatePairingIp(pairingPayload.local_ip)) {
+        throw new Error(`Invalid or disallowed pairing IP: ${pairingPayload.local_ip}. Only private local LAN subnets are allowed.`);
+      }
+
       console.log(`[HBOS Pairing] Connecting to Desktop POS at ${pairingPayload.local_ip}:${pairingPayload.port}...`);
 
       // 1. Fetch Local Catalog Data from Desktop POS
@@ -68,7 +72,7 @@ class DevicePairingService {
       // 3. Import Base64 Images & Store Logos into Mobile Image Store
       if (bundle.images && Array.isArray(bundle.images)) {
         for (const imgData of bundle.images) {
-          await imageStorageService.saveImage(imgData.key, imgData.base64);
+          await saveImageLocally(imgData.key, imgData.base64);
         }
       }
 
@@ -97,6 +101,69 @@ class DevicePairingService {
     };
   }
 
+  /**
+   * Validates pairing IP address and port:
+   * 1. Valid IPv4 4-octet syntax (0-255).
+   * 2. Checks RFC1918 Private Address spaces:
+   *    - 10.0.0.0/8 (10.0.0.0 - 10.255.255.255)
+   *    - 172.16.0.0/12 (172.16.0.0 - 172.31.255.255)
+   *    - 192.168.0.0/16 (192.168.0.0 - 192.168.255.255)
+   * 3. Rejects Public / WAN IP addresses.
+   * 4. Distinguishes Loopback (127.0.0.0/8) from LAN peers.
+   * 5. Compares same-subnet network prefix against host IP.
+   */
+  validatePairingIp(ip, hostIp = null, allowLoopback = true) {
+    if (!ip || typeof ip !== 'string') return false;
+    const parts = ip.trim().split('.');
+    if (parts.length !== 4) return false;
+    const nums = parts.map(Number);
+    if (nums.some(n => isNaN(n) || n < 0 || n > 255 || !Number.isInteger(n))) return false;
+
+    // Check Loopback (127.0.0.0/8)
+    const isLoopback = nums[0] === 127;
+    if (isLoopback) {
+      return allowLoopback;
+    }
+
+    // Check RFC1918 Private Address Spaces
+    const is10 = nums[0] === 10;
+    const is172 = nums[0] === 172 && nums[1] >= 16 && nums[1] <= 31;
+    const is192 = nums[0] === 192 && nums[1] === 168;
+
+    const isRfc1918 = is10 || is172 || is192;
+    if (!isRfc1918) {
+      return false; // Reject Public / WAN / Link-local / Multicast
+    }
+
+    // If hostIp is supplied, verify same-subnet relationship (/24 for 192.168, /16 for 172.16, /8 for 10)
+    if (hostIp && typeof hostIp === 'string') {
+      const hostParts = hostIp.trim().split('.').map(Number);
+      if (hostParts.length === 4 && !hostParts.some(n => isNaN(n) || n < 0 || n > 255)) {
+        if (is192 && hostParts[0] === 192 && hostParts[1] === 168) {
+          // Standard /24 subnet match on 192.168.x.0
+          return nums[2] === hostParts[2];
+        }
+        if (is172 && hostParts[0] === 172 && hostParts[1] >= 16 && hostParts[1] <= 31) {
+          return nums[1] === hostParts[1];
+        }
+        if (is10 && hostParts[0] === 10) {
+          return nums[0] === hostParts[0];
+        }
+      }
+    }
+
+    return true;
+  }
+
+  validatePort(port) {
+    const p = Number(port);
+    return Number.isInteger(p) && p >= 1024 && p <= 65535;
+  }
+
+  validatePairingTarget(ip, port, hostIp = null) {
+    return this.validatePairingIp(ip, hostIp) && this.validatePort(port);
+  }
+
   async detectLocalNetworkIp() {
     return '192.168.1.100'; // Default local LAN IP subnet
   }
@@ -104,3 +171,4 @@ class DevicePairingService {
 
 export const devicePairingService = new DevicePairingService();
 export default devicePairingService;
+

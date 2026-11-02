@@ -1,0 +1,72 @@
+[
+    {
+        "limitation_id": "LIM-001",
+        "gap_ref": "GAP-001",
+        "category": "LEGACY_DATA_LIMITATION",
+        "title": "Historical Sale Item Snapshot Availability",
+        "scope": "Historical Sales Recorded Prior to Phase 9",
+        "current_behavior": "All new sales capture immutable snapshot fields (`product_name`, `sku`, `unit_cost`, `barcode`) directly in `sale_items`.",
+        "legacy_limitation": "Historical sales created prior to migration MIG-001 have NULL snapshots. The system reads historical details via backward-compatible product joins. The Artisan command `php artisan hbos:backfill-sale-item-snapshots` defaults to DRY-RUN mode and logs non-authoritative approximation provenance in command output without mutating historical truth.",
+        "operational_guidance": "Invoices reprinted for legacy transactions reflect catalog state at migration time; new transactions are permanently frozen."
+    },
+    {
+        "limitation_id": "LIM-002",
+        "gap_ref": "GAP-008",
+        "category": "LEGACY_DATA_LIMITATION",
+        "title": "Historical Khata Ledger & Customer Balance Reconciliation",
+        "scope": "Historical Customer Ledger Records Prior to Phase 9",
+        "current_behavior": "All new credit sales, payments, and refunds maintain strictly atomic double-entry balance updates on `customers.balance`.",
+        "legacy_limitation": "Pre-remediation discrepancies in customer balances are not blindly auto-corrected. The read-only command `php artisan hbos:audit-khata-ledger-discrepancies` audits ledger variance and requires manual administrative verification before posting compensating adjustments.",
+        "operational_guidance": "Accountants must review khata discrepancy audit reports and obtain customer confirmation before posting adjustments."
+    },
+    {
+        "limitation_id": "LIM-003",
+        "gap_ref": "GAP-013",
+        "category": "LEGACY_DATA_LIMITATION",
+        "title": "Legacy Expense Records with NULL Financial Account",
+        "scope": "Historical Expense Records Prior to Phase 9",
+        "current_behavior": "New expenses strictly require a valid, active `financial_account_id` validated server-side.",
+        "legacy_limitation": "Legacy expense rows with NULL `financial_account_id` cannot have historical funding sources deterministically inferred. The command `php artisan hbos:repair-null-expense-accounts` (defaults to dry-run) allocates unassigned expenses to an explicit holding account `UNALLOCATED_HISTORICAL_EXPENSES` rather than guessing arbitrary bank accounts.",
+        "operational_guidance": "Do not guess funding accounts for legacy audit records; maintain them with appropriate audit holding accounts."
+    },
+    {
+        "limitation_id": "LIM-004",
+        "gap_ref": "GAP-014",
+        "category": "LEGACY_DATA_LIMITATION",
+        "title": "Historical Orphan Financial Movement Reconciliation",
+        "scope": "Legacy Financial Movements Prior to Phase 9",
+        "current_behavior": "All financial movements are generated exclusively via AccountService with explicit parent entity reference and unique compound keys.",
+        "legacy_limitation": "Historical orphan movements from deleted expenses are reconciled via `php artisan hbos:reconcile-financial-movements` (defaults to dry-run) using compensating void movements rather than destructive row deletion.",
+        "operational_guidance": "Use compensating journal adjustments rather than raw deletion when balancing historical financial accounts."
+    },
+    {
+        "limitation_id": "LIM-005",
+        "gap_ref": "GAP-031",
+        "category": "LEGACY_DATA_LIMITATION",
+        "title": "Historical Expense Category Monthly Budget Records",
+        "scope": "Historical Expense Categories Prior to Phase 9",
+        "current_behavior": "Monthly budget targets are persisted on `expense_categories.monthly_budget` and displayed in expense budgeting views.",
+        "legacy_limitation": "Historical expense categories have NULL `monthly_budget` where no budget was ever configured.",
+        "operational_guidance": "Management can set current monthly budgets in Expense Category settings; historical periods remain unbudgeted."
+    },
+    {
+        "limitation_id": "LIM-006",
+        "gap_ref": "N/A",
+        "category": "AUTOMATED_TEST_COVERAGE_LIMITATION",
+        "title": "Frontend Automated Test Suite Configuration",
+        "scope": "Frontend Client Verification",
+        "current_behavior": "Frontend code compiles cleanly via Vite production build (`npm run build`) with 170 modules transformed and 0 errors.",
+        "legacy_limitation": "No automated unit/component test runner (Vitest/Jest) is configured in `Frontend/package.json`. Quality assurance relies on full backend API test coverage (380 tests) and Vite build verification.",
+        "operational_guidance": "Frontend UI regressions are verified via Vite build checks, API integration tests, and manual verification drills."
+    },
+    {
+        "limitation_id": "LIM-007",
+        "gap_ref": "GAP-028",
+        "category": "LEGACY_UNROUTED_CODE",
+        "title": "Unrouted Prototype View Retention",
+        "scope": "Frontend Source Code Base",
+        "current_behavior": "All operational printing is executed via modal overlays (`ThermalReceiptModal.vue`, `A4InvoiceModal.vue`) and consolidated `printerService.js`.",
+        "legacy_limitation": "Files `ProductInvoiceView.vue` and `reports1View.vue` remain in the codebase as UNROUTED_BUT_RETAINED legacy templates. They are unreachable from active navigation and `/reports1` redirects to `/reports`.",
+        "operational_guidance": "Operators use standard print triggers in Sales History and POS; unrouted templates are ignored."
+    }
+]

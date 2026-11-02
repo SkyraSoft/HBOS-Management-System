@@ -1,0 +1,44 @@
+{
+    "REPLAY-001": {
+        "replay_id": "REPLAY-001",
+        "domain": "Sales Outbox Mutation Replay",
+        "queue_name": "sales",
+        "ordering_rule": "FIFO_CLIENT_TIMESTAMP",
+        "idempotency_key_carrier": "sales.*.idempotency_key",
+        "batch_size_limit": 50,
+        "dependency_handling": "INDEPENDENT_TRANSACTION",
+        "retry_strategy": "EXPONENTIAL_BACKOFF",
+        "duplicate_submission_risk": "PREVENTED_BY_SERVER_IDEMPOTENCY_KEY",
+        "evidence": "Frontend/src/sync/SyncCoordinator.js, api/app/Services/BulkSyncService.php",
+        "gap": "N/A",
+        "certification_status": "CERTIFIED_SAFE_BY_IMPLEMENTATION"
+    },
+    "REPLAY-002": {
+        "replay_id": "REPLAY-002",
+        "domain": "Khata Customer Payment Outbox Replay",
+        "queue_name": "khata_payments",
+        "ordering_rule": "FIFO_CLIENT_TIMESTAMP",
+        "idempotency_key_carrier": "khata_payments.*.idempotency_key",
+        "batch_size_limit": 50,
+        "dependency_handling": "REQUIRES_VALID_CUSTOMER_ID",
+        "retry_strategy": "EXPONENTIAL_BACKOFF",
+        "duplicate_submission_risk": "PREVENTED_BY_SERVER_IDEMPOTENCY_KEY",
+        "evidence": "Frontend/src/sync/SyncCoordinator.js, api/app/Services/BulkSyncService.php",
+        "gap": "P7-GAP-003",
+        "certification_status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "REPLAY-003": {
+        "replay_id": "REPLAY-003",
+        "domain": "Operating Expense Outbox Replay",
+        "queue_name": "expenses",
+        "ordering_rule": "FIFO_CLIENT_TIMESTAMP",
+        "idempotency_key_carrier": "expenses.*.idempotency_key",
+        "batch_size_limit": 50,
+        "dependency_handling": "REQUIRES_VALID_EXPENSE_CATEGORY_ID",
+        "retry_strategy": "EXPONENTIAL_BACKOFF",
+        "duplicate_submission_risk": "PREVENTED_BY_SERVER_IDEMPOTENCY_KEY",
+        "evidence": "Frontend/src/services/localDb.js, api/app/Services/BulkSyncService.php",
+        "gap": "N/A",
+        "certification_status": "CERTIFIED_SAFE_BY_IMPLEMENTATION"
+    }
+}

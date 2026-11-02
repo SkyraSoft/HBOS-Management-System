@@ -1,0 +1,134 @@
+[
+  {
+    "field": "owner_name",
+    "stage": "STEP_1_ACCOUNT",
+    "classification": "SIGNUP_REQUIRED",
+    "description": "Full legal or personal name of business owner for authentication and root accountability."
+  },
+  {
+    "field": "owner_email",
+    "stage": "STEP_1_ACCOUNT",
+    "classification": "SIGNUP_REQUIRED",
+    "description": "Unique email address used for login, password recovery, and tenant verification."
+  },
+  {
+    "field": "owner_password",
+    "stage": "STEP_1_ACCOUNT",
+    "classification": "SIGNUP_REQUIRED",
+    "description": "Secure password (min 8 chars, confirmed) for owner authentication."
+  },
+  {
+    "field": "owner_phone",
+    "stage": "STEP_1_ACCOUNT",
+    "classification": "ONBOARDING_RECOMMENDED",
+    "description": "Mobile contact number for owner 2FA and business alerts."
+  },
+  {
+    "field": "business_name",
+    "stage": "STEP_2_BUSINESS",
+    "classification": "SIGNUP_REQUIRED",
+    "description": "Legal/trading name of the retail business."
+  },
+  {
+    "field": "business_type",
+    "stage": "STEP_2_BUSINESS",
+    "classification": "ONBOARDING_REQUIRED",
+    "description": "Retail category (e.g., General Store, Supermarket, Pharmacy, Electronics, Apparel)."
+  },
+  {
+    "field": "business_phone",
+    "stage": "STEP_2_BUSINESS",
+    "classification": "ONBOARDING_RECOMMENDED",
+    "description": "Official business contact phone."
+  },
+  {
+    "field": "business_email",
+    "stage": "STEP_2_BUSINESS",
+    "classification": "OPTIONAL_BUSINESS_PROFILE",
+    "description": "Official support or public inquiry email for business."
+  },
+  {
+    "field": "website",
+    "stage": "STEP_2_BUSINESS",
+    "classification": "OPTIONAL_BUSINESS_PROFILE",
+    "description": "Official business website URL."
+  },
+  {
+    "field": "country",
+    "stage": "STEP_2_BUSINESS",
+    "classification": "ONBOARDING_REQUIRED",
+    "description": "Primary country of operation (defaults to Pakistan)."
+  },
+  {
+    "field": "currency",
+    "stage": "STEP_2_BUSINESS",
+    "classification": "ONBOARDING_REQUIRED",
+    "description": "Default monetary currency (e.g., PKR, USD, AED, SAR)."
+  },
+  {
+    "field": "timezone",
+    "stage": "STEP_2_BUSINESS",
+    "classification": "ONBOARDING_REQUIRED",
+    "description": "Operating timezone (e.g., Asia/Karachi) for midnight reporting reconciliation."
+  },
+  {
+    "field": "primary_branch_name",
+    "stage": "STEP_3_BRANCH",
+    "classification": "ONBOARDING_REQUIRED",
+    "description": "Name of initial operating branch (defaults to 'Main Branch')."
+  },
+  {
+    "field": "primary_branch_code",
+    "stage": "STEP_3_BRANCH",
+    "classification": "SYSTEM_DERIVED",
+    "description": "Unique branch identifier code (e.g., MAIN, BR-01)."
+  },
+  {
+    "field": "primary_branch_address",
+    "stage": "STEP_3_BRANCH",
+    "classification": "ONBOARDING_RECOMMENDED",
+    "description": "Street address of the primary retail branch."
+  },
+  {
+    "field": "primary_branch_city",
+    "stage": "STEP_3_BRANCH",
+    "classification": "ONBOARDING_RECOMMENDED",
+    "description": "City where primary branch is located."
+  },
+  {
+    "field": "receipt_header",
+    "stage": "STEP_4_DEFAULTS",
+    "classification": "ONBOARDING_RECOMMENDED",
+    "description": "Custom header text printed at the top of customer receipts."
+  },
+  {
+    "field": "receipt_footer",
+    "stage": "STEP_4_DEFAULTS",
+    "classification": "ONBOARDING_RECOMMENDED",
+    "description": "Custom thank-you or return policy message printed at bottom of receipts."
+  },
+  {
+    "field": "invoice_prefix",
+    "stage": "STEP_4_DEFAULTS",
+    "classification": "ONBOARDING_RECOMMENDED",
+    "description": "Prefix for invoice numbers (e.g., INV-)."
+  },
+  {
+    "field": "tax_registration_number",
+    "stage": "STEP_4_DEFAULTS",
+    "classification": "REGULATORY_OPTIONAL",
+    "description": "National Tax Number (NTN) or Sales Tax Registration Number (STRN)."
+  },
+  {
+    "field": "negative_stock_policy",
+    "stage": "STEP_4_DEFAULTS",
+    "classification": "ONBOARDING_RECOMMENDED",
+    "description": "Whether sales are permitted when physical stock count is zero (defaults to block)."
+  },
+  {
+    "field": "billing_card_number",
+    "stage": "BILLING",
+    "classification": "DO_NOT_COLLECT",
+    "description": "Credit/debit card data must NEVER be collected for free release under data minimization."
+  }
+]

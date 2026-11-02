@@ -1,0 +1,106 @@
+{
+  "program": "SkyraSoft HBOS Retail Platform & Workforce Integrity Program",
+  "checkpoint": "2.1 Business Registration & Staged Onboarding",
+  "registry_version": "1.0.0",
+  "date": "2026-10-03",
+  "signup_defects_fixed": [
+    {
+      "defect_id": "UX-DEFECT-001",
+      "issue": "Hidden validation error messages due to display: none in styles",
+      "resolution": "Restored visible red error alert boxes and input border highlights",
+      "status": "FIXED"
+    },
+    {
+      "defect_id": "UX-DEFECT-002",
+      "issue": "Missing/unmatched button CSS class .create-btn",
+      "resolution": "Implemented .create-btn style class with proper contrast, hover states, and disabled state styling",
+      "status": "FIXED"
+    },
+    {
+      "defect_id": "UX-DEFECT-003",
+      "issue": "Owner phone not persisted on registration",
+      "resolution": "Captured phone in AuthController register and persisted to User model",
+      "status": "FIXED"
+    },
+    {
+      "defect_id": "UX-DEFECT-004",
+      "issue": "Immediate inappropriate redirect to main dashboard before business onboarding",
+      "resolution": "Redirects directly to /businesssetup1 onboarding step upon successful registration",
+      "status": "FIXED"
+    },
+    {
+      "defect_id": "UX-DEFECT-005",
+      "issue": "Unclear failure feedback on duplicate email or backend network error",
+      "resolution": "Explicit field-level and top-level error binding with server message rendering",
+      "status": "FIXED"
+    }
+  ],
+  "signup_fields_classified": {
+    "scope": "SIGNUP_MINIMAL",
+    "fields": [
+      { "name": "name", "label": "Owner Name", "required": true },
+      { "name": "email", "label": "Owner Email", "required": true },
+      { "name": "phone", "label": "Owner Phone", "required": false },
+      { "name": "password", "label": "Password", "required": true },
+      { "name": "password_confirmation", "label": "Confirm Password", "required": true },
+      { "name": "business_name", "label": "Business Name", "required": true }
+    ],
+    "excluded_from_signup": [
+      "billing_card",
+      "tax_identifiers",
+      "branch_network",
+      "regulatory_licenses",
+      "bank_accounts"
+    ]
+  },
+  "staged_onboarding_steps": [
+    {
+      "step_number": 1,
+      "name": "Owner Account Establishment",
+      "description": "Owner user and tenant business account provisioned with default primary branch placeholder and onboarding_status set to incomplete",
+      "route": "/register",
+      "persisted_state": "step 1 complete, onboarding_status = incomplete, onboarding_step = 2"
+    },
+    {
+      "step_number": 2,
+      "name": "Business Identity",
+      "description": "Establish legal trading entity details, industry business type, contact channels, and physical address",
+      "route": "/businesssetup1",
+      "api_endpoint": "POST /api/v1/onboarding/step (step: 2)",
+      "fields": ["name", "legal_name", "business_type", "phone", "email", "website", "address", "city", "country", "tax_number"],
+      "persisted_state": "step 2 complete, onboarding_step = 3"
+    },
+    {
+      "step_number": 3,
+      "name": "Primary Branch Configuration",
+      "description": "Configure the flagship / main operational branch code, location, and contact phone",
+      "route": "/preferences",
+      "api_endpoint": "POST /api/v1/onboarding/step (step: 3)",
+      "fields": ["branch_name", "branch_code", "branch_phone", "branch_address", "branch_city"],
+      "persisted_state": "step 3 complete, onboarding_step = 4"
+    },
+    {
+      "step_number": 4,
+      "name": "Business Operational Defaults",
+      "description": "Select currency, timezone, tax configuration, and invoice numbering prefix",
+      "route": "/preferences",
+      "api_endpoint": "POST /api/v1/onboarding/step (step: 4)",
+      "fields": ["currency", "timezone", "tax_rate", "invoice_prefix"],
+      "persisted_state": "step 4 complete, onboarding_step = 5"
+    },
+    {
+      "step_number": 5,
+      "name": "Review & Ready",
+      "description": "Verify configuration summary, initialize financial cash drawer and branch defaults, and complete onboarding",
+      "route": "/completereview",
+      "api_endpoint": "POST /api/v1/onboarding/step (step: 5)",
+      "persisted_state": "onboarding_status = completed, onboarding_completed_at set to timestamp"
+    }
+  ],
+  "resumption_rules": {
+    "state_columns": ["onboarding_status", "onboarding_step", "onboarding_completed_at"],
+    "behavior_on_relogin": "If onboarding_status is incomplete, redirect owner to /onboarding/status to resume at persisted onboarding_step",
+    "duplicate_business_prevention": "Resume workflow operates on existing business_id; zero duplicate business records created",
+    "existing_tenants_policy": "Pre-existing tenants with null onboarding_status receive PROFILE_INCOMPLETE without data fabrication"
+  }
+}

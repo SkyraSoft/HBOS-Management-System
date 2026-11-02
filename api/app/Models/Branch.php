@@ -46,4 +46,19 @@ class Branch extends Model
     {
         return $this->belongsToMany(User::class, 'branch_user')->withTimestamps();
     }
+
+    public function stockTransfersOut()
+    {
+        return $this->hasMany(StockTransfer::class, 'from_branch_id');
+    }
+
+    public function stockTransfersIn()
+    {
+        return $this->hasMany(StockTransfer::class, 'to_branch_id');
+    }
+
+    public function actionNotes()
+    {
+        return $this->hasMany(BranchActionNote::class);
+    }
 }

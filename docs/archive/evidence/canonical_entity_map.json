@@ -1,0 +1,2550 @@
+{
+    "ENTITY-001": {
+        "entity_id": "ENTITY-001",
+        "entity_name": "Business",
+        "primary_table": "businesses",
+        "model": "App\\Models\\Business",
+        "entity_type": "ORGANIZATIONAL",
+        "business_or_system": "BUSINESS",
+        "tenant_scope": "TENANT_ROOT",
+        "branch_scope": "BRANCH_UNAWARE",
+        "lifecycle_classification": "EXPLICIT_STATE_MACHINE",
+        "valid_states": [
+            "ACTIVE",
+            "SUSPENDED",
+            "TRIAL",
+            "EXPIRED"
+        ],
+        "initial_state": "ACTIVE",
+        "state_storage": "status",
+        "valid_transitions": [
+            {
+                "from": "TRIAL",
+                "to": "ACTIVE",
+                "trigger": "subscription_activated",
+                "preconditions": "Valid payment verified",
+                "actor": "SUPERADMIN / OWNER"
+            },
+            {
+                "from": "TRIAL",
+                "to": "EXPIRED",
+                "trigger": "trial_ended",
+                "preconditions": "Trial period elapsed",
+                "actor": "SYSTEM"
+            },
+            {
+                "from": "ACTIVE",
+                "to": "SUSPENDED",
+                "trigger": "account_suspended",
+                "preconditions": "Policy or payment dispute",
+                "actor": "SUPERADMIN"
+            },
+            {
+                "from": "ACTIVE",
+                "to": "EXPIRED",
+                "trigger": "subscription_expired",
+                "preconditions": "Subscription end date reached",
+                "actor": "SYSTEM"
+            },
+            {
+                "from": "SUSPENDED",
+                "to": "ACTIVE",
+                "trigger": "account_reinstated",
+                "preconditions": "Dispute resolved",
+                "actor": "SUPERADMIN"
+            }
+        ],
+        "editable_states": [
+            "ACTIVE",
+            "TRIAL"
+        ],
+        "immutable_states": [],
+        "completion_posting_semantics": "N/A",
+        "cancellation_semantics": "N/A",
+        "void_semantics": "N/A",
+        "reversal_semantics": "N/A",
+        "delete_semantics": "SOFT_DELETE_ALLOWED",
+        "restore_semantics": "RESTORE_VIA_ELOQUENT",
+        "referential_restrictions": "RESTRICT (Cannot delete if branches or users exist)",
+        "financial_side_effects": "NONE",
+        "inventory_side_effects": "NONE",
+        "ledger_side_effects": "NONE",
+        "audit_behavior": "FULL_AUTOMATED",
+        "sync_behavior": "SERVER_MANAGED",
+        "permission_actor_context": "superadmin / business owner",
+        "source_evidence": "api/app/Models/Business.php, api/app/Http/Controllers/Api/V1/BusinessController.php",
+        "gap_ids": [],
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "ENTITY-002": {
+        "entity_id": "ENTITY-002",
+        "entity_name": "User",
+        "primary_table": "users",
+        "model": "App\\Models\\User",
+        "entity_type": "SECURITY",
+        "business_or_system": "BUSINESS",
+        "tenant_scope": "DIRECT_BUSINESS_ID",
+        "branch_scope": "BRANCH_OPTIONAL",
+        "lifecycle_classification": "EXPLICIT_STATE_MACHINE",
+        "valid_states": [
+            "ACTIVE",
+            "INACTIVE",
+            "LOCKED"
+        ],
+        "initial_state": "ACTIVE",
+        "state_storage": "is_active / status",
+        "valid_transitions": [
+            {
+                "from": "ACTIVE",
+                "to": "INACTIVE",
+                "trigger": "deactivate_user",
+                "preconditions": "Not sole active owner",
+                "actor": "OWNER / ADMIN"
+            },
+            {
+                "from": "ACTIVE",
+                "to": "LOCKED",
+                "trigger": "failed_logins_exceeded",
+                "preconditions": "Exceeded max auth failure threshold",
+                "actor": "SYSTEM"
+            },
+            {
+                "from": "INACTIVE",
+                "to": "ACTIVE",
+                "trigger": "activate_user",
+                "preconditions": "Reactivation approved",
+                "actor": "OWNER / ADMIN"
+            },
+            {
+                "from": "LOCKED",
+                "to": "ACTIVE",
+                "trigger": "unlock_user",
+                "preconditions": "Admin unlock or password reset",
+                "actor": "OWNER / ADMIN"
+            }
+        ],
+        "editable_states": [
+            "ACTIVE",
+            "INACTIVE"
+        ],
+        "immutable_states": [],
+        "completion_posting_semantics": "N/A",
+        "cancellation_semantics": "N/A",
+        "void_semantics": "N/A",
+        "reversal_semantics": "N/A",
+        "delete_semantics": "SOFT_DELETE_ALLOWED",
+        "restore_semantics": "RESTORE_VIA_ELOQUENT",
+        "referential_restrictions": "RESTRICT (Cannot delete user with historical sales or purchases)",
+        "financial_side_effects": "NONE",
+        "inventory_side_effects": "NONE",
+        "ledger_side_effects": "NONE",
+        "audit_behavior": "FULL_AUTOMATED",
+        "sync_behavior": "SERVER_MANAGED",
+        "permission_actor_context": "manage_users / owner",
+        "source_evidence": "api/app/Models/User.php, api/app/Http/Controllers/Api/V1/UserGovernanceController.php, api/app/Services/UserGovernanceService.php",
+        "gap_ids": [
+            "P1-GAP-001"
+        ],
+        "verification_confidence": "SOURCE_VERIFIED_WITH_GAP",
+        "certification_status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "ENTITY-003": {
+        "entity_id": "ENTITY-003",
+        "entity_name": "BusinessUser",
+        "primary_table": "business_user",
+        "model": "App\\Models\\Pivot (business_user)",
+        "entity_type": "SECURITY",
+        "business_or_system": "BUSINESS",
+        "tenant_scope": "DIRECT_BUSINESS_ID",
+        "branch_scope": "BRANCH_UNAWARE",
+        "lifecycle_classification": "STATELESS_MASTER",
+        "valid_states": [
+            "ACTIVE"
+        ],
+        "initial_state": "ACTIVE",
+        "state_storage": "record existence",
+        "valid_transitions": [],
+        "editable_states": [
+            "ACTIVE"
+        ],
+        "immutable_states": [],
+        "completion_posting_semantics": "N/A",
+        "cancellation_semantics": "N/A",
+        "void_semantics": "N/A",
+        "reversal_semantics": "N/A",
+        "delete_semantics": "HARD_DELETE_ALLOWED",
+        "restore_semantics": "RE_ASSIGN_MEMBERSHIP",
+        "referential_restrictions": "CASCADE on user/business deletion",
+        "financial_side_effects": "NONE",
+        "inventory_side_effects": "NONE",
+        "ledger_side_effects": "NONE",
+        "audit_behavior": "LOGGED_IN_USER_GOVERNANCE",
+        "sync_behavior": "SERVER_MANAGED",
+        "permission_actor_context": "owner",
+        "source_evidence": "api/database/migrations/2026_09_02_000003_create_business_user_table.php",
+        "gap_ids": [],
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "ENTITY-004": {
+        "entity_id": "ENTITY-004",
+        "entity_name": "Branch",
+        "primary_table": "branches",
+        "model": "App\\Models\\Branch",
+        "entity_type": "ORGANIZATIONAL",
+        "business_or_system": "BUSINESS",
+        "tenant_scope": "DIRECT_BUSINESS_ID",
+        "branch_scope": "BRANCH_SCOPED",
+        "lifecycle_classification": "EXPLICIT_STATE_MACHINE",
+        "valid_states": [
+            "ACTIVE",
+            "INACTIVE",
+            "CLOSED"
+        ],
+        "initial_state": "ACTIVE",
+        "state_storage": "is_active / status",
+        "valid_transitions": [
+            {
+                "from": "ACTIVE",
+                "to": "INACTIVE",
+                "trigger": "deactivate_branch",
+                "preconditions": "Branch operations suspended",
+                "actor": "OWNER / ADMIN"
+            },
+            {
+                "from": "ACTIVE",
+                "to": "CLOSED",
+                "trigger": "close_branch",
+                "preconditions": "Zero stock on hand, cash settled",
+                "actor": "OWNER"
+            },
+            {
+                "from": "INACTIVE",
+                "to": "ACTIVE",
+                "trigger": "activate_branch",
+                "preconditions": "Branch reopened",
+                "actor": "OWNER / ADMIN"
+            },
+            {
+                "from": "INACTIVE",
+                "to": "CLOSED",
+                "trigger": "close_branch",
+                "preconditions": "Zero stock on hand, cash settled",
+                "actor": "OWNER"
+            }
+        ],
+        "editable_states": [
+            "ACTIVE",
+            "INACTIVE"
+        ],
+        "immutable_states": [
+            "CLOSED"
+        ],
+        "completion_posting_semantics": "N/A",
+        "cancellation_semantics": "N/A",
+        "void_semantics": "N/A",
+        "reversal_semantics": "N/A",
+        "delete_semantics": "SOFT_DELETE_ALLOWED",
+        "restore_semantics": "RESTORE_VIA_ELOQUENT",
+        "referential_restrictions": "RESTRICT (Cannot delete branch with active inventory, sales, or accounts)",
+        "financial_side_effects": "NONE",
+        "inventory_side_effects": "NONE",
+        "ledger_side_effects": "NONE",
+        "audit_behavior": "FULL_AUTOMATED",
+        "sync_behavior": "DEXIE_OFFLINE_SYNC",
+        "permission_actor_context": "manage_branches / owner",
+        "source_evidence": "api/app/Models/Branch.php, api/app/Http/Controllers/Api/V1/BranchController.php",
+        "gap_ids": [],
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "ENTITY-005": {
+        "entity_id": "ENTITY-005",
+        "entity_name": "BranchUser",
+        "primary_table": "branch_user",
+        "model": "App\\Models\\Pivot (branch_user)",
+        "entity_type": "SECURITY",
+        "business_or_system": "BUSINESS",
+        "tenant_scope": "INDIRECT_VIA_PARENT",
+        "branch_scope": "BRANCH_SCOPED",
+        "lifecycle_classification": "STATELESS_MASTER",
+        "valid_states": [
+            "ACTIVE"
+        ],
+        "initial_state": "ACTIVE",
+        "state_storage": "record existence",
+        "valid_transitions": [],
+        "editable_states": [
+            "ACTIVE"
+        ],
+        "immutable_states": [],
+        "completion_posting_semantics": "N/A",
+        "cancellation_semantics": "N/A",
+        "void_semantics": "N/A",
+        "reversal_semantics": "N/A",
+        "delete_semantics": "HARD_DELETE_ALLOWED",
+        "restore_semantics": "RE_ASSIGN_MEMBERSHIP",
+        "referential_restrictions": "CASCADE on branch/user deletion",
+        "financial_side_effects": "NONE",
+        "inventory_side_effects": "NONE",
+        "ledger_side_effects": "NONE",
+        "audit_behavior": "LOGGED_IN_USER_GOVERNANCE",
+        "sync_behavior": "SERVER_MANAGED",
+        "permission_actor_context": "manage_users / owner",
+        "source_evidence": "api/database/migrations/2026_09_02_000005_create_branch_user_table.php",
+        "gap_ids": [],
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "ENTITY-006": {
+        "entity_id": "ENTITY-006",
+        "entity_name": "PersonalAccessToken",
+        "primary_table": "personal_access_tokens",
+        "model": "Laravel\\Sanctum\\PersonalAccessToken",
+        "entity_type": "SYSTEM_FRAMEWORK",
+        "business_or_system": "SYSTEM",
+        "tenant_scope": "SYSTEM_GLOBAL",
+        "branch_scope": "BRANCH_UNAWARE",
+        "lifecycle_classification": "HARD_DELETE_LIFECYCLE",
+        "valid_states": [
+            "ACTIVE",
+            "EXPIRED"
+        ],
+        "initial_state": "ACTIVE",
+        "state_storage": "expires_at timestamp",
+        "valid_transitions": [
+            {
+                "from": "ACTIVE",
+                "to": "EXPIRED",
+                "trigger": "token_expiration / logout",
+                "preconditions": "Expiration timestamp reached or user logout",
+                "actor": "SYSTEM / USER"
+            }
+        ],
+        "editable_states": [
+            "ACTIVE"
+        ],
+        "immutable_states": [
+            "EXPIRED"
+        ],
+        "completion_posting_semantics": "N/A",
+        "cancellation_semantics": "N/A",
+        "void_semantics": "N/A",
+        "reversal_semantics": "N/A",
+        "delete_semantics": "HARD_DELETE_ALLOWED",
+        "restore_semantics": "RE_AUTHENTICATE",
+        "referential_restrictions": "CASCADE on tokenable model deletion",
+        "financial_side_effects": "NONE",
+        "inventory_side_effects": "NONE",
+        "ledger_side_effects": "NONE",
+        "audit_behavior": "AUTH_EVENT_LOG",
+        "sync_behavior": "LOCAL_HEADER_AUTH",
+        "permission_actor_context": "sanctum",
+        "source_evidence": "api/app/Http/Controllers/Api/V1/AuthController.php",
+        "gap_ids": [],
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "ENTITY-007": {
+        "entity_id": "ENTITY-007",
+        "entity_name": "PasswordResetToken",
+        "primary_table": "password_reset_tokens",
+        "model": "Framework Table",
+        "entity_type": "SYSTEM_FRAMEWORK",
+        "business_or_system": "SYSTEM",
+        "tenant_scope": "SYSTEM_GLOBAL",
+        "branch_scope": "BRANCH_UNAWARE",
+        "lifecycle_classification": "HARD_DELETE_LIFECYCLE",
+        "valid_states": [
+            "PENDING",
+            "CONSUMED",
+            "EXPIRED"
+        ],
+        "initial_state": "PENDING",
+        "state_storage": "created_at / existence",
+        "valid_transitions": [
+            {
+                "from": "PENDING",
+                "to": "CONSUMED",
+                "trigger": "password_reset_completed",
+                "preconditions": "Token matches and not expired",
+                "actor": "USER"
+            },
+            {
+                "from": "PENDING",
+                "to": "EXPIRED",
+                "trigger": "ttl_elapsed",
+                "preconditions": "60 min elapsed",
+                "actor": "SYSTEM"
+            }
+        ],
+        "editable_states": [],
+        "immutable_states": [
+            "CONSUMED",
+            "EXPIRED"
+        ],
+        "completion_posting_semantics": "N/A",
+        "cancellation_semantics": "N/A",
+        "void_semantics": "N/A",
+        "reversal_semantics": "N/A",
+        "delete_semantics": "HARD_DELETE_ALLOWED",
+        "restore_semantics": "RE_REQUEST_RESET",
+        "referential_restrictions": "NONE",
+        "financial_side_effects": "NONE",
+        "inventory_side_effects": "NONE",
+        "ledger_side_effects": "NONE",
+        "audit_behavior": "NONE",
+        "sync_behavior": "SERVER_MANAGED",
+        "permission_actor_context": "guest / system",
+        "source_evidence": "api/database/migrations/2014_10_12_100000_create_password_reset_tokens_table.php",
+        "gap_ids": [],
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "ENTITY-008": {
+        "entity_id": "ENTITY-008",
+        "entity_name": "Session",
+        "primary_table": "sessions",
+        "model": "Framework Table",
+        "entity_type": "SYSTEM_FRAMEWORK",
+        "business_or_system": "SYSTEM",
+        "tenant_scope": "SYSTEM_GLOBAL",
+        "branch_scope": "BRANCH_UNAWARE",
+        "lifecycle_classification": "HARD_DELETE_LIFECYCLE",
+        "valid_states": [
+            "ACTIVE",
+            "EXPIRED"
+        ],
+        "initial_state": "ACTIVE",
+        "state_storage": "last_activity timestamp",
+        "valid_transitions": [
+            {
+                "from": "ACTIVE",
+                "to": "EXPIRED",
+                "trigger": "session_timeout / logout",
+                "preconditions": "Timeout or explicit destroy",
+                "actor": "SYSTEM / USER"
+            }
+        ],
+        "editable_states": [
+            "ACTIVE"
+        ],
+        "immutable_states": [
+            "EXPIRED"
+        ],
+        "completion_posting_semantics": "N/A",
+        "cancellation_semantics": "N/A",
+        "void_semantics": "N/A",
+        "reversal_semantics": "N/A",
+        "delete_semantics": "HARD_DELETE_ALLOWED",
+        "restore_semantics": "NEW_SESSION",
+        "referential_restrictions": "NONE",
+        "financial_side_effects": "NONE",
+        "inventory_side_effects": "NONE",
+        "ledger_side_effects": "NONE",
+        "audit_behavior": "NONE",
+        "sync_behavior": "SERVER_MANAGED",
+        "permission_actor_context": "framework",
+        "source_evidence": "api/database/migrations/2026_09_02_000008_create_sessions_table.php",
+        "gap_ids": [],
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "ENTITY-009": {
+        "entity_id": "ENTITY-009",
+        "entity_name": "Permission",
+        "primary_table": "permissions",
+        "model": "Spatie\\Permission\\Models\\Permission",
+        "entity_type": "SECURITY",
+        "business_or_system": "BUSINESS",
+        "tenant_scope": "SYSTEM_GLOBAL",
+        "branch_scope": "BRANCH_UNAWARE",
+        "lifecycle_classification": "STATELESS_MASTER",
+        "valid_states": [
+            "ACTIVE"
+        ],
+        "initial_state": "ACTIVE",
+        "state_storage": "record existence",
+        "valid_transitions": [],
+        "editable_states": [
+            "ACTIVE"
+        ],
+        "immutable_states": [],
+        "completion_posting_semantics": "N/A",
+        "cancellation_semantics": "N/A",
+        "void_semantics": "N/A",
+        "reversal_semantics": "N/A",
+        "delete_semantics": "HARD_DELETE_ALLOWED",
+        "restore_semantics": "RE_SEED",
+        "referential_restrictions": "CASCADE on pivot tables",
+        "financial_side_effects": "NONE",
+        "inventory_side_effects": "NONE",
+        "ledger_side_effects": "NONE",
+        "audit_behavior": "RBAC_AUDIT",
+        "sync_behavior": "SERVER_MANAGED",
+        "permission_actor_context": "superadmin / system seeder",
+        "source_evidence": "api/database/migrations/2026_09_02_000009_create_permission_tables.php",
+        "gap_ids": [],
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "ENTITY-010": {
+        "entity_id": "ENTITY-010",
+        "entity_name": "Role",
+        "primary_table": "roles",
+        "model": "Spatie\\Permission\\Models\\Role",
+        "entity_type": "SECURITY",
+        "business_or_system": "BUSINESS",
+        "tenant_scope": "SYSTEM_GLOBAL",
+        "branch_scope": "BRANCH_UNAWARE",
+        "lifecycle_classification": "STATELESS_MASTER",
+        "valid_states": [
+            "ACTIVE"
+        ],
+        "initial_state": "ACTIVE",
+        "state_storage": "record existence",
+        "valid_transitions": [],
+        "editable_states": [
+            "ACTIVE"
+        ],
+        "immutable_states": [],
+        "completion_posting_semantics": "N/A",
+        "cancellation_semantics": "N/A",
+        "void_semantics": "N/A",
+        "reversal_semantics": "N/A",
+        "delete_semantics": "HARD_DELETE_ALLOWED",
+        "restore_semantics": "RE_CREATE",
+        "referential_restrictions": "CASCADE on model_has_roles, role_has_permissions",
+        "financial_side_effects": "NONE",
+        "inventory_side_effects": "NONE",
+        "ledger_side_effects": "NONE",
+        "audit_behavior": "RBAC_AUDIT",
+        "sync_behavior": "SERVER_MANAGED",
+        "permission_actor_context": "manage_roles / superadmin",
+        "source_evidence": "api/database/migrations/2026_09_02_000009_create_permission_tables.php",
+        "gap_ids": [],
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "ENTITY-011": {
+        "entity_id": "ENTITY-011",
+        "entity_name": "ModelHasPermission",
+        "primary_table": "model_has_permissions",
+        "model": "Spatie Pivot",
+        "entity_type": "SECURITY",
+        "business_or_system": "BUSINESS",
+        "tenant_scope": "INDIRECT_VIA_PARENT",
+        "branch_scope": "BRANCH_UNAWARE",
+        "lifecycle_classification": "STATELESS_MASTER",
+        "valid_states": [
+            "ACTIVE"
+        ],
+        "initial_state": "ACTIVE",
+        "state_storage": "record existence",
+        "valid_transitions": [],
+        "editable_states": [
+            "ACTIVE"
+        ],
+        "immutable_states": [],
+        "completion_posting_semantics": "N/A",
+        "cancellation_semantics": "N/A",
+        "void_semantics": "N/A",
+        "reversal_semantics": "N/A",
+        "delete_semantics": "HARD_DELETE_ALLOWED",
+        "restore_semantics": "RE_GRANT",
+        "referential_restrictions": "CASCADE",
+        "financial_side_effects": "NONE",
+        "inventory_side_effects": "NONE",
+        "ledger_side_effects": "NONE",
+        "audit_behavior": "RBAC_AUDIT",
+        "sync_behavior": "SERVER_MANAGED",
+        "permission_actor_context": "manage_roles",
+        "source_evidence": "api/database/migrations/2026_09_02_000009_create_permission_tables.php",
+        "gap_ids": [],
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "ENTITY-012": {
+        "entity_id": "ENTITY-012",
+        "entity_name": "ModelHasRole",
+        "primary_table": "model_has_roles",
+        "model": "Spatie Pivot",
+        "entity_type": "SECURITY",
+        "business_or_system": "BUSINESS",
+        "tenant_scope": "INDIRECT_VIA_PARENT",
+        "branch_scope": "BRANCH_UNAWARE",
+        "lifecycle_classification": "STATELESS_MASTER",
+        "valid_states": [
+            "ACTIVE"
+        ],
+        "initial_state": "ACTIVE",
+        "state_storage": "record existence",
+        "valid_transitions": [],
+        "editable_states": [
+            "ACTIVE"
+        ],
+        "immutable_states": [],
+        "completion_posting_semantics": "N/A",
+        "cancellation_semantics": "N/A",
+        "void_semantics": "N/A",
+        "reversal_semantics": "N/A",
+        "delete_semantics": "HARD_DELETE_ALLOWED",
+        "restore_semantics": "RE_ASSIGN_ROLE",
+        "referential_restrictions": "CASCADE",
+        "financial_side_effects": "NONE",
+        "inventory_side_effects": "NONE",
+        "ledger_side_effects": "NONE",
+        "audit_behavior": "RBAC_AUDIT",
+        "sync_behavior": "SERVER_MANAGED",
+        "permission_actor_context": "manage_roles",
+        "source_evidence": "api/database/migrations/2026_09_02_000009_create_permission_tables.php",
+        "gap_ids": [],
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "ENTITY-013": {
+        "entity_id": "ENTITY-013",
+        "entity_name": "RoleHasPermission",
+        "primary_table": "role_has_permissions",
+        "model": "Spatie Pivot",
+        "entity_type": "SECURITY",
+        "business_or_system": "BUSINESS",
+        "tenant_scope": "SYSTEM_GLOBAL",
+        "branch_scope": "BRANCH_UNAWARE",
+        "lifecycle_classification": "STATELESS_MASTER",
+        "valid_states": [
+            "ACTIVE"
+        ],
+        "initial_state": "ACTIVE",
+        "state_storage": "record existence",
+        "valid_transitions": [],
+        "editable_states": [
+            "ACTIVE"
+        ],
+        "immutable_states": [],
+        "completion_posting_semantics": "N/A",
+        "cancellation_semantics": "N/A",
+        "void_semantics": "N/A",
+        "reversal_semantics": "N/A",
+        "delete_semantics": "HARD_DELETE_ALLOWED",
+        "restore_semantics": "RE_ASSIGN",
+        "referential_restrictions": "CASCADE",
+        "financial_side_effects": "NONE",
+        "inventory_side_effects": "NONE",
+        "ledger_side_effects": "NONE",
+        "audit_behavior": "RBAC_AUDIT",
+        "sync_behavior": "SERVER_MANAGED",
+        "permission_actor_context": "manage_roles",
+        "source_evidence": "api/database/migrations/2026_09_02_000009_create_permission_tables.php",
+        "gap_ids": [],
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "ENTITY-014": {
+        "entity_id": "ENTITY-014",
+        "entity_name": "Category",
+        "primary_table": "categories",
+        "model": "App\\Models\\Category",
+        "entity_type": "MASTER_DATA",
+        "business_or_system": "BUSINESS",
+        "tenant_scope": "DIRECT_BUSINESS_ID",
+        "branch_scope": "BRANCH_UNAWARE",
+        "lifecycle_classification": "SOFT_DELETE_LIFECYCLE",
+        "valid_states": [
+            "ACTIVE",
+            "DELETED"
+        ],
+        "initial_state": "ACTIVE",
+        "state_storage": "deleted_at",
+        "valid_transitions": [
+            {
+                "from": "ACTIVE",
+                "to": "DELETED",
+                "trigger": "soft_delete_category",
+                "preconditions": "No active products linked",
+                "actor": "CATALOG_MANAGER"
+            },
+            {
+                "from": "DELETED",
+                "to": "ACTIVE",
+                "trigger": "restore_category",
+                "preconditions": "Parent business active",
+                "actor": "CATALOG_MANAGER"
+            }
+        ],
+        "editable_states": [
+            "ACTIVE"
+        ],
+        "immutable_states": [
+            "DELETED"
+        ],
+        "completion_posting_semantics": "N/A",
+        "cancellation_semantics": "N/A",
+        "void_semantics": "N/A",
+        "reversal_semantics": "N/A",
+        "delete_semantics": "SOFT_DELETE_ALLOWED",
+        "restore_semantics": "RESTORE_VIA_ELOQUENT",
+        "referential_restrictions": "RESTRICT (Cannot delete if products or subcategories exist)",
+        "financial_side_effects": "NONE",
+        "inventory_side_effects": "NONE",
+        "ledger_side_effects": "NONE",
+        "audit_behavior": "FULL_AUTOMATED",
+        "sync_behavior": "CATALOG_DELTA_SYNC",
+        "permission_actor_context": "manage_products",
+        "source_evidence": "api/app/Models/Category.php, api/app/Http/Controllers/Api/V1/CategoryController.php",
+        "gap_ids": [],
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "ENTITY-015": {
+        "entity_id": "ENTITY-015",
+        "entity_name": "Subcategory",
+        "primary_table": "subcategories",
+        "model": "App\\Models\\Subcategory",
+        "entity_type": "MASTER_DATA",
+        "business_or_system": "BUSINESS",
+        "tenant_scope": "DIRECT_BUSINESS_ID",
+        "branch_scope": "BRANCH_UNAWARE",
+        "lifecycle_classification": "SOFT_DELETE_LIFECYCLE",
+        "valid_states": [
+            "ACTIVE",
+            "DELETED"
+        ],
+        "initial_state": "ACTIVE",
+        "state_storage": "deleted_at",
+        "valid_transitions": [
+            {
+                "from": "ACTIVE",
+                "to": "DELETED",
+                "trigger": "soft_delete_subcategory",
+                "preconditions": "No active products linked",
+                "actor": "CATALOG_MANAGER"
+            },
+            {
+                "from": "DELETED",
+                "to": "ACTIVE",
+                "trigger": "restore_subcategory",
+                "preconditions": "Parent category active",
+                "actor": "CATALOG_MANAGER"
+            }
+        ],
+        "editable_states": [
+            "ACTIVE"
+        ],
+        "immutable_states": [
+            "DELETED"
+        ],
+        "completion_posting_semantics": "N/A",
+        "cancellation_semantics": "N/A",
+        "void_semantics": "N/A",
+        "reversal_semantics": "N/A",
+        "delete_semantics": "SOFT_DELETE_ALLOWED",
+        "restore_semantics": "RESTORE_VIA_ELOQUENT",
+        "referential_restrictions": "RESTRICT (Cannot delete if products exist)",
+        "financial_side_effects": "NONE",
+        "inventory_side_effects": "NONE",
+        "ledger_side_effects": "NONE",
+        "audit_behavior": "FULL_AUTOMATED",
+        "sync_behavior": "CATALOG_DELTA_SYNC",
+        "permission_actor_context": "manage_products",
+        "source_evidence": "api/app/Models/Subcategory.php, api/app/Http/Controllers/Api/V1/SubcategoryController.php",
+        "gap_ids": [],
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "ENTITY-016": {
+        "entity_id": "ENTITY-016",
+        "entity_name": "Brand",
+        "primary_table": "brands",
+        "model": "App\\Models\\Brand",
+        "entity_type": "MASTER_DATA",
+        "business_or_system": "BUSINESS",
+        "tenant_scope": "DIRECT_BUSINESS_ID",
+        "branch_scope": "BRANCH_UNAWARE",
+        "lifecycle_classification": "SOFT_DELETE_LIFECYCLE",
+        "valid_states": [
+            "ACTIVE",
+            "DELETED"
+        ],
+        "initial_state": "ACTIVE",
+        "state_storage": "deleted_at",
+        "valid_transitions": [
+            {
+                "from": "ACTIVE",
+                "to": "DELETED",
+                "trigger": "soft_delete_brand",
+                "preconditions": "No active products linked",
+                "actor": "CATALOG_MANAGER"
+            },
+            {
+                "from": "DELETED",
+                "to": "ACTIVE",
+                "trigger": "restore_brand",
+                "preconditions": "Parent business active",
+                "actor": "CATALOG_MANAGER"
+            }
+        ],
+        "editable_states": [
+            "ACTIVE"
+        ],
+        "immutable_states": [
+            "DELETED"
+        ],
+        "completion_posting_semantics": "N/A",
+        "cancellation_semantics": "N/A",
+        "void_semantics": "N/A",
+        "reversal_semantics": "N/A",
+        "delete_semantics": "SOFT_DELETE_ALLOWED",
+        "restore_semantics": "RESTORE_VIA_ELOQUENT",
+        "referential_restrictions": "RESTRICT (Cannot delete if products exist)",
+        "financial_side_effects": "NONE",
+        "inventory_side_effects": "NONE",
+        "ledger_side_effects": "NONE",
+        "audit_behavior": "FULL_AUTOMATED",
+        "sync_behavior": "CATALOG_DELTA_SYNC",
+        "permission_actor_context": "manage_products",
+        "source_evidence": "api/app/Models/Brand.php, api/app/Http/Controllers/Api/V1/BrandController.php",
+        "gap_ids": [],
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "ENTITY-017": {
+        "entity_id": "ENTITY-017",
+        "entity_name": "Product",
+        "primary_table": "products",
+        "model": "App\\Models\\Product",
+        "entity_type": "MASTER_DATA",
+        "business_or_system": "BUSINESS",
+        "tenant_scope": "DIRECT_BUSINESS_ID",
+        "branch_scope": "BRANCH_UNAWARE",
+        "lifecycle_classification": "EXPLICIT_STATE_MACHINE",
+        "valid_states": [
+            "ACTIVE",
+            "INACTIVE",
+            "DISCONTINUED",
+            "DELETED"
+        ],
+        "initial_state": "ACTIVE",
+        "state_storage": "is_active / deleted_at",
+        "valid_transitions": [
+            {
+                "from": "ACTIVE",
+                "to": "INACTIVE",
+                "trigger": "deactivate_product",
+                "preconditions": "Operator deactivation",
+                "actor": "CATALOG_MANAGER"
+            },
+            {
+                "from": "INACTIVE",
+                "to": "ACTIVE",
+                "trigger": "activate_product",
+                "preconditions": "Operator reactivation",
+                "actor": "CATALOG_MANAGER"
+            },
+            {
+                "from": "ACTIVE",
+                "to": "DELETED",
+                "trigger": "soft_delete_product",
+                "preconditions": "Zero branch stock or operator confirmation",
+                "actor": "CATALOG_MANAGER"
+            },
+            {
+                "from": "INACTIVE",
+                "to": "DELETED",
+                "trigger": "soft_delete_product",
+                "preconditions": "Zero branch stock or operator confirmation",
+                "actor": "CATALOG_MANAGER"
+            },
+            {
+                "from": "DELETED",
+                "to": "ACTIVE",
+                "trigger": "restore_product",
+                "preconditions": "Operator restore action",
+                "actor": "CATALOG_MANAGER"
+            }
+        ],
+        "editable_states": [
+            "ACTIVE",
+            "INACTIVE"
+        ],
+        "immutable_states": [
+            "DELETED"
+        ],
+        "completion_posting_semantics": "N/A",
+        "cancellation_semantics": "N/A",
+        "void_semantics": "N/A",
+        "reversal_semantics": "N/A",
+        "delete_semantics": "SOFT_DELETE_ALLOWED",
+        "restore_semantics": "RESTORE_VIA_ELOQUENT",
+        "referential_restrictions": "RESTRICT (Cannot hard delete product referenced in historical sale_items or purchase_items)",
+        "financial_side_effects": "NONE",
+        "inventory_side_effects": "AUTO_INITIALIZE_BRANCH_INVENTORIES (on creation across active branches)",
+        "ledger_side_effects": "NONE",
+        "audit_behavior": "FULL_AUTOMATED",
+        "sync_behavior": "CATALOG_DELTA_SYNC",
+        "permission_actor_context": "manage_products",
+        "source_evidence": "api/app/Models/Product.php, api/app/Http/Controllers/Api/V1/ProductController.php",
+        "gap_ids": [
+            "P1-GAP-002",
+            "P1-GAP-009"
+        ],
+        "verification_confidence": "SOURCE_VERIFIED_WITH_GAP",
+        "certification_status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "ENTITY-018": {
+        "entity_id": "ENTITY-018",
+        "entity_name": "BranchInventory",
+        "primary_table": "branch_inventories",
+        "model": "App\\Models\\BranchInventory",
+        "entity_type": "BALANCE_CACHE",
+        "business_or_system": "BUSINESS",
+        "tenant_scope": "DIRECT_BUSINESS_ID",
+        "branch_scope": "BRANCH_SCOPED",
+        "lifecycle_classification": "STATELESS_MASTER",
+        "valid_states": [
+            "IN_STOCK",
+            "LOW_STOCK",
+            "OUT_OF_STOCK",
+            "NEGATIVE_STOCK"
+        ],
+        "initial_state": "OUT_OF_STOCK",
+        "state_storage": "quantity_on_hand computed state",
+        "valid_transitions": [],
+        "editable_states": [
+            "IN_STOCK",
+            "LOW_STOCK",
+            "OUT_OF_STOCK",
+            "NEGATIVE_STOCK"
+        ],
+        "immutable_states": [],
+        "completion_posting_semantics": "MUTATED_BY_TRANSACTION_EVENTS",
+        "cancellation_semantics": "REVERSED_BY_COMPENSATING_EVENTS",
+        "void_semantics": "N/A",
+        "reversal_semantics": "N/A",
+        "delete_semantics": "RESTRICT",
+        "restore_semantics": "RE_CALCULATE_FROM_LEDGER",
+        "referential_restrictions": "RESTRICT on product_id and branch_id",
+        "financial_side_effects": "Asset valuation = quantity_on_hand * moving_average_cost",
+        "inventory_side_effects": "PRIMARY_STOCK_BALANCE",
+        "ledger_side_effects": "MUST_BE_DRIVEN_BY_INVENTORY_MOVEMENTS",
+        "audit_behavior": "RECORDED_VIA_INVENTORY_MOVEMENTS",
+        "sync_behavior": "BRANCH_LEVEL_DELTA_SYNC",
+        "permission_actor_context": "manage_inventory",
+        "source_evidence": "api/app/Models/BranchInventory.php, api/app/Services/InventoryService.php, api/app/Services/StockService.php",
+        "gap_ids": [
+            "P1-GAP-003",
+            "P1-GAP-004"
+        ],
+        "verification_confidence": "SOURCE_VERIFIED_WITH_GAP",
+        "certification_status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "ENTITY-019": {
+        "entity_id": "ENTITY-019",
+        "entity_name": "InventoryMovement",
+        "primary_table": "inventory_movements",
+        "model": "App\\Models\\InventoryMovement",
+        "entity_type": "EVENT_LEDGER",
+        "business_or_system": "BUSINESS",
+        "tenant_scope": "DIRECT_BUSINESS_ID",
+        "branch_scope": "BRANCH_SCOPED",
+        "lifecycle_classification": "IMMUTABLE_LEDGER_EVENT",
+        "valid_states": [
+            "POSTED",
+            "REVERSED"
+        ],
+        "initial_state": "POSTED",
+        "state_storage": "status / reversed_at",
+        "valid_transitions": [
+            {
+                "from": "POSTED",
+                "to": "REVERSED",
+                "trigger": "reverse_movement",
+                "preconditions": "Compensating movement posted",
+                "actor": "STOCK_MANAGER / SYSTEM"
+            }
+        ],
+        "editable_states": [],
+        "immutable_states": [
+            "POSTED",
+            "REVERSED"
+        ],
+        "completion_posting_semantics": "APPEND_ONLY_AUDIT_LOGGED",
+        "cancellation_semantics": "COMPENSATING_MOVEMENT_REQUIRED",
+        "void_semantics": "COMPENSATING_MOVEMENT_REQUIRED",
+        "reversal_semantics": "RECORD_OPPOSITE_MOVEMENT",
+        "delete_semantics": "IMMUTABLE_NO_DELETE",
+        "restore_semantics": "N/A",
+        "referential_restrictions": "RESTRICT (Immutable historical ledger)",
+        "financial_side_effects": "Carries unit_cost for COGS and inventory valuation",
+        "inventory_side_effects": "DRIVES_QUANTITY_ON_HAND",
+        "ledger_side_effects": "PRIMARY_STOCK_EVENT_LEDGER",
+        "audit_behavior": "NATURAL_AUDIT_TRAIL",
+        "sync_behavior": "EVENT_REPLAY_SYNC",
+        "permission_actor_context": "system / stock_controller",
+        "source_evidence": "api/app/Models/InventoryMovement.php, api/app/Services/InventoryMovementService.php, api/app/Services/InventoryService.php",
+        "gap_ids": [
+            "P1-GAP-003",
+            "P1-GAP-004"
+        ],
+        "verification_confidence": "SOURCE_VERIFIED_WITH_GAP",
+        "certification_status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "ENTITY-020": {
+        "entity_id": "ENTITY-020",
+        "entity_name": "Sale",
+        "primary_table": "sales",
+        "model": "App\\Models\\Sale",
+        "entity_type": "TRANSACTION_HEADER",
+        "business_or_system": "BUSINESS",
+        "tenant_scope": "DIRECT_BUSINESS_ID",
+        "branch_scope": "BRANCH_SCOPED",
+        "lifecycle_classification": "EXPLICIT_STATE_MACHINE",
+        "valid_states": [
+            "PAID",
+            "PARTIAL",
+            "DUE",
+            "CANCELLED",
+            "RETURNED",
+            "REFUNDED"
+        ],
+        "initial_state": "PAID",
+        "state_storage": "status / payment_status",
+        "valid_transitions": [
+            {
+                "from": "PAID",
+                "to": "CANCELLED",
+                "trigger": "cancel_sale",
+                "preconditions": "No settled returns",
+                "actor": "MANAGER / CASHIER"
+            },
+            {
+                "from": "PAID",
+                "to": "RETURNED",
+                "trigger": "process_return",
+                "preconditions": "Return items processed",
+                "actor": "CASHIER"
+            },
+            {
+                "from": "PARTIAL",
+                "to": "PAID",
+                "trigger": "settle_customer_payment",
+                "preconditions": "Payment covers remaining due",
+                "actor": "CASHIER"
+            },
+            {
+                "from": "PARTIAL",
+                "to": "CANCELLED",
+                "trigger": "cancel_sale",
+                "preconditions": "No returns exist",
+                "actor": "MANAGER"
+            },
+            {
+                "from": "DUE",
+                "to": "PAID",
+                "trigger": "settle_customer_payment",
+                "preconditions": "Payment covers full total",
+                "actor": "CASHIER"
+            },
+            {
+                "from": "DUE",
+                "to": "CANCELLED",
+                "trigger": "cancel_sale",
+                "preconditions": "No returns exist",
+                "actor": "MANAGER"
+            }
+        ],
+        "editable_states": [
+            "DUE",
+            "PARTIAL"
+        ],
+        "immutable_states": [
+            "CANCELLED",
+            "RETURNED"
+        ],
+        "completion_posting_semantics": "POSTS_STOCK_DECREMENT_CASH_OR_KHATA",
+        "cancellation_semantics": "STATUS_CANCEL + STOCK_RESTORE + CASH_OR_KHATA_REVERSAL",
+        "void_semantics": "CANCEL_SALE_OPERATION",
+        "reversal_semantics": "PROCESS_RETURN_REFUND",
+        "delete_semantics": "SOFT_DELETE_ALLOWED",
+        "restore_semantics": "RESTORE_VIA_ELOQUENT",
+        "referential_restrictions": "RESTRICT (Historical invoice cannot be hard deleted)",
+        "financial_side_effects": "Increases revenue, increases cash_ledgers or customer khata balance",
+        "inventory_side_effects": "Decrements branch_inventories stock on hand",
+        "ledger_side_effects": "Posts InventoryMovement (TYPE_SALE), CashLedger or KhataTransaction",
+        "audit_behavior": "FULL_AUTOMATED",
+        "sync_behavior": "OFFLINE_POS_BATCH_INGEST",
+        "permission_actor_context": "process_sales / cashier",
+        "source_evidence": "api/app/Models/Sale.php, api/app/Services/SaleService.php, api/app/Http/Controllers/Api/V1/SaleController.php",
+        "gap_ids": [
+            "P1-GAP-005",
+            "P1-GAP-011"
+        ],
+        "verification_confidence": "SOURCE_VERIFIED_WITH_GAP",
+        "certification_status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "ENTITY-021": {
+        "entity_id": "ENTITY-021",
+        "entity_name": "SaleItem",
+        "primary_table": "sale_items",
+        "model": "App\\Models\\SaleItem",
+        "entity_type": "TRANSACTION_LINE",
+        "business_or_system": "BUSINESS",
+        "tenant_scope": "INDIRECT_VIA_PARENT",
+        "branch_scope": "BRANCH_SCOPED",
+        "lifecycle_classification": "APPEND_ONLY_TRANSACTION_RECORD",
+        "valid_states": [
+            "ACTIVE"
+        ],
+        "initial_state": "ACTIVE",
+        "state_storage": "record existence",
+        "valid_transitions": [],
+        "editable_states": [],
+        "immutable_states": [
+            "ACTIVE"
+        ],
+        "completion_posting_semantics": "IMMUTABLE_ON_SALE_POST",
+        "cancellation_semantics": "INHERITED_FROM_PARENT_SALE",
+        "void_semantics": "INHERITED_FROM_PARENT_SALE",
+        "reversal_semantics": "REFERENCED_BY_SALE_RETURN_ITEMS",
+        "delete_semantics": "RESTRICT (Cascade only with parent sale deletion)",
+        "restore_semantics": "CASCADE_WITH_PARENT",
+        "referential_restrictions": "RESTRICT on product_id, CASCADE on sale_id",
+        "financial_side_effects": "Carries line_total, discount, unit_price, unit_cost for margin reporting",
+        "inventory_side_effects": "Defines quantity decremented from branch stock",
+        "ledger_side_effects": "Maps 1-to-1 to InventoryMovement record",
+        "audit_behavior": "LOGGED_WITH_SALE",
+        "sync_behavior": "INGESTED_WITH_SALE_PAYLOAD",
+        "permission_actor_context": "cashier",
+        "source_evidence": "api/app/Models/SaleItem.php, api/app/Services/SaleService.php",
+        "gap_ids": [
+            "P1-GAP-011"
+        ],
+        "verification_confidence": "SOURCE_VERIFIED_WITH_GAP",
+        "certification_status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "ENTITY-022": {
+        "entity_id": "ENTITY-022",
+        "entity_name": "SaleReturn",
+        "primary_table": "sale_returns",
+        "model": "App\\Models\\SaleReturn",
+        "entity_type": "TRANSACTION_HEADER",
+        "business_or_system": "BUSINESS",
+        "tenant_scope": "DIRECT_BUSINESS_ID",
+        "branch_scope": "BRANCH_SCOPED",
+        "lifecycle_classification": "EXPLICIT_STATE_MACHINE",
+        "valid_states": [
+            "PENDING",
+            "APPROVED",
+            "REJECTED",
+            "REFUNDED",
+            "SETTLED"
+        ],
+        "initial_state": "PENDING",
+        "state_storage": "status / refund_status",
+        "valid_transitions": [
+            {
+                "from": "PENDING",
+                "to": "APPROVED",
+                "trigger": "approve_return",
+                "preconditions": "Return items inspected",
+                "actor": "STORE_MANAGER"
+            },
+            {
+                "from": "PENDING",
+                "to": "REJECTED",
+                "trigger": "reject_return",
+                "preconditions": "Item condition invalid",
+                "actor": "STORE_MANAGER"
+            },
+            {
+                "from": "APPROVED",
+                "to": "SETTLED",
+                "trigger": "settle_refund",
+                "preconditions": "Refund disbursed via cash/bank or customer credit",
+                "actor": "CASHIER / MANAGER"
+            }
+        ],
+        "editable_states": [
+            "PENDING"
+        ],
+        "immutable_states": [
+            "REJECTED",
+            "SETTLED"
+        ],
+        "completion_posting_semantics": "RESTORES_STOCK_AND_POSTS_REFUND_MOVEMENT",
+        "cancellation_semantics": "REVERSE_REFUND_OPERATION",
+        "void_semantics": "REJECT_RETURN",
+        "reversal_semantics": "REVERSE_SETTLED_REFUND",
+        "delete_semantics": "SOFT_DELETE_ALLOWED",
+        "restore_semantics": "RESTORE_VIA_ELOQUENT",
+        "referential_restrictions": "RESTRICT on sale_id, customer_id",
+        "financial_side_effects": "Reduces revenue, debits cash or credits customer khata",
+        "inventory_side_effects": "Increments branch_inventories stock on hand for returned items",
+        "ledger_side_effects": "Posts InventoryMovement (TYPE_RETURN), AccountMovement (TYPE_REFUND)",
+        "audit_behavior": "FULL_AUTOMATED",
+        "sync_behavior": "SERVER_OR_OFFLINE_SYNC",
+        "permission_actor_context": "process_returns",
+        "source_evidence": "api/app/Models/SaleReturn.php, api/app/Http/Controllers/Api/V1/SaleReturnRefundController.php, api/app/Services/SaleService.php",
+        "gap_ids": [],
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "ENTITY-023": {
+        "entity_id": "ENTITY-023",
+        "entity_name": "SaleReturnItem",
+        "primary_table": "sale_return_items",
+        "model": "App\\Models\\SaleReturnItem",
+        "entity_type": "TRANSACTION_LINE",
+        "business_or_system": "BUSINESS",
+        "tenant_scope": "INDIRECT_VIA_PARENT",
+        "branch_scope": "BRANCH_SCOPED",
+        "lifecycle_classification": "APPEND_ONLY_TRANSACTION_RECORD",
+        "valid_states": [
+            "ACTIVE"
+        ],
+        "initial_state": "ACTIVE",
+        "state_storage": "record existence",
+        "valid_transitions": [],
+        "editable_states": [],
+        "immutable_states": [
+            "ACTIVE"
+        ],
+        "completion_posting_semantics": "IMMUTABLE_ON_RETURN_POST",
+        "cancellation_semantics": "INHERITED_FROM_PARENT_RETURN",
+        "void_semantics": "INHERITED_FROM_PARENT_RETURN",
+        "reversal_semantics": "COMPENSATING_REVERSAL",
+        "delete_semantics": "CASCADE_WITH_PARENT",
+        "restore_semantics": "CASCADE_WITH_PARENT",
+        "referential_restrictions": "RESTRICT on product_id, CASCADE on sale_return_id",
+        "financial_side_effects": "Carries refund_amount, unit_price for refund valuation",
+        "inventory_side_effects": "Defines quantity incremented into branch stock",
+        "ledger_side_effects": "Maps to InventoryMovement record",
+        "audit_behavior": "LOGGED_WITH_SALE_RETURN",
+        "sync_behavior": "INGESTED_WITH_SALE_RETURN",
+        "permission_actor_context": "process_returns",
+        "source_evidence": "api/app/Models/SaleReturnItem.php, api/app/Services/SaleService.php",
+        "gap_ids": [],
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "ENTITY-024": {
+        "entity_id": "ENTITY-024",
+        "entity_name": "Customer",
+        "primary_table": "customers",
+        "model": "App\\Models\\Customer",
+        "entity_type": "MASTER_DATA",
+        "business_or_system": "BUSINESS",
+        "tenant_scope": "DIRECT_BUSINESS_ID",
+        "branch_scope": "BRANCH_OPTIONAL",
+        "lifecycle_classification": "EXPLICIT_STATE_MACHINE",
+        "valid_states": [
+            "ACTIVE",
+            "INACTIVE",
+            "BLOCKED",
+            "DELETED"
+        ],
+        "initial_state": "ACTIVE",
+        "state_storage": "is_active / deleted_at",
+        "valid_transitions": [
+            {
+                "from": "ACTIVE",
+                "to": "INACTIVE",
+                "trigger": "deactivate_customer",
+                "preconditions": "Operator deactivation",
+                "actor": "OPERATOR"
+            },
+            {
+                "from": "ACTIVE",
+                "to": "BLOCKED",
+                "trigger": "block_credit",
+                "preconditions": "Credit limit exceeded or bad debt",
+                "actor": "MANAGER"
+            },
+            {
+                "from": "INACTIVE",
+                "to": "ACTIVE",
+                "trigger": "activate_customer",
+                "preconditions": "Operator reactivation",
+                "actor": "OPERATOR"
+            },
+            {
+                "from": "BLOCKED",
+                "to": "ACTIVE",
+                "trigger": "unblock_customer",
+                "preconditions": "Khata dues settled",
+                "actor": "MANAGER"
+            },
+            {
+                "from": "ACTIVE",
+                "to": "DELETED",
+                "trigger": "soft_delete_customer",
+                "preconditions": "Zero outstanding balance or manager confirmation",
+                "actor": "MANAGER"
+            },
+            {
+                "from": "DELETED",
+                "to": "ACTIVE",
+                "trigger": "restore_customer",
+                "preconditions": "Operator restoration",
+                "actor": "MANAGER"
+            }
+        ],
+        "editable_states": [
+            "ACTIVE",
+            "INACTIVE",
+            "BLOCKED"
+        ],
+        "immutable_states": [
+            "DELETED"
+        ],
+        "completion_posting_semantics": "N/A",
+        "cancellation_semantics": "N/A",
+        "void_semantics": "N/A",
+        "reversal_semantics": "N/A",
+        "delete_semantics": "SOFT_DELETE_ALLOWED",
+        "restore_semantics": "RESTORE_VIA_ELOQUENT",
+        "referential_restrictions": "RESTRICT (Cannot delete customer with historical sales or non-zero balance)",
+        "financial_side_effects": "Maintains cached balance (receivables) driven by sales and payments",
+        "inventory_side_effects": "NONE",
+        "ledger_side_effects": "MUST_MATCH_KHATA_TRANSACTIONS_SUM",
+        "audit_behavior": "FULL_AUTOMATED",
+        "sync_behavior": "DEXIE_CUSTOMER_SYNC",
+        "permission_actor_context": "manage_customers",
+        "source_evidence": "api/app/Models/Customer.php, api/app/Services/CustomerAccountService.php, api/app/Http/Controllers/Api/V1/CustomerController.php",
+        "gap_ids": [
+            "P1-GAP-007",
+            "P1-GAP-015"
+        ],
+        "verification_confidence": "SOURCE_VERIFIED_WITH_GAP",
+        "certification_status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "ENTITY-025": {
+        "entity_id": "ENTITY-025",
+        "entity_name": "KhataTransaction",
+        "primary_table": "khata_transactions",
+        "model": "App\\Models\\KhataTransaction",
+        "entity_type": "EVENT_LEDGER",
+        "business_or_system": "BUSINESS",
+        "tenant_scope": "DIRECT_BUSINESS_ID",
+        "branch_scope": "BRANCH_SCOPED",
+        "lifecycle_classification": "IMMUTABLE_LEDGER_EVENT",
+        "valid_states": [
+            "POSTED",
+            "REVERSED"
+        ],
+        "initial_state": "POSTED",
+        "state_storage": "status / existence",
+        "valid_transitions": [
+            {
+                "from": "POSTED",
+                "to": "REVERSED",
+                "trigger": "reverse_khata_transaction",
+                "preconditions": "Sale cancelled or payment reversed",
+                "actor": "MANAGER / SYSTEM"
+            }
+        ],
+        "editable_states": [],
+        "immutable_states": [
+            "POSTED",
+            "REVERSED"
+        ],
+        "completion_posting_semantics": "APPEND_ONLY_CUSTOMER_AR_LEDGER",
+        "cancellation_semantics": "COMPENSATING_CREDIT_OR_DEBIT",
+        "void_semantics": "COMPENSATING_TRANSACTION",
+        "reversal_semantics": "POST_REVERSAL_KHATA_ROW",
+        "delete_semantics": "IMMUTABLE_NO_DELETE",
+        "restore_semantics": "N/A",
+        "referential_restrictions": "RESTRICT on customer_id, branch_id",
+        "financial_side_effects": "Drives customer balance (DEBIT = balance increase, CREDIT = balance decrease)",
+        "inventory_side_effects": "NONE",
+        "ledger_side_effects": "PRIMARY_CUSTOMER_CREDIT_LEDGER",
+        "audit_behavior": "FULL_AUTOMATED",
+        "sync_behavior": "SYNC_WITH_POS_PAYMENTS",
+        "permission_actor_context": "manage_customers / cashier",
+        "source_evidence": "api/app/Models/KhataTransaction.php, api/app/Http/Controllers/Api/V1/KhataController.php, api/app/Services/CustomerAccountService.php",
+        "gap_ids": [
+            "P1-GAP-007"
+        ],
+        "verification_confidence": "SOURCE_VERIFIED_WITH_GAP",
+        "certification_status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "ENTITY-026": {
+        "entity_id": "ENTITY-026",
+        "entity_name": "CustomerPayment",
+        "primary_table": "customer_payments",
+        "model": "App\\Models\\CustomerPayment",
+        "entity_type": "TRANSACTION_HEADER",
+        "business_or_system": "BUSINESS",
+        "tenant_scope": "DIRECT_BUSINESS_ID",
+        "branch_scope": "BRANCH_SCOPED",
+        "lifecycle_classification": "EXPLICIT_STATE_MACHINE",
+        "valid_states": [
+            "POSTED",
+            "REVERSED"
+        ],
+        "initial_state": "POSTED",
+        "state_storage": "reversed_at / status",
+        "valid_transitions": [
+            {
+                "from": "POSTED",
+                "to": "REVERSED",
+                "trigger": "reverse_payment",
+                "preconditions": "Payment not previously reversed",
+                "actor": "STORE_MANAGER / OWNER"
+            }
+        ],
+        "editable_states": [],
+        "immutable_states": [
+            "REVERSED"
+        ],
+        "completion_posting_semantics": "CREDITS_CUSTOMER_BALANCE_AND_DEBITS_CASH_OR_BANK",
+        "cancellation_semantics": "REVERSE_PAYMENT_OPERATION",
+        "void_semantics": "REVERSE_PAYMENT_OPERATION",
+        "reversal_semantics": "RESTORES_CUSTOMER_DUE_AND_REVERSES_FINANCIAL_MOVEMENT",
+        "delete_semantics": "IMMUTABLE_NO_DELETE",
+        "restore_semantics": "N/A",
+        "referential_restrictions": "RESTRICT on customer_id, branch_id",
+        "financial_side_effects": "Decreases customer AR balance, increases financial_account or cash_ledger balance",
+        "inventory_side_effects": "NONE",
+        "ledger_side_effects": "Posts KhataTransaction (CREDIT), AccountMovement (INFLOW), CashLedger (INFLOW)",
+        "audit_behavior": "FULL_AUTOMATED",
+        "sync_behavior": "OFFLINE_PAYMENT_SYNC",
+        "permission_actor_context": "manage_payments / cashier",
+        "source_evidence": "api/app/Models/CustomerPayment.php, api/app/Services/CustomerPaymentService.php, api/app/Http/Controllers/Api/V1/CustomerPaymentController.php",
+        "gap_ids": [
+            "P1-GAP-007"
+        ],
+        "verification_confidence": "SOURCE_VERIFIED_WITH_GAP",
+        "certification_status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "ENTITY-027": {
+        "entity_id": "ENTITY-027",
+        "entity_name": "Supplier",
+        "primary_table": "suppliers",
+        "model": "App\\Models\\Supplier",
+        "entity_type": "MASTER_DATA",
+        "business_or_system": "BUSINESS",
+        "tenant_scope": "DIRECT_BUSINESS_ID",
+        "branch_scope": "BRANCH_OPTIONAL",
+        "lifecycle_classification": "EXPLICIT_STATE_MACHINE",
+        "valid_states": [
+            "ACTIVE",
+            "INACTIVE",
+            "DELETED"
+        ],
+        "initial_state": "ACTIVE",
+        "state_storage": "is_active / deleted_at",
+        "valid_transitions": [
+            {
+                "from": "ACTIVE",
+                "to": "INACTIVE",
+                "trigger": "deactivate_supplier",
+                "preconditions": "Operator deactivation",
+                "actor": "PROCUREMENT_MANAGER"
+            },
+            {
+                "from": "INACTIVE",
+                "to": "ACTIVE",
+                "trigger": "activate_supplier",
+                "preconditions": "Operator reactivation",
+                "actor": "PROCUREMENT_MANAGER"
+            },
+            {
+                "from": "ACTIVE",
+                "to": "DELETED",
+                "trigger": "soft_delete_supplier",
+                "preconditions": "Zero balance or manager confirmation",
+                "actor": "PROCUREMENT_MANAGER"
+            },
+            {
+                "from": "DELETED",
+                "to": "ACTIVE",
+                "trigger": "restore_supplier",
+                "preconditions": "Operator restoration",
+                "actor": "PROCUREMENT_MANAGER"
+            }
+        ],
+        "editable_states": [
+            "ACTIVE",
+            "INACTIVE"
+        ],
+        "immutable_states": [
+            "DELETED"
+        ],
+        "completion_posting_semantics": "N/A",
+        "cancellation_semantics": "N/A",
+        "void_semantics": "N/A",
+        "reversal_semantics": "N/A",
+        "delete_semantics": "SOFT_DELETE_ALLOWED",
+        "restore_semantics": "RESTORE_VIA_ELOQUENT",
+        "referential_restrictions": "RESTRICT (Cannot delete supplier with historical purchases or outstanding payables)",
+        "financial_side_effects": "Maintains cached balance (accounts payable) driven by purchases and supplier payments",
+        "inventory_side_effects": "NONE",
+        "ledger_side_effects": "MUST_MATCH_PURCHASES_MINUS_PAYMENTS",
+        "audit_behavior": "FULL_AUTOMATED",
+        "sync_behavior": "CATALOG_DELTA_SYNC",
+        "permission_actor_context": "manage_suppliers",
+        "source_evidence": "api/app/Models/Supplier.php, api/app/Http/Controllers/Api/V1/SupplierController.php, api/app/Services/SupplierBalanceService.php",
+        "gap_ids": [
+            "P1-GAP-007"
+        ],
+        "verification_confidence": "SOURCE_VERIFIED_WITH_GAP",
+        "certification_status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "ENTITY-028": {
+        "entity_id": "ENTITY-028",
+        "entity_name": "Purchase",
+        "primary_table": "purchases",
+        "model": "App\\Models\\Purchase",
+        "entity_type": "TRANSACTION_HEADER",
+        "business_or_system": "BUSINESS",
+        "tenant_scope": "DIRECT_BUSINESS_ID",
+        "branch_scope": "BRANCH_SCOPED",
+        "lifecycle_classification": "EXPLICIT_STATE_MACHINE",
+        "valid_states": [
+            "RECEIVED",
+            "ORDERED",
+            "PENDING",
+            "CANCELLED"
+        ],
+        "initial_state": "RECEIVED",
+        "state_storage": "status / payment_status",
+        "valid_transitions": [
+            {
+                "from": "ORDERED",
+                "to": "RECEIVED",
+                "trigger": "receive_purchase_goods",
+                "preconditions": "GRN verified, stock inspected",
+                "actor": "STOCK_KEEPER / MANAGER"
+            },
+            {
+                "from": "ORDERED",
+                "to": "CANCELLED",
+                "trigger": "cancel_purchase",
+                "preconditions": "Goods not received",
+                "actor": "PURCHASE_MANAGER"
+            },
+            {
+                "from": "RECEIVED",
+                "to": "CANCELLED",
+                "trigger": "cancel_received_purchase",
+                "preconditions": "Stock on hand sufficient to revert, supplier AP balance reverted",
+                "actor": "OWNER / MANAGER"
+            }
+        ],
+        "editable_states": [
+            "ORDERED",
+            "PENDING"
+        ],
+        "immutable_states": [
+            "CANCELLED"
+        ],
+        "completion_posting_semantics": "INCREMENTS_STOCK_AND_POSTS_SUPPLIER_PAYABLE",
+        "cancellation_semantics": "STATUS_CANCEL + STOCK_DECREMENT + AP_BALANCE_REVERSAL",
+        "void_semantics": "CANCEL_PURCHASE_OPERATION",
+        "reversal_semantics": "PURCHASE_RETURN_OR_CANCELLATION",
+        "delete_semantics": "SOFT_DELETE_ALLOWED",
+        "restore_semantics": "RESTORE_VIA_ELOQUENT",
+        "referential_restrictions": "RESTRICT on supplier_id, branch_id",
+        "financial_side_effects": "Increases supplier balance (AP liability), debits cash/bank if paid immediately",
+        "inventory_side_effects": "Increments branch_inventories stock on hand, recalculates moving average cost",
+        "ledger_side_effects": "Posts InventoryMovement (TYPE_PURCHASE), AccountMovement (TYPE_PURCHASE_PAYMENT if paid)",
+        "audit_behavior": "FULL_AUTOMATED",
+        "sync_behavior": "SERVER_OR_OFFLINE_SYNC",
+        "permission_actor_context": "manage_purchases",
+        "source_evidence": "api/app/Models/Purchase.php, api/app/Services/PurchaseService.php, api/app/Http/Controllers/Api/V1/PurchaseController.php",
+        "gap_ids": [
+            "P1-GAP-006"
+        ],
+        "verification_confidence": "SOURCE_VERIFIED_WITH_GAP",
+        "certification_status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "ENTITY-029": {
+        "entity_id": "ENTITY-029",
+        "entity_name": "PurchaseItem",
+        "primary_table": "purchase_items",
+        "model": "App\\Models\\PurchaseItem",
+        "entity_type": "TRANSACTION_LINE",
+        "business_or_system": "BUSINESS",
+        "tenant_scope": "INDIRECT_VIA_PARENT",
+        "branch_scope": "BRANCH_SCOPED",
+        "lifecycle_classification": "APPEND_ONLY_TRANSACTION_RECORD",
+        "valid_states": [
+            "ACTIVE"
+        ],
+        "initial_state": "ACTIVE",
+        "state_storage": "record existence",
+        "valid_transitions": [],
+        "editable_states": [],
+        "immutable_states": [
+            "ACTIVE"
+        ],
+        "completion_posting_semantics": "IMMUTABLE_ON_PURCHASE_RECEIVE",
+        "cancellation_semantics": "INHERITED_FROM_PARENT_PURCHASE",
+        "void_semantics": "INHERITED_FROM_PARENT_PURCHASE",
+        "reversal_semantics": "COMPENSATING_REVERSAL",
+        "delete_semantics": "CASCADE_WITH_PARENT",
+        "restore_semantics": "CASCADE_WITH_PARENT",
+        "referential_restrictions": "RESTRICT on product_id, CASCADE on purchase_id",
+        "financial_side_effects": "Carries unit_cost, line_total for inventory valuation & AP total",
+        "inventory_side_effects": "Defines stock quantity incremented into branch inventory",
+        "ledger_side_effects": "Maps 1-to-1 to InventoryMovement record",
+        "audit_behavior": "LOGGED_WITH_PURCHASE",
+        "sync_behavior": "INGESTED_WITH_PURCHASE",
+        "permission_actor_context": "manage_purchases",
+        "source_evidence": "api/app/Models/PurchaseItem.php, api/app/Services/PurchaseService.php",
+        "gap_ids": [
+            "P1-GAP-006"
+        ],
+        "verification_confidence": "SOURCE_VERIFIED_WITH_GAP",
+        "certification_status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "ENTITY-030": {
+        "entity_id": "ENTITY-030",
+        "entity_name": "SupplierPayment",
+        "primary_table": "supplier_payments",
+        "model": "App\\Models\\SupplierPayment",
+        "entity_type": "TRANSACTION_HEADER",
+        "business_or_system": "BUSINESS",
+        "tenant_scope": "DIRECT_BUSINESS_ID",
+        "branch_scope": "BRANCH_SCOPED",
+        "lifecycle_classification": "EXPLICIT_STATE_MACHINE",
+        "valid_states": [
+            "POSTED",
+            "REVERSED"
+        ],
+        "initial_state": "POSTED",
+        "state_storage": "status / existence",
+        "valid_transitions": [
+            {
+                "from": "POSTED",
+                "to": "REVERSED",
+                "trigger": "reverse_supplier_payment",
+                "preconditions": "Payment reversal authorized",
+                "actor": "OWNER / ACCOUNTANT"
+            }
+        ],
+        "editable_states": [],
+        "immutable_states": [
+            "REVERSED"
+        ],
+        "completion_posting_semantics": "DECREASES_SUPPLIER_PAYABLE_AND_CREDITS_CASH_OR_BANK",
+        "cancellation_semantics": "REVERSE_SUPPLIER_PAYMENT_OPERATION",
+        "void_semantics": "REVERSE_SUPPLIER_PAYMENT_OPERATION",
+        "reversal_semantics": "RESTORES_SUPPLIER_DUE_AND_REVERSES_FINANCIAL_MOVEMENT",
+        "delete_semantics": "IMMUTABLE_NO_DELETE",
+        "restore_semantics": "N/A",
+        "referential_restrictions": "RESTRICT on supplier_id, branch_id",
+        "financial_side_effects": "Decreases supplier AP balance, decreases financial_account or cash_ledger balance",
+        "inventory_side_effects": "NONE",
+        "ledger_side_effects": "Posts AccountMovement (OUTFLOW), CashLedger (OUTFLOW)",
+        "audit_behavior": "FULL_AUTOMATED",
+        "sync_behavior": "SERVER_MANAGED",
+        "permission_actor_context": "manage_suppliers / accountant",
+        "source_evidence": "api/app/Models/SupplierPayment.php, api/app/Http/Controllers/Api/V1/SupplierPaymentController.php, api/app/Services/SupplierBalanceService.php",
+        "gap_ids": [],
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "ENTITY-031": {
+        "entity_id": "ENTITY-031",
+        "entity_name": "Expense",
+        "primary_table": "expenses",
+        "model": "App\\Models\\Expense",
+        "entity_type": "TRANSACTION_HEADER",
+        "business_or_system": "BUSINESS",
+        "tenant_scope": "DIRECT_BUSINESS_ID",
+        "branch_scope": "BRANCH_SCOPED",
+        "lifecycle_classification": "EXPLICIT_STATE_MACHINE",
+        "valid_states": [
+            "ACTIVE",
+            "VOIDED",
+            "DELETED"
+        ],
+        "initial_state": "ACTIVE",
+        "state_storage": "status / voided_at / deleted_at",
+        "valid_transitions": [
+            {
+                "from": "ACTIVE",
+                "to": "VOIDED",
+                "trigger": "void_expense",
+                "preconditions": "Expense not voided; void reason provided",
+                "actor": "MANAGER / OWNER"
+            },
+            {
+                "from": "ACTIVE",
+                "to": "DELETED",
+                "trigger": "soft_delete_expense",
+                "preconditions": "Operator delete action",
+                "actor": "MANAGER"
+            },
+            {
+                "from": "DELETED",
+                "to": "ACTIVE",
+                "trigger": "restore_expense",
+                "preconditions": "Operator restore action",
+                "actor": "MANAGER"
+            }
+        ],
+        "editable_states": [
+            "ACTIVE"
+        ],
+        "immutable_states": [
+            "VOIDED"
+        ],
+        "completion_posting_semantics": "POSTS_OUTFLOW_TO_FINANCIAL_ACCOUNT_OR_CASH_DRAWER",
+        "cancellation_semantics": "VOID_EXPENSE_OPERATION",
+        "void_semantics": "RESTORES_ACCOUNT_BALANCE_AND_POSTS_REVERSAL_MOVEMENT",
+        "reversal_semantics": "VOID_EXPENSE_OPERATION",
+        "delete_semantics": "SOFT_DELETE_ALLOWED",
+        "restore_semantics": "RESTORE_VIA_ELOQUENT",
+        "referential_restrictions": "RESTRICT on financial_account_id, branch_id",
+        "financial_side_effects": "Reduces cash/bank asset balance, increases operational expenses in P&L",
+        "inventory_side_effects": "NONE",
+        "ledger_side_effects": "Posts AccountMovement (TYPE_EXPENSE) or CashLedger entry",
+        "audit_behavior": "FULL_AUTOMATED",
+        "sync_behavior": "SERVER_OR_OFFLINE_SYNC",
+        "permission_actor_context": "manage_expenses",
+        "source_evidence": "api/app/Models/Expense.php, api/app/Services/ExpenseService.php, api/app/Http/Controllers/Api/V1/ExpenseController.php",
+        "gap_ids": [
+            "P1-GAP-012"
+        ],
+        "verification_confidence": "SOURCE_VERIFIED_WITH_GAP",
+        "certification_status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "ENTITY-032": {
+        "entity_id": "ENTITY-032",
+        "entity_name": "ExpenseCategory",
+        "primary_table": "expense_categories",
+        "model": "App\\Models\\ExpenseCategory",
+        "entity_type": "MASTER_DATA",
+        "business_or_system": "BUSINESS",
+        "tenant_scope": "DIRECT_BUSINESS_ID",
+        "branch_scope": "BRANCH_UNAWARE",
+        "lifecycle_classification": "STATELESS_MASTER",
+        "valid_states": [
+            "ACTIVE"
+        ],
+        "initial_state": "ACTIVE",
+        "state_storage": "record existence",
+        "valid_transitions": [],
+        "editable_states": [
+            "ACTIVE"
+        ],
+        "immutable_states": [],
+        "completion_posting_semantics": "N/A",
+        "cancellation_semantics": "N/A",
+        "void_semantics": "N/A",
+        "reversal_semantics": "N/A",
+        "delete_semantics": "HARD_DELETE_ALLOWED",
+        "restore_semantics": "RE_CREATE",
+        "referential_restrictions": "RESTRICT (Cannot delete category if active expenses are linked)",
+        "financial_side_effects": "NONE",
+        "inventory_side_effects": "NONE",
+        "ledger_side_effects": "NONE",
+        "audit_behavior": "FULL_AUTOMATED",
+        "sync_behavior": "SERVER_MANAGED",
+        "permission_actor_context": "manage_expenses",
+        "source_evidence": "api/app/Models/ExpenseCategory.php, api/app/Http/Controllers/Api/V1/ExpenseCategoryController.php",
+        "gap_ids": [
+            "P1-GAP-016"
+        ],
+        "verification_confidence": "SOURCE_VERIFIED_WITH_GAP",
+        "certification_status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "ENTITY-033": {
+        "entity_id": "ENTITY-033",
+        "entity_name": "RecurringExpense",
+        "primary_table": "recurring_expenses",
+        "model": "App\\Models\\RecurringExpense",
+        "entity_type": "CONFIGURATION",
+        "business_or_system": "BUSINESS",
+        "tenant_scope": "DIRECT_BUSINESS_ID",
+        "branch_scope": "BRANCH_UNAWARE",
+        "lifecycle_classification": "EXPLICIT_STATE_MACHINE",
+        "valid_states": [
+            "ACTIVE",
+            "PAUSED",
+            "COMPLETED",
+            "CANCELLED"
+        ],
+        "initial_state": "ACTIVE",
+        "state_storage": "status / next_due_date schedule",
+        "valid_transitions": [
+            {
+                "from": "ACTIVE",
+                "to": "PAUSED",
+                "trigger": "pause_schedule",
+                "preconditions": "Operator action",
+                "actor": "MANAGER"
+            },
+            {
+                "from": "PAUSED",
+                "to": "ACTIVE",
+                "trigger": "resume_schedule",
+                "preconditions": "Operator action",
+                "actor": "MANAGER"
+            },
+            {
+                "from": "ACTIVE",
+                "to": "COMPLETED",
+                "trigger": "end_date_reached",
+                "preconditions": "Final recurrence executed",
+                "actor": "SYSTEM"
+            },
+            {
+                "from": "ACTIVE",
+                "to": "CANCELLED",
+                "trigger": "cancel_recurring",
+                "preconditions": "Operator cancellation",
+                "actor": "MANAGER"
+            }
+        ],
+        "editable_states": [
+            "ACTIVE",
+            "PAUSED"
+        ],
+        "immutable_states": [
+            "COMPLETED",
+            "CANCELLED"
+        ],
+        "completion_posting_semantics": "SCHEDULED_GENERATION_OF_EXPENSE_RECORDS",
+        "cancellation_semantics": "STATUS_CANCEL",
+        "void_semantics": "STATUS_CANCEL",
+        "reversal_semantics": "N/A",
+        "delete_semantics": "HARD_DELETE_ALLOWED",
+        "restore_semantics": "RE_CREATE",
+        "referential_restrictions": "RESTRICT on business_id",
+        "financial_side_effects": "Generates concrete Expense records on schedule",
+        "inventory_side_effects": "NONE",
+        "ledger_side_effects": "NONE",
+        "audit_behavior": "FULL_AUTOMATED",
+        "sync_behavior": "SERVER_MANAGED",
+        "permission_actor_context": "manage_expenses",
+        "source_evidence": "api/app/Models/RecurringExpense.php, api/app/Http/Controllers/Api/V1/RecurringExpenseController.php",
+        "gap_ids": [],
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "ENTITY-034": {
+        "entity_id": "ENTITY-034",
+        "entity_name": "FinancialAccount",
+        "primary_table": "financial_accounts",
+        "model": "App\\Models\\FinancialAccount",
+        "entity_type": "BALANCE_CACHE",
+        "business_or_system": "BUSINESS",
+        "tenant_scope": "DIRECT_BUSINESS_ID",
+        "branch_scope": "BRANCH_OPTIONAL",
+        "lifecycle_classification": "EXPLICIT_STATE_MACHINE",
+        "valid_states": [
+            "ACTIVE",
+            "INACTIVE",
+            "FROZEN",
+            "DELETED"
+        ],
+        "initial_state": "ACTIVE",
+        "state_storage": "status / deleted_at",
+        "valid_transitions": [
+            {
+                "from": "ACTIVE",
+                "to": "INACTIVE",
+                "trigger": "deactivate_account",
+                "preconditions": "Account not default",
+                "actor": "ACCOUNTANT / OWNER"
+            },
+            {
+                "from": "ACTIVE",
+                "to": "FROZEN",
+                "trigger": "freeze_account",
+                "preconditions": "Dispute or audit investigation",
+                "actor": "OWNER"
+            },
+            {
+                "from": "INACTIVE",
+                "to": "ACTIVE",
+                "trigger": "activate_account",
+                "preconditions": "Operator reactivation",
+                "actor": "ACCOUNTANT / OWNER"
+            },
+            {
+                "from": "FROZEN",
+                "to": "ACTIVE",
+                "trigger": "unfreeze_account",
+                "preconditions": "Investigation resolved",
+                "actor": "OWNER"
+            },
+            {
+                "from": "ACTIVE",
+                "to": "DELETED",
+                "trigger": "soft_delete_account",
+                "preconditions": "Zero balance and not default",
+                "actor": "OWNER"
+            },
+            {
+                "from": "DELETED",
+                "to": "ACTIVE",
+                "trigger": "restore_account",
+                "preconditions": "Operator restoration",
+                "actor": "OWNER"
+            }
+        ],
+        "editable_states": [
+            "ACTIVE",
+            "INACTIVE"
+        ],
+        "immutable_states": [
+            "DELETED"
+        ],
+        "completion_posting_semantics": "MUTATED_BY_ACCOUNT_MOVEMENTS_AND_TRANSFERS",
+        "cancellation_semantics": "REVERSED_BY_COMPENSATING_MOVEMENTS",
+        "void_semantics": "N/A",
+        "reversal_semantics": "N/A",
+        "delete_semantics": "SOFT_DELETE_ALLOWED",
+        "restore_semantics": "RESTORE_VIA_ELOQUENT",
+        "referential_restrictions": "RESTRICT (Cannot delete account if non-zero balance or referenced in movements)",
+        "financial_side_effects": "PRIMARY_LIQUID_ASSET_BALANCE",
+        "inventory_side_effects": "NONE",
+        "ledger_side_effects": "MUST_MATCH_OPENING_BALANCE_PLUS_ACCOUNT_MOVEMENTS_SUM",
+        "audit_behavior": "FULL_AUTOMATED",
+        "sync_behavior": "SERVER_MANAGED",
+        "permission_actor_context": "manage_accounts / owner",
+        "source_evidence": "api/app/Models/FinancialAccount.php, api/app/Services/FinancialAccountService.php, api/app/Http/Controllers/Api/V1/FinancialAccountController.php",
+        "gap_ids": [
+            "P1-GAP-008"
+        ],
+        "verification_confidence": "SOURCE_VERIFIED_WITH_GAP",
+        "certification_status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "ENTITY-035": {
+        "entity_id": "ENTITY-035",
+        "entity_name": "AccountMovement",
+        "primary_table": "account_movements",
+        "model": "App\\Models\\AccountMovement",
+        "entity_type": "EVENT_LEDGER",
+        "business_or_system": "BUSINESS",
+        "tenant_scope": "DIRECT_BUSINESS_ID",
+        "branch_scope": "BRANCH_SCOPED",
+        "lifecycle_classification": "IMMUTABLE_LEDGER_EVENT",
+        "valid_states": [
+            "POSTED",
+            "VOIDED",
+            "REVERSED"
+        ],
+        "initial_state": "POSTED",
+        "state_storage": "status / reversed_at",
+        "valid_transitions": [
+            {
+                "from": "POSTED",
+                "to": "VOIDED",
+                "trigger": "void_movement",
+                "preconditions": "Originating transaction voided",
+                "actor": "SYSTEM / MANAGER"
+            },
+            {
+                "from": "POSTED",
+                "to": "REVERSED",
+                "trigger": "reverse_movement",
+                "preconditions": "Compensating movement posted",
+                "actor": "SYSTEM / ACCOUNTANT"
+            }
+        ],
+        "editable_states": [],
+        "immutable_states": [
+            "VOIDED",
+            "REVERSED"
+        ],
+        "completion_posting_semantics": "APPEND_ONLY_FINANCIAL_MOVEMENT_LEDGER",
+        "cancellation_semantics": "VOID_OR_COMPENSATING_MOVEMENT",
+        "void_semantics": "STATUS_VOIDED + COMPENSATING_ACCOUNT_BALANCE_MUTATION",
+        "reversal_semantics": "POST_OPPOSITE_MOVEMENT",
+        "delete_semantics": "IMMUTABLE_NO_DELETE",
+        "restore_semantics": "N/A",
+        "referential_restrictions": "RESTRICT on account_id, branch_id",
+        "financial_side_effects": "Directly mutates financial_accounts.balance",
+        "inventory_side_effects": "NONE",
+        "ledger_side_effects": "PRIMARY_DOUBLE_ENTRY_OR_FINANCIAL_LEDGER",
+        "audit_behavior": "FULL_AUTOMATED",
+        "sync_behavior": "SERVER_MANAGED",
+        "permission_actor_context": "system / accountant",
+        "source_evidence": "api/app/Models/AccountMovement.php, api/app/Services/AccountMovementService.php",
+        "gap_ids": [
+            "P1-GAP-008"
+        ],
+        "verification_confidence": "SOURCE_VERIFIED_WITH_GAP",
+        "certification_status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "ENTITY-036": {
+        "entity_id": "ENTITY-036",
+        "entity_name": "AccountTransfer",
+        "primary_table": "account_transfers",
+        "model": "App\\Models\\AccountTransfer",
+        "entity_type": "TRANSACTION_HEADER",
+        "business_or_system": "BUSINESS",
+        "tenant_scope": "DIRECT_BUSINESS_ID",
+        "branch_scope": "BRANCH_UNAWARE",
+        "lifecycle_classification": "EXPLICIT_STATE_MACHINE",
+        "valid_states": [
+            "COMPLETED",
+            "REVERSED"
+        ],
+        "initial_state": "COMPLETED",
+        "state_storage": "status",
+        "valid_transitions": [
+            {
+                "from": "COMPLETED",
+                "to": "REVERSED",
+                "trigger": "reverse_transfer",
+                "preconditions": "Destination account has sufficient funds",
+                "actor": "OWNER / ACCOUNTANT"
+            }
+        ],
+        "editable_states": [],
+        "immutable_states": [
+            "REVERSED"
+        ],
+        "completion_posting_semantics": "DEBITS_SOURCE_CREDITS_DESTINATION_ACCOUNTS",
+        "cancellation_semantics": "REVERSE_TRANSFER_OPERATION",
+        "void_semantics": "REVERSE_TRANSFER_OPERATION",
+        "reversal_semantics": "POSTS_COMPENSATING_TRANSFER_MOVEMENTS",
+        "delete_semantics": "IMMUTABLE_NO_DELETE",
+        "restore_semantics": "N/A",
+        "referential_restrictions": "RESTRICT on source_account_id, destination_account_id",
+        "financial_side_effects": "Reduces source account balance, increases destination account balance",
+        "inventory_side_effects": "NONE",
+        "ledger_side_effects": "Posts two balanced AccountMovement rows (OUTFLOW + INFLOW)",
+        "audit_behavior": "FULL_AUTOMATED",
+        "sync_behavior": "SERVER_MANAGED",
+        "permission_actor_context": "manage_accounts / owner",
+        "source_evidence": "api/app/Models/AccountTransfer.php, api/app/Http/Controllers/Api/V1/AccountTransferController.php, api/app/Services/AccountMovementService.php",
+        "gap_ids": [
+            "P1-GAP-013"
+        ],
+        "verification_confidence": "SOURCE_VERIFIED_WITH_GAP",
+        "certification_status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "ENTITY-037": {
+        "entity_id": "ENTITY-037",
+        "entity_name": "CashLedger",
+        "primary_table": "cash_ledgers",
+        "model": "App\\Models\\CashLedger",
+        "entity_type": "EVENT_LEDGER",
+        "business_or_system": "BUSINESS",
+        "tenant_scope": "DIRECT_BUSINESS_ID",
+        "branch_scope": "BRANCH_SCOPED",
+        "lifecycle_classification": "IMMUTABLE_LEDGER_EVENT",
+        "valid_states": [
+            "RECORDED"
+        ],
+        "initial_state": "RECORDED",
+        "state_storage": "record existence",
+        "valid_transitions": [],
+        "editable_states": [],
+        "immutable_states": [
+            "RECORDED"
+        ],
+        "completion_posting_semantics": "APPEND_ONLY_DRAWER_CASH_LOG",
+        "cancellation_semantics": "COMPENSATING_CASH_ENTRY",
+        "void_semantics": "COMPENSATING_CASH_ENTRY",
+        "reversal_semantics": "POST_OPPOSITE_CASH_ENTRY",
+        "delete_semantics": "IMMUTABLE_NO_DELETE",
+        "restore_semantics": "N/A",
+        "referential_restrictions": "RESTRICT on branch_id",
+        "financial_side_effects": "Maintains running physical cash drawer balance",
+        "inventory_side_effects": "NONE",
+        "ledger_side_effects": "PRIMARY_PHYSICAL_CASH_DRAWER_LEDGER",
+        "audit_behavior": "NATURAL_AUDIT_TRAIL",
+        "sync_behavior": "OFFLINE_POS_CASH_SYNC",
+        "permission_actor_context": "cashier / system",
+        "source_evidence": "api/app/Models/CashLedger.php, api/app/Services/CashLedgerService.php",
+        "gap_ids": [],
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "ENTITY-038": {
+        "entity_id": "ENTITY-038",
+        "entity_name": "Setting",
+        "primary_table": "settings",
+        "model": "App\\Models\\Setting",
+        "entity_type": "CONFIGURATION",
+        "business_or_system": "BUSINESS",
+        "tenant_scope": "DIRECT_BUSINESS_ID",
+        "branch_scope": "BRANCH_UNAWARE",
+        "lifecycle_classification": "STATELESS_MASTER",
+        "valid_states": [
+            "ACTIVE"
+        ],
+        "initial_state": "ACTIVE",
+        "state_storage": "record existence",
+        "valid_transitions": [],
+        "editable_states": [
+            "ACTIVE"
+        ],
+        "immutable_states": [],
+        "completion_posting_semantics": "UPSERT_KEY_VALUE_STORAGE",
+        "cancellation_semantics": "N/A",
+        "void_semantics": "N/A",
+        "reversal_semantics": "N/A",
+        "delete_semantics": "HARD_DELETE_ALLOWED",
+        "restore_semantics": "RE_CREATE_DEFAULT",
+        "referential_restrictions": "CASCADE on business deletion",
+        "financial_side_effects": "NONE",
+        "inventory_side_effects": "NONE",
+        "ledger_side_effects": "NONE",
+        "audit_behavior": "FULL_AUTOMATED",
+        "sync_behavior": "CLIENT_CONFIG_CACHE_SYNC",
+        "permission_actor_context": "manage_settings / owner",
+        "source_evidence": "api/app/Models/Setting.php, api/app/Http/Controllers/Api/V1/SettingController.php",
+        "gap_ids": [
+            "P1-GAP-010"
+        ],
+        "verification_confidence": "SOURCE_VERIFIED_WITH_GAP",
+        "certification_status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "ENTITY-039": {
+        "entity_id": "ENTITY-039",
+        "entity_name": "Notification",
+        "primary_table": "notifications",
+        "model": "Illuminate\\Notifications\\DatabaseNotification",
+        "entity_type": "SYSTEM_FRAMEWORK",
+        "business_or_system": "SYSTEM",
+        "tenant_scope": "INDIRECT_VIA_PARENT",
+        "branch_scope": "BRANCH_UNAWARE",
+        "lifecycle_classification": "EXPLICIT_STATE_MACHINE",
+        "valid_states": [
+            "UNREAD",
+            "READ",
+            "DELETED"
+        ],
+        "initial_state": "UNREAD",
+        "state_storage": "read_at",
+        "valid_transitions": [
+            {
+                "from": "UNREAD",
+                "to": "READ",
+                "trigger": "markAsRead",
+                "preconditions": "Recipient reads notification",
+                "actor": "USER"
+            },
+            {
+                "from": "READ",
+                "to": "DELETED",
+                "trigger": "destroyNotification",
+                "preconditions": "User dismisses notification",
+                "actor": "USER"
+            },
+            {
+                "from": "UNREAD",
+                "to": "DELETED",
+                "trigger": "destroyNotification",
+                "preconditions": "User dismisses notification",
+                "actor": "USER"
+            }
+        ],
+        "editable_states": [
+            "UNREAD"
+        ],
+        "immutable_states": [
+            "DELETED"
+        ],
+        "completion_posting_semantics": "N/A",
+        "cancellation_semantics": "N/A",
+        "void_semantics": "N/A",
+        "reversal_semantics": "N/A",
+        "delete_semantics": "HARD_DELETE_ALLOWED",
+        "restore_semantics": "N/A",
+        "referential_restrictions": "CASCADE on notifiable",
+        "financial_side_effects": "NONE",
+        "inventory_side_effects": "NONE",
+        "ledger_side_effects": "NONE",
+        "audit_behavior": "NONE",
+        "sync_behavior": "WEBSOCKET_OR_POLL",
+        "permission_actor_context": "recipient user",
+        "source_evidence": "api/app/Http/Controllers/Api/V1/NotificationController.php",
+        "gap_ids": [],
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "ENTITY-040": {
+        "entity_id": "ENTITY-040",
+        "entity_name": "ActivityLog",
+        "primary_table": "activity_log",
+        "model": "App\\Models\\ActivityLog",
+        "entity_type": "SYSTEM_FRAMEWORK",
+        "business_or_system": "SYSTEM",
+        "tenant_scope": "DIRECT_BUSINESS_ID",
+        "branch_scope": "BRANCH_OPTIONAL",
+        "lifecycle_classification": "IMMUTABLE_LEDGER_EVENT",
+        "valid_states": [
+            "RECORDED"
+        ],
+        "initial_state": "RECORDED",
+        "state_storage": "record existence",
+        "valid_transitions": [],
+        "editable_states": [],
+        "immutable_states": [
+            "RECORDED"
+        ],
+        "completion_posting_semantics": "SYSTEM_AUDIT_TRAIL",
+        "cancellation_semantics": "N/A",
+        "void_semantics": "N/A",
+        "reversal_semantics": "N/A",
+        "delete_semantics": "IMMUTABLE_NO_DELETE",
+        "restore_semantics": "N/A",
+        "referential_restrictions": "RESTRICT (Immutable compliance trail)",
+        "financial_side_effects": "NONE",
+        "inventory_side_effects": "NONE",
+        "ledger_side_effects": "SYSTEM_WIDE_AUDIT_LOG",
+        "audit_behavior": "SELF_LOGGING",
+        "sync_behavior": "SERVER_MANAGED",
+        "permission_actor_context": "view_audit_logs / superadmin",
+        "source_evidence": "api/app/Models/ActivityLog.php, api/app/Services/AuditService.php, api/app/Http/Controllers/Api/V1/AuditLogController.php",
+        "gap_ids": [],
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "ENTITY-041": {
+        "entity_id": "ENTITY-041",
+        "entity_name": "Job",
+        "primary_table": "jobs",
+        "model": "Framework Queue Job",
+        "entity_type": "SYSTEM_FRAMEWORK",
+        "business_or_system": "SYSTEM",
+        "tenant_scope": "SYSTEM_GLOBAL",
+        "branch_scope": "BRANCH_UNAWARE",
+        "lifecycle_classification": "HARD_DELETE_LIFECYCLE",
+        "valid_states": [
+            "PENDING",
+            "RESERVED",
+            "PROCESSED",
+            "FAILED"
+        ],
+        "initial_state": "PENDING",
+        "state_storage": "reserved_at / attempts",
+        "valid_transitions": [
+            {
+                "from": "PENDING",
+                "to": "RESERVED",
+                "trigger": "worker_pop",
+                "preconditions": "Worker claims queue item",
+                "actor": "SYSTEM_WORKER"
+            },
+            {
+                "from": "RESERVED",
+                "to": "PROCESSED",
+                "trigger": "job_succeeded",
+                "preconditions": "Execution completes without exception",
+                "actor": "SYSTEM_WORKER"
+            },
+            {
+                "from": "RESERVED",
+                "to": "FAILED",
+                "trigger": "job_exception_max_attempts",
+                "preconditions": "Exception thrown and attempts exceeded",
+                "actor": "SYSTEM_WORKER"
+            }
+        ],
+        "editable_states": [
+            "PENDING",
+            "RESERVED"
+        ],
+        "immutable_states": [
+            "PROCESSED",
+            "FAILED"
+        ],
+        "completion_posting_semantics": "DELETED_ON_SUCCESS",
+        "cancellation_semantics": "N/A",
+        "void_semantics": "N/A",
+        "reversal_semantics": "N/A",
+        "delete_semantics": "HARD_DELETE_ALLOWED",
+        "restore_semantics": "RETRY_FAILED_JOB",
+        "referential_restrictions": "NONE",
+        "financial_side_effects": "NONE",
+        "inventory_side_effects": "NONE",
+        "ledger_side_effects": "NONE",
+        "audit_behavior": "NONE",
+        "sync_behavior": "SERVER_BACKGROUND_QUEUE",
+        "permission_actor_context": "laravel queue worker",
+        "source_evidence": "api/database/migrations/2026_09_02_000041_create_jobs_table.php",
+        "gap_ids": [],
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "ENTITY-042": {
+        "entity_id": "ENTITY-042",
+        "entity_name": "JobBatch",
+        "primary_table": "job_batches",
+        "model": "Framework Job Batch",
+        "entity_type": "SYSTEM_FRAMEWORK",
+        "business_or_system": "SYSTEM",
+        "tenant_scope": "SYSTEM_GLOBAL",
+        "branch_scope": "BRANCH_UNAWARE",
+        "lifecycle_classification": "EXPLICIT_STATE_MACHINE",
+        "valid_states": [
+            "PENDING",
+            "FINISHED",
+            "CANCELLED"
+        ],
+        "initial_state": "PENDING",
+        "state_storage": "finished_at / cancelled_at",
+        "valid_transitions": [
+            {
+                "from": "PENDING",
+                "to": "FINISHED",
+                "trigger": "all_jobs_completed",
+                "preconditions": "pending_jobs == 0",
+                "actor": "SYSTEM_WORKER"
+            },
+            {
+                "from": "PENDING",
+                "to": "CANCELLED",
+                "trigger": "cancel_batch",
+                "preconditions": "Batch cancelled",
+                "actor": "SYSTEM / ADMIN"
+            }
+        ],
+        "editable_states": [
+            "PENDING"
+        ],
+        "immutable_states": [
+            "FINISHED",
+            "CANCELLED"
+        ],
+        "completion_posting_semantics": "N/A",
+        "cancellation_semantics": "CANCEL_BATCH",
+        "void_semantics": "N/A",
+        "reversal_semantics": "N/A",
+        "delete_semantics": "HARD_DELETE_ALLOWED",
+        "restore_semantics": "N/A",
+        "referential_restrictions": "NONE",
+        "financial_side_effects": "NONE",
+        "inventory_side_effects": "NONE",
+        "ledger_side_effects": "NONE",
+        "audit_behavior": "NONE",
+        "sync_behavior": "SERVER_BACKGROUND_QUEUE",
+        "permission_actor_context": "laravel queue batching",
+        "source_evidence": "api/database/migrations/2026_09_02_000042_create_job_batches_table.php",
+        "gap_ids": [],
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "ENTITY-043": {
+        "entity_id": "ENTITY-043",
+        "entity_name": "FailedJob",
+        "primary_table": "failed_jobs",
+        "model": "Framework Failed Job",
+        "entity_type": "SYSTEM_FRAMEWORK",
+        "business_or_system": "SYSTEM",
+        "tenant_scope": "SYSTEM_GLOBAL",
+        "branch_scope": "BRANCH_UNAWARE",
+        "lifecycle_classification": "HARD_DELETE_LIFECYCLE",
+        "valid_states": [
+            "RECORDED",
+            "RETRIED",
+            "DISMISSED"
+        ],
+        "initial_state": "RECORDED",
+        "state_storage": "failed_at",
+        "valid_transitions": [
+            {
+                "from": "RECORDED",
+                "to": "RETRIED",
+                "trigger": "artisan_queue_retry",
+                "preconditions": "Admin initiates retry",
+                "actor": "DEVOPS_ENGINEER"
+            },
+            {
+                "from": "RECORDED",
+                "to": "DISMISSED",
+                "trigger": "artisan_queue_forget",
+                "preconditions": "Admin dismisses failure",
+                "actor": "DEVOPS_ENGINEER"
+            }
+        ],
+        "editable_states": [],
+        "immutable_states": [
+            "RETRIED",
+            "DISMISSED"
+        ],
+        "completion_posting_semantics": "N/A",
+        "cancellation_semantics": "N/A",
+        "void_semantics": "N/A",
+        "reversal_semantics": "N/A",
+        "delete_semantics": "HARD_DELETE_ALLOWED",
+        "restore_semantics": "N/A",
+        "referential_restrictions": "NONE",
+        "financial_side_effects": "NONE",
+        "inventory_side_effects": "NONE",
+        "ledger_side_effects": "NONE",
+        "audit_behavior": "NONE",
+        "sync_behavior": "SERVER_BACKGROUND_QUEUE",
+        "permission_actor_context": "devops / admin",
+        "source_evidence": "api/database/migrations/2026_09_02_000043_create_failed_jobs_table.php",
+        "gap_ids": [],
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "ENTITY-044": {
+        "entity_id": "ENTITY-044",
+        "entity_name": "CacheEntry",
+        "primary_table": "cache",
+        "model": "Framework Cache Table",
+        "entity_type": "SYSTEM_FRAMEWORK",
+        "business_or_system": "SYSTEM",
+        "tenant_scope": "SYSTEM_GLOBAL",
+        "branch_scope": "BRANCH_UNAWARE",
+        "lifecycle_classification": "HARD_DELETE_LIFECYCLE",
+        "valid_states": [
+            "VALID",
+            "EXPIRED"
+        ],
+        "initial_state": "VALID",
+        "state_storage": "expiration timestamp",
+        "valid_transitions": [
+            {
+                "from": "VALID",
+                "to": "EXPIRED",
+                "trigger": "ttl_elapsed / cache_flush",
+                "preconditions": "Expiration reached",
+                "actor": "SYSTEM / OPERATOR"
+            }
+        ],
+        "editable_states": [
+            "VALID"
+        ],
+        "immutable_states": [
+            "EXPIRED"
+        ],
+        "completion_posting_semantics": "TRANSIENT_KEY_VALUE",
+        "cancellation_semantics": "N/A",
+        "void_semantics": "N/A",
+        "reversal_semantics": "N/A",
+        "delete_semantics": "HARD_DELETE_ALLOWED",
+        "restore_semantics": "RE_POPULATE",
+        "referential_restrictions": "NONE",
+        "financial_side_effects": "NONE",
+        "inventory_side_effects": "NONE",
+        "ledger_side_effects": "NONE",
+        "audit_behavior": "NONE",
+        "sync_behavior": "LOCAL_CACHE",
+        "permission_actor_context": "system framework",
+        "source_evidence": "api/database/migrations/2026_09_02_000044_create_cache_table.php",
+        "gap_ids": [],
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "ENTITY-045": {
+        "entity_id": "ENTITY-045",
+        "entity_name": "CacheLock",
+        "primary_table": "cache_locks",
+        "model": "Framework Cache Lock Table",
+        "entity_type": "SYSTEM_FRAMEWORK",
+        "business_or_system": "SYSTEM",
+        "tenant_scope": "SYSTEM_GLOBAL",
+        "branch_scope": "BRANCH_UNAWARE",
+        "lifecycle_classification": "HARD_DELETE_LIFECYCLE",
+        "valid_states": [
+            "LOCKED",
+            "RELEASED",
+            "EXPIRED"
+        ],
+        "initial_state": "LOCKED",
+        "state_storage": "expiration / owner key",
+        "valid_transitions": [
+            {
+                "from": "LOCKED",
+                "to": "RELEASED",
+                "trigger": "lock_release",
+                "preconditions": "Process completes atomic section",
+                "actor": "APPLICATION_MUTEX"
+            },
+            {
+                "from": "LOCKED",
+                "to": "EXPIRED",
+                "trigger": "ttl_elapsed",
+                "preconditions": "Lock holder crashed / timeout",
+                "actor": "SYSTEM"
+            }
+        ],
+        "editable_states": [],
+        "immutable_states": [
+            "RELEASED",
+            "EXPIRED"
+        ],
+        "completion_posting_semantics": "MUTEX_CONCURRENCY_CONTROL",
+        "cancellation_semantics": "N/A",
+        "void_semantics": "N/A",
+        "reversal_semantics": "N/A",
+        "delete_semantics": "HARD_DELETE_ALLOWED",
+        "restore_semantics": "N/A",
+        "referential_restrictions": "NONE",
+        "financial_side_effects": "NONE",
+        "inventory_side_effects": "NONE",
+        "ledger_side_effects": "NONE",
+        "audit_behavior": "NONE",
+        "sync_behavior": "MUTEX_ACQUISITION",
+        "permission_actor_context": "atomic lock manager",
+        "source_evidence": "api/database/migrations/2026_09_02_000045_create_cache_locks_table.php",
+        "gap_ids": [],
+        "verification_confidence": "SOURCE_VERIFIED_COMPLETE",
+        "certification_status": "CERTIFIED_COMPLETE"
+    },
+    "ENTITY-046": {
+        "entity_id": "ENTITY-046",
+        "entity_name": "Employee",
+        "primary_table": "employees (UNMIGRATED)",
+        "model": "App\\Models\\Employee",
+        "entity_type": "MASTER_DATA",
+        "business_or_system": "BUSINESS",
+        "tenant_scope": "DIRECT_BUSINESS_ID",
+        "branch_scope": "BRANCH_UNAWARE",
+        "lifecycle_classification": "INCOMPLETE_LIFECYCLE",
+        "valid_states": [
+            "ACTIVE",
+            "INACTIVE"
+        ],
+        "initial_state": "ACTIVE",
+        "state_storage": "is_active",
+        "valid_transitions": [
+            {
+                "from": "ACTIVE",
+                "to": "INACTIVE",
+                "trigger": "deactivate_employee",
+                "preconditions": "Operator deactivation",
+                "actor": "HR_MANAGER"
+            },
+            {
+                "from": "INACTIVE",
+                "to": "ACTIVE",
+                "trigger": "activate_employee",
+                "preconditions": "Operator reactivation",
+                "actor": "HR_MANAGER"
+            }
+        ],
+        "editable_states": [
+            "ACTIVE",
+            "INACTIVE"
+        ],
+        "immutable_states": [],
+        "completion_posting_semantics": "INCOMPLETE_PAYROLL_LIFECYCLE",
+        "cancellation_semantics": "N/A",
+        "void_semantics": "N/A",
+        "reversal_semantics": "N/A",
+        "delete_semantics": "DELETE_SEMANTICS_GAP",
+        "restore_semantics": "INCOMPLETE_MODEL",
+        "referential_restrictions": "business_id FK in migration",
+        "financial_side_effects": "Captures payroll attributes without ledger posting",
+        "inventory_side_effects": "NONE",
+        "ledger_side_effects": "NO_PAYROLL_ACCOUNT_MOVEMENTS",
+        "audit_behavior": "NONE",
+        "sync_behavior": "NOT_IMPLEMENTED",
+        "permission_actor_context": "hr / owner",
+        "source_evidence": "api/app/Models/Employee.php, api/database/migrations/2026_09_04_102948_create_employees_table.php",
+        "gap_ids": [
+            "P1-GAP-014",
+            "P2-GAP-001"
+        ],
+        "verification_confidence": "SOURCE_VERIFIED_WITH_GAP",
+        "certification_status": "CERTIFIED_WITH_KNOWN_GAP"
+    }
+}

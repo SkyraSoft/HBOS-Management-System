@@ -17,8 +17,8 @@ class InventoryService
      */
     public function receiveStock(array $data): InventoryMovement
     {
-        $quantity = intval($data['quantity'] ?? 0);
-        if ($quantity <= 0) {
+        $quantity = round(floatval($data['quantity'] ?? 0), 3);
+        if (bccomp((string)$quantity, '0', 3) <= 0) {
             throw new Exception("Stock receive quantity must be greater than zero.");
         }
 
@@ -53,16 +53,17 @@ class InventoryService
                     'business_id' => $businessId,
                     'branch_id' => $branchId,
                     'product_id' => $productId,
-                    'quantity_on_hand' => 0,
-                    'minimum_stock' => $product->min_stock ?? 0,
+                    'quantity_on_hand' => 0.000,
+                    'minimum_stock' => $product->min_stock ?? 0.000,
                 ]);
             }
 
-            $inventory->quantity_on_hand += $quantity;
+            $inventory->quantity_on_hand = bcadd((string)$inventory->quantity_on_hand, (string)$quantity, 3);
             $inventory->save();
 
             // Also update legacy product stock field as non-authoritative fallback
-            $product->increment('stock', $quantity);
+            $product->stock = bcadd((string)$product->stock, (string)$quantity, 3);
+            $product->save();
 
             $performedBy = $data['performed_by'] ?? (Auth::id() ?? null);
             $type = $data['type'] ?? 'purchase';
@@ -90,8 +91,8 @@ class InventoryService
      */
     public function issueStock(array $data): InventoryMovement
     {
-        $quantity = intval($data['quantity'] ?? 0);
-        if ($quantity <= 0) {
+        $quantity = round(floatval($data['quantity'] ?? 0), 3);
+        if (bccomp((string)$quantity, '0', 3) <= 0) {
             throw new Exception("Stock issue quantity must be greater than zero.");
         }
 
@@ -121,23 +122,20 @@ class InventoryService
                 ->lockForUpdate()
                 ->first();
 
-            $currentStock = $inventory ? $inventory->quantity_on_hand : 0;
+            $currentStock = $inventory ? round(floatval($inventory->quantity_on_hand), 3) : 0.000;
 
-            // Insufficient stock enforcement (No silent capping, no negative stock)
-            if ($currentStock < $quantity) {
+            // Insufficient stock enforcement (Exact fixed precision comparison)
+            if (bccomp((string)$currentStock, (string)$quantity, 3) < 0) {
                 throw new Exception("Insufficient stock for product '{$product->name}' in branch '{$branch->name}'. Available: {$currentStock}, Requested: {$quantity}.");
             }
 
-            $inventory->quantity_on_hand -= $quantity;
+            $inventory->quantity_on_hand = bcsub((string)$inventory->quantity_on_hand, (string)$quantity, 3);
             $inventory->save();
 
             // Also update legacy product stock field as non-authoritative fallback
-            if ($product->stock >= $quantity) {
-                $product->decrement('stock', $quantity);
-            } else {
-                $product->stock = max(0, $product->stock - $quantity);
-                $product->save();
-            }
+            $newStock = bcsub((string)$product->stock, (string)$quantity, 3);
+            $product->stock = bccomp($newStock, '0', 3) < 0 ? '0.000' : $newStock;
+            $product->save();
 
             $performedBy = $data['performed_by'] ?? (Auth::id() ?? null);
             $type = $data['type'] ?? 'sale';
@@ -209,7 +207,7 @@ class InventoryService
                 throw new Exception("Both branches must belong to the active business.");
             }
 
-            $quantity = intval($data['quantity'] ?? 0);
+            $quantity = round(floatval($data['quantity'] ?? 0), 3);
             $notes = $data['notes'] ?? "Stock transfer from {$fromBranch->name} to {$toBranch->name}";
 
             // 1. Issue from source branch
@@ -245,13 +243,15 @@ class InventoryService
      */
     public function reverseMovement(InventoryMovement $movement, string $reason = 'Reversal'): InventoryMovement
     {
+        $quantity = round(abs(floatval($movement->quantity)), 3);
+
         if ($movement->quantity < 0) {
             // Original was OUT, compensating movement is IN
             return $this->receiveStock([
                 'business_id' => $movement->business_id,
                 'branch_id' => $movement->branch_id,
                 'product_id' => $movement->product_id,
-                'quantity' => abs($movement->quantity),
+                'quantity' => $quantity,
                 'type' => 'sale_return',
                 'reference_type' => InventoryMovement::class,
                 'reference_id' => $movement->id,
@@ -264,7 +264,7 @@ class InventoryService
                 'business_id' => $movement->business_id,
                 'branch_id' => $movement->branch_id,
                 'product_id' => $movement->product_id,
-                'quantity' => abs($movement->quantity),
+                'quantity' => $quantity,
                 'type' => 'purchase_return',
                 'reference_type' => InventoryMovement::class,
                 'reference_id' => $movement->id,
@@ -277,12 +277,12 @@ class InventoryService
     /**
      * Get current branch balance
      */
-    public function getBranchBalance(int $productId, int $branchId): int
+    public function getBranchBalance(int $productId, int $branchId): float
     {
-        return intval(
+        return round(floatval(
             BranchInventory::where('branch_id', $branchId)
                 ->where('product_id', $productId)
                 ->value('quantity_on_hand') ?? 0
-        );
+        ), 3);
     }
 }

@@ -1,0 +1,106 @@
+{
+    "program_phase": "PHASE 10 OF 10",
+    "architecture_version": "HBOS Post-Remediation Definitive Baseline",
+    "canonical_ui_inventory": {
+        "canonical_route_ids_accounted_for": "33 / 33",
+        "current_route_definitions": 31,
+        "routed_active_pages": 30,
+        "redirect_routes": 1,
+        "legacy_unrouted_views": 2,
+        "tabs_subtabs": 42,
+        "sections": 187,
+        "forms": 38,
+        "fields": 214,
+        "tables": 29,
+        "modals_overlays": 26,
+        "ui_actions": 78
+    },
+    "backend_and_database_inventory": {
+        "pre_remediation_physical_tables": 45,
+        "post_phase9_added_tables": 3,
+        "current_physical_tables": 48,
+        "pre_remediation_physical_columns": 438,
+        "columns_introduced_inside_new_tables": 29,
+        "columns_added_to_existing_tables": 15,
+        "total_columns_added_in_phase9": 44,
+        "current_physical_columns": 482,
+        "canonical_business_entities": 46,
+        "total_application_migrations": 65,
+        "phase9_migrations": 11,
+        "admin_data_repair_commands": 5
+    },
+    "offline_and_sync_inventory": {
+        "physical_dexie_stores": {
+            "products": {
+                "purpose": "Master product catalog cache",
+                "authority": "Server Authoritative",
+                "sync": "Download"
+            },
+            "categories": {
+                "purpose": "Category taxonomy cache",
+                "authority": "Server Authoritative",
+                "sync": "Download"
+            },
+            "brands": {
+                "purpose": "Brand taxonomy cache",
+                "authority": "Server Authoritative",
+                "sync": "Download"
+            },
+            "customers": {
+                "purpose": "Customer profiles and balances cache",
+                "authority": "Server Authoritative",
+                "sync": "Bidirectional"
+            },
+            "sales": {
+                "purpose": "Offline sales transaction queue",
+                "authority": "Client Queue -> Server Authority",
+                "sync": "Upload"
+            },
+            "khata_payments": {
+                "purpose": "Offline customer debt payment queue",
+                "authority": "Client Queue -> Server Authority",
+                "sync": "Upload"
+            },
+            "expenses": {
+                "purpose": "Offline petty cash expense queue",
+                "authority": "Client Queue -> Server Authority",
+                "sync": "Upload"
+            },
+            "outbox": {
+                "purpose": "Unified mutation queue buffer",
+                "authority": "Client Queue",
+                "sync": "Upload"
+            },
+            "images": {
+                "purpose": "Base64 product & store logos image cache",
+                "authority": "Local Cache",
+                "sync": "P2P Stream"
+            }
+        },
+        "total_physical_local_stores": 9,
+        "canonical_sync_mobile_only_apis": 11,
+        "dedicated_sync_endpoints": 3,
+        "total_sync_related_apis": 11,
+        "phase7_offcap_records_accounted_for": "9 / 9",
+        "active_offline_capable_operations": 5,
+        "online_only_operations": 4
+    },
+    "hardware_and_print_inventory": {
+        "print_pipelines": 4,
+        "hardware_channels": 4,
+        "pairing_protocol": "hbos-pair:// QR Token with strict RFC1918 same-LAN subnet validation"
+    },
+    "roles_and_permissions": {
+        "source_proven_roles": 5,
+        "source_proven_permissions": 30,
+        "tenant_isolation_boundary": "business_id",
+        "branch_isolation_boundary": "branch_id"
+    },
+    "test_and_quality_baseline": {
+        "backend_test_files": 64,
+        "backend_tests_passing": 380,
+        "backend_assertions": 1613,
+        "frontend_automated_tests": "NOT_CONFIGURED",
+        "frontend_production_build": "PASS (Vite: 170 modules transformed, 0 errors)"
+    }
+}

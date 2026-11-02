@@ -1,0 +1,341 @@
+{
+    "AccountMovementService": {
+        "name": "AccountMovementService",
+        "has_db_transaction": true,
+        "methods": [
+            "calculateBalance",
+            "recalculateBalance",
+            "postInflow",
+            "postOutflow",
+            "voidMovement",
+            "statement"
+        ],
+        "models_used": [
+            "FinancialAccount",
+            "AccountMovement",
+            "AccountTransfer",
+            "SaleReturn"
+        ],
+        "content_length": 15523
+    },
+    "AuditService": {
+        "name": "AuditService",
+        "has_db_transaction": false,
+        "methods": [],
+        "models_used": [
+            "ActivityLog",
+            "User"
+        ],
+        "content_length": 5495
+    },
+    "BulkSyncService": {
+        "name": "BulkSyncService",
+        "has_db_transaction": true,
+        "methods": [
+            "ingestBulkTransactions",
+            "getCatalogDelta"
+        ],
+        "models_used": [
+            "Product",
+            "Category",
+            "Subcategory",
+            "Brand",
+            "Supplier",
+            "Customer",
+            "Branch",
+            "User",
+            "Sale",
+            "CustomerPayment",
+            "Expense"
+        ],
+        "content_length": 10896
+    },
+    "CashLedgerService": {
+        "name": "CashLedgerService",
+        "has_db_transaction": true,
+        "methods": [
+            "recordTransaction",
+            "getBalance"
+        ],
+        "models_used": [
+            "CashLedger"
+        ],
+        "content_length": 1923
+    },
+    "CustomerAccountService": {
+        "name": "CustomerAccountService",
+        "has_db_transaction": false,
+        "methods": [
+            "calculateRawBalance",
+            "calculateOutstanding",
+            "calculateCredit",
+            "calculateBranchExposure",
+            "recalculateBalance",
+            "getAccountLedger"
+        ],
+        "models_used": [
+            "Branch",
+            "Customer",
+            "CustomerPayment",
+            "Sale",
+            "SaleReturn"
+        ],
+        "content_length": 7532
+    },
+    "CustomerPaymentService": {
+        "name": "CustomerPaymentService",
+        "has_db_transaction": true,
+        "methods": [
+            "__construct",
+            "recordPayment",
+            "reversePayment"
+        ],
+        "models_used": [
+            "Branch",
+            "Customer",
+            "CustomerPayment",
+            "Sale",
+            "User"
+        ],
+        "content_length": 12614
+    },
+    "DashboardService": {
+        "name": "DashboardService",
+        "has_db_transaction": false,
+        "methods": [
+            "resolveDateRange",
+            "calculatePercentageChange",
+            "getOwnerDashboard",
+            "getManagerDashboard",
+            "getSalespersonDashboard",
+            "calculateSalesMetrics",
+            "calculateExpenses",
+            "calculateCashAndBank",
+            "calculatePeriodCashMovement",
+            "calculateCustomerReceivables",
+            "calculateSupplierPayables",
+            "calculateInventoryMetrics",
+            "calculateProductPerformance",
+            "calculateBranchComparison",
+            "getRecentActivity"
+        ],
+        "models_used": [
+            "Sale",
+            "SaleItem",
+            "SaleReturn",
+            "SaleReturnItem",
+            "Expense",
+            "Branch",
+            "BranchInventory",
+            "Customer",
+            "Supplier",
+            "FinancialAccount",
+            "AccountMovement",
+            "CustomerPayment",
+            "SupplierPayment",
+            "Purchase",
+            "Product",
+            "User"
+        ],
+        "content_length": 42185
+    },
+    "ExpenseService": {
+        "name": "ExpenseService",
+        "has_db_transaction": true,
+        "methods": [
+            "__construct",
+            "createExpense",
+            "voidExpense"
+        ],
+        "models_used": [
+            "Expense",
+            "ExpenseCategory",
+            "FinancialAccount",
+            "AccountMovement"
+        ],
+        "content_length": 6218
+    },
+    "FinancialAccountService": {
+        "name": "FinancialAccountService",
+        "has_db_transaction": true,
+        "methods": [
+            "createAccount",
+            "updateAccount",
+            "getDefaultCashAccount",
+            "deleteAccount"
+        ],
+        "models_used": [
+            "FinancialAccount",
+            "AccountMovement"
+        ],
+        "content_length": 6321
+    },
+    "InventoryMovementService": {
+        "name": "InventoryMovementService",
+        "has_db_transaction": false,
+        "methods": [
+            "__construct",
+            "recordMovement",
+            "reverseMovement"
+        ],
+        "models_used": [],
+        "content_length": 830
+    },
+    "InventoryService": {
+        "name": "InventoryService",
+        "has_db_transaction": true,
+        "methods": [
+            "receiveStock",
+            "issueStock",
+            "adjustStock",
+            "transferStock",
+            "reverseMovement",
+            "getBranchBalance"
+        ],
+        "models_used": [
+            "BranchInventory",
+            "InventoryMovement",
+            "Product",
+            "Branch"
+        ],
+        "content_length": 11320
+    },
+    "NeedsAttentionService": {
+        "name": "NeedsAttentionService",
+        "has_db_transaction": false,
+        "methods": [
+            "evaluateAlerts"
+        ],
+        "models_used": [
+            "Branch",
+            "BranchInventory",
+            "Customer",
+            "Supplier",
+            "FinancialAccount",
+            "AccountMovement",
+            "SaleReturn",
+            "Sale",
+            "CustomerPayment",
+            "Purchase"
+        ],
+        "content_length": 16789
+    },
+    "PurchaseService": {
+        "name": "PurchaseService",
+        "has_db_transaction": true,
+        "methods": [
+            "createPurchase",
+            "cancelPurchase"
+        ],
+        "models_used": [
+            "Purchase",
+            "PurchaseItem",
+            "Supplier",
+            "Product",
+            "Branch",
+            "SupplierPayment",
+            "User"
+        ],
+        "content_length": 10615
+    },
+    "ReportService": {
+        "name": "ReportService",
+        "has_db_transaction": false,
+        "methods": [
+            "getSalesReport",
+            "getInventoryReport",
+            "getCustomerReport",
+            "getSupplierReport",
+            "getExpenseReport",
+            "getFinancialAccountReport",
+            "getBranchReport"
+        ],
+        "models_used": [
+            "Sale",
+            "SaleItem",
+            "SaleReturn",
+            "Expense",
+            "Branch",
+            "BranchInventory",
+            "Customer",
+            "Supplier",
+            "FinancialAccount",
+            "AccountMovement",
+            "Product",
+            "Purchase",
+            "CustomerPayment",
+            "SupplierPayment"
+        ],
+        "content_length": 22888
+    },
+    "SaleService": {
+        "name": "SaleService",
+        "has_db_transaction": true,
+        "methods": [
+            "__construct",
+            "getActiveBusinessId",
+            "createSale",
+            "cancelSale",
+            "processReturn"
+        ],
+        "models_used": [
+            "Sale",
+            "SaleItem",
+            "SaleReturn",
+            "SaleReturnItem",
+            "Product",
+            "Customer",
+            "Branch",
+            "User"
+        ],
+        "content_length": 31298
+    },
+    "StockService": {
+        "name": "StockService",
+        "has_db_transaction": false,
+        "methods": [
+            "__construct",
+            "decrementStock",
+            "incrementStock"
+        ],
+        "models_used": [
+            "Product"
+        ],
+        "content_length": 1606
+    },
+    "SupplierBalanceService": {
+        "name": "SupplierBalanceService",
+        "has_db_transaction": true,
+        "methods": [
+            "recordPurchaseLiability",
+            "recordPayment",
+            "reversePurchaseLiability",
+            "reconcileBalance",
+            "reconcileBalanceFromDue"
+        ],
+        "models_used": [
+            "Supplier",
+            "Purchase",
+            "SupplierPayment"
+        ],
+        "content_length": 4098
+    },
+    "UserGovernanceService": {
+        "name": "UserGovernanceService",
+        "has_db_transaction": true,
+        "methods": [
+            "__construct",
+            "listUsers",
+            "createUser",
+            "updateUser",
+            "toggleUserStatus",
+            "countActiveOwners"
+        ],
+        "models_used": [
+            "User",
+            "Branch",
+            "Business"
+        ],
+        "content_length": 11926
+    }
+}

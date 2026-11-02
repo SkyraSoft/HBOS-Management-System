@@ -21,12 +21,27 @@ class Product extends Model
         'barcode',
         'cost_price',
         'selling_price',
+        'wholesale_price',
         'stock',
         'min_stock',
+        'allow_fractional',
+        'sale_unit',
+        'conversion_factor',
         'unit',
         'description',
         'image',
         'is_active'
+    ];
+
+    protected $casts = [
+        'cost_price' => 'decimal:2',
+        'selling_price' => 'decimal:2',
+        'wholesale_price' => 'decimal:2',
+        'stock' => 'decimal:3',
+        'min_stock' => 'decimal:3',
+        'allow_fractional' => 'boolean',
+        'conversion_factor' => 'decimal:3',
+        'is_active' => 'boolean',
     ];
 
     public function category()
@@ -47,5 +62,10 @@ class Product extends Model
     public function branchInventories()
     {
         return $this->hasMany(BranchInventory::class);
+    }
+
+    public function barcodes()
+    {
+        return $this->hasMany(ProductBarcode::class);
     }
 }

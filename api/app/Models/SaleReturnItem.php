@@ -16,11 +16,15 @@ class SaleReturnItem extends Model
         'quantity',
         'unit_price',
         'refund_amount',
+        'is_restockable',
+        'return_reason',
     ];
 
     protected $casts = [
+        'quantity' => 'decimal:3',
         'unit_price' => 'decimal:2',
         'refund_amount' => 'decimal:2',
+        'is_restockable' => 'boolean',
     ];
 
     public function saleReturn()

@@ -1,0 +1,50 @@
+[
+  {
+    "order": 1,
+    "phase": "PROMPT_2_BUSINESS_AND_EMPLOYEE_LIFECYCLE",
+    "scope": [
+      "Fix RegisterView.vue form, CSS, validation, and error display",
+      "Implement staged 5-step business onboarding wizard (Account -> Business -> Branch -> Defaults -> Ready)",
+      "Expand businesses table schema with legal name, contact, tax/registration, address, and preferences",
+      "Expand branches table schema with phone, address, manager_id, operational flags",
+      "Fix EmployeesView.vue to integrate seamlessly with /users API",
+      "Implement employee creation with invitation / forced password reset lifecycle",
+      "Ensure historical actor snapshots on all material mutations",
+      "Enforce individual employee credentials with zero shared-login dependency"
+    ]
+  },
+  {
+    "order": 2,
+    "phase": "PROMPT_3_ROLE_APPLICATIONS_AND_SUPER_OWNER_EXPERIENCE",
+    "scope": [
+      "Seed canonical Accountant and Inventory Manager Spatie roles & permissions",
+      "Implement Super Owner Executive Dashboard with consolidated KPIs & branch comparisons",
+      "Implement Branch Manager scoped dashboard & operational constraints",
+      "Implement Salesperson / Cashier POS-first landing and streamlined UX",
+      "Implement Accountant and Inventory Manager specialized interfaces",
+      "Implement Super Owner Read-Only 'View As' Preview Mode with middleware write-protection and top banner",
+      "Implement Owner Review Notes / Action Request system",
+      "Dynamic role-based sidebar navigation and router guards"
+    ]
+  },
+  {
+    "order": 3,
+    "phase": "PROMPT_4_PUBLIC_DISTRIBUTION_MULTI_TENANCY_OFFLINE_AND_SCALE",
+    "scope": [
+      "Tauri desktop build and Microsoft Store package verification",
+      "IndexedDB tenant isolation and offline transaction replay actor preservation",
+      "Cross-tenant attack penetration test matrix",
+      "Multi-device session security and token revocation tests",
+      "High-scale public distribution resilience"
+    ]
+  },
+  {
+    "order": 4,
+    "phase": "PROMPT_5_END_TO_END_RETAIL_PLATFORM_VERIFICATION",
+    "scope": [
+      "Simulate complete Business A (Owner + 2 Branches + 4 Staff Roles) and Business B lifecycle",
+      "Verify zero cross-tenant leaks, zero preview-mode writes, zero unknown transaction actors",
+      "Certify retail workforce architecture"
+    ]
+  }
+]

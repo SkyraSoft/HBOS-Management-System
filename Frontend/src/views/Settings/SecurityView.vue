@@ -177,8 +177,8 @@
                   </select>
                 </div>
 
-                <!-- Branch Filter -->
-                <div class="col-md-3 col-12" v-if="branches.length > 0">
+                <!-- Branch Filter (Multi-Branch only) -->
+                <div class="col-md-3 col-12" v-if="branches.length > 1">
                   <select v-model="filters.branch_id" class="form-select form-select-sm bg-light" @change="loadLogs(1)">
                     <option value="">All Branches</option>
                     <option v-for="b in branches" :key="b.id" :value="b.id">{{ b.name }}</option>
@@ -197,7 +197,7 @@
                       <th class="py-3">ACTOR</th>
                       <th class="py-3">ACTION / DESCRIPTION</th>
                       <th class="py-3">CATEGORY</th>
-                      <th class="py-3">BRANCH</th>
+                      <th class="py-3" v-if="branches.length > 1">BRANCH</th>
                       <th class="py-3 pe-4 text-center">EVENT</th>
                     </tr>
                   </thead>
@@ -247,7 +247,7 @@
                       </td>
 
                       <!-- Branch -->
-                      <td class="py-3 record-cell">
+                      <td class="py-3 record-cell" v-if="branches.length > 1">
                         <span class="badge bg-light text-dark border">
                           {{ log.branch?.name || 'Business-Wide' }}
                         </span>
@@ -263,7 +263,7 @@
 
                     <!-- Empty State -->
                     <tr v-if="auditLogs.length === 0 && !isLoading">
-                      <td colspan="6" class="text-center py-5">
+                      <td :colspan="branches.length > 1 ? 6 : 5" class="text-center py-5">
                         <div class="empty-state-box">
                           <i class="bi bi-journal-x text-muted" style="font-size: 2.2rem;"></i>
                           <h6 class="mt-2 fw-bold text-dark">No Audit Events Found</h6>
@@ -276,7 +276,7 @@
                     </tr>
 
                     <tr v-if="isLoading">
-                      <td colspan="6" class="text-center py-5">
+                      <td :colspan="branches.length > 1 ? 6 : 5" class="text-center py-5">
                         <div class="spinner-border text-primary" role="status">
                           <span class="visually-hidden">Loading...</span>
                         </div>
@@ -347,7 +347,7 @@
                     <label class="text-muted small fw-bold text-uppercase">Actor</label>
                     <div class="small">{{ selectedLogItem.actor?.name || 'System' }}</div>
                   </div>
-                  <div class="col-6">
+                  <div class="col-6" v-if="branches.length > 1">
                     <label class="text-muted small fw-bold text-uppercase">Branch</label>
                     <div class="small">{{ selectedLogItem.branch?.name || 'Business-Wide' }}</div>
                   </div>

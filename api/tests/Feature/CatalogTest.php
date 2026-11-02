@@ -96,8 +96,8 @@ class CatalogTest extends TestCase
                                    'unit' => 'pcs'
                                ]);
                                
-        $updateResponse->assertStatus(200)
-                       ->assertJsonPath('selling_price', 550);
+        $updateResponse->assertStatus(200);
+        $this->assertEquals(550.00, (float) $updateResponse->json('selling_price'));
     }
 
     public function test_products_are_isolated_by_business_id()

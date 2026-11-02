@@ -23,6 +23,19 @@ class CustomerPaymentController extends Controller
         return ResolveActiveBusiness::requireActiveBusinessId();
     }
 
+    public function allPayments(Request $request)
+    {
+        $businessId = $this->getBusinessId($request);
+        $payments = CustomerPayment::with(['customer', 'branch', 'sale', 'user', 'reversedBy'])
+            ->where('business_id', $businessId)
+            ->orderBy('date', 'desc')
+            ->orderBy('id', 'desc')
+            ->limit(100)
+            ->get();
+
+        return response()->json($payments);
+    }
+
     public function index(Request $request, string $customerId)
     {
         $businessId = $this->getBusinessId($request);
@@ -44,7 +57,7 @@ class CustomerPaymentController extends Controller
         $customer = Customer::where('business_id', $businessId)->findOrFail($customerId);
 
         $request->validate([
-            'branch_id' => 'required|integer',
+            'branch_id' => 'nullable|integer',
             'sale_id' => 'nullable|integer',
             'amount' => 'required|numeric|min:0.01',
             'payment_method' => 'nullable|string|max:50',
@@ -56,6 +69,10 @@ class CustomerPaymentController extends Controller
         $payload = $request->all();
         $payload['customer_id'] = $customer->id;
         $payload['business_id'] = $businessId;
+        if (empty($payload['branch_id'])) {
+            $payload['branch_id'] = $request->user()->branch_id
+                ?? \App\Models\Branch::where('business_id', $businessId)->value('id');
+        }
 
         $payment = $this->paymentService->recordPayment($payload, $request->user());
 

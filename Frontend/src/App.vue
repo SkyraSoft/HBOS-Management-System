@@ -11,10 +11,10 @@ const route = useRoute()
 
 // Determine which layout to use based on the route meta field
 const layout = computed(() => {
-  if (route.meta.layout === 'auth') return AuthLayout
-  if (route.meta.layout === 'ProductLayout') return ProductLayout
-  if (route.meta.layout === 'SettingsLayout') return SettingsLayout
-  if (route.meta.layout === 'EmptyLayout') return EmptyLayout
+  if (route.meta?.layout === 'auth' || route.path === '/login' || route.path === '/register') return AuthLayout
+  if (route.meta?.layout === 'ProductLayout') return ProductLayout
+  if (route.meta?.layout === 'SettingsLayout') return SettingsLayout
+  if (route.meta?.layout === 'EmptyLayout') return EmptyLayout
   
   // Default to MainLayout
   return MainLayout

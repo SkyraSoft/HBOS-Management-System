@@ -16,6 +16,7 @@ class Customer extends Model
         'business_id',
         'name',
         'phone',
+        'secondary_phone',
         'email',
         'address',
         'opening_balance',

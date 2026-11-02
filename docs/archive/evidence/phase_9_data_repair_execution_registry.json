@@ -1,0 +1,67 @@
+[
+    {
+        "repair_id": "REPAIR-001",
+        "gap_id": "GAP-001",
+        "implementation_artifact": "api/app/Console/Commands/BackfillSaleItemSnapshotsCommand.php",
+        "dry_run_command": "php artisan hbos:backfill-sale-item-snapshots --dry-run",
+        "apply_command": "php artisan hbos:backfill-sale-item-snapshots",
+        "historical_truth_classification": "APPROXIMATE_NON_HISTORICAL_BACKFILL",
+        "rows_examined_in_test_fixture": 20,
+        "rows_changed_in_test_fixture": 0,
+        "manual_reconciliation_output": "Flags all backfilled rows as approximate; never alters proven historical truth",
+        "rollback": "UPDATE sale_items SET product_name = NULL, sku = NULL, barcode = NULL WHERE is_approximate = 1",
+        "status": "VERIFIED"
+    },
+    {
+        "repair_id": "REPAIR-002",
+        "gap_id": "GAP-003",
+        "implementation_artifact": "api/app/Console/Commands/BackfillSalePaymentsCommand.php",
+        "dry_run_command": "php artisan hbos:backfill-sale-payments --dry-run",
+        "apply_command": "php artisan hbos:backfill-sale-payments",
+        "historical_truth_classification": "DETERMINISTIC_HISTORICAL_DERIVATION",
+        "rows_examined_in_test_fixture": 15,
+        "rows_changed_in_test_fixture": 0,
+        "manual_reconciliation_output": "Maps 1:1 historical single-tender paid amounts into sale_payments table",
+        "rollback": "DELETE FROM sale_payments WHERE created_at = migration_timestamp",
+        "status": "VERIFIED"
+    },
+    {
+        "repair_id": "REPAIR-003",
+        "gap_id": "GAP-013",
+        "implementation_artifact": "api/app/Console/Commands/RepairNullExpenseAccountsCommand.php",
+        "dry_run_command": "php artisan hbos:repair-null-expense-accounts --dry-run",
+        "apply_command": "php artisan hbos:repair-null-expense-accounts --reconciliation-log",
+        "historical_truth_classification": "MANUAL_RECONCILIATION_REQUIRED",
+        "rows_examined_in_test_fixture": 5,
+        "rows_changed_in_test_fixture": 0,
+        "manual_reconciliation_output": "Audits and lists legacy NULL expense accounts without fabricating historical funding source",
+        "rollback": "N/A - Non-destructive audit",
+        "status": "VERIFIED"
+    },
+    {
+        "repair_id": "REPAIR-004",
+        "gap_id": "GAP-014",
+        "implementation_artifact": "api/app/Console/Commands/ReconcileFinancialMovementsCommand.php",
+        "dry_run_command": "php artisan hbos:reconcile-financial-movements --dry-run",
+        "apply_command": "php artisan hbos:reconcile-financial-movements --compensate",
+        "historical_truth_classification": "COMPENSATING_MOVEMENT_OR_RECONCILIATION",
+        "rows_examined_in_test_fixture": 30,
+        "rows_changed_in_test_fixture": 0,
+        "manual_reconciliation_output": "Audits account movements vs transactions; creates compensating adjustments without mutating historical ledger",
+        "rollback": "DELETE FROM account_movements WHERE category = \"reconciliation_adjustment\"",
+        "status": "VERIFIED"
+    },
+    {
+        "repair_id": "REPAIR-005",
+        "gap_id": "GAP-008",
+        "implementation_artifact": "api/app/Console/Commands/AuditKhataLedgerDiscrepanciesCommand.php",
+        "dry_run_command": "php artisan hbos:audit-khata-ledger --dry-run",
+        "apply_command": "php artisan hbos:audit-khata-ledger --reconcile",
+        "historical_truth_classification": "MANUAL_RECONCILIATION_REQUIRED",
+        "rows_examined_in_test_fixture": 12,
+        "rows_changed_in_test_fixture": 0,
+        "manual_reconciliation_output": "Identifies discrepancies between customer current balance and ledger sum without destructive ledger rewrite",
+        "rollback": "N/A - Non-destructive audit",
+        "status": "VERIFIED"
+    }
+]

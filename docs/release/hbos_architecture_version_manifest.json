@@ -1,0 +1,84 @@
+{
+  "manifest_name": "SkyraSoft HBOS Authoritative Architecture & Version Manifest",
+  "generated_at": "2026-10-24T23:25:00+05:00",
+  "build_identifier": "HBOS-V1.0.0-STAGE3-20261024-WIN64",
+  "governance": {
+    "development_phases": "Phases 1-10 Frozen (Strictly NO Phase 11)",
+    "post_development_delivery": "3 Stages across 12 Checkpoints",
+    "production_decision": "PRODUCTION_NO_GO"
+  },
+  "runtime_components": {
+    "desktop": {
+      "framework": "Tauri",
+      "tauri_version": "1.8.3",
+      "tauri_cli_version": "1.6.3",
+      "rustc_version": "1.85+",
+      "target_triple": "x86_64-pc-windows-msvc",
+      "webview": "Microsoft Edge WebView2 (Evergreen)",
+      "window_configuration": {
+        "fullscreen": false,
+        "decorations": true,
+        "resizable": true,
+        "width": 1366,
+        "height": 768,
+        "min_width": 1024,
+        "min_height": 600
+      }
+    },
+    "frontend": {
+      "framework": "Vue 3",
+      "vue_version": "3.5.40",
+      "vite_version": "8.2.1",
+      "pinia_version": "4.0.2",
+      "vue_router_version": "5.2.0",
+      "axios_version": "1.19.0",
+      "dist_path": "Frontend/dist",
+      "app_version": "1.0.0",
+      "sync_schema_version": 1
+    },
+    "backend": {
+      "framework": "Laravel",
+      "laravel_version": "11.x",
+      "php_version": "8.2+",
+      "api_namespace": "/api/v1",
+      "auth_guard": "Laravel Sanctum (Token-based Bearer)",
+      "supported_databases": ["MariaDB / MySQL 8.0+", "SQLite (isolated test fixtures)"]
+    }
+  },
+  "session_modes": [
+    {
+      "mode_id": "UNAUTHENTICATED_WELCOME",
+      "route": "/welcome",
+      "description": "Safe landing screen providing 3 primary unauthenticated choices: Log In, Create My Business, and Try Demo."
+    },
+    {
+      "mode_id": "NEW_BUSINESS_ONBOARDING",
+      "route": "/setup/business",
+      "description": "Clean, multi-step store configuration workflow for newly registered merchant owners."
+    },
+    {
+      "mode_id": "AUTHENTICATED_PRODUCTION",
+      "route": "/dashboard",
+      "description": "Genuine authenticated merchant session operating on live tenant databases with valid Sanctum token."
+    },
+    {
+      "mode_id": "DEMO_SINGLE_STORE",
+      "storage_namespace": "HBOS_Store_Biz_demo_single",
+      "description": "Client-side isolated demonstration sandbox representing Al-Madina General Store (15 products, PKR 8,500 float, 4 Khata customers, 3 suppliers)."
+    },
+    {
+      "mode_id": "DEMO_MULTI_STORE",
+      "storage_namespace": "HBOS_Store_Biz_demo_multi",
+      "description": "Client-side isolated multi-branch demonstration sandbox representing Al-Madina Supermarket (Clifton, Saddar, Gulshan with in-transit transfer)."
+    },
+    {
+      "mode_id": "VIEW_AS_AUDIT",
+      "description": "Strict read-only Owner impersonation preview mode with enforced HTTP 403 mutation blocking."
+    },
+    {
+      "mode_id": "VALIDATED_OFFLINE_REAL_SESSION",
+      "description": "Network-disconnected merchant operations persisting durable transactions in client IndexedDB outbox."
+    }
+  ],
+  "authoritative_demo_manifest_reference": "docs/release/hbos_demo_fixture_manifest.json"
+}

@@ -53,7 +53,7 @@
                         </div>
 
                         <div class="stat-value">
-                            PKR 85,400
+                            PKR {{ todayPurchasesTotal.toLocaleString('en-PK') }}
                         </div>
 
                     </div>
@@ -66,7 +66,7 @@
                         </div>
 
                         <div class="stat-value">
-                            PKR 1,245,600
+                            PKR {{ thisMonthPurchasesTotal.toLocaleString('en-PK') }}
                         </div>
 
                     </div>
@@ -79,7 +79,7 @@
                         </div>
 
                         <div class="stat-value">
-                            8
+                            {{ pendingPurchasesCount }}
                         </div>
 
                     </div>
@@ -92,7 +92,7 @@
                         </div>
 
                         <div class="stat-value danger">
-                            PKR 285,400
+                            PKR {{ supplierPayablesTotal.toLocaleString('en-PK') }}
                         </div>
 
                     </div>
@@ -107,35 +107,27 @@
                     <div class="filters">
 
                         <div class="search-box">
-
                             <span>⌕</span>
-
-                            <input type="text" id="purchaseSearch" placeholder="Search invoices, suppliers..." oninput="filterPurchases()">
-
+                            <input type="text" id="purchaseSearch" placeholder="Search invoices, suppliers..." v-model="purchaseSearchQuery">
                         </div>
 
-
-                        <select class="filter-select" id="dateFilter">
-                            <option>Date: All Time</option>
-                            <option>Today</option>
-                            <option>This Week</option>
-                            <option>This Month</option>
+                        <select class="filter-select" id="dateFilter" v-model="filterDateRange">
+                            <option value="all">Date: All Time</option>
+                            <option value="today">Today</option>
+                            <option value="week">This Week</option>
+                            <option value="month">This Month</option>
                         </select>
 
-
-                        <select class="filter-select" id="supplierFilter">
-                            <option>Supplier: All</option>
-                            <option>Ali Traders</option>
-                            <option>Zafar Wholesalers</option>
-                            <option>Metro Distributors</option>
+                        <select class="filter-select" id="supplierFilter" v-model="filterSupplierId">
+                            <option value="">Supplier: All</option>
+                            <option v-for="s in suppliers" :key="s.id" :value="s.id">{{ s.name }}</option>
                         </select>
 
-
-                        <select class="filter-select">
-                            <option>Payment: All</option>
-                            <option>Paid</option>
-                            <option>Partial</option>
-                            <option>Credit</option>
+                        <select class="filter-select" id="paymentStatusFilter" v-model="filterPaymentStatus">
+                            <option value="">Payment: All</option>
+                            <option value="Paid">Paid</option>
+                            <option value="Partial">Partial</option>
+                            <option value="Unpaid">Unpaid</option>
                         </select>
 
                     </div>
@@ -163,8 +155,7 @@
 
 
                             <tbody id="purchaseTable">
-
-                                <tr v-for="purchase in purchases" :key="purchase.id">
+                                <tr v-for="purchase in paginatedPurchases" :key="purchase.id">
                                     <td>
                                         <div class="purchase-id">
                                             {{ purchase.po_number }}
@@ -184,16 +175,16 @@
                                     </td>
 
                                     <td class="amount">
-                                        {{ formatNumber(purchase.total) }}
+                                        {{ formatNumber(purchase.paid_amount ?? purchase.paid ?? 0) }}
                                     </td>
 
                                     <td class="amount">
-                                        0
+                                        {{ formatNumber(purchase.due_amount ?? (Number(purchase.total || purchase.total_amount || 0) - Number(purchase.paid_amount ?? purchase.paid ?? 0))) }}
                                     </td>
 
                                     <td>
-                                        <span class="status paid">
-                                            Paid
+                                        <span :class="['status', getPurchaseStatusClass(purchase)]">
+                                            {{ getPurchaseStatusLabel(purchase) }}
                                         </span>
                                     </td>
 
@@ -208,57 +199,26 @@
                                     </td>
                                 </tr>
 
-                                <tr v-if="!purchases || purchases.length === 0">
-                                    <td colspan="9" style="text-align: center; padding: 20px; color: var(--muted);">
-                                        No purchases found. Click "+ New Purchase" to create one.
+                                <tr v-if="filteredPurchases.length === 0">
+                                    <td colspan="9" style="text-align: center; padding: 25px; color: var(--muted);">
+                                        No purchases found. {{ (purchases && purchases.length > 0) ? 'Try clearing your search/filter.' : 'Click "+ New Purchase" to create one.' }}
                                     </td>
                                 </tr>
-
                             </tbody>
-
                         </table>
-
                     </div>
 
-
                     <div class="table-footer">
-
                         <div>
-                            Showing 1 to 4 of 45 entries
+                            <span v-if="filteredPurchases.length === 0">Showing 0 entries</span>
+                            <span v-else>Showing {{ (currentPage - 1) * perPage + 1 }} to {{ Math.min(currentPage * perPage, filteredPurchases.length) }} of {{ filteredPurchases.length }} entries</span>
                         </div>
 
-                        <div class="pagination">
-
-                            <button class="page-btn">
-                                ‹
-                            </button>
-
-                            <button class="page-btn active">
-                                1
-                            </button>
-
-                            <button class="page-btn">
-                                2
-                            </button>
-
-                            <button class="page-btn">
-                                3
-                            </button>
-
-                            <button class="page-btn">
-                                …
-                            </button>
-
-                            <button class="page-btn">
-                                12
-                            </button>
-
-                            <button class="page-btn">
-                                ›
-                            </button>
-
+                        <div class="pagination" v-if="totalPages > 1">
+                            <button class="page-btn" :disabled="currentPage <= 1" @click="currentPage--">‹</button>
+                            <button v-for="pg in totalPages" :key="pg" class="page-btn" :class="{ active: pg === currentPage }" @click="currentPage = pg">{{ pg }}</button>
+                            <button class="page-btn" :disabled="currentPage >= totalPages" @click="currentPage++">›</button>
                         </div>
-
                     </div>
 
                 </div>
@@ -427,11 +387,19 @@
                                 <div>Unit</div>
                                 <div>Price</div>
                                 <div>Disc %</div>
+                                <div style="text-align: right;">Landed Cost</div>
                                 <div>Total</div>
                                 <div></div>
 
                             </div>
 
+
+                            <!-- EMPTY STATE -->
+                            <div v-if="purchaseItems.length === 0" style="text-align: center; padding: 36px 16px; color: #64748b; font-size: 14px; background: #fafafa; border-radius: 8px; margin: 12px 0;">
+                                <i class="bi bi-cart-x" style="font-size: 28px; display: block; margin-bottom: 8px; color: #94a3b8;"></i>
+                                <span class="fw-semibold text-dark">No products added yet</span>
+                                <p class="text-muted small m-0 mt-1">Search and select products above to build your purchase order.</p>
+                            </div>
 
                             <!-- REACTIVE PRODUCTS -->
                             <div class="product-row purchase-product" v-for="(item, index) in purchaseItems" :key="index">
@@ -440,16 +408,47 @@
                                     <input v-model="item.sku" style="border: none; background: transparent; width: 100%; font-size: 12px; color: #8893a7; outline: none;" placeholder="SKU" />
                                 </div>
                                 <div>
-                                    <input class="mini-input qty" type="number" v-model.number="item.quantity" min="1">
+                                    <input class="mini-input qty" type="number" v-model.number="item.quantity" min="0.001" step="0.001">
                                 </div>
                                 <div>
                                     <input class="mini-input" style="width: 50px;" v-model="item.unit">
                                 </div>
                                 <div>
-                                    <input class="mini-input price" type="number" v-model.number="item.price" min="0">
+                                    <input class="mini-input price" type="number" v-model.number="item.price" min="0" step="0.01">
+                                    <!-- Supplier Price History Tooltip & Trend Badge (SRT-GAP-016) -->
+                                    <div v-if="item.product_id && supplierPriceHistory[item.product_id]" style="margin-top: 4px; font-size: 10px;">
+                                        <template v-if="supplierPriceHistory[item.product_id].found">
+                                            <span 
+                                                v-if="item.price > supplierPriceHistory[item.product_id].last_price" 
+                                                class="price-trend-badge warning"
+                                                style="color: #b45309; background: #fef3c7; padding: 2px 4px; border-radius: 4px; display: inline-flex; align-items: center; gap: 2px; cursor: help; font-weight: 600; font-size: 9px;"
+                                                :title="`Last price from supplier: PKR ${supplierPriceHistory[item.product_id].last_price} on ${supplierPriceHistory[item.product_id].last_date || 'N/A'} (PO #${supplierPriceHistory[item.product_id].po_number || 'N/A'}) | Prior Trend: ${supplierPriceHistory[item.product_id].trend_percentage > 0 ? '+' : ''}${supplierPriceHistory[item.product_id].trend_percentage}%`"
+                                            >
+                                                ▲ +{{ (((item.price - supplierPriceHistory[item.product_id].last_price) / supplierPriceHistory[item.product_id].last_price) * 100).toFixed(1) }}% vs Last ({{ supplierPriceHistory[item.product_id].last_price }})
+                                            </span>
+                                            <span 
+                                                v-else 
+                                                class="price-trend-badge normal"
+                                                style="color: #047857; background: #d1fae5; padding: 2px 4px; border-radius: 4px; display: inline-flex; align-items: center; gap: 2px; cursor: help; font-weight: 500; font-size: 9px;"
+                                                :title="`Last price from supplier: PKR ${supplierPriceHistory[item.product_id].last_price} on ${supplierPriceHistory[item.product_id].last_date || 'N/A'} (PO #${supplierPriceHistory[item.product_id].po_number || 'N/A'}) | Prior Trend: ${supplierPriceHistory[item.product_id].trend_percentage > 0 ? '+' : ''}${supplierPriceHistory[item.product_id].trend_percentage}%`"
+                                            >
+                                                ● Last: PKR {{ supplierPriceHistory[item.product_id].last_price }}
+                                            </span>
+                                        </template>
+                                        <template v-else>
+                                            <span style="color: #9ca3af; font-size: 9px;" title="No historical purchases found from this supplier">New supplier price</span>
+                                        </template>
+                                    </div>
                                 </div>
                                 <div>
                                     <input class="mini-input discount" type="number" v-model.number="item.discount" min="0" max="100">
+                                </div>
+                                <!-- Landed Cost Display (SRT-GAP-015) -->
+                                <div class="landed-cost-col" style="font-size: 12px; color: #4338ca; text-align: right;">
+                                    <div style="font-weight: 700;">PKR {{ formatNumber(allocatedLandedCosts[index]?.landedUnitCost || item.price) }}</div>
+                                    <div v-if="shippingCost > 0" style="font-size: 10px; color: #6366f1;">
+                                        +PKR {{ formatNumber(allocatedLandedCosts[index]?.allocatedFreight || 0) }} frt
+                                    </div>
                                 </div>
                                 <div class="row-total">
                                     <span class="line-total">{{ formatNumber((item.quantity * item.price) * (1 - (item.discount / 100))) }}</span>
@@ -496,101 +495,59 @@
 
 
                         <div class="summary-line">
-
-                            <span>
-                                Tax / VAT (5%)
-                            </span>
-
-                            <span id="tax">{{ formatNumber(tax) }}</span>
-
-                        </div>
-
-
-                        <div class="summary-line">
-
                             <span>
                                 Shipping
                             </span>
-
                             <input class="mini-input" id="shipping" type="number" v-model.number="shippingCost" min="0" style="width:96px;">
-
                         </div>
 
+                        <div class="summary-line" v-if="shippingCost > 0" style="font-size: 11px; color: #4338ca; background: #eef2ff; padding: 4px 8px; border-radius: 4px;">
+                            <span>Freight Allocation:</span>
+                            <span style="font-weight: 600;">Value-Proportional</span>
+                        </div>
 
                         <div class="summary-total">
-
                             <span>
                                 Grand Total
                             </span>
-
                             <span id="grandTotal">{{ formatNumber(grandTotal) }}</span>
-
                         </div>
 
-
                         <!-- PAYMENT -->
-
                         <div class="payment-section">
-
                             <h2 class="card-title">
                                 Payment
                             </h2>
 
-
                             <label>
                                 Payment Status
                             </label>
-
                             <div class="payment-options">
-
-                                <button class="payment-option active" onclick="selectPayment(this, 'paid')">
+                                <button type="button" class="payment-option" :class="{ active: paymentStatus === 'paid' }" @click="setPaymentStatus('paid')">
                                     Paid in Full
                                 </button>
-
-                                <button class="payment-option" onclick="selectPayment(this, 'partial')">
+                                <button type="button" class="payment-option" :class="{ active: paymentStatus === 'partial' }" @click="setPaymentStatus('partial')">
                                     Partial
                                 </button>
-
-                                <button class="payment-option" onclick="selectPayment(this, 'credit')">
+                                <button type="button" class="payment-option" :class="{ active: paymentStatus === 'credit' }" @click="setPaymentStatus('credit')">
                                     Credit
                                 </button>
-
                             </div>
-
 
                             <label>
                                 Amount Paid
                             </label>
-
                             <input class="input" id="amountPaid" type="number" v-model.number="amountPaid" min="0">
-
 
                             <label style="margin-top:16px;">
                                 Payment Method
                             </label>
-
-                            <select class="select" id="paymentMethod">
-
-                                <option>
-                                    Cash
-                                </option>
-
-                                <option>
-                                    Bank Transfer
-                                </option>
-
-                                <option>
-                                    Card
-                                </option>
-
-                                <option>
-                                    JazzCash
-                                </option>
-
-                                <option>
-                                    Easypaisa
-                                </option>
-
+                            <select class="select" id="paymentMethod" v-model="selectedPaymentMethod">
+                                <option value="Cash">Cash</option>
+                                <option value="Bank Transfer">Bank Transfer</option>
+                                <option value="Card">Card</option>
+                                <option value="JazzCash">JazzCash</option>
+                                <option value="Easypaisa">Easypaisa</option>
                             </select>
 
 
@@ -618,173 +575,136 @@
 <script setup>
 import { ref, onMounted, watch, computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
+import api from '@/api';
 import { usePurchasesStore } from '@/stores/purchases';
 import { useSuppliersStore } from '@/stores/suppliers';
+import { useRetailStore } from '@/stores/retail';
 
 const formatNumber = (val) => Number(val).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-const purchaseItems = ref([
-    {
-        name: 'Premium Jasmine Rice',
-        sku: 'RICE-001',
-        quantity: 50,
-        unit: 'kg',
-        price: 45,
-        discount: 0
-    },
-    {
-        name: 'Refined Sunflower Oil',
-        sku: 'OIL-042',
-        quantity: 24,
-        unit: 'Ltr',
-        price: 120,
-        discount: 5
-    }
-]);
-
-const shippingCost = ref(50);
-
-const addCustomItem = () => {
-    purchaseItems.value.push({
-        name: '',
-        sku: '',
-        quantity: 1,
-        unit: 'pcs',
-        price: 0,
-        discount: 0
-    });
+const getPurchaseStatusLabel = (p) => {
+    const total = Number(p.total ?? p.total_amount ?? 0);
+    const paid = Number(p.paid_amount ?? p.paid ?? 0);
+    const due = Number(p.due_amount ?? (total - paid));
+    if (due <= 0 || paid >= total) return 'Paid';
+    if (paid > 0 && due > 0) return 'Partial';
+    return 'Unpaid';
 };
 
-const removePurchaseItem = (index) => {
-    purchaseItems.value.splice(index, 1);
+const getPurchaseStatusClass = (p) => {
+    const label = getPurchaseStatusLabel(p);
+    if (label === 'Paid') return 'paid';
+    if (label === 'Partial') return 'partial';
+    return 'unpaid';
 };
-
-const subtotal = computed(() => {
-    return purchaseItems.value.reduce((sum, item) => sum + (item.quantity * item.price), 0);
-});
-
-const discountTotal = computed(() => {
-    return purchaseItems.value.reduce((sum, item) => sum + ((item.quantity * item.price) * (item.discount / 100)), 0);
-});
-
-const tax = computed(() => {
-    return (subtotal.value - discountTotal.value) * 0.05;
-});
-
-const grandTotal = computed(() => {
-    return subtotal.value - discountTotal.value + tax.value + shippingCost.value;
-});
-
-const suppliersStore = useSuppliersStore();
-const suppliers = computed(() => suppliersStore.suppliers);
-
-const supplierSearchQuery = ref('');
-const selectedSupplierId = ref(null);
-const showSupplierDropdown = ref(false);
-const invoiceNumber = ref('');
-const isSubmitting = ref(false);
-
-const filteredSuppliers = computed(() => {
-    if (!supplierSearchQuery.value) return suppliers.value;
-    return suppliers.value.filter(s => 
-        s.name.toLowerCase().includes(supplierSearchQuery.value.toLowerCase())
-    );
-});
-
-const selectSupplier = (supplier) => {
-    selectedSupplierId.value = supplier.id;
-    supplierSearchQuery.value = supplier.name;
-    showSupplierDropdown.value = false;
-};
-
-const hideSupplierDropdown = () => {
-    setTimeout(() => {
-        showSupplierDropdown.value = false;
-        const match = suppliers.value.find(s => s.id === selectedSupplierId.value);
-        if (match) {
-            supplierSearchQuery.value = match.name;
-        } else {
-            supplierSearchQuery.value = '';
-            selectedSupplierId.value = null;
-        }
-    }, 200);
-};
-
-
-import { useRetailStore } from '@/stores/retail';
-
-const confirmPurchase = async () => {
-    try {
-        const retailStore = useRetailStore();
-        await retailStore.fetchProducts();
-        
-        let productId = 1;
-        if (retailStore.products && retailStore.products.length > 0) {
-            productId = retailStore.products[0].id;
-        }
-
-        let poNumber = invoiceNumber.value.trim();
-        if (!poNumber) {
-            // Generate a random unique PO number
-            poNumber = 'PO-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
-        }
-        
-        const dateInput = document.getElementById('purchaseDate');
-        const purchaseDate = (dateInput && dateInput.value) ? dateInput.value : new Date().toISOString().split('T')[0];
-
-        // Ensure supplier is selected
-        if (!selectedSupplierId.value) {
-            alert('Please select a supplier before confirming purchase.');
-            return;
-        }
-
-        if (isSubmitting.value) return;
-        isSubmitting.value = true;
-
-        const purchaseData = {
-            supplier_id: selectedSupplierId.value,
-            po_number: poNumber,
-            date: purchaseDate,
-            subtotal: subtotal.value,
-            total: grandTotal.value,
-            status: 'received',
-            notes: 'Created via Confirm Purchase',
-            items: purchaseItems.value.map(item => ({
-                product_id: productId, // Fallback dummy product id
-                quantity: item.quantity,
-                unit_cost: item.price,
-                total: (item.quantity * item.price) * (1 - (item.discount / 100))
-            }))
-        };
-
-        const result = await store.addPurchase(purchaseData);
-        if (result.success) {
-            alert('Purchase completed successfully.');
-            // Clear form
-            invoiceNumber.value = '';
-            selectedSupplierId.value = null;
-            supplierSearchQuery.value = '';
-            purchaseItems.value = [];
-            showPurchaseList();
-        } else {
-            alert('Failed to save purchase: ' + result.message);
-        }
-    } catch (e) {
-        console.error(e);
-        alert('An error occurred');
-    } finally {
-        isSubmitting.value = false;
-    }
-};
-
 
 const router = useRouter();
 const route = useRoute();
 const props = defineProps({ isModal: { type: Boolean, default: false } });
 const emit = defineEmits(['success']);
+
 const store = usePurchasesStore();
+const suppliersStore = useSuppliersStore();
+const retailStore = useRetailStore();
+
+const amountPaid = ref(0);
+const paymentStatus = ref('paid');
+const selectedPaymentMethod = ref('Cash');
+
+const setPaymentStatus = (status) => {
+    paymentStatus.value = status;
+    if (status === 'paid') {
+        amountPaid.value = grandTotal.value;
+    } else if (status === 'credit') {
+        amountPaid.value = 0;
+    }
+};
 
 const purchases = computed(() => store.purchases);
+const suppliers = computed(() => suppliersStore.suppliers);
+
+const todayPurchasesTotal = computed(() => {
+    const today = new Date().toISOString().split('T')[0];
+    return (purchases.value || [])
+        .filter(p => (p.purchase_date || p.date || p.created_at || '').startsWith(today))
+        .reduce((sum, p) => sum + (Number(p.total_amount || p.total || p.grand_total) || 0), 0);
+});
+
+const thisMonthPurchasesTotal = computed(() => {
+    const currentMonth = new Date().toISOString().slice(0, 7);
+    return (purchases.value || [])
+        .filter(p => (p.purchase_date || p.date || p.created_at || '').startsWith(currentMonth))
+        .reduce((sum, p) => sum + (Number(p.total_amount || p.total || p.grand_total) || 0), 0);
+});
+
+const pendingPurchasesCount = computed(() => {
+    return (purchases.value || []).filter(p => (p.status || '').toLowerCase() === 'pending' || (p.payment_status || '').toLowerCase() === 'pending').length;
+});
+
+const supplierPayablesTotal = computed(() => {
+    return (suppliers.value || []).reduce((sum, s) => sum + (Number(s.balance || s.payable || s.current_balance) || 0), 0);
+});
+
+const filterSupplierId = ref('');
+const filterPaymentStatus = ref('');
+const filterDateRange = ref('all');
+const purchaseSearchQuery = ref('');
+const currentPage = ref(1);
+const perPage = ref(10);
+
+const filteredPurchases = computed(() => {
+    let list = [...(purchases.value || [])];
+
+    if (filterSupplierId.value) {
+        list = list.filter(p => {
+            const sId = p.supplier_id || p.supplier?.id;
+            const sName = p.supplier?.name || p.notes || '';
+            return String(sId) === String(filterSupplierId.value) || sName.toLowerCase().includes(filterSupplierId.value.toLowerCase());
+        });
+    }
+
+    if (filterPaymentStatus.value) {
+        list = list.filter(p => {
+            const status = getPurchaseStatusLabel(p);
+            return status.toLowerCase() === filterPaymentStatus.value.toLowerCase();
+        });
+    }
+
+    if (purchaseSearchQuery.value.trim()) {
+        const q = purchaseSearchQuery.value.trim().toLowerCase();
+        list = list.filter(p => {
+            const po = (p.po_number || '').toLowerCase();
+            const suppName = (p.supplier?.name || p.notes || '').toLowerCase();
+            const id = String(p.id || '');
+            return po.includes(q) || suppName.includes(q) || id.includes(q);
+        });
+    }
+
+    if (filterDateRange.value !== 'all') {
+        const now = new Date();
+        const todayStr = now.toISOString().split('T')[0];
+        if (filterDateRange.value === 'today') {
+            list = list.filter(p => (p.purchase_date || p.date || p.created_at || '').startsWith(todayStr));
+        } else if (filterDateRange.value === 'month') {
+            const monthStr = now.toISOString().slice(0, 7);
+            list = list.filter(p => (p.purchase_date || p.date || p.created_at || '').startsWith(monthStr));
+        }
+    }
+
+    return list;
+});
+
+const totalPages = computed(() => Math.max(1, Math.ceil(filteredPurchases.value.length / perPage.value)));
+
+const paginatedPurchases = computed(() => {
+    const start = (currentPage.value - 1) * perPage.value;
+    return filteredPurchases.value.slice(start, start + perPage.value);
+});
+
+watch([filterSupplierId, filterPaymentStatus, filterDateRange, purchaseSearchQuery], () => {
+    currentPage.value = 1;
+});
+
 const isNewPurchase = ref(props.isModal ? true : route.query.new === 'true');
 
 watch(() => route.query.new, (isNew) => {
@@ -801,7 +721,7 @@ const showPurchaseList = () => {
         router.push('/supplierpayable?tab=purchase-orders');
     } else {
         isNewPurchase.value = false;
-        router.push('/purchase'); // clear query params
+        router.push('/purchase');
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 };
@@ -810,10 +730,277 @@ const goToSupplier = () => {
     router.push('/supplier');
 };
 
+const purchaseItems = ref([]);
+
+const shippingCost = ref(0);
+const invoiceNumber = ref('');
+const isSubmitting = ref(false);
+
+const supplierSearchQuery = ref('');
+const selectedSupplierId = ref(null);
+const showSupplierDropdown = ref(false);
+
+const productSearchQuery = ref('');
+const showProductDropdown = ref(false);
+
+// Historical supplier price lookup cache (SRT-GAP-016)
+const supplierPriceHistory = ref({});
+
+const fetchSupplierPriceHistory = async (supplierId, productId) => {
+    if (!supplierId || !productId) return;
+    try {
+        const res = await api.get(`/purchases?action=last-price&supplier_id=${supplierId}&product_id=${productId}`);
+        if (res && res.data) {
+            supplierPriceHistory.value = {
+                ...supplierPriceHistory.value,
+                [productId]: res.data
+            };
+        }
+    } catch (e) {
+        console.error('Failed to fetch supplier price history', e);
+    }
+};
+
+const filteredSuppliers = computed(() => {
+    if (!supplierSearchQuery.value) return suppliers.value;
+    return suppliers.value.filter(s => 
+        s.name.toLowerCase().includes(supplierSearchQuery.value.toLowerCase())
+    );
+});
+
+const selectSupplier = (supplier) => {
+    selectedSupplierId.value = supplier.id;
+    supplierSearchQuery.value = supplier.name;
+    showSupplierDropdown.value = false;
+    
+    // Refresh price history for items in cart with product_id
+    purchaseItems.value.forEach(item => {
+        if (item.product_id) {
+            fetchSupplierPriceHistory(supplier.id, item.product_id);
+        }
+    });
+};
+
+const hideSupplierDropdown = () => {
+    setTimeout(() => {
+        showSupplierDropdown.value = false;
+        const match = suppliers.value.find(s => s.id === selectedSupplierId.value);
+        if (match) {
+            supplierSearchQuery.value = match.name;
+        } else {
+            supplierSearchQuery.value = '';
+            selectedSupplierId.value = null;
+        }
+    }, 200);
+};
+
+const filteredProducts = computed(() => {
+    const list = retailStore.products || [];
+    if (!productSearchQuery.value.trim()) return list.slice(0, 20);
+    const q = productSearchQuery.value.toLowerCase().trim();
+    return list.filter(p => 
+        (p.name && p.name.toLowerCase().includes(q)) ||
+        (p.sku && p.sku.toLowerCase().includes(q)) ||
+        (p.barcode && p.barcode.toLowerCase().includes(q)) ||
+        (p.alternateBarcodes && p.alternateBarcodes.some(b => String(b).toLowerCase().includes(q)))
+    ).slice(0, 20);
+});
+
+const selectProduct = (prod) => {
+    const defaultCost = Number(prod.costPrice || prod.cost || prod.purchase_price || prod.price || 0);
+    const item = {
+        product_id: prod.id,
+        name: prod.name,
+        sku: prod.sku || '',
+        quantity: 1,
+        unit: prod.saleUnit || prod.unit || 'pcs',
+        price: defaultCost,
+        discount: 0,
+        allow_fractional: prod.allowFractional || prod.allow_fractional || false
+    };
+    purchaseItems.value.push(item);
+    productSearchQuery.value = '';
+    showProductDropdown.value = false;
+
+    if (selectedSupplierId.value) {
+        fetchSupplierPriceHistory(selectedSupplierId.value, prod.id);
+    }
+};
+
+const addCustomItem = () => {
+    purchaseItems.value.push({
+        product_id: null,
+        name: '',
+        sku: '',
+        quantity: 1,
+        unit: 'pcs',
+        price: 0,
+        discount: 0,
+        allow_fractional: true
+    });
+};
+
+const removePurchaseItem = (index) => {
+    purchaseItems.value.splice(index, 1);
+};
+
+const subtotal = computed(() => {
+    return purchaseItems.value.reduce((sum, item) => sum + (Number(item.quantity || 0) * Number(item.price || 0)), 0);
+});
+
+const discountTotal = computed(() => {
+    return purchaseItems.value.reduce((sum, item) => sum + ((Number(item.quantity || 0) * Number(item.price || 0)) * (Number(item.discount || 0) / 100)), 0);
+});
+
+const grandTotal = computed(() => {
+    return Math.max(0, subtotal.value - discountTotal.value + Number(shippingCost.value || 0));
+});
+
+watch(grandTotal, (newVal) => {
+    if (paymentStatus.value === 'paid') {
+        amountPaid.value = newVal;
+    }
+}, { immediate: true });
+
+// SRT-GAP-015: Value-proportional landed cost allocation with highest-subtotal remainder reconciliation
+const allocatedLandedCosts = computed(() => {
+    const freight = Number(shippingCost.value || 0);
+    const sub = Number(subtotal.value || 0);
+    const items = purchaseItems.value;
+    if (!items.length) return [];
+
+    let totalAllocated = 0;
+    let highestIndex = -1;
+    let highestLineTotal = -1;
+
+    const results = items.map((item, idx) => {
+        const lineTotal = Math.round(((Number(item.quantity || 0) * Number(item.price || 0)) * (1 - (Number(item.discount || 0) / 100))) * 100) / 100;
+        let allocated = 0;
+        if (freight > 0 && sub > 0) {
+            allocated = Math.round((freight * (lineTotal / sub)) * 100) / 100;
+        }
+        totalAllocated += allocated;
+        if (lineTotal > highestLineTotal) {
+            highestLineTotal = lineTotal;
+            highestIndex = idx;
+        }
+        return {
+            lineTotal,
+            allocatedFreight: allocated,
+            landedUnitCost: Number(item.price || 0)
+        };
+    });
+
+    // Residual discrepancy reconciliation to highest subtotal line item
+    if (freight > 0 && sub > 0 && highestIndex >= 0) {
+        const residual = Math.round((freight - totalAllocated) * 100) / 100;
+        if (residual !== 0) {
+            results[highestIndex].allocatedFreight = Math.round((results[highestIndex].allocatedFreight + residual) * 100) / 100;
+        }
+    }
+
+    results.forEach((res, idx) => {
+        const qty = Number(items[idx].quantity || 0);
+        const basePrice = Number(items[idx].price || 0);
+        res.landedUnitCost = qty > 0 
+            ? Math.round((basePrice + (res.allocatedFreight / qty)) * 10000) / 10000 
+            : basePrice;
+    });
+
+    return results;
+});
+
+const confirmPurchase = async () => {
+    try {
+        if (!selectedSupplierId.value) {
+            alert('Please select a supplier before confirming purchase.');
+            return;
+        }
+
+        if (purchaseItems.value.length === 0) {
+            alert('Please add at least one item.');
+            return;
+        }
+
+        let defaultProductId = 1;
+        if (retailStore.products && retailStore.products.length > 0) {
+            defaultProductId = retailStore.products[0].id;
+        }
+
+        let poNumber = invoiceNumber.value.trim();
+        if (!poNumber) {
+            poNumber = 'PO-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
+        }
+        
+        const dateInput = document.getElementById('purchaseDate');
+        const purchaseDate = (dateInput && dateInput.value) ? dateInput.value : new Date().toISOString().split('T')[0];
+
+        if (isSubmitting.value) return;
+        isSubmitting.value = true;
+
+        const purchaseData = {
+            supplier_id: selectedSupplierId.value,
+            po_number: poNumber,
+            date: purchaseDate,
+            subtotal: subtotal.value,
+            freight_amount: Number(shippingCost.value || 0),
+            total: grandTotal.value,
+            paid_amount: Number(amountPaid.value || 0),
+            payment_method: selectedPaymentMethod.value || 'Cash',
+            status: 'received',
+            notes: 'Created via Confirm Purchase',
+            items: purchaseItems.value.map(item => ({
+                product_id: item.product_id || defaultProductId,
+                quantity: Number(item.quantity),
+                unit_cost: Number(item.price),
+                total: (Number(item.quantity) * Number(item.price)) * (1 - (Number(item.discount || 0) / 100))
+            }))
+        };
+
+        const result = await store.addPurchase(purchaseData);
+        if (result.success) {
+            alert('Purchase completed successfully.');
+            invoiceNumber.value = '';
+            selectedSupplierId.value = null;
+            supplierSearchQuery.value = '';
+            purchaseItems.value = [];
+            amountPaid.value = 0;
+            paymentStatus.value = 'paid';
+            await store.fetchPurchases();
+            await suppliersStore.fetchSuppliers();
+            showPurchaseList();
+        } else {
+            alert('Failed to save purchase: ' + result.message);
+        }
+    } catch (e) {
+        console.error(e);
+        alert('An error occurred');
+    } finally {
+        isSubmitting.value = false;
+    }
+};
+
+const hydratePurchaseData = async () => {
+    await Promise.allSettled([
+        store.fetchPurchases(),
+        suppliersStore.fetchSuppliers(),
+        retailStore.fetchProducts()
+    ]);
+};
+
 onMounted(async () => {
-    await store.fetchPurchases();
-    await suppliersStore.fetchSuppliers();
-    await retailStore.fetchProducts();
+    await hydratePurchaseData();
+});
+
+watch(() => isNewPurchase.value, async (val) => {
+    if (val) {
+        if (!retailStore.products || retailStore.products.length === 0) {
+            await retailStore.fetchProducts();
+        }
+        if (!suppliersStore.suppliers || suppliersStore.suppliers.length === 0) {
+            await suppliersStore.fetchSuppliers();
+        }
+    }
 });
 </script>
 
@@ -1459,7 +1646,7 @@ onMounted(async () => {
             display: grid;
 
             grid-template-columns:
-                minmax(150px, 1.5fr) 78px 60px 115px 90px 110px 35px;
+                minmax(140px, 1.4fr) 75px 55px 115px 80px 105px 105px 35px;
 
             gap: 10px;
             align-items: center;

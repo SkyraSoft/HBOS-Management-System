@@ -1,9 +1,9 @@
 {
   "build": {
-    "beforeDevCommand": "npm run dev",
-    "beforeBuildCommand": "npm run build",
+    "beforeDevCommand": "",
+    "beforeBuildCommand": "",
     "devPath": "http://localhost:5173",
-    "distDir": "../dist"
+    "distDir": "../Frontend/dist"
   },
   "package": {
     "productName": "HBOS POS",
@@ -69,13 +69,16 @@
     },
     "windows": [
       {
-        "title": "HBOS POS Counter",
-        "width": 1280,
-        "height": 800,
-        "resizable": false,
-        "fullscreen": true,
-        "decorations": false,
-        "alwaysOnTop": false
+        "title": "SkyraSoft HBOS - Retail Operating System",
+        "width": 1366,
+        "height": 768,
+        "minWidth": 1024,
+        "minHeight": 600,
+        "resizable": true,
+        "fullscreen": false,
+        "decorations": true,
+        "alwaysOnTop": false,
+        "center": true
       }
     ]
   }

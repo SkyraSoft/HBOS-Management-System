@@ -1,0 +1,19 @@
+{
+    "metadata": {
+        "backend_suite": "PHPUnit 11.5.56",
+        "frontend_build": "Vite 8.2.1",
+        "generated_at": "2026-10-02T19:54:42+00:00"
+    },
+    "results": {
+        "backend_total_tests": 386,
+        "backend_assertions": 1667,
+        "backend_failures": 0,
+        "backend_status": "PASS",
+        "frontend_modules_transformed": 171,
+        "frontend_errors": 0,
+        "frontend_status": "PASS",
+        "targeted_platform_tests": 6,
+        "targeted_platform_assertions": 54,
+        "targeted_platform_status": "PASS"
+    }
+}

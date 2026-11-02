@@ -1,0 +1,118 @@
+[
+    {
+        "role_id": "ROLE-001",
+        "name": "Business Owner",
+        "display_title": "Business Owner / Enterprise Administrator",
+        "purpose": "Complete authoritative control across all business entities, branches, financial settings, and user governance",
+        "scope": "Enterprise / Multi-Branch (All branches within the tenant business_id)",
+        "permitted_domains": [
+            "POS Sales & Refunds",
+            "Customer Khata & Receivables",
+            "Products & Inventory Valuation",
+            "Procurement & Landed Cost",
+            "Supplier AP & Debit Notes",
+            "Expenses & Budget Allocation",
+            "Financial Accounts & Cash Ledgers",
+            "Capital Injection & Drawing",
+            "Multi-Branch Transfers",
+            "Business Settings & Tax Rules",
+            "User Staff Governance & Payroll Fields",
+            "Audit Logs & System Reports"
+        ],
+        "high_risk_operations": [
+            "Stock Adjustment / Write-Off",
+            "Purchase Cancellation",
+            "Supplier Payment Reversal",
+            "Expense Voiding",
+            "Account-to-Account Transfers",
+            "User Role/Permission Modification"
+        ],
+        "restrictions": "Cannot access data belonging to another business_id (strict multi-tenant isolation)"
+    },
+    {
+        "role_id": "ROLE-002",
+        "name": "Branch Manager",
+        "display_title": "Branch Operations Manager",
+        "purpose": "Supervise day-to-day branch sales, stock movements, cash registers, and staff performance within assigned branch",
+        "scope": "Assigned Branch (branch_id context)",
+        "permitted_domains": [
+            "POS Sales, Split Tender & Returns",
+            "Customer Khata Receipts",
+            "Branch Inventory & Stock Checks",
+            "Inter-Branch Transfer Request & Receipt",
+            "Purchase Receipt / GRN",
+            "Branch Expenses",
+            "Cash Register Opening/Closing",
+            "Branch Sales & Stock Reports"
+        ],
+        "high_risk_operations": [
+            "Approve Stock Adjustments",
+            "Approve Sale Returns / Refunds",
+            "Accept Inter-Branch Transfers"
+        ],
+        "restrictions": "Cannot alter business-wide settings, cannot manage enterprise financial accounts, cannot alter staff payroll base salary"
+    },
+    {
+        "role_id": "ROLE-003",
+        "name": "Salesperson / Cashier",
+        "display_title": "Front-Counter Salesperson / Cashier",
+        "purpose": "Fast counter checkout, barcode scanning, customer balance lookup, split tender receipt, and thermal printing",
+        "scope": "Assigned Branch POS Register",
+        "permitted_domains": [
+            "POS Fast Checkout",
+            "Barcode Scanning",
+            "Split Tender (Cash/Card/Khata)",
+            "Customer Selection",
+            "Thermal Receipt Printing & Reprint",
+            "Offline POS Transactions",
+            "Cash Drawer Shift Tracking"
+        ],
+        "high_risk_operations": [
+            "Sale Cancellation (Requires Manager Override if configured)",
+            "Sale Refund (Requires Condition Assessment)"
+        ],
+        "restrictions": "No access to supplier procurement costs, profit margin reports, financial account ledgers, or user governance"
+    },
+    {
+        "role_id": "ROLE-004",
+        "name": "Accountant",
+        "display_title": "Financial Accountant / Bookkeeper",
+        "purpose": "Manage Accounts Receivable (Khata), Accounts Payable (Suppliers), Expenses, Account Transfers, and Financial Reporting",
+        "scope": "Business Financial Accounts (Tenant Scope)",
+        "permitted_domains": [
+            "Customer Khata Auditing & Payment Receipt",
+            "Supplier Payment Processing & Reversals",
+            "Expense Allocation & Budget Variance Review",
+            "Financial Account Reconciliations",
+            "Profit & Loss, Cash Flow, Tax Reports",
+            "Supplier Return / Debit Note Accounting"
+        ],
+        "high_risk_operations": [
+            "Supplier Payment Reversal",
+            "Expense Reclassification",
+            "Financial Account Transfers"
+        ],
+        "restrictions": "Cannot physically execute POS sales without cashier role, cannot modify master stock quantities directly"
+    },
+    {
+        "role_id": "ROLE-005",
+        "name": "Inventory Manager",
+        "display_title": "Warehouse & Inventory Controller",
+        "purpose": "Manage product catalog, wholesale price tiers, barcode generation, GRN purchase receipt, transfers, and stock counts",
+        "scope": "Warehouse & Multi-Branch Stock (branch_id context)",
+        "permitted_domains": [
+            "Product Master CRUD & Barcodes",
+            "Wholesale & Retail Pricing Setup",
+            "Purchase Receipt / GRN & Freight",
+            "Inter-Branch Stock Transfers (Dispatch/Receive)",
+            "Stock Adjustments & Waste Classification",
+            "Supplier Return Physical Dispatch",
+            "Inventory Valuation & Low Stock Audits"
+        ],
+        "high_risk_operations": [
+            "Stock Write-off / Damaged Stock Reclassification",
+            "Purchase Cancellation / Return to Vendor"
+        ],
+        "restrictions": "No access to customer khata ledgers, general financial accounts, or payroll governance"
+    }
+]

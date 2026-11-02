@@ -68,6 +68,11 @@ class Sale extends Model
         return $this->hasMany(SaleItem::class);
     }
 
+    public function payments()
+    {
+        return $this->hasMany(SalePayment::class);
+    }
+
     public function returns()
     {
         return $this->hasMany(SaleReturn::class);
@@ -76,5 +81,10 @@ class Sale extends Model
     public function cancelledBy()
     {
         return $this->belongsTo(User::class, 'cancelled_by');
+    }
+
+    public function getCreatedByAttribute()
+    {
+        return $this->user_id;
     }
 }

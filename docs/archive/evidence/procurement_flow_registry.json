@@ -1,0 +1,225 @@
+{
+    "FLOW-008": {
+        "flow_id": "FLOW-008",
+        "flow_name": "Purchase on Credit with Immediate GRN Stock Receipt",
+        "flow_family": "PROCUREMENT",
+        "business_purpose": "Record vendor purchase invoice on credit, receiving physical goods into branch inventory, updating weighted cost, and crediting Supplier AP.",
+        "initiating_actor": "STOCK_KEEPER / PROCUREMENT_MANAGER",
+        "entry_ui": "Purchase Entry Form (PurchaseCreateView.vue)",
+        "entry_route": "POST /api/v1/purchases",
+        "primary_mutations": [
+            "MUTATION-046"
+        ],
+        "primary_entities": [
+            "ENTITY-028",
+            "ENTITY-029",
+            "ENTITY-018",
+            "ENTITY-019",
+            "ENTITY-027"
+        ],
+        "starting_state": "PURCHASE_ENTRY",
+        "ending_state": "RECEIVED",
+        "tables_written": [
+            "purchases",
+            "purchase_items",
+            "branch_inventories",
+            "inventory_movements",
+            "suppliers",
+            "activity_log"
+        ],
+        "stock_effects": "INCREMENTS_QUANTITY_ON_HAND",
+        "inventory_ledger_effects": "POSTS_INVENTORY_MOVEMENT_TYPE_PURCHASE",
+        "ar_effects": "NONE",
+        "customer_ledger_effects": "NONE",
+        "ap_effects": "INCREMENTS_SUPPLIER_PAYABLE_BALANCE",
+        "supplier_ledger_effects": "UPDATES_SUPPLIER_BALANCE",
+        "financial_account_effects": "NONE",
+        "account_ledger_effects": "NONE",
+        "cash_effects": "NONE",
+        "audit_effects": "LOGS_PURCHASE_CREATION",
+        "print_document_effects": "GRN_PURCHASE_BILL_DOCUMENT",
+        "sync_effects": "CATALOG_STOCK_DELTA_SYNC",
+        "reversal_path": "FLOW-016 (Purchase Cancellation)",
+        "p1_references": [
+            "P1-GAP-006"
+        ],
+        "p2_references": [
+            "P2-GAP-013"
+        ],
+        "p3_gap_ids": [
+            "P3-GAP-005",
+            "P3-GAP-006"
+        ],
+        "source_evidence": "api/app/Http/Controllers/Api/V1/PurchaseController.php@store, api/app/Services/PurchaseService.php@createPurchase",
+        "verification_confidence": "SOURCE_VERIFIED_WITH_GAP",
+        "certification_status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "FLOW-009": {
+        "flow_id": "FLOW-009",
+        "flow_name": "Purchase with Immediate Full Cash/Bank Disbursal",
+        "flow_family": "PROCUREMENT",
+        "business_purpose": "Record vendor purchase with full upfront payment, immediately incrementing stock and debiting selected financial/cash account with zero net AP balance.",
+        "initiating_actor": "PROCUREMENT_MANAGER / ACCOUNTANT",
+        "entry_ui": "Purchase Entry Form (PurchaseCreateView.vue)",
+        "entry_route": "POST /api/v1/purchases",
+        "primary_mutations": [
+            "MUTATION-046"
+        ],
+        "primary_entities": [
+            "ENTITY-028",
+            "ENTITY-029",
+            "ENTITY-018",
+            "ENTITY-019",
+            "ENTITY-027",
+            "ENTITY-034",
+            "ENTITY-035"
+        ],
+        "starting_state": "PURCHASE_ENTRY",
+        "ending_state": "RECEIVED",
+        "tables_written": [
+            "purchases",
+            "purchase_items",
+            "branch_inventories",
+            "inventory_movements",
+            "suppliers",
+            "financial_accounts",
+            "account_movements",
+            "activity_log"
+        ],
+        "stock_effects": "INCREMENTS_QUANTITY_ON_HAND",
+        "inventory_ledger_effects": "POSTS_INVENTORY_MOVEMENT_TYPE_PURCHASE",
+        "ar_effects": "NONE",
+        "customer_ledger_effects": "NONE",
+        "ap_effects": "NET_ZERO_SUPPLIER_BALANCE_CHANGE",
+        "supplier_ledger_effects": "UPDATES_SUPPLIER_BALANCE",
+        "financial_account_effects": "DECREMENTS_FINANCIAL_ACCOUNT_BALANCE",
+        "account_ledger_effects": "POSTS_ACCOUNT_MOVEMENT_TYPE_PURCHASE_PAYMENT",
+        "cash_effects": "POSTS_CASH_DRAWER_OUTFLOW_IF_CASH",
+        "audit_effects": "LOGS_PURCHASE_WITH_PAYMENT",
+        "print_document_effects": "PAID_PURCHASE_INVOICE",
+        "sync_effects": "CATALOG_STOCK_DELTA_SYNC",
+        "reversal_path": "FLOW-016 (Purchase Cancellation)",
+        "p1_references": [
+            "P1-GAP-006"
+        ],
+        "p2_references": [
+            "P2-GAP-013"
+        ],
+        "p3_gap_ids": [
+            "P3-GAP-005"
+        ],
+        "source_evidence": "api/app/Http/Controllers/Api/V1/PurchaseController.php@store, api/app/Services/PurchaseService.php@createPurchase",
+        "verification_confidence": "SOURCE_VERIFIED_WITH_GAP",
+        "certification_status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "FLOW-010": {
+        "flow_id": "FLOW-010",
+        "flow_name": "Purchase with Partial Upfront Payment",
+        "flow_family": "PROCUREMENT",
+        "business_purpose": "Record vendor purchase with partial upfront payment, disbursing paid amount from liquid account and crediting remainder to Supplier AP liability.",
+        "initiating_actor": "PROCUREMENT_MANAGER / ACCOUNTANT",
+        "entry_ui": "Purchase Entry Form (PurchaseCreateView.vue)",
+        "entry_route": "POST /api/v1/purchases",
+        "primary_mutations": [
+            "MUTATION-046"
+        ],
+        "primary_entities": [
+            "ENTITY-028",
+            "ENTITY-029",
+            "ENTITY-018",
+            "ENTITY-019",
+            "ENTITY-027",
+            "ENTITY-034",
+            "ENTITY-035"
+        ],
+        "starting_state": "PURCHASE_ENTRY",
+        "ending_state": "RECEIVED",
+        "tables_written": [
+            "purchases",
+            "purchase_items",
+            "branch_inventories",
+            "inventory_movements",
+            "suppliers",
+            "financial_accounts",
+            "account_movements",
+            "activity_log"
+        ],
+        "stock_effects": "INCREMENTS_QUANTITY_ON_HAND",
+        "inventory_ledger_effects": "POSTS_INVENTORY_MOVEMENT_TYPE_PURCHASE",
+        "ar_effects": "NONE",
+        "customer_ledger_effects": "NONE",
+        "ap_effects": "INCREMENTS_SUPPLIER_PAYABLE_BY_REMAINING_DUE",
+        "supplier_ledger_effects": "UPDATES_SUPPLIER_BALANCE",
+        "financial_account_effects": "DECREMENTS_FINANCIAL_ACCOUNT_BY_PAID_PORTION",
+        "account_ledger_effects": "POSTS_ACCOUNT_MOVEMENT_FOR_PAID_PORTION",
+        "cash_effects": "POSTS_CASH_DRAWER_OUTFLOW_IF_CASH",
+        "audit_effects": "LOGS_PARTIAL_PURCHASE",
+        "print_document_effects": "PURCHASE_BILL_WITH_DUE_BALANCE",
+        "sync_effects": "CATALOG_STOCK_DELTA_SYNC",
+        "reversal_path": "FLOW-016 (Purchase Cancellation)",
+        "p1_references": [
+            "P1-GAP-006"
+        ],
+        "p2_references": [
+            "P2-GAP-013"
+        ],
+        "p3_gap_ids": [
+            "P3-GAP-005"
+        ],
+        "source_evidence": "api/app/Http/Controllers/Api/V1/PurchaseController.php@store, api/app/Services/PurchaseService.php@createPurchase",
+        "verification_confidence": "SOURCE_VERIFIED_WITH_GAP",
+        "certification_status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "FLOW-011": {
+        "flow_id": "FLOW-011",
+        "flow_name": "Post-GRN Supplier Payment Disbursal",
+        "flow_family": "PROCUREMENT",
+        "business_purpose": "Disburse payment to vendor against outstanding AP liabilities, debiting financial account/cash and reducing supplier payable balance.",
+        "initiating_actor": "ACCOUNTANT / OWNER",
+        "entry_ui": "Supplier Payment Form (SupplierPaymentModal.vue)",
+        "entry_route": "POST /api/v1/supplier-payments",
+        "primary_mutations": [
+            "MUTATION-049"
+        ],
+        "primary_entities": [
+            "ENTITY-030",
+            "ENTITY-027",
+            "ENTITY-034",
+            "ENTITY-035",
+            "ENTITY-037"
+        ],
+        "starting_state": "PAYMENT_ENTRY",
+        "ending_state": "POSTED",
+        "tables_written": [
+            "supplier_payments",
+            "suppliers",
+            "financial_accounts",
+            "account_movements",
+            "cash_ledgers",
+            "activity_log"
+        ],
+        "stock_effects": "NONE",
+        "inventory_ledger_effects": "NONE",
+        "ar_effects": "NONE",
+        "customer_ledger_effects": "NONE",
+        "ap_effects": "DECREMENTS_SUPPLIER_PAYABLE_BALANCE",
+        "supplier_ledger_effects": "UPDATES_SUPPLIER_BALANCE",
+        "financial_account_effects": "DECREMENTS_FINANCIAL_ACCOUNT_BALANCE",
+        "account_ledger_effects": "POSTS_OUTFLOW_ACCOUNT_MOVEMENT",
+        "cash_effects": "POSTS_CASH_DRAWER_OUTFLOW_IF_CASH",
+        "audit_effects": "LOGS_SUPPLIER_PAYMENT",
+        "print_document_effects": "SUPPLIER_PAYMENT_VOUCHER",
+        "sync_effects": "SERVER_MANAGED",
+        "reversal_path": "MANUAL_COMPENSATING_ENTRY (No dedicated reverse endpoint)",
+        "p1_references": [],
+        "p2_references": [
+            "P2-GAP-015"
+        ],
+        "p3_gap_ids": [
+            "P3-GAP-007"
+        ],
+        "source_evidence": "api/app/Http/Controllers/Api/V1/SupplierPaymentController.php@store, api/app/Services/SupplierBalanceService.php@recordPayment",
+        "verification_confidence": "SOURCE_VERIFIED_WITH_GAP",
+        "certification_status": "CERTIFIED_WITH_KNOWN_GAP"
+    }
+}

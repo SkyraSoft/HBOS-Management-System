@@ -1,0 +1,785 @@
+[
+    {
+        "file": "api/database/migrations/2026_10_02_000001_add_snapshot_columns_to_sale_items_table.php",
+        "change_type": "SCHEMA_MIGRATION",
+        "gap_ids": [
+            "GAP-001"
+        ],
+        "remediation_group": "TRANSACTION_SNAPSHOTS",
+        "wave": "WAVE_1",
+        "reason": "Persist product_name, sku, unit_cost, and barcode snapshots at transaction time on sale_items",
+        "schema_impact": "Adds product_name, sku, unit_cost, barcode nullable columns to sale_items",
+        "api_impact": "Sale items response includes snapshot fields",
+        "frontend_impact": "Invoice reprint uses immutable historical snapshots",
+        "compatibility_impact": "Existing legacy rows have NULL snapshots; backward compatible read fallback",
+        "tests_covering_change": [
+            "tests/Feature/Phase9RemediationVerificationTest.php::test_sale_item_snapshots_are_persisted_at_transaction_time",
+            "tests/Feature/Phase9MigrationUpDownTest.php"
+        ]
+    },
+    {
+        "file": "api/database/migrations/2026_10_02_000002_add_wholesale_price_to_products_table.php",
+        "change_type": "SCHEMA_MIGRATION",
+        "gap_ids": [
+            "GAP-002"
+        ],
+        "remediation_group": "PRODUCT_PRICING",
+        "wave": "WAVE_1",
+        "reason": "Persist wholesale_price on products catalog",
+        "schema_impact": "Adds wholesale_price decimal(12,2) nullable column to products",
+        "api_impact": "Product store/update and sync endpoints serialize wholesale_price",
+        "frontend_impact": "B2B/Wholesale pricing tier in POS and Product Catalog form",
+        "compatibility_impact": "Nullable column, backward compatible",
+        "tests_covering_change": [
+            "tests/Feature/Phase9RemediationVerificationTest.php::test_wholesale_price_persistence_on_products",
+            "tests/Feature/Phase9MigrationUpDownTest.php"
+        ]
+    },
+    {
+        "file": "api/database/migrations/2026_10_02_000003_create_sale_payments_table.php",
+        "change_type": "SCHEMA_MIGRATION",
+        "gap_ids": [
+            "GAP-003"
+        ],
+        "remediation_group": "PAYMENT_ALLOCATION",
+        "wave": "WAVE_1",
+        "reason": "Support split tender payments by persisting individual payment lines per sale",
+        "schema_impact": "Creates sale_payments table with sale_id, payment_method, amount, financial_account_id, reference_no",
+        "api_impact": "Sale checkout payload accepts array of payments; response includes payments relationship",
+        "frontend_impact": "POS split-tender payment modal support",
+        "compatibility_impact": "Legacy sales query single tender fallback; backward compatible",
+        "tests_covering_change": [
+            "tests/Feature/Phase9RemediationVerificationTest.php::test_split_tender_payments_and_account_movement_integrity",
+            "tests/Feature/Phase9MigrationUpDownTest.php"
+        ]
+    },
+    {
+        "file": "api/database/migrations/2026_10_02_000004_enforce_non_null_financial_account_on_expenses.php",
+        "change_type": "SCHEMA_MIGRATION",
+        "gap_ids": [
+            "GAP-013"
+        ],
+        "remediation_group": "EXPENSE_INTEGRITY",
+        "wave": "WAVE_1",
+        "reason": "Enforce financial_account_id integrity on expenses to prevent unallocated cash leakage",
+        "schema_impact": "Creates index on expenses.financial_account_id",
+        "api_impact": "Expense create/update requests strictly require financial_account_id",
+        "frontend_impact": "Expense entry modal enforces financial account selection",
+        "compatibility_impact": "Legacy records with NULL accounts preserved pending manual reconciliation",
+        "tests_covering_change": [
+            "tests/Feature/Phase9RemediationVerificationTest.php::test_expense_requires_financial_account_and_records_movement",
+            "tests/Feature/Phase9MigrationUpDownTest.php"
+        ]
+    },
+    {
+        "file": "api/database/migrations/2026_10_02_000005_add_landed_cost_to_purchases_table.php",
+        "change_type": "SCHEMA_MIGRATION",
+        "gap_ids": [
+            "GAP-005"
+        ],
+        "remediation_group": "PURCHASE_LANDED_COST",
+        "wave": "WAVE_3",
+        "reason": "Persist freight and other landed costs on purchases and incorporate into moving-average unit cost",
+        "schema_impact": "Adds freight_amount and other_charges decimal columns to purchases table",
+        "api_impact": "Purchase store/update payloads accept freight_amount and other_charges",
+        "frontend_impact": "Purchase order entry form shows freight/shipping fields",
+        "compatibility_impact": "Defaults to 0.00; backward compatible with existing purchases",
+        "tests_covering_change": [
+            "tests/Feature/Phase9RemediationVerificationTest.php::test_purchase_landed_cost_allocation_and_valuation",
+            "tests/Feature/Phase9MigrationUpDownTest.php"
+        ]
+    },
+    {
+        "file": "api/database/migrations/2026_10_02_000006_add_transfer_status_to_inventory_movements.php",
+        "change_type": "SCHEMA_MIGRATION",
+        "gap_ids": [
+            "GAP-007"
+        ],
+        "remediation_group": "TRANSFER_LIFECYCLE",
+        "wave": "WAVE_3",
+        "reason": "Support explicit in-transit transfer status and tracking on stock movements",
+        "schema_impact": "Adds transfer_status string column to inventory_movements",
+        "api_impact": "Stock transfer endpoints track in-transit state explicitly",
+        "frontend_impact": "Transfer management UI shows transit status badge",
+        "compatibility_impact": "Nullable column, defaults to completed for historical movements",
+        "tests_covering_change": [
+            "tests/Feature/Phase9RemediationVerificationTest.php::test_inter_branch_stock_transfer_lifecycle",
+            "tests/Feature/Phase9MigrationUpDownTest.php"
+        ]
+    },
+    {
+        "file": "api/database/migrations/2026_10_02_000007_add_restock_condition_to_sale_return_items.php",
+        "change_type": "SCHEMA_MIGRATION",
+        "gap_ids": [
+            "GAP-010"
+        ],
+        "remediation_group": "RETURN_RESTOCK_CONDITION",
+        "wave": "WAVE_2",
+        "reason": "Distinguish sellable vs damaged/scrap returned items to avoid invalid stock increments",
+        "schema_impact": "Adds condition and is_restocked boolean columns to sale_return_items",
+        "api_impact": "Sale return payload accepts line item condition (sellable, damaged, scrap)",
+        "frontend_impact": "Return wizard allows operator to select return item condition",
+        "compatibility_impact": "Defaults to sellable / restocked for legacy returns; backward compatible",
+        "tests_covering_change": [
+            "tests/Feature/Phase9RemediationVerificationTest.php::test_sale_return_restock_condition_handling",
+            "tests/Feature/Phase9MigrationUpDownTest.php"
+        ]
+    },
+    {
+        "file": "api/database/migrations/2026_10_02_000008_create_supplier_returns_table.php",
+        "change_type": "SCHEMA_MIGRATION",
+        "gap_ids": [
+            "GAP-011"
+        ],
+        "remediation_group": "SUPPLIER_RETURN_DEBIT_NOTE",
+        "wave": "WAVE_3",
+        "reason": "Provide dedicated debit note / supplier return workflow with inventory decrement and AP reduction",
+        "schema_impact": "Creates supplier_returns and supplier_return_items tables",
+        "api_impact": "New CRUD and posting endpoints under /api/v1/supplier-returns",
+        "frontend_impact": "Supplier debit note management view and creation modal",
+        "compatibility_impact": "New tables; zero impact on legacy purchase records",
+        "tests_covering_change": [
+            "tests/Feature/Phase9RemediationVerificationTest.php::test_supplier_return_debit_note_workflow",
+            "tests/Feature/Phase9MigrationUpDownTest.php"
+        ]
+    },
+    {
+        "file": "api/database/migrations/2026_10_02_000009_add_payroll_columns_to_users_table.php",
+        "change_type": "SCHEMA_MIGRATION",
+        "gap_ids": [
+            "GAP-029"
+        ],
+        "remediation_group": "PAYROLL_PERSISTENCE",
+        "wave": "WAVE_3",
+        "reason": "Persist wage, payment cycle, and next payment date on user accounts",
+        "schema_impact": "Adds base_salary, payment_cycle, next_payment_date to users table",
+        "api_impact": "User governance and HR endpoints serialize payroll fields",
+        "frontend_impact": "User edit modal includes salary and payroll schedule controls",
+        "compatibility_impact": "Nullable columns; backward compatible",
+        "tests_covering_change": [
+            "tests/Feature/Phase9RemediationVerificationTest.php::test_payroll_employee_fields_persistence",
+            "tests/Feature/Phase9MigrationUpDownTest.php"
+        ]
+    },
+    {
+        "file": "api/database/migrations/2026_10_02_000010_add_secondary_phone_to_customers_table.php",
+        "change_type": "SCHEMA_MIGRATION",
+        "gap_ids": [
+            "GAP-030"
+        ],
+        "remediation_group": "CUSTOMER_SECONDARY_PHONE",
+        "wave": "WAVE_4",
+        "reason": "Persist customer secondary phone number for communication resilience",
+        "schema_impact": "Adds secondary_phone string nullable column to customers table",
+        "api_impact": "Customer CRUD and sync delta endpoints serialize secondary_phone",
+        "frontend_impact": "Customer creation and edit forms include secondary phone field",
+        "compatibility_impact": "Nullable column; backward compatible",
+        "tests_covering_change": [
+            "tests/Feature/Phase9RemediationVerificationTest.php::test_customer_secondary_phone_persistence",
+            "tests/Feature/Phase9MigrationUpDownTest.php"
+        ]
+    },
+    {
+        "file": "api/database/migrations/2026_10_02_000011_add_monthly_budget_to_expense_categories_table.php",
+        "change_type": "SCHEMA_MIGRATION",
+        "gap_ids": [
+            "GAP-031"
+        ],
+        "remediation_group": "EXPENSE_CATEGORY_BUDGET",
+        "wave": "WAVE_4",
+        "reason": "Persist monthly budget limits on expense categories for budget tracking",
+        "schema_impact": "Adds monthly_budget decimal nullable column to expense_categories table",
+        "api_impact": "Expense category CRUD endpoints serialize monthly_budget",
+        "frontend_impact": "Expense category manager includes monthly budget field",
+        "compatibility_impact": "Nullable column; backward compatible",
+        "tests_covering_change": [
+            "tests/Feature/Phase9RemediationVerificationTest.php::test_expense_category_monthly_budget_persistence",
+            "tests/Feature/Phase9MigrationUpDownTest.php"
+        ]
+    },
+    {
+        "file": "api/app/Models/SaleItem.php",
+        "change_type": "BACKEND_MODEL",
+        "gap_ids": [
+            "GAP-001"
+        ],
+        "remediation_group": "TRANSACTION_SNAPSHOTS",
+        "wave": "WAVE_1",
+        "reason": "Fillable and casting updates for snapshot attributes (product_name, sku, unit_cost, barcode)",
+        "schema_impact": "Maps to sale_items snapshot columns",
+        "api_impact": "Attributes exposed in API serialization",
+        "frontend_impact": "Used by POS receipt rendering",
+        "compatibility_impact": "Fallback accessors provided when snapshots are null",
+        "tests_covering_change": [
+            "tests/Feature/Phase9RemediationVerificationTest.php::test_sale_item_snapshots_are_persisted_at_transaction_time"
+        ]
+    },
+    {
+        "file": "api/app/Models/Product.php",
+        "change_type": "BACKEND_MODEL",
+        "gap_ids": [
+            "GAP-002"
+        ],
+        "remediation_group": "PRODUCT_PRICING",
+        "wave": "WAVE_1",
+        "reason": "Fillable and casting updates for wholesale_price",
+        "schema_impact": "Maps to products.wholesale_price",
+        "api_impact": "Attributes exposed in Catalog APIs",
+        "frontend_impact": "Catalog and POS price tiering",
+        "compatibility_impact": "None",
+        "tests_covering_change": [
+            "tests/Feature/Phase9RemediationVerificationTest.php::test_wholesale_price_persistence_on_products"
+        ]
+    },
+    {
+        "file": "api/app/Models/Sale.php",
+        "change_type": "BACKEND_MODEL",
+        "gap_ids": [
+            "GAP-003",
+            "GAP-009"
+        ],
+        "remediation_group": "PAYMENT_ALLOCATION",
+        "wave": "WAVE_1",
+        "reason": "Adds payments relationship and immutability protection on posted sales",
+        "schema_impact": "HasMany relationship to SalePayment",
+        "api_impact": "Sale payload includes payments relation",
+        "frontend_impact": "Multi-tender display",
+        "compatibility_impact": "None",
+        "tests_covering_change": [
+            "tests/Feature/Phase9RemediationVerificationTest.php::test_split_tender_payments_and_account_movement_integrity"
+        ]
+    },
+    {
+        "file": "api/app/Models/SalePayment.php",
+        "change_type": "BACKEND_MODEL",
+        "gap_ids": [
+            "GAP-003"
+        ],
+        "remediation_group": "PAYMENT_ALLOCATION",
+        "wave": "WAVE_1",
+        "reason": "Eloquent model for split-tender payments",
+        "schema_impact": "Maps to sale_payments table",
+        "api_impact": "Resource model for sale payment splits",
+        "frontend_impact": "Payment allocation items",
+        "compatibility_impact": "New model",
+        "tests_covering_change": [
+            "tests/Feature/Phase9RemediationVerificationTest.php::test_split_tender_payments_and_account_movement_integrity"
+        ]
+    },
+    {
+        "file": "api/app/Models/SaleReturnItem.php",
+        "change_type": "BACKEND_MODEL",
+        "gap_ids": [
+            "GAP-010"
+        ],
+        "remediation_group": "RETURN_RESTOCK_CONDITION",
+        "wave": "WAVE_2",
+        "reason": "Fillable and casting updates for condition and is_restocked",
+        "schema_impact": "Maps to sale_return_items columns",
+        "api_impact": "Exposed in sale return resources",
+        "frontend_impact": "Return line condition display",
+        "compatibility_impact": "None",
+        "tests_covering_change": [
+            "tests/Feature/Phase9RemediationVerificationTest.php::test_sale_return_restock_condition_handling"
+        ]
+    },
+    {
+        "file": "api/app/Models/Purchase.php",
+        "change_type": "BACKEND_MODEL",
+        "gap_ids": [
+            "GAP-005"
+        ],
+        "remediation_group": "PURCHASE_LANDED_COST",
+        "wave": "WAVE_3",
+        "reason": "Fillable and casting updates for freight_amount and other_charges",
+        "schema_impact": "Maps to purchases columns",
+        "api_impact": "Exposed in purchase resources",
+        "frontend_impact": "Purchase order financial breakdown",
+        "compatibility_impact": "None",
+        "tests_covering_change": [
+            "tests/Feature/Phase9RemediationVerificationTest.php::test_purchase_landed_cost_allocation_and_valuation"
+        ]
+    },
+    {
+        "file": "api/app/Models/SupplierReturn.php",
+        "change_type": "BACKEND_MODEL",
+        "gap_ids": [
+            "GAP-011"
+        ],
+        "remediation_group": "SUPPLIER_RETURN_DEBIT_NOTE",
+        "wave": "WAVE_3",
+        "reason": "Eloquent model for supplier returns / debit notes",
+        "schema_impact": "Maps to supplier_returns table",
+        "api_impact": "Debit note resource",
+        "frontend_impact": "Supplier return management",
+        "compatibility_impact": "New model",
+        "tests_covering_change": [
+            "tests/Feature/Phase9RemediationVerificationTest.php::test_supplier_return_debit_note_workflow"
+        ]
+    },
+    {
+        "file": "api/app/Models/SupplierReturnItem.php",
+        "change_type": "BACKEND_MODEL",
+        "gap_ids": [
+            "GAP-011"
+        ],
+        "remediation_group": "SUPPLIER_RETURN_DEBIT_NOTE",
+        "wave": "WAVE_3",
+        "reason": "Eloquent model for supplier return line items",
+        "schema_impact": "Maps to supplier_return_items table",
+        "api_impact": "Debit note line items",
+        "frontend_impact": "Line item breakdown",
+        "compatibility_impact": "New model",
+        "tests_covering_change": [
+            "tests/Feature/Phase9RemediationVerificationTest.php::test_supplier_return_debit_note_workflow"
+        ]
+    },
+    {
+        "file": "api/app/Models/User.php",
+        "change_type": "BACKEND_MODEL",
+        "gap_ids": [
+            "GAP-029"
+        ],
+        "remediation_group": "PAYROLL_PERSISTENCE",
+        "wave": "WAVE_3",
+        "reason": "Fillable and casting updates for base_salary, payment_cycle, next_payment_date",
+        "schema_impact": "Maps to users table columns",
+        "api_impact": "Exposed in User Governance APIs",
+        "frontend_impact": "HR and staff management views",
+        "compatibility_impact": "None",
+        "tests_covering_change": [
+            "tests/Feature/Phase9RemediationVerificationTest.php::test_payroll_employee_fields_persistence"
+        ]
+    },
+    {
+        "file": "api/app/Models/Customer.php",
+        "change_type": "BACKEND_MODEL",
+        "gap_ids": [
+            "GAP-030"
+        ],
+        "remediation_group": "CUSTOMER_SECONDARY_PHONE",
+        "wave": "WAVE_4",
+        "reason": "Fillable updates for secondary_phone",
+        "schema_impact": "Maps to customers.secondary_phone",
+        "api_impact": "Customer resources include secondary_phone",
+        "frontend_impact": "Customer profile and lookup",
+        "compatibility_impact": "None",
+        "tests_covering_change": [
+            "tests/Feature/Phase9RemediationVerificationTest.php::test_customer_secondary_phone_persistence"
+        ]
+    },
+    {
+        "file": "api/app/Models/ExpenseCategory.php",
+        "change_type": "BACKEND_MODEL",
+        "gap_ids": [
+            "GAP-031"
+        ],
+        "remediation_group": "EXPENSE_CATEGORY_BUDGET",
+        "wave": "WAVE_4",
+        "reason": "Fillable and casting updates for monthly_budget",
+        "schema_impact": "Maps to expense_categories.monthly_budget",
+        "api_impact": "Expense categories resource includes monthly_budget",
+        "frontend_impact": "Category budget tracking",
+        "compatibility_impact": "None",
+        "tests_covering_change": [
+            "tests/Feature/Phase9RemediationVerificationTest.php::test_expense_category_monthly_budget_persistence"
+        ]
+    },
+    {
+        "file": "api/app/Http/Requests/StorePurchaseRequest.php",
+        "change_type": "BACKEND_REQUEST",
+        "gap_ids": [
+            "GAP-005"
+        ],
+        "remediation_group": "PURCHASE_LANDED_COST",
+        "wave": "WAVE_3",
+        "reason": "Validation rules for freight_amount and other_charges on purchase orders",
+        "schema_impact": "None",
+        "api_impact": "Accepts numeric freight_amount and other_charges in purchase creation",
+        "frontend_impact": "Purchase order entry form validation",
+        "compatibility_impact": "Nullable / numeric; backward compatible",
+        "tests_covering_change": [
+            "tests/Feature/Phase9RemediationVerificationTest.php::test_purchase_landed_cost_allocation_and_valuation"
+        ]
+    },
+    {
+        "file": "api/app/Http/Controllers/Api/V1/SaleController.php",
+        "change_type": "BACKEND_CONTROLLER",
+        "gap_ids": [
+            "GAP-001",
+            "GAP-003",
+            "GAP-018",
+            "GAP-019"
+        ],
+        "remediation_group": "TRANSACTION_CONTROLLERS",
+        "wave": "WAVE_1",
+        "reason": "Validates split-tender payments array and idempotency header on sale creation",
+        "schema_impact": "None",
+        "api_impact": "POST /api/v1/sales accepts split payments payload and returns payment allocation breakdown",
+        "frontend_impact": "POS checkout API integration",
+        "compatibility_impact": "Backward compatible with single tender payment_method payload",
+        "tests_covering_change": [
+            "tests/Feature/Phase9RemediationVerificationTest.php::test_split_tender_payments_and_account_movement_integrity"
+        ]
+    },
+    {
+        "file": "api/app/Services/SaleService.php",
+        "change_type": "BACKEND_SERVICE",
+        "gap_ids": [
+            "GAP-001",
+            "GAP-002",
+            "GAP-003",
+            "GAP-009",
+            "GAP-010",
+            "GAP-018",
+            "GAP-019",
+            "GAP-020"
+        ],
+        "remediation_group": "TRANSACTION_SERVICES",
+        "wave": "WAVE_1",
+        "reason": "Server authoritative calculation, snapshot persistence, split payment allocation, idempotency enforcement, restock condition handling, and customer khata immutability",
+        "schema_impact": "Integrates with sale_items, sale_payments, branch_inventories, account_movements",
+        "api_impact": "Strict server validation of totals, split payments, restock flags",
+        "frontend_impact": "POS checkout and return workflows",
+        "compatibility_impact": "Single tender payload automatically converted to split payment row",
+        "tests_covering_change": [
+            "tests/Feature/Phase9RemediationVerificationTest.php::test_sale_item_snapshots_are_persisted_at_transaction_time",
+            "tests/Feature/Phase9RemediationVerificationTest.php::test_split_tender_payments_and_account_movement_integrity",
+            "tests/Feature/Phase9RemediationVerificationTest.php::test_sale_return_restock_condition_handling"
+        ]
+    },
+    {
+        "file": "api/app/Services/PurchaseService.php",
+        "change_type": "BACKEND_SERVICE",
+        "gap_ids": [
+            "GAP-004",
+            "GAP-005",
+            "GAP-006"
+        ],
+        "remediation_group": "PROCUREMENT_SERVICES",
+        "wave": "WAVE_2",
+        "reason": "Landed cost allocation to moving-average unit cost, stock on-hand verification prior to purchase cancellation, and manual unit cost adjustment guards",
+        "schema_impact": "Integrates with purchases, purchase_items, branch_inventories",
+        "api_impact": "Purchase cancellation returns 422 if inventory already consumed below return quantity",
+        "frontend_impact": "Purchase management feedback",
+        "compatibility_impact": "None",
+        "tests_covering_change": [
+            "tests/Feature/Phase9RemediationVerificationTest.php::test_purchase_landed_cost_allocation_and_valuation",
+            "tests/Feature/Phase9RemediationVerificationTest.php::test_purchase_cancellation_guards_stock_on_hand"
+        ]
+    },
+    {
+        "file": "api/app/Services/SupplierReturnService.php",
+        "change_type": "BACKEND_SERVICE",
+        "gap_ids": [
+            "GAP-011"
+        ],
+        "remediation_group": "SUPPLIER_RETURN_SERVICES",
+        "wave": "WAVE_3",
+        "reason": "Encapsulates supplier return posting, inventory decrement, supplier ledger debit note, and optional financial refund",
+        "schema_impact": "Integrates with supplier_returns, supplier_return_items, inventory_movements, supplier_ledger",
+        "api_impact": "Dedicated debit note transaction execution",
+        "frontend_impact": "Supplier debit note workflow",
+        "compatibility_impact": "New service",
+        "tests_covering_change": [
+            "tests/Feature/Phase9RemediationVerificationTest.php::test_supplier_return_debit_note_workflow"
+        ]
+    },
+    {
+        "file": "api/app/Http/Controllers/Api/V1/SupplierReturnController.php",
+        "change_type": "BACKEND_CONTROLLER",
+        "gap_ids": [
+            "GAP-011"
+        ],
+        "remediation_group": "SUPPLIER_RETURN_CONTROLLER",
+        "wave": "WAVE_3",
+        "reason": "API controller exposing index, store, show, and cancel endpoints for supplier returns",
+        "schema_impact": "None",
+        "api_impact": "Exposes /api/v1/supplier-returns endpoints with RBAC guards",
+        "frontend_impact": "Supplier return view integration",
+        "compatibility_impact": "New controller",
+        "tests_covering_change": [
+            "tests/Feature/Phase9RemediationVerificationTest.php::test_supplier_return_debit_note_workflow"
+        ]
+    },
+    {
+        "file": "api/app/Http/Controllers/Api/V1/SupplierPaymentController.php",
+        "change_type": "BACKEND_CONTROLLER",
+        "gap_ids": [
+            "GAP-012"
+        ],
+        "remediation_group": "SUPPLIER_PAYMENT_REVERSAL",
+        "wave": "WAVE_3",
+        "reason": "Controlled reversal endpoint for supplier payments with duplicate prevention and audit logging",
+        "schema_impact": "Updates supplier_payments status, reverses financial movements",
+        "api_impact": "Exposes POST /api/v1/supplier-payments/{id}/reverse",
+        "frontend_impact": "Supplier payment history reversal button",
+        "compatibility_impact": "Additive endpoint",
+        "tests_covering_change": [
+            "tests/Feature/Phase9RemediationVerificationTest.php::test_supplier_payment_reversal_workflow"
+        ]
+    },
+    {
+        "file": "api/app/Services/SupplierBalanceService.php",
+        "change_type": "BACKEND_SERVICE",
+        "gap_ids": [
+            "GAP-012"
+        ],
+        "remediation_group": "SUPPLIER_BALANCE_SERVICE",
+        "wave": "WAVE_3",
+        "reason": "Supplier balance recomputation and payment reversal ledger adjustment logic",
+        "schema_impact": "Integrates with supplier_ledgers, supplier_payments",
+        "api_impact": "Reverses supplier balance impact upon payment reversal",
+        "frontend_impact": "Supplier profile balance update",
+        "compatibility_impact": "None",
+        "tests_covering_change": [
+            "tests/Feature/Phase9RemediationVerificationTest.php::test_supplier_payment_reversal_workflow"
+        ]
+    },
+    {
+        "file": "api/app/Http/Controllers/Api/V1/ExpenseController.php",
+        "change_type": "BACKEND_CONTROLLER",
+        "gap_ids": [
+            "GAP-013",
+            "GAP-014"
+        ],
+        "remediation_group": "EXPENSE_CONTROLLER",
+        "wave": "WAVE_1",
+        "reason": "Validation enforcement for financial_account_id on expense creation and movement voiding on expense deletion",
+        "schema_impact": "None",
+        "api_impact": "Expense create rejects requests without financial_account_id",
+        "frontend_impact": "Expense form validation feedback",
+        "compatibility_impact": "Prevents silent creation of unallocated expenses",
+        "tests_covering_change": [
+            "tests/Feature/Phase9RemediationVerificationTest.php::test_expense_requires_financial_account_and_records_movement"
+        ]
+    },
+    {
+        "file": "api/app/Http/Controllers/Api/V1/UserGovernanceController.php",
+        "change_type": "BACKEND_CONTROLLER",
+        "gap_ids": [
+            "GAP-029"
+        ],
+        "remediation_group": "USER_GOVERNANCE_CONTROLLER",
+        "wave": "WAVE_3",
+        "reason": "Validation and persistence handling for base_salary, payment_cycle, next_payment_date on users",
+        "schema_impact": "None",
+        "api_impact": "User store/update accepts payroll fields",
+        "frontend_impact": "Staff profile editor",
+        "compatibility_impact": "None",
+        "tests_covering_change": [
+            "tests/Feature/Phase9RemediationVerificationTest.php::test_payroll_employee_fields_persistence"
+        ]
+    },
+    {
+        "file": "api/app/Services/UserGovernanceService.php",
+        "change_type": "BACKEND_SERVICE",
+        "gap_ids": [
+            "GAP-029"
+        ],
+        "remediation_group": "USER_GOVERNANCE_SERVICE",
+        "wave": "WAVE_3",
+        "reason": "User governance business logic handling payroll wage parameters and audit logging",
+        "schema_impact": "Integrates with users table",
+        "api_impact": "User management service",
+        "frontend_impact": "HR employee management",
+        "compatibility_impact": "None",
+        "tests_covering_change": [
+            "tests/Feature/Phase9RemediationVerificationTest.php::test_payroll_employee_fields_persistence"
+        ]
+    },
+    {
+        "file": "api/app/Http/Controllers/Api/V1/CustomerController.php",
+        "change_type": "BACKEND_CONTROLLER",
+        "gap_ids": [
+            "GAP-030"
+        ],
+        "remediation_group": "CUSTOMER_CONTROLLER",
+        "wave": "WAVE_4",
+        "reason": "Validation and persistence handling for secondary_phone on customers",
+        "schema_impact": "None",
+        "api_impact": "Customer store/update accepts secondary_phone",
+        "frontend_impact": "Customer profile editor",
+        "compatibility_impact": "None",
+        "tests_covering_change": [
+            "tests/Feature/Phase9RemediationVerificationTest.php::test_customer_secondary_phone_persistence"
+        ]
+    },
+    {
+        "file": "api/app/Http/Controllers/Api/V1/ExpenseCategoryController.php",
+        "change_type": "BACKEND_CONTROLLER",
+        "gap_ids": [
+            "GAP-031"
+        ],
+        "remediation_group": "EXPENSE_CATEGORY_CONTROLLER",
+        "wave": "WAVE_4",
+        "reason": "Validation and persistence handling for monthly_budget on expense categories",
+        "schema_impact": "None",
+        "api_impact": "Expense category store/update accepts monthly_budget",
+        "frontend_impact": "Category budget editor",
+        "compatibility_impact": "None",
+        "tests_covering_change": [
+            "tests/Feature/Phase9RemediationVerificationTest.php::test_expense_category_monthly_budget_persistence"
+        ]
+    },
+    {
+        "file": "api/app/Services/BulkSyncService.php",
+        "change_type": "BACKEND_SERVICE",
+        "gap_ids": [
+            "GAP-002",
+            "GAP-021",
+            "GAP-022",
+            "GAP-030"
+        ],
+        "remediation_group": "SYNC_SERVICES",
+        "wave": "WAVE_4",
+        "reason": "Includes wholesale_price and secondary_phone in catalog delta sync payloads and enforces temp-id mapping order",
+        "schema_impact": "None",
+        "api_impact": "Catalog sync payload includes extended fields",
+        "frontend_impact": "Offline Dexie sync receives full catalog schema",
+        "compatibility_impact": "None",
+        "tests_covering_change": [
+            "tests/Feature/CatalogTest.php::test_sync_catalog_returns_products"
+        ]
+    },
+    {
+        "file": "api/routes/api.php",
+        "change_type": "BACKEND_ROUTES",
+        "gap_ids": [
+            "GAP-011",
+            "GAP-012",
+            "GAP-015",
+            "GAP-016",
+            "GAP-017"
+        ],
+        "remediation_group": "SECURITY_ROUTES",
+        "wave": "WAVE_1",
+        "reason": "Registered supplier return routes, supplier payment reversal route, and server RBAC guards on sensitive actions",
+        "schema_impact": "None",
+        "api_impact": "New routes protected by auth:sanctum and active.business middleware",
+        "frontend_impact": "API client endpoint mapping",
+        "compatibility_impact": "None",
+        "tests_covering_change": [
+            "tests/Feature/Phase9RemediationVerificationTest.php::test_supplier_return_debit_note_workflow"
+        ]
+    },
+    {
+        "file": "api/app/Console/Commands/BackfillSaleItemSnapshotsCommand.php",
+        "change_type": "ARTISAN_COMMAND",
+        "gap_ids": [
+            "GAP-001"
+        ],
+        "remediation_group": "DATA_REPAIR",
+        "wave": "WAVE_1",
+        "reason": "REPAIR-001: Dry-run capable command to populate sale_items historical snapshots with non-historical approximation flags",
+        "schema_impact": "Updates sale_items snapshot columns",
+        "api_impact": "None",
+        "frontend_impact": "None",
+        "compatibility_impact": "Truth-preserving: marks backfilled snapshots as approximate",
+        "tests_covering_change": [
+            "tests/Feature/Phase9RemediationVerificationTest.php::test_data_repair_commands_dry_run_safety"
+        ]
+    },
+    {
+        "file": "api/app/Console/Commands/BackfillSalePaymentsCommand.php",
+        "change_type": "ARTISAN_COMMAND",
+        "gap_ids": [
+            "GAP-003"
+        ],
+        "remediation_group": "DATA_REPAIR",
+        "wave": "WAVE_1",
+        "reason": "REPAIR-002: Dry-run capable command to backfill single-tender sale_payments rows for historical sales",
+        "schema_impact": "Inserts into sale_payments table",
+        "api_impact": "None",
+        "frontend_impact": "None",
+        "compatibility_impact": "Deterministic 1:1 mapping from historical sales",
+        "tests_covering_change": [
+            "tests/Feature/Phase9RemediationVerificationTest.php::test_data_repair_commands_dry_run_safety"
+        ]
+    },
+    {
+        "file": "api/app/Console/Commands/RepairNullExpenseAccountsCommand.php",
+        "change_type": "ARTISAN_COMMAND",
+        "gap_ids": [
+            "GAP-013"
+        ],
+        "remediation_group": "DATA_REPAIR",
+        "wave": "WAVE_1",
+        "reason": "REPAIR-003: Dry-run audit command to identify and report unallocated legacy expenses without silent fabrication",
+        "schema_impact": "Reports on expenses with NULL financial_account_id",
+        "api_impact": "None",
+        "frontend_impact": "None",
+        "compatibility_impact": "Requires explicit manual reconciliation for legacy NULLs",
+        "tests_covering_change": [
+            "tests/Feature/Phase9RemediationVerificationTest.php::test_data_repair_commands_dry_run_safety"
+        ]
+    },
+    {
+        "file": "api/app/Console/Commands/ReconcileFinancialMovementsCommand.php",
+        "change_type": "ARTISAN_COMMAND",
+        "gap_ids": [
+            "GAP-014"
+        ],
+        "remediation_group": "DATA_REPAIR",
+        "wave": "WAVE_2",
+        "reason": "REPAIR-004: Dry-run reconciliation command to audit financial movements against parent transactions",
+        "schema_impact": "Audits account_movements integrity",
+        "api_impact": "None",
+        "frontend_impact": "None",
+        "compatibility_impact": "Truth-preserving: compensating movements only with manual approval",
+        "tests_covering_change": [
+            "tests/Feature/Phase9RemediationVerificationTest.php::test_data_repair_commands_dry_run_safety"
+        ]
+    },
+    {
+        "file": "api/app/Console/Commands/AuditKhataLedgerDiscrepanciesCommand.php",
+        "change_type": "ARTISAN_COMMAND",
+        "gap_ids": [
+            "GAP-008"
+        ],
+        "remediation_group": "DATA_REPAIR",
+        "wave": "WAVE_2",
+        "reason": "REPAIR-005: Dry-run audit command to detect discrepancies between customer balances and khata ledger transactions",
+        "schema_impact": "Audits customer_khata_transactions",
+        "api_impact": "None",
+        "frontend_impact": "None",
+        "compatibility_impact": "Truth-preserving: reports variance without destructive mutation",
+        "tests_covering_change": [
+            "tests/Feature/Phase9RemediationVerificationTest.php::test_data_repair_commands_dry_run_safety"
+        ]
+    },
+    {
+        "file": "Frontend/src/services/devicePairingService.js",
+        "change_type": "FRONTEND_SERVICE",
+        "gap_ids": [
+            "GAP-024"
+        ],
+        "remediation_group": "DEVICE_PAIRING",
+        "wave": "WAVE_4",
+        "reason": "RFC1918 private subnet IP syntax validation, loopback classification, port range safety, and same-LAN subnet comparison",
+        "schema_impact": "None",
+        "api_impact": "None",
+        "frontend_impact": "Rejects invalid or public IPs during hardware terminal pairing",
+        "compatibility_impact": "None",
+        "tests_covering_change": [
+            "scratch/test_device_pairing_validation.js"
+        ]
+    },
+    {
+        "file": "Frontend/src/services/localDb.js",
+        "change_type": "FRONTEND_SERVICE",
+        "gap_ids": [
+            "GAP-021"
+        ],
+        "remediation_group": "OFFLINE_SERVICES",
+        "wave": "WAVE_4",
+        "reason": "IndexedDB offline store schema and interoperable default export for pairing and sync engines",
+        "schema_impact": "None",
+        "api_impact": "None",
+        "frontend_impact": "Client offline store stability",
+        "compatibility_impact": "None",
+        "tests_covering_change": [
+            "Frontend build check"
+        ]
+    }
+]

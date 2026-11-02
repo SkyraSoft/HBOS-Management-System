@@ -12,12 +12,25 @@ class Business extends Model
 
     protected $fillable = [
         'name',
+        'legal_name',
         'type',
         'address',
+        'country',
+        'timezone',
+        'tax_number',
         'phone',
         'email',
+        'website',
         'logo',
-        'currency'
+        'currency',
+        'onboarding_status',
+        'onboarding_step',
+        'onboarding_completed_at'
+    ];
+
+    protected $casts = [
+        'onboarding_step' => 'integer',
+        'onboarding_completed_at' => 'datetime'
     ];
 
     /**

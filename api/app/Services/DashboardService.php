@@ -193,9 +193,9 @@ class DashboardService
         $expensesTotal = $this->calculateExpenses($businessId, $branchId, $from, $to);
         $prevExpensesTotal = $this->calculateExpenses($businessId, $branchId, $dateRange['comparison']['from'], $dateRange['comparison']['to']);
 
-        // Operating Position
+        // Operating Position / Net Profit (REQ-0027)
         $operatingPosition = $salesMetrics['is_cogs_complete']
-            ? round($salesMetrics['gross_profit'] - $expensesTotal, 2)
+            ? (float) bcsub((string) $salesMetrics['gross_profit'], (string) $expensesTotal, 2)
             : null;
 
         // Cash & Bank Balances
@@ -223,6 +223,8 @@ class DashboardService
         // Recent Activity
         $recentActivity = $this->getRecentActivity($businessId, $branchId, 10);
 
+        $activeBranchCount = Branch::where('business_id', $businessId)->where('status', 'active')->count();
+
         return [
             'role' => 'Business Owner',
             'period' => [
@@ -233,7 +235,9 @@ class DashboardService
             'scope' => [
                 'business_id' => $businessId,
                 'branch_id' => $branchId,
-                'branch_name' => $branchId ? (Branch::find($branchId)?->name ?? "Branch #{$branchId}") : 'All Branches',
+                'branch_name' => $branchId 
+                    ? (Branch::find($branchId)?->name ?? "Branch #{$branchId}") 
+                    : ($activeBranchCount > 1 ? 'All Branches' : null),
             ],
             'sales' => [
                 'gross_sales' => $salesMetrics['gross_sales'],
@@ -256,6 +260,10 @@ class DashboardService
                 'is_partial' => !$salesMetrics['is_cogs_complete'],
             ],
             'operating_position' => [
+                'amount' => $operatingPosition,
+                'is_partial' => !$salesMetrics['is_cogs_complete'],
+            ],
+            'net_profit' => [
                 'amount' => $operatingPosition,
                 'is_partial' => !$salesMetrics['is_cogs_complete'],
             ],
@@ -461,6 +469,7 @@ class DashboardService
 
         $returnedQtyByItem = DB::table('sale_return_items')
             ->whereIn('sale_item_id', $allItemIds)
+            ->where('is_restockable', true)
             ->select('sale_item_id', DB::raw('SUM(quantity) as returned_qty'))
             ->groupBy('sale_item_id')
             ->pluck('returned_qty', 'sale_item_id');
@@ -483,8 +492,8 @@ class DashboardService
                 } else {
                     $grossCogs += ((float) $item->quantity * (float) $item->cost_price);
 
-                    // Returned COGS for this item from pre-aggregated map
-                    $returnedQty = (int) ($returnedQtyByItem[$item->id] ?? 0);
+                    // Returned COGS for this item from pre-aggregated map (restockable only)
+                    $returnedQty = (float) ($returnedQtyByItem[$item->id] ?? 0.00);
 
                     if ($returnedQty > 0) {
                         $returnedCogs += ($returnedQty * (float) $item->cost_price);

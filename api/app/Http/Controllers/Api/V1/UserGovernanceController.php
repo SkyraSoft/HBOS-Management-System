@@ -55,17 +55,30 @@ class UserGovernanceController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email',
-            'password' => 'required|string|min:8',
-            'role' => 'required|string|in:Business Owner,Branch Manager,Salesperson',
+            'phone' => 'nullable|string|max:50',
+            'employee_code' => 'nullable|string|max:50',
+            'job_title' => 'nullable|string|max:100',
+            'hire_date' => 'nullable|date',
+            'password' => 'nullable|string|min:8',
+            'role' => 'required|string|in:Business Owner,Branch Manager,Salesperson,Accountant,Inventory Manager',
             'branch_id' => 'nullable|integer',
+            'salary_amount' => 'nullable|numeric|min:0',
+            'payment_cycle' => 'nullable|string|in:monthly,weekly,biweekly,daily',
+            'next_payment_date' => 'nullable|date',
         ]);
 
         $createdUser = $this->userGovernanceService->createUser($activeBusinessId, $validated, $user);
 
-        return response()->json([
+        $responseData = [
             'message' => 'Staff user created successfully.',
             'data' => $createdUser,
-        ], 201);
+        ];
+
+        if (isset($createdUser->plain_invitation_token)) {
+            $responseData['invitation_token'] = $createdUser->plain_invitation_token;
+        }
+
+        return response()->json($responseData, 201);
     }
 
     /**
@@ -108,8 +121,15 @@ class UserGovernanceController extends Controller
         $validated = $request->validate([
             'name' => 'sometimes|required|string|max:255',
             'email' => 'sometimes|required|email|max:255|unique:users,email,' . $id,
-            'role' => 'sometimes|required|string|in:Business Owner,Branch Manager,Salesperson',
+            'phone' => 'nullable|string|max:50',
+            'employee_code' => 'nullable|string|max:50',
+            'job_title' => 'nullable|string|max:100',
+            'hire_date' => 'nullable|date',
+            'role' => 'sometimes|required|string|in:Business Owner,Branch Manager,Salesperson,Accountant,Inventory Manager',
             'branch_id' => 'nullable|integer',
+            'salary_amount' => 'nullable|numeric|min:0',
+            'payment_cycle' => 'nullable|string|in:monthly,weekly,biweekly,daily',
+            'next_payment_date' => 'nullable|date',
         ]);
 
         $updatedUser = $this->userGovernanceService->updateUser($activeBusinessId, (int) $id, $validated, $user);

@@ -60,8 +60,6 @@ class ResolveActiveBusiness
                 // Set Spatie permission team context for tenant-scoped authorization
                 if (function_exists('setPermissionsTeamId')) {
                     setPermissionsTeamId($activeBusinessId);
-                    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
-                    $user->unsetRelation('roles')->unsetRelation('permissions');
                 }
             }
         }

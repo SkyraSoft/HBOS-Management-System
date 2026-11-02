@@ -49,7 +49,7 @@
             <div class="supplier-kpi-data">
               <span class="supplier-kpi-label">Total Purchases</span>
               <div class="supplier-kpi-num">PKR {{ totalPurchases.toLocaleString() }}</div>
-              <span class="supplier-kpi-note text-success fw-medium">↗ +9.6% vs prev</span>
+              <span class="supplier-kpi-note text-success fw-medium">● Real-time Total</span>
             </div>
           </div>
 
@@ -59,7 +59,7 @@
             </div>
             <div class="supplier-kpi-data">
               <span class="supplier-kpi-label">Active Suppliers</span>
-              <div class="supplier-kpi-num">{{ suppliers.length || 32 }}</div>
+              <div class="supplier-kpi-num">{{ suppliers.length }}</div>
               <span class="supplier-kpi-note text-success fw-medium">● Active Network</span>
             </div>
           </div>
@@ -81,8 +81,8 @@
             </div>
             <div class="supplier-kpi-data">
               <span class="supplier-kpi-label">Purchase Orders</span>
-              <div class="supplier-kpi-num">48</div>
-              <span class="supplier-kpi-note text-muted">This quarter</span>
+              <div class="supplier-kpi-num">{{ totalPurchaseOrders }}</div>
+              <span class="supplier-kpi-note text-muted">All orders</span>
             </div>
           </div>
 
@@ -92,7 +92,7 @@
             </div>
             <div class="supplier-kpi-data">
               <span class="supplier-kpi-label">Average Purchase</span>
-              <div class="supplier-kpi-num">PKR 13,000</div>
+              <div class="supplier-kpi-num">PKR {{ averagePurchase.toLocaleString() }}</div>
               <span class="supplier-kpi-note text-muted">Per order volume</span>
             </div>
           </div>
@@ -675,11 +675,20 @@ const filteredSuppliers = computed(() => {
 });
 
 const totalPurchases = computed(() => {
-  return suppliers.value.reduce((sum, s) => sum + (Number(s.total_purchases) || 0), 0) || 625000;
+  return suppliers.value.reduce((sum, s) => sum + (Number(s.total_purchases) || 0), 0);
 });
 
 const totalPayables = computed(() => {
-  return suppliers.value.reduce((sum, s) => sum + (Number(s.balance) || 0), 0) || 185000;
+  return suppliers.value.reduce((sum, s) => sum + (Number(s.balance) || 0), 0);
+});
+
+const totalPurchaseOrders = computed(() => {
+  return suppliers.value.reduce((sum, s) => sum + (Number(s.purchases_count) || 0), 0);
+});
+
+const averagePurchase = computed(() => {
+  const orders = totalPurchaseOrders.value;
+  return orders > 0 ? Math.round(totalPurchases.value / orders) : 0;
 });
 
 // ADD SUPPLIER MODAL STATE

@@ -9,7 +9,17 @@ import printerService from '../services/printerService.js';
  */
 class SyncCoordinator {
   constructor() {
-    this.apiBaseUrl = 'https://hbos.skyrasoft.com/api/v1';
+    const getBase = () => {
+      if (typeof window !== 'undefined') {
+        const custom = localStorage.getItem('hbos_custom_api_endpoint');
+        if (custom) return custom;
+        if (window.location.origin.includes('tauri.localhost')) {
+          return 'http://127.0.0.1:8000/api/v1';
+        }
+      }
+      return '/api/v1';
+    };
+    this.apiBaseUrl = getBase();
     this.syncIntervalMs = 5 * 60 * 1000; // 5 minutes
     this.timerId = null;
     this.isSyncing = false;
@@ -18,6 +28,9 @@ class SyncCoordinator {
   }
 
   init() {
+    const isDemo = typeof window !== 'undefined' && !!localStorage.getItem('hbos_demo_mode');
+    if (isDemo) return;
+
     if (typeof window !== 'undefined') {
       window.addEventListener('online', () => this.handleOnlineStatus(true));
       window.addEventListener('offline', () => this.handleOnlineStatus(false));

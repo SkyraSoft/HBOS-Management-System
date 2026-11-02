@@ -29,19 +29,19 @@
 
                     <div class="action-buttons">
 
-                        <button class="btn-hbos" type="button" onclick="editCustomer()">
+                        <button class="btn-hbos" type="button" @click="editCustomer">
 
                             <i class="bi bi-pencil"></i>
                             Edit Customer
                         </button>
 
-                        <button class="btn-hbos" type="button" onclick="newSale()">
+                        <button class="btn-hbos" type="button" @click="newSale">
 
                             <i class="bi bi-receipt"></i>
                             New Sale
                         </button>
 
-                        <button class="btn-hbos btn-primary-hbos" type="button" onclick="recordPayment()">
+                        <button class="btn-hbos btn-primary-hbos" type="button" @click="recordPayment">
 
                             <i class="bi bi-wallet2"></i>
                             Record Payment
@@ -451,6 +451,21 @@
 
 <script setup>
 import { onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+
+const recordPayment = () => {
+    router.push({ path: '/customer', query: { tab: 'customers', action: 'payment' } });
+};
+
+const newSale = () => {
+    router.push('/pos');
+};
+
+const editCustomer = () => {
+    router.push('/customer');
+};
 
 onMounted(() => {
 });

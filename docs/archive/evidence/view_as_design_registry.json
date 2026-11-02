@@ -1,0 +1,48 @@
+{
+  "feature_name": "Super Owner 'View As' Role & Branch Preview Mode",
+  "actor_authenticated": "Business Super Owner (Real identity preserved, token unchanged)",
+  "state_attributes": {
+    "is_preview_mode": true,
+    "preview_role_id": "BRANCH_MANAGER | SALESPERSON_CASHIER | ACCOUNTANT | INVENTORY_MANAGER",
+    "preview_branch_id": "Target Branch ID"
+  },
+  "safety_invariants": {
+    "read_only_enforced": true,
+    "blocked_http_methods": ["POST", "PUT", "PATCH", "DELETE"],
+    "backend_guard": "Enforced by ResolveActiveBusiness / ViewAsReadOnlyMiddleware",
+    "token_impersonation": "FORBIDDEN (No employee token or password hash is swapped)"
+  },
+  "ui_specifications": {
+    "persistent_banner": {
+      "display": "Fixed Top Alert Bar (High Contrast Amber/Navy)",
+      "text": "PREVIEW MODE — Viewing as: [Role Name] at [Branch Name] (READ ONLY)",
+      "exit_button": "One-click 'Exit Preview' returning immediately to Super Owner dashboard"
+    },
+    "menu_rendering": "Dynamically masks navigation items to match exact target role access profile",
+    "dashboard_rendering": "Renders exact target role dashboard with branch filter locked to preview_branch_id"
+  },
+  "audit_tracking": {
+    "preview_started_event": "Logged with causer_id=owner_id, preview_role, preview_branch, timestamp",
+    "preview_exited_event": "Logged with causer_id=owner_id, duration_seconds, timestamp"
+  },
+  "owner_review_workflow": {
+    "capability_name": "Owner Action Request / Review Note",
+    "purpose": "Enables owner during preview to flag discrepancies or assign investigation tasks without mutating transactions directly",
+    "schema": [
+      "business_id",
+      "branch_id",
+      "created_by_owner_id",
+      "target_user_id (optional)",
+      "target_role",
+      "title",
+      "description",
+      "priority (low, medium, high, urgent)",
+      "status (pending, acknowledged, resolved)",
+      "related_resource_type",
+      "related_resource_id",
+      "created_at",
+      "acknowledged_at",
+      "resolved_at"
+    ]
+  }
+}

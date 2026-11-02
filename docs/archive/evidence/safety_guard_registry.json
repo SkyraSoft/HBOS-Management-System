@@ -1,0 +1,233 @@
+{
+    "ACTION-015": {
+        "action_id": "ACTION-015",
+        "label": "Delete Product",
+        "risk": "HIGH",
+        "current_guard": "Modal Confirmation Dialog",
+        "confirmation_type": "EXPLICIT_MODAL",
+        "context_shown": "Product Name & SKU",
+        "reversibility": "REVERSIBLE_SOFT_DELETE",
+        "guard_assessment": "ADEQUATE",
+        "gap": "N/A"
+    },
+    "ACTION-016": {
+        "action_id": "ACTION-016",
+        "label": "Quick Restock Addition",
+        "risk": "HIGH",
+        "current_guard": "Modal Form Validation",
+        "confirmation_type": "FORM_SUBMIT",
+        "context_shown": "Current Stock & Delta",
+        "reversibility": "REVERSIBLE_VIA_DEDUCTION",
+        "guard_assessment": "ADEQUATE_WITH_KNOWN_GAP",
+        "gap": "P5-GAP-003"
+    },
+    "ACTION-017": {
+        "action_id": "ACTION-017",
+        "label": "Quick Restock Deduction",
+        "risk": "HIGH",
+        "current_guard": "Modal Form Validation",
+        "confirmation_type": "FORM_SUBMIT",
+        "context_shown": "Current Stock & Delta",
+        "reversibility": "REVERSIBLE_VIA_ADDITION",
+        "guard_assessment": "ADEQUATE_WITH_KNOWN_GAP",
+        "gap": "P5-GAP-003"
+    },
+    "ACTION-036": {
+        "action_id": "ACTION-036",
+        "label": "Cash Checkout (F1)",
+        "risk": "HIGH",
+        "current_guard": "Payment Checkout Modal",
+        "confirmation_type": "MODAL_HOTKEY_ENTER",
+        "context_shown": "Grand Total, Cash Tendered, Change Due",
+        "reversibility": "REVERSIBLE_VIA_RETURN",
+        "guard_assessment": "ADEQUATE",
+        "gap": "N/A"
+    },
+    "ACTION-037": {
+        "action_id": "ACTION-037",
+        "label": "Split Tender Checkout",
+        "risk": "HIGH",
+        "current_guard": "Payment Checkout Modal",
+        "confirmation_type": "MODAL_SUBMIT",
+        "context_shown": "Split Tender Breakdown & Due Balances",
+        "reversibility": "REVERSIBLE_VIA_RETURN",
+        "guard_assessment": "ADEQUATE",
+        "gap": "N/A"
+    },
+    "ACTION-046": {
+        "action_id": "ACTION-046",
+        "label": "Settle Cash Refund",
+        "risk": "CRITICAL",
+        "current_guard": "Return Settlement Modal",
+        "confirmation_type": "MODAL_SUBMIT",
+        "context_shown": "Refund Total & Item List",
+        "reversibility": "IRREVERSIBLE_PHYSICAL_CASH",
+        "guard_assessment": "ADEQUATE_WITH_KNOWN_GAP",
+        "gap": "P5-GAP-005"
+    },
+    "ACTION-047": {
+        "action_id": "ACTION-047",
+        "label": "Settle Khata Credit Refund",
+        "risk": "HIGH",
+        "current_guard": "Return Settlement Modal",
+        "confirmation_type": "MODAL_SUBMIT",
+        "context_shown": "Refund Amount & Customer Khata Balance",
+        "reversibility": "REVERSIBLE_LEDGER_ADJUSTMENT",
+        "guard_assessment": "ADEQUATE",
+        "gap": "N/A"
+    },
+    "ACTION-048": {
+        "action_id": "ACTION-048",
+        "label": "Settle Bank Refund",
+        "risk": "HIGH",
+        "current_guard": "Return Settlement Modal",
+        "confirmation_type": "MODAL_SUBMIT",
+        "context_shown": "Refund Amount & Bank Account",
+        "reversibility": "REVERSIBLE_BANK_ADJUSTMENT",
+        "guard_assessment": "ADEQUATE",
+        "gap": "N/A"
+    },
+    "ACTION-049": {
+        "action_id": "ACTION-049",
+        "label": "Void / Cancel Completed Sale",
+        "risk": "CRITICAL",
+        "current_guard": "Browser Confirm Prompt",
+        "confirmation_type": "GENERIC_BROWSER_CONFIRM",
+        "context_shown": "Invoice # only",
+        "reversibility": "IRREVERSIBLE_VOIDING",
+        "guard_assessment": "WEAK_CONFIRMATION",
+        "gap": "P5-GAP-006"
+    },
+    "ACTION-053": {
+        "action_id": "ACTION-053",
+        "label": "Confirm Purchase GRN",
+        "risk": "HIGH",
+        "current_guard": "Full Page Review & Submit",
+        "confirmation_type": "FORM_SUBMIT",
+        "context_shown": "Items, Cost, Total Payable, Destination Branch",
+        "reversibility": "REVERSIBLE_VIA_PURCHASE_RETURN",
+        "guard_assessment": "ADEQUATE",
+        "gap": "N/A"
+    },
+    "ACTION-055": {
+        "action_id": "ACTION-055",
+        "label": "Cancel Purchase",
+        "risk": "CRITICAL",
+        "current_guard": "Confirmation Modal",
+        "confirmation_type": "EXPLICIT_MODAL",
+        "context_shown": "PO #, Supplier, Total Billed",
+        "reversibility": "IRREVERSIBLE_CANCEL",
+        "guard_assessment": "ADEQUATE",
+        "gap": "N/A"
+    },
+    "ACTION-059": {
+        "action_id": "ACTION-059",
+        "label": "Delete Supplier",
+        "risk": "HIGH",
+        "current_guard": "Confirmation Modal Dialog",
+        "confirmation_type": "EXPLICIT_MODAL",
+        "context_shown": "Supplier Name & Balance",
+        "reversibility": "REVERSIBLE_SOFT_DELETE",
+        "guard_assessment": "ADEQUATE",
+        "gap": "N/A"
+    },
+    "ACTION-060": {
+        "action_id": "ACTION-060",
+        "label": "Settle Supplier Payable Bill",
+        "risk": "HIGH",
+        "current_guard": "Payment Settlement Modal",
+        "confirmation_type": "MODAL_SUBMIT",
+        "context_shown": "Supplier Name, Outstanding Bill, Payment Amount",
+        "reversibility": "REVERSIBLE_VOUCHER_ADJUSTMENT",
+        "guard_assessment": "ADEQUATE",
+        "gap": "N/A"
+    },
+    "ACTION-063": {
+        "action_id": "ACTION-063",
+        "label": "Delete Customer",
+        "risk": "HIGH",
+        "current_guard": "Confirmation Modal Dialog",
+        "confirmation_type": "EXPLICIT_MODAL",
+        "context_shown": "Customer Name & Balance",
+        "reversibility": "REVERSIBLE_SOFT_DELETE",
+        "guard_assessment": "ADEQUATE",
+        "gap": "N/A"
+    },
+    "ACTION-064": {
+        "action_id": "ACTION-064",
+        "label": "Record Customer Payment",
+        "risk": "HIGH",
+        "current_guard": "Payment Modal Dialog",
+        "confirmation_type": "MODAL_SUBMIT",
+        "context_shown": "Customer Name, Total Debt, Collected Amount, New Balance",
+        "reversibility": "REVERSIBLE_VIA_PAYMENT_REVERSAL",
+        "guard_assessment": "ADEQUATE",
+        "gap": "N/A"
+    },
+    "ACTION-067": {
+        "action_id": "ACTION-067",
+        "label": "Collect Khata Payment",
+        "risk": "HIGH",
+        "current_guard": "Payment Modal Dialog",
+        "confirmation_type": "MODAL_SUBMIT",
+        "context_shown": "Customer Name, Outstanding Balance, Payment Amount",
+        "reversibility": "REVERSIBLE_VIA_PAYMENT_REVERSAL",
+        "guard_assessment": "ADEQUATE",
+        "gap": "N/A"
+    },
+    "ACTION-069": {
+        "action_id": "ACTION-069",
+        "label": "Return Debt Transaction",
+        "risk": "HIGH",
+        "current_guard": "Full Page Review & Post",
+        "confirmation_type": "FORM_SUBMIT",
+        "context_shown": "Customer, Debt Amount, Adjustment Reason",
+        "reversibility": "REVERSIBLE_LEDGER_ADJUSTMENT",
+        "guard_assessment": "ADEQUATE",
+        "gap": "N/A"
+    },
+    "ACTION-070": {
+        "action_id": "ACTION-070",
+        "label": "Reverse Customer Payment",
+        "risk": "CRITICAL",
+        "current_guard": "Confirmation Modal Dialog",
+        "confirmation_type": "EXPLICIT_MODAL",
+        "context_shown": "Payment Voucher ID, Amount, Customer Debt Impact",
+        "reversibility": "IRREVERSIBLE_REVERSAL",
+        "guard_assessment": "ADEQUATE",
+        "gap": "N/A"
+    },
+    "ACTION-072": {
+        "action_id": "ACTION-072",
+        "label": "Save Expense",
+        "risk": "HIGH",
+        "current_guard": "Form Submit Validation",
+        "confirmation_type": "FORM_SUBMIT",
+        "context_shown": "Category, Description, Amount, Payment Account",
+        "reversibility": "REVERSIBLE_VIA_VOID",
+        "guard_assessment": "ADEQUATE_WITH_KNOWN_GAP",
+        "gap": "P5-GAP-008"
+    },
+    "ACTION-074": {
+        "action_id": "ACTION-074",
+        "label": "Update Expense",
+        "risk": "HIGH",
+        "current_guard": "Form Edit Validation",
+        "confirmation_type": "FORM_SUBMIT",
+        "context_shown": "Original Amount, Modified Amount, Category",
+        "reversibility": "REVERSIBLE_EDIT",
+        "guard_assessment": "ADEQUATE",
+        "gap": "N/A"
+    },
+    "ACTION-075": {
+        "action_id": "ACTION-075",
+        "label": "Void Expense (Reverse Ledger)",
+        "risk": "CRITICAL",
+        "current_guard": "Confirmation Modal Dialog",
+        "confirmation_type": "EXPLICIT_MODAL",
+        "context_shown": "Expense ID, Category, Restored Cash Amount",
+        "reversibility": "IRREVERSIBLE_VOIDING",
+        "guard_assessment": "ADEQUATE",
+        "gap": "N/A"
+    }
+}

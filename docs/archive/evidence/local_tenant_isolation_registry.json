@@ -1,0 +1,27 @@
+{
+    "metadata": {
+        "technology": "IndexedDB \/ localDb.js",
+        "current_database_name": "HBOS_Local_Store_DB",
+        "current_status": "SHARED_STATIC_UNNAMESPACED",
+        "risk_rating": "HIGH (PLATFORM-GAP-001)"
+    },
+    "current_vulnerability_analysis": {
+        "scenario": "User A from Business A logs into HBOS. Catalog and customers are cached to HBOS_Local_Store_DB. User A logs out. User B from Business B logs in on same device\/browser profile.",
+        "result_today": "User B has access to User A products, customers, and pending offline outbox records in IndexedDB because localDb.js uses a single static unnamespaced DB and clearAuthData() only deletes localStorage tokens.",
+        "leak_vectors": [
+            "products store (names, SKUs, wholesale\/retail prices)",
+            "customers store (names, phone numbers, addresses, credit limits)",
+            "sales store (offline sale records)",
+            "khata_payments store (debt repayments)",
+            "expenses store (business expense logs)",
+            "images store (product and receipt images)",
+            "outbox store (pending unsynced transactions)"
+        ]
+    },
+    "target_remediation_design": {
+        "namespaced_database_naming": "HBOS_Store_Biz_${business_id}",
+        "user_session_binding": "Initialize DB connection dynamically upon authenticated business resolution",
+        "logout_eviction_lifecycle": "Explicitly close and purge or isolate local store instance upon user logout \/ business switch",
+        "outbox_protection": "Warn cashier if un-synced outbox transactions exist before switching active business"
+    }
+}

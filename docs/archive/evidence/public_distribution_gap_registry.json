@@ -1,0 +1,99 @@
+{
+    "metadata": {
+        "program": "SkyraSoft HBOS Public Distribution & Multi-Tenant Platform Integrity Program",
+        "checkpoint": "CHECKPOINT 1 \u2014 ARCHITECTURE AUDIT & GAP REGISTRY",
+        "total_gaps": 10
+    },
+    "gaps": [
+        {
+            "gap_id": "PLATFORM-GAP-001",
+            "title": "IndexedDB Local Store Un-namespaced Multi-Tenant Data Leakage",
+            "severity": "CRITICAL",
+            "domain": "Offline Storage & Local Isolation",
+            "source_location": "frontend\/src\/services\/localDb.js, frontend\/src\/stores\/auth.js",
+            "description": "Local database name is static (HBOS_Local_Store_DB) and stores are shared globally on device. Logging out does not clear IndexedDB stores, allowing subsequent users on the same device\/browser profile to access foreign tenant catalog, customer lists, and pending offline transactions.",
+            "target_remediation": "Implement dynamic tenant-namespaced database naming (HBOS_Store_Biz_${id}) and explicit cache closure\/eviction on logout."
+        },
+        {
+            "gap_id": "PLATFORM-GAP-002",
+            "title": "Missing Tenantable Trait on SupplierReturn & ActivityLog Models",
+            "severity": "HIGH",
+            "domain": "Backend Multi-Tenant Isolation",
+            "source_location": "api\/app\/Models\/SupplierReturn.php, api\/app\/Models\/ActivityLog.php",
+            "description": "SupplierReturn and ActivityLog models contain business_id columns but omit the Tenantable trait and TenantScope. Direct model queries or relationship traversal without manual controller filtering could expose foreign tenant records.",
+            "target_remediation": "Attach Tenantable trait to SupplierReturn and ActivityLog models."
+        },
+        {
+            "gap_id": "PLATFORM-GAP-003",
+            "title": "Missing Rate Limiting on Public Self-Service Authentication Routes",
+            "severity": "HIGH",
+            "domain": "Public Signup Abuse & Bot Resistance",
+            "source_location": "api\/routes\/api.php, api\/app\/Http\/Controllers\/Api\/V1\/AuthController.php",
+            "description": "Public \/auth\/login and \/auth\/register routes lack throttle middleware, exposing the platform to automated bot account creation, credential stuffing, and API resource exhaustion.",
+            "target_remediation": "Attach strict throttle middleware (e.g., throttle:10,1 for register, throttle:6,1 for login) and failed-attempt tracking."
+        },
+        {
+            "gap_id": "PLATFORM-GAP-004",
+            "title": "Missing Email Normalization on Registration and Login",
+            "severity": "MEDIUM",
+            "domain": "Account Security & Identity",
+            "source_location": "api\/app\/Http\/Controllers\/Api\/V1\/AuthController.php",
+            "description": "Email inputs are not normalized to lowercase before validation and storage, allowing potential duplicate accounts or login failures due to case mismatch.",
+            "target_remediation": "Enforce strtolower(trim($email)) in AuthController and User model."
+        },
+        {
+            "gap_id": "PLATFORM-GAP-005",
+            "title": "Missing Self-Service Password Reset and Multi-Device Session Invalidation",
+            "severity": "MEDIUM",
+            "domain": "Account Lifecycle & Recovery",
+            "source_location": "api\/routes\/api.php, api\/app\/Http\/Controllers\/Api\/V1\/AuthController.php",
+            "description": "HBOS lacks password reset endpoints (\/auth\/forgot-password, \/auth\/reset-password) and a \"logout other devices\" endpoint to revoke all Sanctum tokens upon credential change.",
+            "target_remediation": "Implement secure password reset flow and multi-device session revocation endpoints."
+        },
+        {
+            "gap_id": "PLATFORM-GAP-006",
+            "title": "Absence of Windows Desktop Shell Packaging for Microsoft Store Distribution",
+            "severity": "HIGH",
+            "domain": "Windows Distribution & Packaging",
+            "source_location": "frontend\/package.json, frontend\/src\/",
+            "description": "The client application exists only as a Vite web SPA. There is no configured native wrapper (e.g., Tauri or Electron or MSIX manifest) for Windows packaging, hardware API integration, or Microsoft Store ingestion.",
+            "target_remediation": "Design and configure a lightweight, secure Windows desktop shell (Tauri \/ Electron MSIX) preserving native IndexedDB and thermal printer pipelines."
+        },
+        {
+            "gap_id": "PLATFORM-GAP-007",
+            "title": "Missing Client-Server Version Handshake and Update Gating Headers",
+            "severity": "MEDIUM",
+            "domain": "Client Update & Release Lifecycle",
+            "source_location": "api\/app\/Http\/Middleware\/ResolveActiveBusiness.php, frontend\/src\/api.js",
+            "description": "The backend does not validate incoming X-App-Version headers or emit min_supported_version \/ update_available metadata, making distributed client update management impossible.",
+            "target_remediation": "Implement version negotiation middleware on API and client update notification handling in frontend."
+        },
+        {
+            "gap_id": "PLATFORM-GAP-008",
+            "title": "Incomplete Initial Tenant Default Settings and Financial Structure Onboarding",
+            "severity": "MEDIUM",
+            "domain": "Tenant Provisioning",
+            "source_location": "api\/app\/Http\/Controllers\/Api\/V1\/AuthController.php",
+            "description": "Registration provisions a business and main branch, but fails to seed default cash accounts and essential business settings, causing blank states on fresh onboarding.",
+            "target_remediation": "Seed initial \"Main Cash\" account and core receipt\/invoice settings during atomic signup transaction."
+        },
+        {
+            "gap_id": "PLATFORM-GAP-009",
+            "title": "Missing Multi-Business Creation for Existing Authenticated Users",
+            "severity": "LOW",
+            "domain": "Multi-Business Tenant Ownership",
+            "source_location": "api\/app\/Http\/Controllers\/Api\/V1\/BusinessController.php",
+            "description": "An existing authenticated user cannot easily self-provision a second business tenant and switch contexts via a dedicated onboarding endpoint.",
+            "target_remediation": "Provide an authenticated endpoint for creating additional business tenants under the same user identity."
+        },
+        {
+            "gap_id": "PLATFORM-GAP-010",
+            "title": "Lack of Tenant Isolation in Uploaded Static File Paths",
+            "severity": "LOW",
+            "domain": "Media & File Storage",
+            "source_location": "api\/app\/Http\/Controllers\/Api\/V1\/SettingController.php",
+            "description": "Uploaded store logos and assets do not strictly partition directories by business_id (e.g. storage\/app\/public\/businesses\/{id}\/logo.png), risking path collisions across tenants.",
+            "target_remediation": "Enforce tenant-partitioned storage directory naming."
+        }
+    ]
+}

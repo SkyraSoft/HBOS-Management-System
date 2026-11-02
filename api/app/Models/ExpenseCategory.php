@@ -14,6 +14,11 @@ class ExpenseCategory extends Model
     protected $fillable = [
         'business_id',
         'name',
+        'monthly_budget',
+    ];
+
+    protected $casts = [
+        'monthly_budget' => 'decimal:2',
     ];
 
     public function business()

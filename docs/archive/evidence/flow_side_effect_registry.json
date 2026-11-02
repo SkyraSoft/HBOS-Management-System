@@ -1,0 +1,612 @@
+{
+    "FLOW-001": {
+        "flow_id": "FLOW-001",
+        "flow_name": "POS Direct Cash Sale (Fully Paid)",
+        "flow_family": "REVENUE",
+        "primary_entity": "ENTITY-020",
+        "primary_mutations": [
+            "MUTATION-029"
+        ],
+        "stock": "EXPECTED_AND_PRESENT",
+        "inventory_ledger": "EXPECTED_AND_PRESENT",
+        "customer_balance": "NOT_APPLICABLE",
+        "customer_ledger": "NOT_APPLICABLE",
+        "supplier_balance": "NOT_APPLICABLE",
+        "supplier_ledger": "NOT_APPLICABLE",
+        "financial_account": "NOT_APPLICABLE",
+        "account_movement": "NOT_APPLICABLE",
+        "cash_ledger": "EXPECTED_AND_PRESENT",
+        "status_transition": "EXPECTED_AND_PRESENT",
+        "audit": "EXPECTED_AND_PRESENT",
+        "print": "EXPECTED_AND_PRESENT",
+        "sync": "EXPECTED_AND_PRESENT",
+        "reversal_available": "EXPECTED_AND_PRESENT",
+        "atomic_db_boundary": "EXPECTED_AND_PRESENT",
+        "known_gaps": [
+            "P3-GAP-001"
+        ]
+    },
+    "FLOW-002": {
+        "flow_id": "FLOW-002",
+        "flow_name": "POS Direct Bank / Digital Payment Sale",
+        "flow_family": "REVENUE",
+        "primary_entity": "ENTITY-020",
+        "primary_mutations": [
+            "MUTATION-029"
+        ],
+        "stock": "EXPECTED_AND_PRESENT",
+        "inventory_ledger": "EXPECTED_AND_PRESENT",
+        "customer_balance": "NOT_APPLICABLE",
+        "customer_ledger": "NOT_APPLICABLE",
+        "supplier_balance": "NOT_APPLICABLE",
+        "supplier_ledger": "NOT_APPLICABLE",
+        "financial_account": "EXPECTED_AND_PRESENT",
+        "account_movement": "EXPECTED_AND_PRESENT",
+        "cash_ledger": "NOT_APPLICABLE",
+        "status_transition": "EXPECTED_AND_PRESENT",
+        "audit": "EXPECTED_AND_PRESENT",
+        "print": "EXPECTED_AND_PRESENT",
+        "sync": "EXPECTED_AND_PRESENT",
+        "reversal_available": "EXPECTED_AND_PRESENT",
+        "atomic_db_boundary": "EXPECTED_AND_PRESENT",
+        "known_gaps": [
+            "P3-GAP-001"
+        ]
+    },
+    "FLOW-003": {
+        "flow_id": "FLOW-003",
+        "flow_name": "POS Credit Sale on Customer Khata (Unpaid)",
+        "flow_family": "REVENUE",
+        "primary_entity": "ENTITY-020",
+        "primary_mutations": [
+            "MUTATION-029"
+        ],
+        "stock": "EXPECTED_AND_PRESENT",
+        "inventory_ledger": "EXPECTED_AND_PRESENT",
+        "customer_balance": "EXPECTED_AND_PRESENT",
+        "customer_ledger": "EXPECTED_AND_PRESENT",
+        "supplier_balance": "NOT_APPLICABLE",
+        "supplier_ledger": "NOT_APPLICABLE",
+        "financial_account": "NOT_APPLICABLE",
+        "account_movement": "NOT_APPLICABLE",
+        "cash_ledger": "NOT_APPLICABLE",
+        "status_transition": "EXPECTED_AND_PRESENT",
+        "audit": "EXPECTED_AND_PRESENT",
+        "print": "EXPECTED_AND_PRESENT",
+        "sync": "EXPECTED_AND_PRESENT",
+        "reversal_available": "EXPECTED_AND_PRESENT",
+        "atomic_db_boundary": "EXPECTED_AND_PRESENT",
+        "known_gaps": [
+            "P3-GAP-002"
+        ]
+    },
+    "FLOW-004": {
+        "flow_id": "FLOW-004",
+        "flow_name": "POS Partially Paid Sale",
+        "flow_family": "REVENUE",
+        "primary_entity": "ENTITY-020",
+        "primary_mutations": [
+            "MUTATION-029"
+        ],
+        "stock": "EXPECTED_AND_PRESENT",
+        "inventory_ledger": "EXPECTED_AND_PRESENT",
+        "customer_balance": "EXPECTED_AND_PRESENT",
+        "customer_ledger": "EXPECTED_AND_PRESENT",
+        "supplier_balance": "NOT_APPLICABLE",
+        "supplier_ledger": "NOT_APPLICABLE",
+        "financial_account": "EXPECTED_AND_PRESENT",
+        "account_movement": "EXPECTED_AND_PRESENT",
+        "cash_ledger": "EXPECTED_AND_PRESENT",
+        "status_transition": "EXPECTED_AND_PRESENT",
+        "audit": "EXPECTED_AND_PRESENT",
+        "print": "EXPECTED_AND_PRESENT",
+        "sync": "EXPECTED_AND_PRESENT",
+        "reversal_available": "EXPECTED_AND_PRESENT",
+        "atomic_db_boundary": "EXPECTED_AND_PRESENT",
+        "known_gaps": [
+            "P3-GAP-002"
+        ]
+    },
+    "FLOW-005": {
+        "flow_id": "FLOW-005",
+        "flow_name": "POS Split-Tender / Multi-Payment Sale",
+        "flow_family": "REVENUE",
+        "primary_entity": "ENTITY-020",
+        "primary_mutations": [
+            "MUTATION-029"
+        ],
+        "stock": "EXPECTED_AND_PRESENT",
+        "inventory_ledger": "EXPECTED_AND_PRESENT",
+        "customer_balance": "NOT_APPLICABLE",
+        "customer_ledger": "NOT_APPLICABLE",
+        "supplier_balance": "NOT_APPLICABLE",
+        "supplier_ledger": "NOT_APPLICABLE",
+        "financial_account": "EXPECTED_AND_PRESENT",
+        "account_movement": "EXPECTED_AND_PRESENT",
+        "cash_ledger": "EXPECTED_AND_PRESENT",
+        "status_transition": "EXPECTED_AND_PRESENT",
+        "audit": "EXPECTED_AND_PRESENT",
+        "print": "EXPECTED_AND_PRESENT",
+        "sync": "EXPECTED_AND_PRESENT",
+        "reversal_available": "EXPECTED_AND_PRESENT",
+        "atomic_db_boundary": "EXPECTED_AND_PRESENT",
+        "known_gaps": [
+            "P3-GAP-003"
+        ]
+    },
+    "FLOW-006": {
+        "flow_id": "FLOW-006",
+        "flow_name": "Post-Sale Customer Khata Payment Receipt",
+        "flow_family": "REVENUE",
+        "primary_entity": "ENTITY-026",
+        "primary_mutations": [
+            "MUTATION-041"
+        ],
+        "stock": "NOT_APPLICABLE",
+        "inventory_ledger": "NOT_APPLICABLE",
+        "customer_balance": "EXPECTED_AND_PRESENT",
+        "customer_ledger": "EXPECTED_AND_PRESENT",
+        "supplier_balance": "NOT_APPLICABLE",
+        "supplier_ledger": "NOT_APPLICABLE",
+        "financial_account": "EXPECTED_AND_PRESENT",
+        "account_movement": "EXPECTED_AND_PRESENT",
+        "cash_ledger": "EXPECTED_AND_PRESENT",
+        "status_transition": "EXPECTED_AND_PRESENT",
+        "audit": "EXPECTED_AND_PRESENT",
+        "print": "EXPECTED_AND_PRESENT",
+        "sync": "EXPECTED_AND_PRESENT",
+        "reversal_available": "EXPECTED_AND_PRESENT",
+        "atomic_db_boundary": "EXPECTED_AND_PRESENT",
+        "known_gaps": []
+    },
+    "FLOW-007": {
+        "flow_id": "FLOW-007",
+        "flow_name": "Offline POS Batch Sync Ingestion",
+        "flow_family": "REVENUE",
+        "primary_entity": "ENTITY-020",
+        "primary_mutations": [
+            "MUTATION-071"
+        ],
+        "stock": "EXPECTED_AND_PRESENT",
+        "inventory_ledger": "EXPECTED_AND_PRESENT",
+        "customer_balance": "EXPECTED_AND_PRESENT",
+        "customer_ledger": "EXPECTED_AND_PRESENT",
+        "supplier_balance": "NOT_APPLICABLE",
+        "supplier_ledger": "NOT_APPLICABLE",
+        "financial_account": "EXPECTED_AND_PRESENT",
+        "account_movement": "EXPECTED_AND_PRESENT",
+        "cash_ledger": "EXPECTED_AND_PRESENT",
+        "status_transition": "EXPECTED_AND_PRESENT",
+        "audit": "EXPECTED_AND_PRESENT",
+        "print": "EXPECTED_AND_PRESENT",
+        "sync": "EXPECTED_AND_PRESENT",
+        "reversal_available": "EXPECTED_AND_PRESENT",
+        "atomic_db_boundary": "EXPECTED_AND_PRESENT",
+        "known_gaps": [
+            "P3-GAP-004"
+        ]
+    },
+    "FLOW-008": {
+        "flow_id": "FLOW-008",
+        "flow_name": "Purchase on Credit with Immediate GRN Stock Receipt",
+        "flow_family": "PROCUREMENT",
+        "primary_entity": "ENTITY-028",
+        "primary_mutations": [
+            "MUTATION-046"
+        ],
+        "stock": "EXPECTED_AND_PRESENT",
+        "inventory_ledger": "EXPECTED_AND_PRESENT",
+        "customer_balance": "NOT_APPLICABLE",
+        "customer_ledger": "NOT_APPLICABLE",
+        "supplier_balance": "EXPECTED_AND_PRESENT",
+        "supplier_ledger": "EXPECTED_AND_PRESENT",
+        "financial_account": "NOT_APPLICABLE",
+        "account_movement": "NOT_APPLICABLE",
+        "cash_ledger": "NOT_APPLICABLE",
+        "status_transition": "EXPECTED_AND_PRESENT",
+        "audit": "EXPECTED_AND_PRESENT",
+        "print": "EXPECTED_AND_PRESENT",
+        "sync": "EXPECTED_AND_PRESENT",
+        "reversal_available": "EXPECTED_AND_PRESENT",
+        "atomic_db_boundary": "EXPECTED_AND_PRESENT",
+        "known_gaps": [
+            "P3-GAP-005",
+            "P3-GAP-006"
+        ]
+    },
+    "FLOW-009": {
+        "flow_id": "FLOW-009",
+        "flow_name": "Purchase with Immediate Full Cash/Bank Disbursal",
+        "flow_family": "PROCUREMENT",
+        "primary_entity": "ENTITY-028",
+        "primary_mutations": [
+            "MUTATION-046"
+        ],
+        "stock": "EXPECTED_AND_PRESENT",
+        "inventory_ledger": "EXPECTED_AND_PRESENT",
+        "customer_balance": "NOT_APPLICABLE",
+        "customer_ledger": "NOT_APPLICABLE",
+        "supplier_balance": "EXPECTED_AND_PRESENT",
+        "supplier_ledger": "EXPECTED_AND_PRESENT",
+        "financial_account": "EXPECTED_AND_PRESENT",
+        "account_movement": "EXPECTED_AND_PRESENT",
+        "cash_ledger": "EXPECTED_AND_PRESENT",
+        "status_transition": "EXPECTED_AND_PRESENT",
+        "audit": "EXPECTED_AND_PRESENT",
+        "print": "EXPECTED_AND_PRESENT",
+        "sync": "EXPECTED_AND_PRESENT",
+        "reversal_available": "EXPECTED_AND_PRESENT",
+        "atomic_db_boundary": "EXPECTED_AND_PRESENT",
+        "known_gaps": [
+            "P3-GAP-005"
+        ]
+    },
+    "FLOW-010": {
+        "flow_id": "FLOW-010",
+        "flow_name": "Purchase with Partial Upfront Payment",
+        "flow_family": "PROCUREMENT",
+        "primary_entity": "ENTITY-028",
+        "primary_mutations": [
+            "MUTATION-046"
+        ],
+        "stock": "EXPECTED_AND_PRESENT",
+        "inventory_ledger": "EXPECTED_AND_PRESENT",
+        "customer_balance": "NOT_APPLICABLE",
+        "customer_ledger": "NOT_APPLICABLE",
+        "supplier_balance": "EXPECTED_AND_PRESENT",
+        "supplier_ledger": "EXPECTED_AND_PRESENT",
+        "financial_account": "EXPECTED_AND_PRESENT",
+        "account_movement": "EXPECTED_AND_PRESENT",
+        "cash_ledger": "EXPECTED_AND_PRESENT",
+        "status_transition": "EXPECTED_AND_PRESENT",
+        "audit": "EXPECTED_AND_PRESENT",
+        "print": "EXPECTED_AND_PRESENT",
+        "sync": "EXPECTED_AND_PRESENT",
+        "reversal_available": "EXPECTED_AND_PRESENT",
+        "atomic_db_boundary": "EXPECTED_AND_PRESENT",
+        "known_gaps": [
+            "P3-GAP-005"
+        ]
+    },
+    "FLOW-011": {
+        "flow_id": "FLOW-011",
+        "flow_name": "Post-GRN Supplier Payment Disbursal",
+        "flow_family": "PROCUREMENT",
+        "primary_entity": "ENTITY-030",
+        "primary_mutations": [
+            "MUTATION-049"
+        ],
+        "stock": "NOT_APPLICABLE",
+        "inventory_ledger": "NOT_APPLICABLE",
+        "customer_balance": "NOT_APPLICABLE",
+        "customer_ledger": "NOT_APPLICABLE",
+        "supplier_balance": "EXPECTED_AND_PRESENT",
+        "supplier_ledger": "EXPECTED_AND_PRESENT",
+        "financial_account": "EXPECTED_AND_PRESENT",
+        "account_movement": "EXPECTED_AND_PRESENT",
+        "cash_ledger": "EXPECTED_AND_PRESENT",
+        "status_transition": "EXPECTED_AND_PRESENT",
+        "audit": "EXPECTED_AND_PRESENT",
+        "print": "EXPECTED_AND_PRESENT",
+        "sync": "EXPECTED_AND_PRESENT",
+        "reversal_available": "EXPECTED_AND_PRESENT",
+        "atomic_db_boundary": "EXPECTED_AND_PRESENT",
+        "known_gaps": [
+            "P3-GAP-007"
+        ]
+    },
+    "FLOW-012": {
+        "flow_id": "FLOW-012",
+        "flow_name": "Sale Return with Restocking & Cash/Bank Refund",
+        "flow_family": "REVERSAL",
+        "primary_entity": "ENTITY-022",
+        "primary_mutations": [
+            "MUTATION-033",
+            "MUTATION-034"
+        ],
+        "stock": "EXPECTED_AND_PRESENT",
+        "inventory_ledger": "EXPECTED_AND_PRESENT",
+        "customer_balance": "NOT_APPLICABLE",
+        "customer_ledger": "NOT_APPLICABLE",
+        "supplier_balance": "NOT_APPLICABLE",
+        "supplier_ledger": "NOT_APPLICABLE",
+        "financial_account": "EXPECTED_AND_PRESENT",
+        "account_movement": "EXPECTED_AND_PRESENT",
+        "cash_ledger": "EXPECTED_AND_PRESENT",
+        "status_transition": "EXPECTED_AND_PRESENT",
+        "audit": "EXPECTED_AND_PRESENT",
+        "print": "EXPECTED_AND_PRESENT",
+        "sync": "EXPECTED_AND_PRESENT",
+        "reversal_available": "EXPECTED_AND_PRESENT",
+        "atomic_db_boundary": "EXPECTED_AND_PRESENT",
+        "known_gaps": [
+            "P3-GAP-008"
+        ]
+    },
+    "FLOW-013": {
+        "flow_id": "FLOW-013",
+        "flow_name": "Sale Return with Customer Store Credit / Khata Adjustment",
+        "flow_family": "REVERSAL",
+        "primary_entity": "ENTITY-022",
+        "primary_mutations": [
+            "MUTATION-033",
+            "MUTATION-034"
+        ],
+        "stock": "EXPECTED_AND_PRESENT",
+        "inventory_ledger": "EXPECTED_AND_PRESENT",
+        "customer_balance": "EXPECTED_AND_PRESENT",
+        "customer_ledger": "EXPECTED_AND_PRESENT",
+        "supplier_balance": "NOT_APPLICABLE",
+        "supplier_ledger": "NOT_APPLICABLE",
+        "financial_account": "NOT_APPLICABLE",
+        "account_movement": "NOT_APPLICABLE",
+        "cash_ledger": "NOT_APPLICABLE",
+        "status_transition": "EXPECTED_AND_PRESENT",
+        "audit": "EXPECTED_AND_PRESENT",
+        "print": "EXPECTED_AND_PRESENT",
+        "sync": "EXPECTED_AND_PRESENT",
+        "reversal_available": "EXPECTED_AND_PRESENT",
+        "atomic_db_boundary": "EXPECTED_AND_PRESENT",
+        "known_gaps": []
+    },
+    "FLOW-014": {
+        "flow_id": "FLOW-014",
+        "flow_name": "Sale Cancellation & Automatic Multi-Module Rollback",
+        "flow_family": "REVERSAL",
+        "primary_entity": "ENTITY-020",
+        "primary_mutations": [
+            "MUTATION-031"
+        ],
+        "stock": "EXPECTED_AND_PRESENT",
+        "inventory_ledger": "EXPECTED_AND_PRESENT",
+        "customer_balance": "EXPECTED_AND_PRESENT",
+        "customer_ledger": "EXPECTED_AND_PRESENT",
+        "supplier_balance": "NOT_APPLICABLE",
+        "supplier_ledger": "NOT_APPLICABLE",
+        "financial_account": "EXPECTED_AND_PRESENT",
+        "account_movement": "EXPECTED_AND_PRESENT",
+        "cash_ledger": "EXPECTED_AND_PRESENT",
+        "status_transition": "EXPECTED_AND_PRESENT",
+        "audit": "EXPECTED_AND_PRESENT",
+        "print": "EXPECTED_AND_PRESENT",
+        "sync": "EXPECTED_AND_PRESENT",
+        "reversal_available": "EXPECTED_AND_PRESENT",
+        "atomic_db_boundary": "EXPECTED_AND_PRESENT",
+        "known_gaps": []
+    },
+    "FLOW-015": {
+        "flow_id": "FLOW-015",
+        "flow_name": "Customer Payment Reversal",
+        "flow_family": "REVERSAL",
+        "primary_entity": "ENTITY-026",
+        "primary_mutations": [
+            "MUTATION-042"
+        ],
+        "stock": "NOT_APPLICABLE",
+        "inventory_ledger": "NOT_APPLICABLE",
+        "customer_balance": "EXPECTED_AND_PRESENT",
+        "customer_ledger": "EXPECTED_AND_PRESENT",
+        "supplier_balance": "NOT_APPLICABLE",
+        "supplier_ledger": "NOT_APPLICABLE",
+        "financial_account": "EXPECTED_AND_PRESENT",
+        "account_movement": "EXPECTED_AND_PRESENT",
+        "cash_ledger": "EXPECTED_AND_PRESENT",
+        "status_transition": "EXPECTED_AND_PRESENT",
+        "audit": "EXPECTED_AND_PRESENT",
+        "print": "EXPECTED_AND_PRESENT",
+        "sync": "EXPECTED_AND_PRESENT",
+        "reversal_available": "EXPECTED_AND_PRESENT",
+        "atomic_db_boundary": "EXPECTED_AND_PRESENT",
+        "known_gaps": []
+    },
+    "FLOW-016": {
+        "flow_id": "FLOW-016",
+        "flow_name": "Purchase Cancellation & Stock/AP Reversion",
+        "flow_family": "REVERSAL",
+        "primary_entity": "ENTITY-028",
+        "primary_mutations": [
+            "MUTATION-047"
+        ],
+        "stock": "EXPECTED_AND_PRESENT",
+        "inventory_ledger": "EXPECTED_AND_PRESENT",
+        "customer_balance": "NOT_APPLICABLE",
+        "customer_ledger": "NOT_APPLICABLE",
+        "supplier_balance": "EXPECTED_AND_PRESENT",
+        "supplier_ledger": "EXPECTED_AND_PRESENT",
+        "financial_account": "EXPECTED_AND_PRESENT",
+        "account_movement": "EXPECTED_AND_PRESENT",
+        "cash_ledger": "EXPECTED_AND_PRESENT",
+        "status_transition": "EXPECTED_AND_PRESENT",
+        "audit": "EXPECTED_AND_PRESENT",
+        "print": "EXPECTED_AND_PRESENT",
+        "sync": "EXPECTED_AND_PRESENT",
+        "reversal_available": "EXPECTED_AND_PRESENT",
+        "atomic_db_boundary": "EXPECTED_AND_PRESENT",
+        "known_gaps": [
+            "P3-GAP-009"
+        ]
+    },
+    "FLOW-017": {
+        "flow_id": "FLOW-017",
+        "flow_name": "Operating Expense Void & Account Restoration",
+        "flow_family": "REVERSAL",
+        "primary_entity": "ENTITY-031",
+        "primary_mutations": [
+            "MUTATION-059"
+        ],
+        "stock": "NOT_APPLICABLE",
+        "inventory_ledger": "NOT_APPLICABLE",
+        "customer_balance": "NOT_APPLICABLE",
+        "customer_ledger": "NOT_APPLICABLE",
+        "supplier_balance": "NOT_APPLICABLE",
+        "supplier_ledger": "NOT_APPLICABLE",
+        "financial_account": "EXPECTED_AND_PRESENT",
+        "account_movement": "EXPECTED_AND_PRESENT",
+        "cash_ledger": "EXPECTED_AND_PRESENT",
+        "status_transition": "EXPECTED_AND_PRESENT",
+        "audit": "EXPECTED_AND_PRESENT",
+        "print": "EXPECTED_AND_PRESENT",
+        "sync": "EXPECTED_AND_PRESENT",
+        "reversal_available": "EXPECTED_AND_PRESENT",
+        "atomic_db_boundary": "EXPECTED_AND_PRESENT",
+        "known_gaps": []
+    },
+    "FLOW-018": {
+        "flow_id": "FLOW-018",
+        "flow_name": "Inter-Account Fund Transfer Reversal",
+        "flow_family": "REVERSAL",
+        "primary_entity": "ENTITY-036",
+        "primary_mutations": [
+            "MUTATION-065"
+        ],
+        "stock": "NOT_APPLICABLE",
+        "inventory_ledger": "NOT_APPLICABLE",
+        "customer_balance": "NOT_APPLICABLE",
+        "customer_ledger": "NOT_APPLICABLE",
+        "supplier_balance": "NOT_APPLICABLE",
+        "supplier_ledger": "NOT_APPLICABLE",
+        "financial_account": "EXPECTED_AND_PRESENT",
+        "account_movement": "EXPECTED_AND_PRESENT",
+        "cash_ledger": "NOT_APPLICABLE",
+        "status_transition": "EXPECTED_AND_PRESENT",
+        "audit": "EXPECTED_AND_PRESENT",
+        "print": "EXPECTED_AND_PRESENT",
+        "sync": "EXPECTED_AND_PRESENT",
+        "reversal_available": "EXPECTED_AND_PRESENT",
+        "atomic_db_boundary": "EXPECTED_AND_PRESENT",
+        "known_gaps": [
+            "P3-GAP-010"
+        ]
+    },
+    "FLOW-019": {
+        "flow_id": "FLOW-019",
+        "flow_name": "Manual Inventory Stock Adjustment",
+        "flow_family": "SUPPORTING",
+        "primary_entity": "ENTITY-018",
+        "primary_mutations": [
+            "MUTATION-027"
+        ],
+        "stock": "EXPECTED_AND_PRESENT",
+        "inventory_ledger": "EXPECTED_AND_PRESENT",
+        "customer_balance": "NOT_APPLICABLE",
+        "customer_ledger": "NOT_APPLICABLE",
+        "supplier_balance": "NOT_APPLICABLE",
+        "supplier_ledger": "NOT_APPLICABLE",
+        "financial_account": "NOT_APPLICABLE",
+        "account_movement": "NOT_APPLICABLE",
+        "cash_ledger": "NOT_APPLICABLE",
+        "status_transition": "EXPECTED_AND_PRESENT",
+        "audit": "EXPECTED_AND_PRESENT",
+        "print": "EXPECTED_AND_PRESENT",
+        "sync": "EXPECTED_AND_PRESENT",
+        "reversal_available": "EXPECTED_AND_PRESENT",
+        "atomic_db_boundary": "EXPECTED_AND_PRESENT",
+        "known_gaps": [
+            "P3-GAP-011"
+        ]
+    },
+    "FLOW-020": {
+        "flow_id": "FLOW-020",
+        "flow_name": "Inter-Branch Stock Transfer",
+        "flow_family": "SUPPORTING",
+        "primary_entity": "ENTITY-018",
+        "primary_mutations": [
+            "MUTATION-028"
+        ],
+        "stock": "EXPECTED_AND_PRESENT",
+        "inventory_ledger": "EXPECTED_AND_PRESENT",
+        "customer_balance": "NOT_APPLICABLE",
+        "customer_ledger": "NOT_APPLICABLE",
+        "supplier_balance": "NOT_APPLICABLE",
+        "supplier_ledger": "NOT_APPLICABLE",
+        "financial_account": "NOT_APPLICABLE",
+        "account_movement": "NOT_APPLICABLE",
+        "cash_ledger": "NOT_APPLICABLE",
+        "status_transition": "EXPECTED_AND_PRESENT",
+        "audit": "EXPECTED_AND_PRESENT",
+        "print": "EXPECTED_AND_PRESENT",
+        "sync": "EXPECTED_AND_PRESENT",
+        "reversal_available": "EXPECTED_AND_PRESENT",
+        "atomic_db_boundary": "EXPECTED_AND_PRESENT",
+        "known_gaps": [
+            "P3-GAP-012"
+        ]
+    },
+    "FLOW-021": {
+        "flow_id": "FLOW-021",
+        "flow_name": "Financial Account Direct Capital Injection",
+        "flow_family": "SUPPORTING",
+        "primary_entity": "ENTITY-034",
+        "primary_mutations": [
+            "MUTATION-063"
+        ],
+        "stock": "NOT_APPLICABLE",
+        "inventory_ledger": "NOT_APPLICABLE",
+        "customer_balance": "NOT_APPLICABLE",
+        "customer_ledger": "NOT_APPLICABLE",
+        "supplier_balance": "NOT_APPLICABLE",
+        "supplier_ledger": "NOT_APPLICABLE",
+        "financial_account": "EXPECTED_AND_PRESENT",
+        "account_movement": "EXPECTED_AND_PRESENT",
+        "cash_ledger": "NOT_APPLICABLE",
+        "status_transition": "EXPECTED_AND_PRESENT",
+        "audit": "EXPECTED_AND_PRESENT",
+        "print": "EXPECTED_AND_PRESENT",
+        "sync": "EXPECTED_AND_PRESENT",
+        "reversal_available": "EXPECTED_AND_PRESENT",
+        "atomic_db_boundary": "EXPECTED_AND_PRESENT",
+        "known_gaps": []
+    },
+    "FLOW-022": {
+        "flow_id": "FLOW-022",
+        "flow_name": "Financial Account Direct Capital Drawing",
+        "flow_family": "SUPPORTING",
+        "primary_entity": "ENTITY-034",
+        "primary_mutations": [
+            "MUTATION-064"
+        ],
+        "stock": "NOT_APPLICABLE",
+        "inventory_ledger": "NOT_APPLICABLE",
+        "customer_balance": "NOT_APPLICABLE",
+        "customer_ledger": "NOT_APPLICABLE",
+        "supplier_balance": "NOT_APPLICABLE",
+        "supplier_ledger": "NOT_APPLICABLE",
+        "financial_account": "EXPECTED_AND_PRESENT",
+        "account_movement": "EXPECTED_AND_PRESENT",
+        "cash_ledger": "NOT_APPLICABLE",
+        "status_transition": "EXPECTED_AND_PRESENT",
+        "audit": "EXPECTED_AND_PRESENT",
+        "print": "EXPECTED_AND_PRESENT",
+        "sync": "EXPECTED_AND_PRESENT",
+        "reversal_available": "EXPECTED_AND_PRESENT",
+        "atomic_db_boundary": "EXPECTED_AND_PRESENT",
+        "known_gaps": []
+    },
+    "FLOW-023": {
+        "flow_id": "FLOW-023",
+        "flow_name": "Direct Operating Expense Disbursal",
+        "flow_family": "SUPPORTING",
+        "primary_entity": "ENTITY-031",
+        "primary_mutations": [
+            "MUTATION-056"
+        ],
+        "stock": "NOT_APPLICABLE",
+        "inventory_ledger": "NOT_APPLICABLE",
+        "customer_balance": "NOT_APPLICABLE",
+        "customer_ledger": "NOT_APPLICABLE",
+        "supplier_balance": "NOT_APPLICABLE",
+        "supplier_ledger": "NOT_APPLICABLE",
+        "financial_account": "EXPECTED_AND_PRESENT",
+        "account_movement": "EXPECTED_AND_PRESENT",
+        "cash_ledger": "EXPECTED_AND_PRESENT",
+        "status_transition": "EXPECTED_AND_PRESENT",
+        "audit": "EXPECTED_AND_PRESENT",
+        "print": "EXPECTED_AND_PRESENT",
+        "sync": "EXPECTED_AND_PRESENT",
+        "reversal_available": "EXPECTED_AND_PRESENT",
+        "atomic_db_boundary": "EXPECTED_AND_PRESENT",
+        "known_gaps": [
+            "P3-GAP-013"
+        ]
+    }
+}

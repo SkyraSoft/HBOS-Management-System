@@ -84,6 +84,22 @@ return [
             ]) : [],
         ],
 
+        'isolated_uat' => [
+            'driver' => 'mariadb',
+            'host' => env('UAT_DB_HOST', '127.0.0.1'),
+            'port' => env('UAT_DB_PORT', '3306'),
+            'database' => env('UAT_DB_DATABASE', ''),
+            'username' => env('UAT_DB_USERNAME', 'hbos_uat_user'),
+            'password' => env('UAT_DB_PASSWORD', ''),
+            'unix_socket' => env('UAT_DB_SOCKET', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => true,
+            'engine' => null,
+        ],
+
         'pgsql' => [
             'driver' => 'pgsql',
             'url' => env('DB_URL'),

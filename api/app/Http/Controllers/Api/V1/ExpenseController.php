@@ -55,7 +55,7 @@ class ExpenseController extends Controller
         $request->validate([
             'category_id' => 'nullable|integer',
             'category' => 'nullable|string|max:255',
-            'financial_account_id' => 'nullable|integer',
+            'financial_account_id' => 'required|integer',
             'amount' => 'required|numeric|min:0.01',
             'date' => 'required|date',
             'description' => 'nullable|string|max:500',

@@ -1,0 +1,65 @@
+{
+    "DEP-001": {
+        "dependency_id": "DEP-001",
+        "blocking_gap": "GAP-013",
+        "dependent_gap": "GAP-003",
+        "reason": "Normalized financial account allocation architecture in GAP-013 establishes the core AccountMovement ledger patterns needed by multi-tender split sales.",
+        "dependency_type": "SHARED_REMEDIATION",
+        "implementation_consequence": "Implement GAP-013 account models before finalizing sale_payments account foreign keys.",
+        "test_consequence": "Split tender tests depend on valid financial account fixtures."
+    },
+    "DEP-002": {
+        "dependency_id": "DEP-002",
+        "blocking_gap": "GAP-013",
+        "dependent_gap": "GAP-004",
+        "reason": "Stock adjustment financial ledger integration requires designated Inventory Valuation account structure established under financial account foundations in Wave 1.",
+        "dependency_type": "DATA_MODEL_PREREQUISITE",
+        "implementation_consequence": "GAP-013 core ledger models in Wave 1 must exist before linking adjustment movements in Wave 2.",
+        "test_consequence": "Adjustment valuation tests require financial account seeders."
+    },
+    "DEP-003": {
+        "dependency_id": "DEP-003",
+        "blocking_gap": "GAP-013",
+        "dependent_gap": "GAP-012",
+        "reason": "Supplier payment reversal debits/credits financial accounts using the clean AccountMovement architecture defined in GAP-013.",
+        "dependency_type": "SERVICE_PREREQUISITE",
+        "implementation_consequence": "Reversal service depends on FinancialAccountService movement rollback methods.",
+        "test_consequence": "Supplier payment reversal tests verify account balance restore."
+    },
+    "DEP-004": {
+        "dependency_id": "DEP-004",
+        "blocking_gap": "GAP-001",
+        "dependent_gap": "GAP-021",
+        "reason": "Thermal and A4 receipt print formatting depends on the complete line item snapshot schema established in GAP-001.",
+        "dependency_type": "SCHEMA_PREREQUISITE",
+        "implementation_consequence": "Update printerService template after adding barcode/sku columns to sale_items.",
+        "test_consequence": "Print tests verify snapshot rendering."
+    },
+    "DEP-005": {
+        "dependency_id": "DEP-005",
+        "blocking_gap": "GAP-003",
+        "dependent_gap": "GAP-021",
+        "reason": "Thermal receipt print templates must format split cash/card lines based on sale_payments breakdown.",
+        "dependency_type": "UI_PREREQUISITE",
+        "implementation_consequence": "Format receipt tender lines from sale_payments table.",
+        "test_consequence": "Print receipt tests check split tender breakdown."
+    },
+    "DEP-006": {
+        "dependency_id": "DEP-006",
+        "blocking_gap": "GAP-019",
+        "dependent_gap": "GAP-009",
+        "reason": "Idempotency key middleware and deduplication infrastructure created in GAP-019 is shared by payment reversal handlers in GAP-009.",
+        "dependency_type": "SHARED_REMEDIATION",
+        "implementation_consequence": "Shared Idempotency trait applied to both refund settlement and payment reversal.",
+        "test_consequence": "Concurrency tests share test utilities."
+    },
+    "DEP-007": {
+        "dependency_id": "DEP-007",
+        "blocking_gap": "GAP-012",
+        "dependent_gap": "GAP-011",
+        "reason": "Supplier return debit note workflow coordinates AP balance reductions with supplier payment reversal ledgers.",
+        "dependency_type": "SHARED_REMEDIATION",
+        "implementation_consequence": "Supplier balance calculation methods shared between returns and payment reversals.",
+        "test_consequence": "Supplier balance reconciliation tests both flows together."
+    }
+}

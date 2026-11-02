@@ -1,0 +1,50 @@
+{
+    "TEMPID-001": {
+        "mapping_id": "TEMPID-001",
+        "entity": "ENTITY-019",
+        "temp_id_format": "UUID_V4 (e.g. 550e8400-e29b-41d4-a716-446655440000)",
+        "collision_risk": "NEGLIGIBLE_CRYPTOGRAPHIC_UUID",
+        "device_uniqueness": "SCOPED_BY_CLIENT_UUID_AND_DEVICE_ID",
+        "mapping_to_server_id": "SERVER_ID_RETURNED_IN_BULK_SYNC_RESPONSE",
+        "child_reference_remapping": "SALE_ITEMS_TIED_TO_SALE_UUID_IN_CLIENT_PAYLOAD",
+        "queue_dependency_update": "AUTOMATIC_CASCADE_UPON_BULK_RESPONSE",
+        "local_store_update": "LOCAL_SALES_RECORD_UPDATED_WITH_SERVER_ID_AND_SYNCED_FLAG",
+        "print_document_behavior": "PRINTS_CLIENT_INVOICE_NUMBER_LOCALLY_PRE_REPLAY",
+        "failure_recovery": "RETAINS_UUID_FOR_SAFE_IDEMPOTENT_RETRY",
+        "evidence": "Frontend/src/services/offlinePosEngine.js, api/app/Services/BulkSyncService.php:57-64",
+        "gap": "N/A",
+        "certification_status": "CERTIFIED_SAFE_BY_IMPLEMENTATION"
+    },
+    "TEMPID-002": {
+        "mapping_id": "TEMPID-002",
+        "entity": "ENTITY-025",
+        "temp_id_format": "UUID_V4",
+        "collision_risk": "NEGLIGIBLE_CRYPTOGRAPHIC_UUID",
+        "device_uniqueness": "SCOPED_BY_CLIENT_UUID",
+        "mapping_to_server_id": "SERVER_ID_RETURNED_IN_BULK_SYNC_RESPONSE",
+        "child_reference_remapping": "KHATA_TRANSACTIONS_CREATED_ON_SERVER_WITH_RETURNED_ID",
+        "queue_dependency_update": "OUTBOX_ENTRY_MARKED_SYNCED",
+        "local_store_update": "LOCAL_PAYMENT_MARKED_SYNCED",
+        "print_document_behavior": "PRINTS_PAYMENT_RECEIPT_WITH_CLIENT_UUID",
+        "failure_recovery": "RETAINS_UUID_FOR_SAFE_IDEMPOTENT_RETRY",
+        "evidence": "Frontend/src/sync/SyncCoordinator.js, api/app/Services/BulkSyncService.php:77-84",
+        "gap": "N/A",
+        "certification_status": "CERTIFIED_SAFE_BY_IMPLEMENTATION"
+    },
+    "TEMPID-003": {
+        "mapping_id": "TEMPID-003",
+        "entity": "ENTITY-029",
+        "temp_id_format": "UUID_V4",
+        "collision_risk": "NEGLIGIBLE_CRYPTOGRAPHIC_UUID",
+        "device_uniqueness": "SCOPED_BY_CLIENT_UUID",
+        "mapping_to_server_id": "SERVER_ID_RETURNED_IN_BULK_SYNC_RESPONSE",
+        "child_reference_remapping": "ACCOUNT_MOVEMENTS_CREATED_ON_SERVER",
+        "queue_dependency_update": "OUTBOX_ENTRY_MARKED_SYNCED",
+        "local_store_update": "LOCAL_EXPENSE_MARKED_SYNCED",
+        "print_document_behavior": "PRINTS_VOUCHER_WITH_CLIENT_UUID",
+        "failure_recovery": "RETAINS_UUID_FOR_SAFE_IDEMPOTENT_RETRY",
+        "evidence": "api/app/Services/BulkSyncService.php:109-115",
+        "gap": "N/A",
+        "certification_status": "CERTIFIED_SAFE_BY_IMPLEMENTATION"
+    }
+}

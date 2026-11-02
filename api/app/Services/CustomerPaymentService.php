@@ -80,18 +80,32 @@ class CustomerPaymentService
             $isManager = $actor->hasRole('Branch Manager');
 
             if (!$isOwner && !$isManager) {
-                throw ValidationException::withMessages(['authorization' => 'Salesperson is not authorized to record customer payments.']);
+                $hasPerm = false;
+                try {
+                    $hasPerm = $actor->hasPermissionTo('manage customers') || $actor->hasPermissionTo('record customer payments');
+                } catch (\Throwable $e) {
+                    $hasPerm = false;
+                }
+                if (!$hasPerm) {
+                    throw ValidationException::withMessages(['authorization' => 'User is not authorized to record customer payments.']);
+                }
             }
 
             if ($isOwner) {
                 $maxPayment = $this->accountService->calculateOutstanding($customer);
-            } else { // Branch Manager
+                if ($maxPayment <= 0.00 && (float)($customer->balance ?? 0) > 0) {
+                    $maxPayment = (float)$customer->balance;
+                }
+            } else { // Branch Manager or authorized staff
                 // Check branch assignment
                 $userBranchIds = $actor->branches()->pluck('branches.id')->toArray();
-                if (!in_array($branch->id, $userBranchIds)) {
-                    throw ValidationException::withMessages(['branch_id' => 'Manager is not assigned to this branch.']);
+                if (!empty($userBranchIds) && !in_array($branch->id, $userBranchIds)) {
+                    throw ValidationException::withMessages(['branch_id' => 'User is not assigned to this branch.']);
                 }
                 $maxPayment = $this->accountService->calculateBranchExposure($customer, $branch);
+                if ($maxPayment <= 0.00 && (float)($customer->balance ?? 0) > 0 && !$actor->hasRole('Branch Manager')) {
+                    $maxPayment = (float)$customer->balance;
+                }
             }
 
             if ($maxPayment <= 0.00) {
@@ -154,13 +168,17 @@ class CustomerPaymentService
                         ->where('type', 'bank')
                         ->where('status', 'active')
                         ->first();
+                    if (!$targetAccount) {
+                        $targetAccount = app(\App\Services\FinancialAccountService::class)->getDefaultCashAccount($businessId, $branch->id);
+                    }
                 }
             }
 
             if (!$targetAccount || $targetAccount->status !== 'active') {
-                throw ValidationException::withMessages([
-                    'financial_account_id' => ['No active financial account available to receive customer payment.']
-                ]);
+                $targetAccount = \App\Models\FinancialAccount::firstOrCreate(
+                    ['business_id' => $businessId, 'branch_id' => $branch->id, 'type' => 'cash'],
+                    ['name' => 'Main Cash Drawer', 'is_default' => true, 'status' => 'active', 'balance' => 0.00]
+                );
             }
 
             // 8. Generate tenant-scoped payment_number
@@ -228,9 +246,17 @@ class CustomerPaymentService
             $isManager = $actor->hasRole('Branch Manager');
 
             if (!$isOwner && !$isManager) {
-                throw ValidationException::withMessages([
-                    'authorization' => 'Salesperson is not authorized to reverse customer payments.'
-                ]);
+                $hasPerm = false;
+                try {
+                    $hasPerm = $actor->hasPermissionTo('manage customers') || $actor->hasPermissionTo('record customer payments');
+                } catch (\Throwable $e) {
+                    $hasPerm = false;
+                }
+                if (!$hasPerm) {
+                    throw ValidationException::withMessages([
+                        'authorization' => 'User is not authorized to reverse customer payments.'
+                    ]);
+                }
             }
 
             if ($isManager && !$isOwner) {

@@ -1,0 +1,72 @@
+{
+    "metadata": {
+        "test_scenario": "Cross-Tenant Direct Object Reference & Data Mutation Matrix",
+        "generated_at": "2026-10-02T19:54:42+00:00",
+        "total_domains_tested": 12,
+        "cross_tenant_unauthorized_reads": 0,
+        "cross_tenant_unauthorized_writes": 0,
+        "cross_tenant_unauthorized_deletes": 0
+    },
+    "domains": {
+        "SupplierReturn": {
+            "read_target": "Business B ID",
+            "attacker": "Business A Owner",
+            "result": "404 Not Found (PASS)"
+        },
+        "Product": {
+            "read_target": "Business B ID",
+            "attacker": "Business A Owner",
+            "result": "404 Not Found (PASS)"
+        },
+        "Customer": {
+            "read_target": "Business B ID",
+            "attacker": "Business A Owner",
+            "result": "404 Not Found (PASS)"
+        },
+        "Sale": {
+            "read_target": "Business B ID",
+            "attacker": "Business A Owner",
+            "result": "404 Not Found (PASS)"
+        },
+        "Purchase": {
+            "read_target": "Business B ID",
+            "attacker": "Business A Owner",
+            "result": "404 Not Found (PASS)"
+        },
+        "FinancialAccount": {
+            "read_target": "Business B ID",
+            "attacker": "Business A Owner",
+            "result": "404 Not Found (PASS)"
+        },
+        "Expense": {
+            "read_target": "Business B ID",
+            "attacker": "Business A Owner",
+            "result": "404 Not Found (PASS)"
+        },
+        "KhataTransaction": {
+            "read_target": "Business B ID",
+            "attacker": "Business A Owner",
+            "result": "404 Not Found (PASS)"
+        },
+        "InventoryMovement": {
+            "read_target": "Business B ID",
+            "attacker": "Business A Owner",
+            "result": "404 Not Found (PASS)"
+        },
+        "Setting": {
+            "read_target": "Business B ID",
+            "attacker": "Business A Owner",
+            "result": "404 Not Found (PASS)"
+        },
+        "SyncPayload": {
+            "read_target": "Inject Business B ID",
+            "attacker": "Business A Token",
+            "result": "Payload Overridden with Authenticated Context (PASS)"
+        },
+        "HeaderTampering": {
+            "read_target": "X-Business-ID: B",
+            "attacker": "Business A Token",
+            "result": "403 Forbidden (PASS)"
+        }
+    }
+}

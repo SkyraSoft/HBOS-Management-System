@@ -1,0 +1,352 @@
+{
+    "P3-GAP-001": {
+        "gap_id": "P3-GAP-001",
+        "flow_ids": [
+            "FLOW-001",
+            "FLOW-005"
+        ],
+        "steps": [
+            4,
+            5
+        ],
+        "title": "Sale Line Items Lack Barcode / SKU Point-in-Time Snapshot",
+        "current_behavior": "When a sale item is created, only product_id, quantity, unit_price, subtotal, and cost_price are stored. The barcode and SKU are resolved at render time via products relationship.",
+        "broken_handoff": "Product Master -> Sale Items Historical Snapshot",
+        "evidence": "api/database/migrations/2024_01_01_000018_create_sale_items_table.php, api/app/Services/SaleService.php:104",
+        "p1_cross_reference": "P1-GAP-011",
+        "p2_cross_reference": "P2-GAP-006",
+        "business_impact": "If a product barcode or SKU changes in product master, past printed invoices and reprint historical records show altered or missing barcodes.",
+        "financial_impact": "None directly on totals; impacts audit and inventory dispute resolution.",
+        "inventory_impact": "Prevents precise reverse-lookup of serialized/barcoded units from historical sale item lines.",
+        "customer_supplier_impact": "Customer invoice reprints may diverge from original printed receipt.",
+        "later_validation_phase": "PHASE_5_UI_UX",
+        "remediation_phase": "PHASE_9_REMEDIATION",
+        "status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "P3-GAP-002": {
+        "gap_id": "P3-GAP-002",
+        "flow_ids": [
+            "FLOW-003",
+            "FLOW-004"
+        ],
+        "steps": [
+            6
+        ],
+        "title": "Changing Customer on Posted Sale Creates Khata Receivable Discrepancy",
+        "current_behavior": "When an existing sale is edited via PUT /api/v1/sales/{id} and customer_id is modified, the sale table customer_id updates, but the previous customer Khata transaction is not credited and the new customer Khata is not debited.",
+        "broken_handoff": "Sale Mutation -> Khata Transaction Reversal & Re-posting",
+        "evidence": "api/app/Http/Controllers/Api/V1/SaleController.php@update, api/app/Services/SaleService.php@updateSale",
+        "p1_cross_reference": "P1-GAP-003",
+        "p2_cross_reference": "P2-GAP-006",
+        "business_impact": "Original customer statement permanently reflects unpaid charge; new customer statement omits the debt.",
+        "financial_impact": "Severe AR ledger divergence between customers.balance cache and individual customer statement transaction totals.",
+        "inventory_impact": "None.",
+        "customer_supplier_impact": "Customer billed for items purchased by another customer.",
+        "later_validation_phase": "PHASE_4_CALCULATIONS_ACCOUNTING",
+        "remediation_phase": "PHASE_9_REMEDIATION",
+        "status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "P3-GAP-003": {
+        "gap_id": "P3-GAP-003",
+        "flow_ids": [
+            "FLOW-005"
+        ],
+        "steps": [
+            2,
+            4,
+            6
+        ],
+        "title": "Split-Tender Payment Method Allocations Lack Dedicated Breakdown Table",
+        "current_behavior": "When a sale is paid via multiple tenders (e.g., 50% Cash, 50% Bank Card), the sale header records payment_method=\"split\" and paid_amount=total, but does not store child payment ledger rows linking exact tender amounts to specific financial accounts.",
+        "broken_handoff": "POS Multi-Tender Modal -> Financial Account Breakdown Persistence",
+        "evidence": "api/database/migrations/2024_01_01_000017_create_sales_table.php, src/views/pos/PaymentModal.vue:240",
+        "p1_cross_reference": "P1-GAP-005",
+        "p2_cross_reference": "P2-GAP-006",
+        "business_impact": "Inability to reconcile end-of-day bank settlement vs cash drawer totals for split payments; receipt reprints cannot show tender breakdown.",
+        "financial_impact": "Cash register drawer and bank account reconciliation reports cannot independently verify split payment allocations.",
+        "inventory_impact": "None.",
+        "customer_supplier_impact": "Customer cannot obtain itemized payment receipt showing split card vs cash amounts.",
+        "later_validation_phase": "PHASE_4_CALCULATIONS_ACCOUNTING",
+        "remediation_phase": "PHASE_9_REMEDIATION",
+        "status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "P3-GAP-004": {
+        "gap_id": "P3-GAP-004",
+        "flow_ids": [
+            "FLOW-007"
+        ],
+        "steps": [
+            3,
+            4
+        ],
+        "title": "Offline POS Batch Sync Relies on Client Timestamps Without Clock Drift Guard",
+        "current_behavior": "When offline sales sync via POST /api/v1/sync/sales, created_at is adopted directly from client device without bounds check against server time or sequence ordering.",
+        "broken_handoff": "Offline Device Sync Engine -> Server Inventory Movement Chronology",
+        "evidence": "api/app/Http/Controllers/Api/V1/SyncController.php@syncSales, src/services/syncEngine.js:188",
+        "p1_cross_reference": "P1-GAP-009",
+        "p2_cross_reference": "P2-GAP-017",
+        "business_impact": "Device with incorrect local clock injects transactions out of chronological order into inventory and cash movements.",
+        "financial_impact": "Shift cash reporting and daily revenue aggregates become distorted across calendar days.",
+        "inventory_impact": "Negative inventory movement timestamps may precede stock receipt timestamp in stock ledger.",
+        "customer_supplier_impact": "Invoices generated offline appear with incorrect dates.",
+        "later_validation_phase": "PHASE_7_OFFLINE_SYNC",
+        "remediation_phase": "PHASE_9_REMEDIATION",
+        "status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "P3-GAP-005": {
+        "gap_id": "P3-GAP-005",
+        "flow_ids": [
+            "FLOW-008",
+            "FLOW-009",
+            "FLOW-010"
+        ],
+        "steps": [
+            4,
+            5
+        ],
+        "title": "Purchase Freight & Landed Cost Not Allocated to Product Cost Moving Average",
+        "current_behavior": "Purchase bills support shipping_cost / freight fields on the purchase header, but InventoryService calculates unit cost strictly from purchase_items.unit_cost, omitting freight allocation.",
+        "broken_handoff": "Purchase Bill Header -> Product Moving Average Unit Cost Calculation",
+        "evidence": "api/app/Services/PurchaseService.php@receivePurchase, api/app/Services/InventoryService.php@updateProductCostPrice",
+        "p1_cross_reference": "P1-GAP-006",
+        "p2_cross_reference": "P2-GAP-009",
+        "business_impact": "Gross profit margins are artificially overstated because COGS excludes inbound shipping and freight costs.",
+        "financial_impact": "Distorts inventory valuation on balance sheet and miscalculates FIFO/weighted average COGS in P&L.",
+        "inventory_impact": "Product cost price remains lower than true landed acquisition cost.",
+        "customer_supplier_impact": "Pricing decisions made on underestimated unit cost leading to eroded retail margins.",
+        "later_validation_phase": "PHASE_4_CALCULATIONS_ACCOUNTING",
+        "remediation_phase": "PHASE_9_REMEDIATION",
+        "status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "P3-GAP-006": {
+        "gap_id": "P3-GAP-006",
+        "flow_ids": [
+            "FLOW-016"
+        ],
+        "steps": [
+            3,
+            4
+        ],
+        "title": "Missing Dedicated Supplier Return / Debit Note Workflow",
+        "current_behavior": "HBOS does not have a dedicated Purchase Return / Supplier Return entity. To return damaged or excess stock to a supplier, operators must manually adjust inventory down and enter a separate AP adjustment.",
+        "broken_handoff": "Procurement Correction -> Supplier Debit Note & Stock Decrement Orchestration",
+        "evidence": "api/routes/api.php (Absence of /api/v1/purchase-returns), api/app/Models/Purchase.php",
+        "p1_cross_reference": "P1-GAP-007",
+        "p2_cross_reference": "P2-GAP-010",
+        "business_impact": "Increases operator error when returning defective stock to vendors; no formal debit note document generated.",
+        "financial_impact": "Supplier payable balances frequently fail to reflect returned merchandise credits.",
+        "inventory_impact": "Manual stock adjustments used as workaround obscure procurement defect rate analytics.",
+        "customer_supplier_impact": "Disputes with suppliers over uncredited returned goods.",
+        "later_validation_phase": "PHASE_4_CALCULATIONS_ACCOUNTING",
+        "remediation_phase": "PHASE_9_REMEDIATION",
+        "status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "P3-GAP-007": {
+        "gap_id": "P3-GAP-007",
+        "flow_ids": [
+            "FLOW-011"
+        ],
+        "steps": [
+            5
+        ],
+        "title": "Supplier Payment Mutation Lacks Dedicated Automated Reversal Path",
+        "current_behavior": "When a supplier payment is recorded via POST /api/v1/suppliers/{id}/payments, no DELETE /reversal endpoint exists to automatically restore supplier AP and credit the financial account simultaneously.",
+        "broken_handoff": "Supplier Payment Ledger -> Automated Reversal Compensation Chain",
+        "evidence": "api/app/Http/Controllers/Api/V1/SupplierController.php@addPayment",
+        "p1_cross_reference": "P1-GAP-008",
+        "p2_cross_reference": "P2-GAP-015",
+        "business_impact": "Erroneous supplier payment entries require manual dual-sided database/account corrections.",
+        "financial_impact": "Risk of one-sided corrections causing bank account and supplier ledger mismatch.",
+        "inventory_impact": "None.",
+        "customer_supplier_impact": "Supplier ledger shows incorrect payment history upon erroneous disbursement.",
+        "later_validation_phase": "PHASE_4_CALCULATIONS_ACCOUNTING",
+        "remediation_phase": "PHASE_9_REMEDIATION",
+        "status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "P3-GAP-008": {
+        "gap_id": "P3-GAP-008",
+        "flow_ids": [
+            "FLOW-012",
+            "FLOW-013"
+        ],
+        "steps": [
+            4,
+            5
+        ],
+        "title": "Sale Return Lacks Granular Restock Condition / Scrap Decision Flag",
+        "current_behavior": "Sale returns automatically increment branch stock unconditionally for all returned line items. There is no flag to mark an item as damaged/scrap to prevent re-entering sellable inventory.",
+        "broken_handoff": "Sale Return Modal -> Damaged Goods Quarantine / Scrap Ledger",
+        "evidence": "api/app/Services/SaleReturnService.php@processReturn, api/database/migrations/2024_01_01_000021_create_sale_returns_table.php",
+        "p1_cross_reference": "P1-GAP-010",
+        "p2_cross_reference": "P2-GAP-008",
+        "business_impact": "Damaged/expired goods returned by customers are immediately added back into sellable inventory on hand.",
+        "financial_impact": "Overvalues sellable inventory assets by carrying unsellable damaged goods at full cost price.",
+        "inventory_impact": "Inventory on hand includes broken units; POS operators can sell defective items to subsequent customers.",
+        "customer_supplier_impact": "Subsequent customers may receive returned damaged merchandise.",
+        "later_validation_phase": "PHASE_5_UI_UX",
+        "remediation_phase": "PHASE_9_REMEDIATION",
+        "status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "P3-GAP-009": {
+        "gap_id": "P3-GAP-009",
+        "flow_ids": [
+            "FLOW-016"
+        ],
+        "steps": [
+            3,
+            4
+        ],
+        "title": "Purchase Cancellation Does Not Verify If Received Stock Has Already Been Sold",
+        "current_behavior": "Canceling a received purchase attempts to decrement branch inventory by the full purchase quantity. If items have already been sold via POS, quantity_on_hand is forced into negative numbers without pre-check.",
+        "broken_handoff": "Purchase Cancellation Service -> Current Available Stock Guard",
+        "evidence": "api/app/Services/PurchaseService.php@cancelPurchase",
+        "p1_cross_reference": "P1-GAP-006",
+        "p2_cross_reference": "P2-GAP-014",
+        "business_impact": "Canceling historical purchases corrupts stock balances into negative quantities.",
+        "financial_impact": "AP reversed while revenue from sold stock remains recognized, distorting matching principle.",
+        "inventory_impact": "Creates negative quantity_on_hand records in branch_inventories.",
+        "customer_supplier_impact": "Supplier AP canceled for inventory that was consumed in retail operations.",
+        "later_validation_phase": "PHASE_4_CALCULATIONS_ACCOUNTING",
+        "remediation_phase": "PHASE_9_REMEDIATION",
+        "status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "P3-GAP-010": {
+        "gap_id": "P3-GAP-010",
+        "flow_ids": [
+            "FLOW-014"
+        ],
+        "steps": [
+            5,
+            6
+        ],
+        "title": "Sale Cancellation Incomplete Reversal When Sale Is Partially Paid by Bank Transfer",
+        "current_behavior": "Sale cancellation successfully reverses cash register inflow and customer Khata, but if the sale was settled via bank transfer, the corresponding financial account balance is not decremented automatically.",
+        "broken_handoff": "Sale Cancellation Service -> Financial Account Reversal Movement",
+        "evidence": "api/app/Services/SaleService.php@cancelSale, api/app/Http/Controllers/Api/V1/SaleController.php@cancel",
+        "p1_cross_reference": "P1-GAP-005",
+        "p2_cross_reference": "P2-GAP-006",
+        "business_impact": "Bank balance in system remains inflated after a bank-paid sale is voided.",
+        "financial_impact": "Financial account balance does not match real-world bank statement upon sale void.",
+        "inventory_impact": "None (stock is restored correctly).",
+        "customer_supplier_impact": "Customer was refunded in reality but financial account ledger shows funds retained.",
+        "later_validation_phase": "PHASE_4_CALCULATIONS_ACCOUNTING",
+        "remediation_phase": "PHASE_9_REMEDIATION",
+        "status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "P3-GAP-011": {
+        "gap_id": "P3-GAP-011",
+        "flow_ids": [
+            "FLOW-019"
+        ],
+        "steps": [
+            3,
+            4
+        ],
+        "title": "Stock Quantity Adjustment Bypasses Financial Inventory Valuation Adjustment Account",
+        "current_behavior": "Stock adjustments increment or decrement branch inventory and record an inventory_movement, but do not post a corresponding debit/credit entry to a Financial Inventory Shrinkage / Gain account.",
+        "broken_handoff": "Inventory Adjustment -> Financial Account P&L Shrinkage Write-off",
+        "evidence": "api/app/Services/StockAdjustmentService.php@adjustStock",
+        "p1_cross_reference": "P1-GAP-002",
+        "p2_cross_reference": "P2-GAP-004",
+        "business_impact": "Physical inventory write-offs do not automatically reflect in financial P&L statements.",
+        "financial_impact": "Inventory shrinkage expenses must be manually entered as separate expense records.",
+        "inventory_impact": "Physical stock aligns with records, but financial asset balance drifts from ledger.",
+        "customer_supplier_impact": "None.",
+        "later_validation_phase": "PHASE_4_CALCULATIONS_ACCOUNTING",
+        "remediation_phase": "PHASE_9_REMEDIATION",
+        "status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "P3-GAP-012": {
+        "gap_id": "P3-GAP-012",
+        "flow_ids": [
+            "FLOW-020"
+        ],
+        "steps": [
+            3,
+            4
+        ],
+        "title": "Inter-Branch Stock Transfer Operates Synchronously Without In-Transit Clearing State",
+        "current_behavior": "Inter-branch transfer immediately decrements sending branch stock and increments destination branch stock in a single transaction without a pending/in-transit intermediate status.",
+        "broken_handoff": "Sending Branch Dispatch -> Transit Verification -> Receiving Branch Receipt",
+        "evidence": "api/app/Services/TransferService.php@createTransfer",
+        "p1_cross_reference": "P1-GAP-013",
+        "p2_cross_reference": "P2-GAP-005",
+        "business_impact": "Goods in transit are immediately visible as available to sell at destination branch before physical arrival; loss during transit cannot be tracked.",
+        "financial_impact": "Branch-level inventory valuation immediately shifts before custody transfer is confirmed.",
+        "inventory_impact": "Destination branch POS operators can sell stock that is still physically in transit on a delivery truck.",
+        "customer_supplier_impact": "POS orders at receiving branch fail fulfillment if truck has not arrived.",
+        "later_validation_phase": "PHASE_6_ROLES_STATE",
+        "remediation_phase": "PHASE_9_REMEDIATION",
+        "status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "P3-GAP-013": {
+        "gap_id": "P3-GAP-013",
+        "flow_ids": [
+            "FLOW-023"
+        ],
+        "steps": [
+            3,
+            4
+        ],
+        "title": "Operating Expense Entry Allows Null Financial Account Creating Unallocated Cash Drift",
+        "current_behavior": "Expense creation allows financial_account_id to be null when marked as cash without enforcing an active cash register session link.",
+        "broken_handoff": "Expense Disbursal -> Cash Register / Financial Account Exact Allocation",
+        "evidence": "api/app/Http/Requests/ExpenseStoreRequest.php:32, api/app/Services/ExpenseService.php:54",
+        "p1_cross_reference": "P1-GAP-012",
+        "p2_cross_reference": "P2-GAP-016",
+        "business_impact": "Expense records exist with no deduction from either cash drawer or bank accounts.",
+        "financial_impact": "P&L reflects expense but balance sheet cash/bank accounts remain overvalued.",
+        "inventory_impact": "None.",
+        "customer_supplier_impact": "None.",
+        "later_validation_phase": "PHASE_4_CALCULATIONS_ACCOUNTING",
+        "remediation_phase": "PHASE_9_REMEDIATION",
+        "status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "P3-GAP-014": {
+        "gap_id": "P3-GAP-014",
+        "flow_ids": [
+            "FLOW-001",
+            "FLOW-003"
+        ],
+        "steps": [
+            1,
+            4
+        ],
+        "title": "Customer Wholesale Price Tier Bypass During POS Offline Cart Add",
+        "current_behavior": "When POS operates offline, wholesale customer pricing tier is not applied dynamically if customer is attached after cart lines are already added.",
+        "broken_handoff": "Customer Profile Wholesale Flag -> Offline Reactive Cart Price Recalculation",
+        "evidence": "src/views/pos/PosView.vue:410, src/stores/cartStore.js:82",
+        "p1_cross_reference": "P1-GAP-001",
+        "p2_cross_reference": "P2-GAP-001",
+        "business_impact": "Wholesale customers charged retail price on offline transactions unless operator manually overrides each line.",
+        "financial_impact": "Customer overcharged; requires credit adjustments and manual invoice corrections.",
+        "inventory_impact": "None.",
+        "customer_supplier_impact": "Wholesale clients dispute incorrect retail pricing on offline sales.",
+        "later_validation_phase": "PHASE_5_UI_UX",
+        "remediation_phase": "PHASE_9_REMEDIATION",
+        "status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "P3-GAP-015": {
+        "gap_id": "P3-GAP-015",
+        "flow_ids": [
+            "FLOW-015"
+        ],
+        "steps": [
+            3,
+            4
+        ],
+        "title": "Customer Payment Reversal Does Not Guard Against Secondary Over-Collection Reversal",
+        "current_behavior": "Reversing a customer payment restores the customer balance, but does not verify if subsequent payments or credits have already settled the original sale invoice.",
+        "broken_handoff": "Customer Payment Reversal -> Invoice Level Due Amount Re-allocation",
+        "evidence": "api/app/Services/KhataService.php@reversePayment",
+        "p1_cross_reference": "P1-GAP-003",
+        "p2_cross_reference": "P2-GAP-007",
+        "business_impact": "Customer balance increases, but individual sale payment statuses may remain marked as PAID.",
+        "financial_impact": "Discrepancy between customer total balance and sum of unpaid sales invoices.",
+        "inventory_impact": "None.",
+        "customer_supplier_impact": "Customer account shows debt while specific invoices indicate settled.",
+        "later_validation_phase": "PHASE_4_CALCULATIONS_ACCOUNTING",
+        "remediation_phase": "PHASE_9_REMEDIATION",
+        "status": "CERTIFIED_WITH_KNOWN_GAP"
+    }
+}

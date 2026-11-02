@@ -54,11 +54,38 @@ export const useCustomersStore = defineStore('customers', () => {
     }
   }
 
+  const recordCustomerPayment = async (customerId, paymentData) => {
+    try {
+      const response = await api.post(`/customers/${customerId}/payments`, paymentData)
+      await fetchCustomers()
+      return { success: true, data: response.data }
+    } catch (error) {
+      console.error('Error recording customer payment:', error)
+      let msg = error.response?.data?.error || error.response?.data?.message || 'Failed to record payment'
+      if (error.response?.data?.errors) {
+        msg = Object.values(error.response.data.errors).flat().join(' ');
+      }
+      return { success: false, message: msg }
+    }
+  }
+
+  const fetchCustomerLedger = async (customerId) => {
+    try {
+      const response = await api.get(`/customers/${customerId}/ledger`)
+      return { success: true, data: response.data }
+    } catch (error) {
+      console.error('Error fetching customer ledger:', error)
+      return { success: false, message: error.response?.data?.message || 'Failed to fetch customer ledger' }
+    }
+  }
+
   return {
     customers,
     fetchCustomers,
     addCustomer,
     updateCustomer,
-    deleteCustomer
+    deleteCustomer,
+    recordCustomerPayment,
+    fetchCustomerLedger
   }
 })

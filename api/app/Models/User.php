@@ -32,12 +32,21 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'phone',
+        'employee_code',
+        'job_title',
+        'hire_date',
         'password',
         'business_id',
         'branch_id',
         'role',
+        'salary_amount',
+        'payment_cycle',
+        'next_payment_date',
         'is_active',
-        'last_login_at'
+        'last_login_at',
+        'invitation_token',
+        'invitation_expires_at'
     ];
 
     /**
@@ -48,6 +57,7 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'invitation_token'
     ];
 
     /**
@@ -61,6 +71,10 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_active' => 'boolean',
+            'salary_amount' => 'decimal:2',
+            'hire_date' => 'date',
+            'next_payment_date' => 'date',
+            'invitation_expires_at' => 'datetime',
         ];
     }
 

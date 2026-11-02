@@ -27,7 +27,7 @@ class SaleController extends Controller
         }
 
         $businessId = $user ? $this->saleService->getActiveBusinessId($user) : null;
-        $query = Sale::with(['items.product', 'customer', 'branch', 'user', 'returns'])
+        $query = Sale::with(['items.product', 'customer', 'branch', 'user', 'returns', 'payments'])
             ->orderBy('created_at', 'desc');
 
         if ($businessId) {
@@ -67,18 +67,48 @@ class SaleController extends Controller
             'total' => 'nullable|numeric',
             'paid_amount' => 'nullable|numeric',
             'payment_method' => 'nullable|string',
+            'payments' => 'nullable|array',
+            'payments.*.payment_method' => 'required_with:payments|string',
+            'payments.*.amount' => 'required_with:payments|numeric|min:0.01',
+            'payments.*.financial_account_id' => 'nullable|integer',
+            'payments.*.reference_number' => 'nullable|string',
+            'override_authorization' => 'nullable|array',
+            'override_authorization.approver_email' => 'required_with:override_authorization|string',
+            'override_authorization.approver_password' => 'required_with:override_authorization|string',
+            'override_authorization.reason' => 'nullable|string|max:500',
             'notes' => 'nullable|string',
             'idempotency_key' => 'nullable|string|max:100',
             'items' => 'required|array|min:1',
             'items.*.product_id' => 'required',
-            'items.*.quantity' => 'required|integer|min:1',
+            'items.*.quantity' => ['required', 'numeric', 'min:0.001', 'regex:/^\d+(\.\d{1,3})?$/'],
+            'items.*.unit' => 'nullable|string|max:50',
             'items.*.unit_price' => 'nullable|numeric',
             'items.*.discount' => 'nullable|numeric',
+            'items.*.pricing_mode' => 'nullable|string|in:RETAIL,WHOLESALE,retail,wholesale',
+            'pricing_mode' => 'nullable|string|in:RETAIL,WHOLESALE,retail,wholesale',
         ]);
 
         try {
             $sale = $this->saleService->createSale($request->all(), $user);
-            return response()->json($sale, 201);
+
+            app(\App\Services\AuditService::class)->log(
+                logName: 'sale',
+                event: 'created',
+                description: "Sale {$sale->invoice_number} created by {$user->name}. Total: {$sale->total}",
+                subject: $sale,
+                properties: [
+                    'sale_id' => $sale->id,
+                    'invoice_number' => $sale->invoice_number,
+                    'total' => (float) $sale->total,
+                    'payment_method' => $sale->payment_method,
+                    'role_at_action' => $user->roles->first()?->name,
+                ],
+                branchId: $sale->branch_id,
+                businessId: (int) $sale->business_id,
+                causer: $user
+            );
+
+            return response()->json($sale->load('payments'), 201);
         } catch (ValidationException $e) {
             return response()->json(['errors' => $e->errors(), 'message' => $e->getMessage()], 422);
         } catch (Exception $e) {
@@ -94,7 +124,7 @@ class SaleController extends Controller
         }
 
         $businessId = $user ? $this->saleService->getActiveBusinessId($user) : null;
-        $query = Sale::with(['items.product', 'customer', 'branch', 'user', 'returns.items.product', 'cancelledBy']);
+        $query = Sale::with(['items.product', 'customer', 'branch', 'user', 'returns.items.product', 'payments', 'cancelledBy']);
         
         if ($businessId) {
             $query->where('business_id', $businessId);
@@ -197,11 +227,19 @@ class SaleController extends Controller
             'idempotency_key' => 'nullable|string|max:100',
             'items' => 'required|array|min:1',
             'items.*.sale_item_id' => 'required|integer',
-            'items.*.quantity' => 'required|integer|min:1',
+            'items.*.quantity' => ['required', 'numeric', 'min:0.001', 'regex:/^\d+(\.\d{1,3})?$/'],
+            'items.*.is_restockable' => 'nullable|boolean',
+            'items.*.return_reason' => 'nullable|string|max:255',
         ]);
 
         $businessId = $this->saleService->getActiveBusinessId($user);
         $sale = Sale::where('business_id', $businessId)->findOrFail($id);
+
+        if ($user && !$user->hasRole('Business Owner')) {
+            if ($user->branch_id && intval($sale->branch_id) !== intval($user->branch_id)) {
+                return response()->json(['message' => 'Unauthorized access to sale record for return.'], 403);
+            }
+        }
 
         try {
             $saleReturn = $this->saleService->processReturn($sale, $request->items, $request->reason, $user, $request->idempotency_key);

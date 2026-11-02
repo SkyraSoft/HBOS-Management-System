@@ -18,6 +18,10 @@ class SupplierPayment extends Model
         'amount',
         'date',
         'payment_method',
+        'status',
+        'reversed_at',
+        'reversed_by',
+        'reversal_reason',
         'notes',
         'idempotency_key',
     ];
@@ -25,6 +29,7 @@ class SupplierPayment extends Model
     protected $casts = [
         'amount' => 'decimal:2',
         'date' => 'date',
+        'reversed_at' => 'datetime',
     ];
 
     public function supplier()

@@ -24,7 +24,30 @@
       </div>
     </div>
 
-    <!-- STATS OVERVIEW CARDS -->
+    <!-- NAVIGATION TABS -->
+    <div class="d-flex align-items-center gap-2 mb-4 border-bottom pb-2">
+      <button 
+        type="button" 
+        class="btn btn-sm px-3 py-2 rounded-3 fw-semibold"
+        :class="activeTab === 'users' ? 'btn-dark' : 'btn-light text-muted'"
+        @click="activeTab = 'users'"
+      >
+        <i class="bi bi-people-fill me-1"></i> User Directory
+      </button>
+      <button 
+        v-if="isOwner"
+        type="button" 
+        class="btn btn-sm px-3 py-2 rounded-3 fw-semibold"
+        :class="activeTab === 'audit' ? 'btn-dark' : 'btn-light text-muted'"
+        @click="selectAuditTab"
+      >
+        <i class="bi bi-shield-check me-1"></i> Audit Trail
+      </button>
+    </div>
+
+    <!-- USERS TAB CONTENT -->
+    <div v-if="activeTab === 'users'">
+      <!-- STATS OVERVIEW CARDS -->
     <div class="row g-3 mb-4">
       <div class="col-6 col-md-3">
         <div class="card shadow-sm border-0 rounded-4 p-3 bg-white h-100">
@@ -97,8 +120,10 @@
             <select class="form-select form-select-sm compact-filter-select" v-model="filterRole">
               <option value="">All Roles</option>
               <option value="Business Owner">Business Owner</option>
-              <option value="Branch Manager">Branch Manager</option>
+              <option value="Branch Manager" v-if="branches.length > 1">Branch Manager</option>
               <option value="Salesperson">Salesperson</option>
+              <option value="Accountant">Accountant</option>
+              <option value="Inventory Manager">Inventory Manager</option>
             </select>
 
             <select class="form-select form-select-sm compact-filter-select" v-model="filterStatus">
@@ -116,7 +141,7 @@
               <tr>
                 <th>User Profile</th>
                 <th>Assigned Role</th>
-                <th>Branch</th>
+                <th v-if="branches.length > 1">Branch</th>
                 <th>Status</th>
                 <th>Created</th>
                 <th style="text-align: right;">Actions</th>
@@ -142,7 +167,7 @@
                     {{ user.role }}
                   </span>
                 </td>
-                <td>
+                <td v-if="branches.length > 1">
                   <span class="text-dark small fw-medium">{{ user.branch_name || 'All Branches' }}</span>
                 </td>
                 <td>
@@ -177,7 +202,7 @@
               </tr>
 
               <tr v-if="filteredUsers.length === 0">
-                <td colspan="6" class="text-center py-5">
+                <td :colspan="branches.length > 1 ? 6 : 5" class="text-center py-5">
                   <div class="empty-state">
                     <i class="bi bi-people fs-1 text-muted opacity-50 mb-2 d-block"></i>
                     <h6 class="fw-bold text-dark">No users found</h6>
@@ -187,6 +212,178 @@
               </tr>
             </tbody>
           </table>
+        </div>
+      </div>
+    </div>
+    </div> <!-- END USERS TAB CONTENT -->
+
+    <!-- AUDIT TRAIL TAB CONTENT (OWNER ONLY) -->
+    <div v-else-if="activeTab === 'audit' && isOwner" class="card shadow-sm border-0 rounded-4 overflow-hidden bg-white mb-4">
+      <div class="card-body p-4">
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+          <div>
+            <h5 class="fw-bold text-dark m-0 d-flex align-items-center gap-2">
+              <i class="bi bi-shield-check text-primary"></i> System Activity &amp; Audit Trail
+            </h5>
+            <p class="text-muted small m-0">Immutable, tenant-scoped audit records for security, auth, and governance events.</p>
+          </div>
+          <button 
+            class="btn btn-outline-secondary btn-sm px-3 rounded-3 d-flex align-items-center gap-1.5"
+            @click="loadAuditLogs(auditPagination.current_page)"
+            :disabled="isAuditLoading"
+            type="button"
+          >
+            <i class="bi bi-arrow-clockwise" :class="{ 'spin-icon': isAuditLoading }"></i>
+            Refresh Logs
+          </button>
+        </div>
+
+        <!-- AUDIT FILTERS -->
+        <div class="row g-2 mb-4 align-items-center bg-light p-3 rounded-3">
+          <div class="col-md-3">
+            <div class="input-group input-group-sm">
+              <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+              <input 
+                type="text" 
+                class="form-control border-start-0" 
+                placeholder="Search description or event..." 
+                v-model="auditFilters.search"
+                @keyup.enter="loadAuditLogs(1)"
+              />
+            </div>
+          </div>
+          <div class="col-md-2">
+            <select class="form-select form-select-sm" v-model="auditFilters.event" @change="loadAuditLogs(1)">
+              <option value="">All Events</option>
+              <option value="auth_login">Login (auth_login)</option>
+              <option value="auth_logout">Logout (auth_logout)</option>
+              <option value="branch_created">Branch Created</option>
+              <option value="branch_updated">Branch Updated</option>
+              <option value="branch_status_changed">Branch Status</option>
+              <option value="user_invited">User Invited</option>
+              <option value="user_activated_deactivated">User Status</option>
+              <option value="user_role_changed">Role Changed</option>
+              <option value="branch_membership_changed">Branch Membership</option>
+              <option value="business_profile_changed">Business Profile</option>
+            </select>
+          </div>
+          <div class="col-md-2">
+            <input 
+              type="date" 
+              class="form-control form-control-sm" 
+              v-model="auditFilters.from_date" 
+              @change="loadAuditLogs(1)"
+              title="From Date" 
+            />
+          </div>
+          <div class="col-md-2">
+            <input 
+              type="date" 
+              class="form-control form-control-sm" 
+              v-model="auditFilters.to_date" 
+              @change="loadAuditLogs(1)"
+              title="To Date" 
+            />
+          </div>
+          <div class="col-md-3 d-flex gap-2">
+            <button class="btn btn-primary btn-sm flex-fill rounded-2" @click="loadAuditLogs(1)" type="button">
+              Apply Filter
+            </button>
+            <button class="btn btn-outline-secondary btn-sm rounded-2" @click="resetAuditFilters" type="button" title="Reset Filters">
+              Reset
+            </button>
+          </div>
+        </div>
+
+        <!-- LOADING STATE -->
+        <div v-if="isAuditLoading" class="text-center py-5">
+          <div class="spinner-border text-primary spinner-border-sm me-2" role="status"></div>
+          <span class="text-muted small">Loading immutable audit logs...</span>
+        </div>
+
+        <!-- ERROR STATE -->
+        <div v-else-if="auditError" class="alert alert-danger rounded-3 p-3 text-center my-3">
+          <i class="bi bi-exclamation-octagon-fill me-2"></i> {{ auditError }}
+        </div>
+
+        <!-- AUDIT TABLE -->
+        <div v-else class="table-responsive">
+          <table class="table table-hover align-middle mb-0 custom-users-table">
+            <thead>
+              <tr>
+                <th>Timestamp</th>
+                <th>Event / Action</th>
+                <th>Actor</th>
+                <th v-if="branches.length > 1">Branch</th>
+                <th>Subject / Target</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="log in auditLogs" :key="log.id">
+                <td class="text-nowrap small text-muted">
+                  {{ new Date(log.created_at).toLocaleString() }}
+                </td>
+                <td>
+                  <span class="badge rounded-pill bg-light text-dark border px-2.5 py-1.5 font-monospace" style="font-size: 11px;">
+                    {{ log.event || log.log_name || 'action' }}
+                  </span>
+                </td>
+                <td>
+                  <div class="fw-semibold text-dark small">{{ log.causer?.name || 'System' }}</div>
+                  <div v-if="log.causer?.email" class="text-muted" style="font-size: 11px;">{{ log.causer.email }}</div>
+                </td>
+                <td v-if="branches.length > 1">
+                  <span class="badge bg-secondary-subtle text-secondary small">
+                    {{ log.branch?.name || (log.branch?.code ? log.branch.code : 'Central / All') }}
+                  </span>
+                </td>
+                <td class="small text-muted">
+                  {{ log.subject_type ? (log.subject_type.split('\\').pop() + (log.subject_id ? ' #' + log.subject_id : '')) : (log.log_name || '-') }}
+                </td>
+                <td class="small text-dark">
+                  {{ log.description || '-' }}
+                </td>
+              </tr>
+              <tr v-if="auditLogs.length === 0">
+                <td :colspan="branches.length > 1 ? 6 : 5" class="text-center py-5">
+                  <div class="empty-state">
+                    <i class="bi bi-shield-x fs-1 text-muted opacity-50 mb-2 d-block"></i>
+                    <h6 class="fw-bold text-dark">No audit records found</h6>
+                    <p class="text-muted small m-0">No recorded governance or activity logs match the selected criteria.</p>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- PAGINATION -->
+        <div v-if="auditPagination.total > 0" class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top flex-wrap gap-2">
+          <div class="text-muted small">
+            Showing {{ ((auditPagination.current_page - 1) * auditPagination.per_page) + 1 }} to {{ Math.min(auditPagination.current_page * auditPagination.per_page, auditPagination.total) }} of {{ auditPagination.total }} logs
+          </div>
+          <div class="d-flex gap-1.5">
+            <button 
+              class="btn btn-sm btn-outline-secondary rounded-2 px-3" 
+              :disabled="auditPagination.current_page <= 1 || isAuditLoading"
+              @click="loadAuditLogs(auditPagination.current_page - 1)"
+              type="button"
+            >
+              Previous
+            </button>
+            <span class="btn btn-sm btn-light border disabled">
+              Page {{ auditPagination.current_page }} of {{ auditPagination.last_page }}
+            </span>
+            <button 
+              class="btn btn-sm btn-outline-secondary rounded-2 px-3" 
+              :disabled="auditPagination.current_page >= auditPagination.last_page || isAuditLoading"
+              @click="loadAuditLogs(auditPagination.current_page + 1)"
+              type="button"
+            >
+              Next
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -201,7 +398,7 @@
             </div>
             <div>
               <h5 class="modal-title fw-bold text-dark m-0">{{ isEditMode ? 'Edit Staff Account' : 'Create Staff User' }}</h5>
-              <p class="text-muted small m-0">{{ isEditMode ? 'Update account details, branch, and role assignment' : 'Set up credentials and assign role permissions' }}</p>
+              <p class="text-muted small m-0">{{ isEditMode ? (branches.length > 1 ? 'Update account details, branch, and role assignment' : 'Update account details and role assignment') : 'Set up credentials and assign role permissions' }}</p>
             </div>
           </div>
           <button class="modal-close-btn" @click="closeUserModal" type="button">
@@ -242,26 +439,32 @@
             </div>
 
             <!-- Branch Assignment -->
-            <div class="col-md-6">
+            <div v-if="branches.length > 1" class="col-md-6">
               <label class="form-label small fw-bold text-dark">Assigned Branch</label>
               <div class="input-group">
                 <span class="input-group-text bg-light border-end-0"><i class="bi bi-shop text-muted"></i></span>
                 <select class="form-select border-start-0" v-model="userForm.branch_id">
-                  <option :value="null">All Branches (Business Wide)</option>
+                  <option :value="null" v-if="!['Salesperson', 'Branch Manager'].includes(userForm.role)">All Branches (Business Wide)</option>
                   <option v-for="b in branches" :key="b.id" :value="b.id">{{ b.name }}</option>
                 </select>
               </div>
             </div>
 
             <!-- Role Assignment -->
-            <div class="col-md-6">
+            <div :class="branches.length > 1 ? 'col-md-6' : 'col-md-12'">
               <label class="form-label small fw-bold text-dark">System Role <span class="text-danger">*</span></label>
               <div class="input-group">
                 <span class="input-group-text bg-light border-end-0"><i class="bi bi-shield-check text-muted"></i></span>
                 <select class="form-select border-start-0" v-model="userForm.role" required>
-                  <option value="Business Owner">Business Owner (Full Business Governance)</option>
-                  <option value="Branch Manager">Branch Manager (Branch Operations)</option>
-                  <option value="Salesperson">Salesperson (POS &amp; Counter Sales)</option>
+                  <option v-if="branches.length > 1" value="Branch Manager">Branch Manager</option>
+                  <option value="Salesperson">Cashier / Salesperson</option>
+                  <!-- Compatibility Role Preservation: Preserve existing role if legacy user is being viewed/edited -->
+                  <option 
+                    v-if="userForm.role && !['Branch Manager', 'Salesperson'].includes(userForm.role)" 
+                    :value="userForm.role"
+                  >
+                    {{ userForm.role }} (Preserved Role)
+                  </option>
                 </select>
               </div>
             </div>
@@ -313,11 +516,26 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted } from 'vue';
+import { ref, reactive, computed, watch, onMounted } from 'vue';
 import { useToast } from 'vue-toastification';
 import api from '../../api';
+import { useAuthStore } from '../../stores/auth';
 
 const toast = useToast();
+const authStore = useAuthStore();
+
+const activeTab = ref('users');
+const isOwner = computed(() => {
+  const r = authStore.user?.role || (authStore.user?.roles && authStore.user.roles[0]?.name);
+  return r === 'Business Owner';
+});
+
+const selectAuditTab = () => {
+  activeTab.value = 'audit';
+  if (auditLogs.value.length === 0) {
+    loadAuditLogs(1);
+  }
+};
 
 const users = ref([]);
 const branches = ref([]);
@@ -325,6 +543,62 @@ const isLoading = ref(false);
 const searchQuery = ref('');
 const filterRole = ref('');
 const filterStatus = ref('');
+
+// --- AUDIT TRAIL STATE & METHODS ---
+const auditLogs = ref([]);
+const isAuditLoading = ref(false);
+const auditError = ref(null);
+const auditPagination = reactive({
+  current_page: 1,
+  last_page: 1,
+  total: 0,
+  per_page: 20
+});
+const auditFilters = reactive({
+  search: '',
+  event: '',
+  from_date: '',
+  to_date: '',
+  branch_id: ''
+});
+
+const loadAuditLogs = async (page = 1) => {
+  if (!isOwner.value) return;
+  isAuditLoading.value = true;
+  auditError.value = null;
+  try {
+    const params = {
+      page,
+      per_page: auditPagination.per_page
+    };
+    if (auditFilters.search) params.search = auditFilters.search;
+    if (auditFilters.event && auditFilters.event !== 'All') params.event = auditFilters.event;
+    if (auditFilters.from_date) params.from_date = auditFilters.from_date;
+    if (auditFilters.to_date) params.to_date = auditFilters.to_date;
+    if (auditFilters.branch_id) params.branch_id = auditFilters.branch_id;
+
+    const res = await api.get('/audit-logs', { params });
+    const responseData = res.data;
+    auditLogs.value = responseData.data || [];
+    auditPagination.current_page = responseData.current_page || 1;
+    auditPagination.last_page = responseData.last_page || 1;
+    auditPagination.total = responseData.total || 0;
+  } catch (err) {
+    console.error('Failed to load audit logs:', err);
+    auditError.value = err.response?.data?.message || 'Failed to load audit logs. Please try again.';
+  } finally {
+    isAuditLoading.value = false;
+  }
+};
+
+const resetAuditFilters = () => {
+  auditFilters.search = '';
+  auditFilters.event = '';
+  auditFilters.from_date = '';
+  auditFilters.to_date = '';
+  auditFilters.branch_id = '';
+  loadAuditLogs(1);
+};
 
 const showUserModal = ref(false);
 const isEditMode = ref(false);
@@ -350,7 +624,7 @@ const loadData = async () => {
       ...u,
       status: u.is_active ? 'Active' : 'Inactive'
     }));
-    branches.value = branchesRes.data || [];
+    branches.value = branchesRes.data?.data || (Array.isArray(branchesRes.data) ? branchesRes.data : []);
   } catch (e) {
     console.error('Failed to load user accounts:', e);
     toast.error('Failed to load user accounts.');
@@ -384,6 +658,13 @@ const filteredUsers = computed(() => {
   });
 });
 
+// Watch role changes to enforce branch selection for Salesperson and Branch Manager
+watch(() => userForm.role, (newRole) => {
+  if (['Salesperson', 'Branch Manager'].includes(newRole) && !userForm.branch_id && branches.value.length > 0) {
+    userForm.branch_id = branches.value[0].id;
+  }
+});
+
 // Modal handlers
 const openAddUserModal = () => {
   isEditMode.value = false;
@@ -403,7 +684,7 @@ const openEditUserModal = (user) => {
   userForm.name = user.name;
   userForm.email = user.email;
   userForm.role = user.role;
-  userForm.branch_id = user.branch_id || null;
+  userForm.branch_id = user.branch_id || (['Salesperson', 'Branch Manager'].includes(user.role) && branches.value.length > 0 ? branches.value[0].id : null);
   userForm.password = '';
   userForm.confirmPassword = '';
   showUserModal.value = true;
@@ -416,6 +697,11 @@ const closeUserModal = () => {
 const saveUser = async () => {
   if (!userForm.name || !userForm.email) {
     toast.error('Please provide a full name and email address.');
+    return;
+  }
+
+  if (['Salesperson', 'Branch Manager'].includes(userForm.role) && !userForm.branch_id) {
+    toast.error(`Please select an assigned branch for ${userForm.role}.`);
     return;
   }
 
@@ -513,6 +799,10 @@ const getRoleClass = (role) => {
       return 'role-manager';
     case 'Salesperson':
       return 'role-cashier';
+    case 'Accountant':
+      return 'role-accountant';
+    case 'Inventory Manager':
+      return 'role-inventory';
     default:
       return 'role-default';
   }
@@ -526,6 +816,10 @@ const getRoleIcon = (role) => {
       return 'bi-briefcase';
     case 'Salesperson':
       return 'bi-person';
+    case 'Accountant':
+      return 'bi-calculator';
+    case 'Inventory Manager':
+      return 'bi-boxes';
     default:
       return 'bi-person';
   }
@@ -781,5 +1075,14 @@ const getStatusClass = (status) => {
 
 .user-modal-body {
   padding: 24px;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.spin-icon {
+  animation: spin 1s linear infinite;
+  display: inline-block;
 }
 </style>

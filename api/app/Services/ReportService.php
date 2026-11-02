@@ -526,6 +526,184 @@ class ReportService
     }
 
     /**
+     * Comprehensive Small-Retail Net Profit Statement (REQ-0027, SRT-GAP-019).
+     *
+     * Gross Goods Sales (SUM subtotal)
+     * - Order Discounts (SUM discount)
+     * + Invoiced Tax (SUM tax)
+     * = Commercial Invoice Sales (SUM total)
+     * - Economic Returns (SUM sale_returns.refund_amount)
+     * = Profit Revenue Basis / Net Commercial Sales
+     * - Net COGS (Gross COGS from sale_items.cost_price snapshot - Restockable Returned COGS)
+     * = Gross Profit
+     * - Operating Expenses (posted expenses in period, excluding voided/capital/transfers/adjustments)
+     * = Operational Net Profit
+     */
+    public function getProfitabilityReport(int $businessId, ?int $branchId, string $from, string $to, ?string $format = null)
+    {
+        // 1. Completed Sales in Date Range
+        $salesQuery = Sale::where('business_id', $businessId)
+            ->where('status', 'completed')
+            ->whereDate('date', '>=', $from)
+            ->whereDate('date', '<=', $to);
+
+        if ($branchId) {
+            $salesQuery->where('branch_id', $branchId);
+        }
+
+        $sales = $salesQuery->get(['id', 'subtotal', 'discount', 'tax', 'total']);
+
+        $grossGoodsSales = '0.00';
+        $discounts = '0.00';
+        $tax = '0.00';
+        $commercialInvoiceSales = '0.00';
+
+        foreach ($sales as $s) {
+            $grossGoodsSales = bcadd($grossGoodsSales, (string) ($s->subtotal ?? '0.00'), 2);
+            $discounts = bcadd($discounts, (string) ($s->discount ?? '0.00'), 2);
+            $tax = bcadd($tax, (string) ($s->tax ?? '0.00'), 2);
+            $commercialInvoiceSales = bcadd($commercialInvoiceSales, (string) ($s->total ?? '0.00'), 2);
+        }
+
+        // 2. Economic Returns in Date Range
+        $returnsQuery = SaleReturn::where('business_id', $businessId)
+            ->whereDate('created_at', '>=', $from)
+            ->whereDate('created_at', '<=', $to);
+
+        if ($branchId) {
+            $returnsQuery->where('branch_id', $branchId);
+        }
+
+        $economicReturns = (string) ($returnsQuery->sum('refund_amount') ?? '0.00');
+        $economicReturns = bcadd($economicReturns, '0.00', 2);
+
+        // 3. Profit Revenue Basis / Net Commercial Sales
+        $netSales = bcsub($commercialInvoiceSales, $economicReturns, 2);
+        if (bccomp($netSales, '0.00', 2) < 0) {
+            $netSales = '0.00';
+        }
+
+        // 4. COGS Calculation from immutable snapshot
+        $saleIds = $sales->pluck('id');
+        $saleItems = SaleItem::whereIn('sale_id', $saleIds)->get(['id', 'sale_id', 'quantity', 'cost_price']);
+
+        $grossCogs = '0.00';
+        $uncostedItemsCount = 0;
+
+        foreach ($saleItems as $item) {
+            if ($item->cost_price === null) {
+                $uncostedItemsCount++;
+            } else {
+                $lineCogs = bcmul((string) $item->quantity, (string) $item->cost_price, 2);
+                $grossCogs = bcadd($grossCogs, $lineCogs, 2);
+            }
+        }
+
+        // Restockable Returned COGS in period
+        $returnIds = $returnsQuery->pluck('id');
+        $returnedCogs = '0.00';
+
+        if ($returnIds->isNotEmpty()) {
+            $returnItems = DB::table('sale_return_items')
+                ->join('sale_items', 'sale_return_items.sale_item_id', '=', 'sale_items.id')
+                ->whereIn('sale_return_items.sale_return_id', $returnIds)
+                ->where('sale_return_items.is_restockable', true)
+                ->select('sale_return_items.quantity', 'sale_items.cost_price')
+                ->get();
+
+            foreach ($returnItems as $ri) {
+                if ($ri->cost_price !== null) {
+                    $reversedLine = bcmul((string) $ri->quantity, (string) $ri->cost_price, 2);
+                    $returnedCogs = bcadd($returnedCogs, $reversedLine, 2);
+                }
+            }
+        }
+
+        $netCogs = bcsub($grossCogs, $returnedCogs, 2);
+        if (bccomp($netCogs, '0.00', 2) < 0) {
+            $netCogs = '0.00';
+        }
+
+        // 5. Gross Profit
+        $grossProfit = bcsub($netSales, $netCogs, 2);
+
+        // 6. Operating Expenses in Date Range
+        $expensesQuery = Expense::where('business_id', $businessId)
+            ->where('status', 'posted')
+            ->whereDate('date', '>=', $from)
+            ->whereDate('date', '<=', $to);
+
+        if ($branchId) {
+            $expensesQuery->where('branch_id', $branchId);
+        }
+
+        $operatingExpenses = (string) ($expensesQuery->sum('amount') ?? '0.00');
+        $operatingExpenses = bcadd($operatingExpenses, '0.00', 2);
+
+        // 7. Net Profit
+        $netProfit = bcsub($grossProfit, $operatingExpenses, 2);
+
+        // 8. Margins
+        $grossMarginPercent = bccomp($netSales, '0.00', 2) > 0
+            ? round(((float) $grossProfit / (float) $netSales) * 100, 2)
+            : 0.00;
+
+        $netMarginPercent = bccomp($netSales, '0.00', 2) > 0
+            ? round(((float) $netProfit / (float) $netSales) * 100, 2)
+            : 0.00;
+
+        $isComplete = ($uncostedItemsCount === 0);
+
+        if (strtolower($format ?? '') === 'csv') {
+            $headers = ['Metric', 'Amount (PKR)'];
+            $rows = [
+                ['Gross Goods Sales', number_format((float) $grossGoodsSales, 2)],
+                ['Discounts', number_format((float) $discounts, 2)],
+                ['Invoiced Tax', number_format((float) $tax, 2)],
+                ['Commercial Invoice Sales', number_format((float) $commercialInvoiceSales, 2)],
+                ['Economic Returns', number_format((float) $economicReturns, 2)],
+                ['Net Commercial Sales (Revenue Basis)', number_format((float) $netSales, 2)],
+                ['Gross COGS', number_format((float) $grossCogs, 2)],
+                ['Returned COGS (Restockable)', number_format((float) $returnedCogs, 2)],
+                ['Net COGS', number_format((float) $netCogs, 2)],
+                ['Gross Profit', number_format((float) $grossProfit, 2)],
+                ['Gross Margin %', $grossMarginPercent . '%'],
+                ['Operating Expenses', number_format((float) $operatingExpenses, 2)],
+                ['Operational Net Profit', number_format((float) $netProfit, 2)],
+                ['Net Margin %', $netMarginPercent . '%'],
+            ];
+            return $this->exportToCsv($headers, $rows, "profitability_statement_{$from}_to_{$to}.csv");
+        }
+
+        return [
+            'period' => [
+                'from' => $from,
+                'to' => $to,
+            ],
+            'gross_goods_sales' => (float) $grossGoodsSales,
+            'discounts' => (float) $discounts,
+            'tax' => (float) $tax,
+            'commercial_invoice_sales' => (float) $commercialInvoiceSales,
+            'economic_returns' => (float) $economicReturns,
+            'net_sales' => (float) $netSales,
+            'profit_revenue_basis' => (float) $netSales,
+            'gross_cogs' => (float) $grossCogs,
+            'returned_cogs' => (float) $returnedCogs,
+            'net_cogs' => (float) $netCogs,
+            'cogs_status' => $isComplete ? 'complete' : 'partial',
+            'is_cogs_complete' => $isComplete,
+            'uncosted_sales_count' => $uncostedItemsCount,
+            'gross_profit' => (float) $grossProfit,
+            'gross_margin_percent' => $grossMarginPercent,
+            'operating_expenses' => (float) $operatingExpenses,
+            'net_profit' => (float) $netProfit,
+            'net_margin_percent' => $netMarginPercent,
+            'tax_liability_mode' => 'OPERATIONAL_INVOICE_SURCHARGE',
+            'accounting_basis' => 'Small-Retail Operational Cash & Inventory Basis (REQ-0027)',
+        ];
+    }
+
+    /**
      * Sanitize cell value to prevent CSV Formula Injection in spreadsheet applications.
      */
     protected function sanitizeCsvCell($value)

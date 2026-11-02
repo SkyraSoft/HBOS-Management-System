@@ -1,0 +1,74 @@
+{
+    "CONF-001": {
+        "conflict_id": "CONF-001",
+        "entity": "ENTITY-017",
+        "conflict_scenario": "Product price or name modified concurrently online while device caches previous master",
+        "detection_strategy": "TIMESTAMP_VERSION_CHECK",
+        "resolution_strategy": "SERVER_WINS",
+        "client_behavior": "OVERWRITES_LOCAL_INDEXEDDB_ON_DELTA_SYNC",
+        "server_behavior": "AUTHORITATIVE_SOURCE_OF_TRUTH",
+        "evidence": "api/app/Services/BulkSyncService.php@getCatalogDelta",
+        "gap": "N/A",
+        "certification_status": "CERTIFIED_SAFE_BY_IMPLEMENTATION"
+    },
+    "CONF-002": {
+        "conflict_id": "CONF-002",
+        "entity": "ENTITY-019",
+        "conflict_scenario": "Offline POS device submits completed sale with client-assigned invoice number",
+        "detection_strategy": "IDEMPOTENCY_KEY_LOOKUP",
+        "resolution_strategy": "APPEND_ONLY_NO_CONFLICT",
+        "client_behavior": "RECEIVES_SERVER_SALE_ID_AND_PURGES_LOCAL_OUTBOX",
+        "server_behavior": "CREATES_IMMUTABLE_SALE_RECORD_AND_LEDGER_ENTRIES",
+        "evidence": "api/app/Services/BulkSyncService.php:49-67",
+        "gap": "N/A",
+        "certification_status": "CERTIFIED_SAFE_BY_IMPLEMENTATION"
+    },
+    "CONF-003": {
+        "conflict_id": "CONF-003",
+        "entity": "ENTITY-023",
+        "conflict_scenario": "Customer balance updated by online payment while offline device processes credit sale",
+        "detection_strategy": "LEDGER_APPEND_RECALCULATION",
+        "resolution_strategy": "LEDGER_APPEND",
+        "client_behavior": "OPTIMISTIC_LOCAL_PROJECTION_UNTIL_NEXT_DELTA_PULL",
+        "server_behavior": "INCREMENTAL_BALANCE_DELTA_ADDITION_ON_SALE_COMMIT",
+        "evidence": "api/app/Services/SaleService.php, api/app/Services/BulkSyncService.php",
+        "gap": "P7-GAP-003",
+        "certification_status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "CONF-004": {
+        "conflict_id": "CONF-004",
+        "entity": "ENTITY-018",
+        "conflict_scenario": "Two offline devices sell the last remaining cached inventory unit simultaneously",
+        "detection_strategy": "POST_FACTO_NEGATIVE_STOCK_DEDUCTION",
+        "resolution_strategy": "APPEND_ONLY_NO_CONFLICT",
+        "client_behavior": "OPTIMISTIC_DEDUCTION_LOCALLY",
+        "server_behavior": "ACCEPTS_REPLAY_AND_ALLOWS_NEGATIVE_OR_DEFICIT_STOCK",
+        "evidence": "api/app/Services/SaleService.php@createSale",
+        "gap": "P7-GAP-002",
+        "certification_status": "CERTIFIED_WITH_KNOWN_GAP"
+    },
+    "CONF-005": {
+        "conflict_id": "CONF-005",
+        "entity": "ENTITY-025",
+        "conflict_scenario": "Khata payment collected offline while another device collects payment for same customer",
+        "detection_strategy": "IDEMPOTENCY_KEY_LOOKUP",
+        "resolution_strategy": "APPEND_ONLY_NO_CONFLICT",
+        "client_behavior": "REDUCES_LOCAL_BALANCE_ESTIMATE",
+        "server_behavior": "INDEPENDENT_PAYMENT_LEDGER_APPEND",
+        "evidence": "api/app/Services/BulkSyncService.php:70-87",
+        "gap": "N/A",
+        "certification_status": "CERTIFIED_SAFE_BY_IMPLEMENTATION"
+    },
+    "CONF-006": {
+        "conflict_id": "CONF-006",
+        "entity": "ENTITY-029",
+        "conflict_scenario": "Petty expense logged offline simultaneously on two counter tablets",
+        "detection_strategy": "IDEMPOTENCY_KEY_LOOKUP",
+        "resolution_strategy": "APPEND_ONLY_NO_CONFLICT",
+        "client_behavior": "LOGS_LOCAL_VOUCHER",
+        "server_behavior": "APPENDS_BOTH_EXPENSES_TO_EXPENSE_LEDGER",
+        "evidence": "api/app/Services/BulkSyncService.php:104-118",
+        "gap": "N/A",
+        "certification_status": "CERTIFIED_SAFE_BY_IMPLEMENTATION"
+    }
+}

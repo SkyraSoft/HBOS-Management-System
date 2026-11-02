@@ -1,0 +1,91 @@
+{
+    "WAVE_1": {
+        "wave_name": "WAVE_1: Foundational Corrections (Schema, Security, Authority, Idempotency & Split Tender)",
+        "foundation_blockers_count": 10,
+        "gaps_addressed": [
+            "GAP-001",
+            "GAP-002",
+            "GAP-003",
+            "GAP-013",
+            "GAP-015",
+            "GAP-016",
+            "GAP-017",
+            "GAP-018",
+            "GAP-019",
+            "GAP-020"
+        ],
+        "migrations": [
+            "MIG-001",
+            "MIG-002",
+            "MIG-003",
+            "MIG-004"
+        ],
+        "data_repairs": [
+            "REPAIR-001",
+            "REPAIR-002",
+            "REPAIR-003",
+            "REPAIR-004"
+        ],
+        "rationale": "Establishes foundational database schema, tenant/branch security boundaries, server authority, and mandatory financial account constraints before higher-level modules execute."
+    },
+    "WAVE_2": {
+        "wave_name": "WAVE_2: Workflow Corrections (Inventory, AR Immutability, Reversals & Ledger Integrity)",
+        "foundation_blockers_count": 0,
+        "gaps_addressed": [
+            "GAP-004",
+            "GAP-006",
+            "GAP-008",
+            "GAP-009",
+            "GAP-010",
+            "GAP-014"
+        ],
+        "migrations": [
+            "MIG-007"
+        ],
+        "data_repairs": [
+            "REPAIR-005"
+        ],
+        "rationale": "Enforces strict ledger immutability on posted sales, prevents inventory deficits during purchase cancellation, and integrates stock adjustment asset accounting."
+    },
+    "WAVE_3": {
+        "wave_name": "WAVE_3: Procurement & Extended Backend (Landed Cost, Inter-Branch, Supplier Returns & Payroll HR)",
+        "foundation_blockers_count": 0,
+        "gaps_addressed": [
+            "GAP-005",
+            "GAP-007",
+            "GAP-011",
+            "GAP-012",
+            "GAP-029"
+        ],
+        "migrations": [
+            "MIG-005",
+            "MIG-006",
+            "MIG-008",
+            "MIG-009"
+        ],
+        "data_repairs": [],
+        "rationale": "Introduces complete Supplier Return debit note workflow, landed cost proration, inter-branch in-transit clearing states, and staff payroll compensation schema."
+    },
+    "WAVE_4": {
+        "wave_name": "WAVE_4: UI, Offline, Sync, Hardware & Extended Fields (Offline POS, Print, Pairing, UI Safety & Master Fields)",
+        "foundation_blockers_count": 0,
+        "gaps_addressed": [
+            "GAP-021",
+            "GAP-022",
+            "GAP-023",
+            "GAP-024",
+            "GAP-025",
+            "GAP-026",
+            "GAP-027",
+            "GAP-028",
+            "GAP-030",
+            "GAP-031"
+        ],
+        "migrations": [
+            "MIG-010",
+            "MIG-011"
+        ],
+        "data_repairs": [],
+        "rationale": "Refines offline POS checkout, fixes print-before-commit sequence, validates LAN pairing IP boundaries, adds destructive confirmation modals, and persists customer secondary phone & monthly budgets."
+    }
+}

@@ -1,0 +1,62 @@
+{
+    "REPAIR-001": {
+        "repair_id": "REPAIR-001",
+        "target_gaps": [
+            "GAP-001"
+        ],
+        "repair_name": "Convenience Backfill for Legacy Sale Item Names/SKUs from Product Master",
+        "strategy": "APPROXIMATE_NON_HISTORICAL_BACKFILL",
+        "script": "php artisan hbos:backfill-sale-item-snapshots",
+        "historical_quality": "APPROXIMATE_NON_HISTORICAL_BACKFILL (Uses current master values as convenience; historical point-in-time state remains unrecoverable)",
+        "claim_transaction_time_accuracy": false,
+        "reconciliation_required": false
+    },
+    "REPAIR-002": {
+        "repair_id": "REPAIR-002",
+        "target_gaps": [
+            "GAP-003"
+        ],
+        "repair_name": "Populate sale_payments Table From Legacy Sales Single Tender",
+        "strategy": "DETERMINISTIC_BACKFILL",
+        "script": "php artisan hbos:backfill-sale-payments",
+        "historical_quality": "DETERMINISTIC_BACKFILL (Constructs 1-to-1 payment record for each existing sale)",
+        "claim_transaction_time_accuracy": false,
+        "reconciliation_required": true
+    },
+    "REPAIR-003": {
+        "repair_id": "REPAIR-003",
+        "target_gaps": [
+            "GAP-013"
+        ],
+        "repair_name": "Allocate Legacy NULL Account Expenses to Unallocated Expense Reconciliation Account",
+        "strategy": "MANUAL_RECONCILIATION_REQUIRED",
+        "script": "php artisan hbos:repair-null-expense-accounts",
+        "historical_quality": "MANUAL_RECONCILIATION_REQUIRED (Links to dedicated UNALLOCATED_HISTORICAL_EXPENSES account to avoid fabricating actual bank/cash source)",
+        "claim_transaction_time_accuracy": false,
+        "reconciliation_required": true
+    },
+    "REPAIR-004": {
+        "repair_id": "REPAIR-004",
+        "target_gaps": [
+            "GAP-014"
+        ],
+        "repair_name": "Reconcile Account Movements for Historical Deleted Expenses Via Compensating Records",
+        "strategy": "COMPENSATING_MOVEMENT_OR_RECONCILIATION",
+        "script": "php artisan hbos:reconcile-financial-movements",
+        "historical_quality": "COMPENSATING_MOVEMENT_OR_RECONCILIATION (Creates compensating reversal movement rather than destructively deleting history)",
+        "claim_transaction_time_accuracy": false,
+        "reconciliation_required": true
+    },
+    "REPAIR-005": {
+        "repair_id": "REPAIR-005",
+        "target_gaps": [
+            "GAP-008"
+        ],
+        "repair_name": "Read-Only Audit & Discrepancy Schedule for Khata Customer Edits",
+        "strategy": "MANUAL_RECONCILIATION_REQUIRED",
+        "script": "php artisan hbos:audit-khata-ledger-discrepancies",
+        "historical_quality": "READ_ONLY_RECONCILIATION_REPORT_FOR_OPERATOR_REVIEW",
+        "claim_transaction_time_accuracy": false,
+        "reconciliation_required": true
+    }
+}

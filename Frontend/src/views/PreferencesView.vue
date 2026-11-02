@@ -9,73 +9,62 @@
 
             <div class="stepper">
 
-
-                <!-- PROFILE -->
-
+                <!-- 1. ACCOUNT -->
                 <div class="step completed">
-
                     <div class="step-marker">
                         <i class="bi bi-check"></i>
                     </div>
-
                     <div class="step-label">
-                        Profile
+                        Account
                     </div>
-
                 </div>
-
 
                 <div class="step-line completed"></div>
 
-
-                <!-- STORE DETAILS -->
-
+                <!-- 2. BUSINESS -->
                 <div class="step completed">
-
                     <div class="step-marker">
                         <i class="bi bi-check"></i>
                     </div>
-
                     <div class="step-label">
-                        Store Details
+                        Business
                     </div>
-
                 </div>
-
 
                 <div class="step-line completed"></div>
 
+                <!-- 3. MAIN STORE -->
+                <div class="step completed">
+                    <div class="step-marker">
+                        <i class="bi bi-check"></i>
+                    </div>
+                    <div class="step-label">
+                        Main Store
+                    </div>
+                </div>
 
-                <!-- PREFERENCES -->
+                <div class="step-line completed"></div>
 
+                <!-- 4. PREFERENCES -->
                 <div class="step active">
-
-                    <div class="step-marker">
-                        3
-                    </div>
-
-                    <div class="step-label">
-                        Preferences
-                    </div>
-
-                </div>
-
-
-                <div class="step-line"></div>
-
-
-                <!-- REVIEW -->
-
-                <div class="step">
-
                     <div class="step-marker">
                         4
                     </div>
+                    <div class="step-label">
+                        Preferences
+                    </div>
+                </div>
 
+                <div class="step-line"></div>
+
+                <!-- 5. REVIEW -->
+                <div class="step">
+                    <div class="step-marker">
+                        5
+                    </div>
                     <div class="step-label">
                         Review
                     </div>
-
                 </div>
 
             </div>
@@ -119,62 +108,34 @@
 
 
                     <!-- CURRENCY -->
-
                     <div class="form-group">
-
                         <label for="currency" class="form-label">
                             Base Currency
                         </label>
-
                         <div class="input-wrapper">
-
-                            <input type="text" id="currency" class="form-control-custom locked-input" value="PKR - Pakistani Rupee" readonly="">
-
+                            <input type="text" id="currency" class="form-control-custom locked-input" :value="form.currency + ' - Local Currency'" readonly="">
                             <i class="bi bi-lock input-lock"></i>
-
                         </div>
-
                         <div class="help-text">
                             Defaulted based on your selected region.
                         </div>
-
                     </div>
 
-
                     <!-- TIMEZONE -->
-
                     <div class="form-group">
-
                         <label for="timezone" class="form-label">
                             Timezone
                         </label>
-
                         <div class="select-wrapper">
-
-                            <select id="timezone" class="form-control-custom">
-
-                                <option selected="">
-                                    PKT (Asia/Karachi)
-                                </option>
-
-                                <option>
-                                    UTC
-                                </option>
-
-                                <option>
-                                    GMT
-                                </option>
-
-                                <option>
-                                    GST (Asia/Dubai)
-                                </option>
-
+                            <select id="timezone" v-model="form.timezone" class="form-control-custom">
+                                <option value="Asia/Karachi">PKT (Asia/Karachi)</option>
+                                <option value="UTC">UTC</option>
+                                <option value="Asia/Dubai">GST (Asia/Dubai)</option>
+                                <option value="America/New_York">EST (America/New_York)</option>
+                                <option value="Europe/London">GMT (Europe/London)</option>
                             </select>
-
                             <i class="bi bi-chevron-down select-arrow"></i>
-
                         </div>
-
                     </div>
 
                 </div>
@@ -346,30 +307,75 @@
                 <button type="button" class="back-button" id="backButton">
 
                     <i class="bi bi-arrow-left"></i>
-
                     Back
-
                 </button>
 
-
-                <button type="button" class="continue-button" id="continueButton">
-
-                    Continue to Review
-
+                <button type="button" class="continue-button" id="continueButton" @click="handleContinue" :disabled="loading">
+                    <span>
+                        {{ loading ? 'Saving...' : 'Continue to Review' }}
+                    </span>
                     <i class="bi bi-arrow-right"></i>
-
                 </button>
 
             </div>
 
-        
 </div>
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import api from '../api';
+import { useToast } from 'vue-toastification';
 
-onMounted(() => {
+const router = useRouter();
+const toast = useToast();
+const loading = ref(false);
+
+const form = reactive({
+  currency: 'PKR',
+  timezone: 'Asia/Karachi',
+  tax_number: '',
+});
+
+const handleBack = () => {
+  router.push('/mainstoresetup');
+};
+
+const handleContinue = async () => {
+  loading.value = true;
+  try {
+    await api.post('/onboarding/step', {
+      step: 4,
+      currency: form.currency,
+      timezone: form.timezone,
+      tax_number: form.tax_number,
+    });
+    router.push('/completereview');
+  } catch (err) {
+    console.error('Failed to save preferences step', err);
+    toast.error(err.response?.data?.message || 'Failed to save business preferences');
+  } finally {
+    loading.value = false;
+  }
+};
+
+onMounted(async () => {
+  try {
+    const res = await api.get('/onboarding/status');
+    const biz = res.data?.business;
+    if (biz) {
+      if (biz.onboarding_status === 'completed') {
+        router.push('/');
+        return;
+      }
+      if (biz.currency) form.currency = biz.currency;
+      if (biz.timezone) form.timezone = biz.timezone;
+      if (biz.tax_number) form.tax_number = biz.tax_number;
+    }
+  } catch (err) {
+    console.warn('Could not fetch onboarding status', err);
+  }
 });
 </script>
 

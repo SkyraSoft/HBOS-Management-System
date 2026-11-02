@@ -20,9 +20,9 @@ class BranchInventory extends Model
     ];
 
     protected $casts = [
-        'quantity_on_hand' => 'integer',
-        'minimum_stock' => 'integer',
-        'reorder_level' => 'integer',
+        'quantity_on_hand' => 'decimal:3',
+        'minimum_stock' => 'decimal:3',
+        'reorder_level' => 'decimal:3',
     ];
 
     public function business()

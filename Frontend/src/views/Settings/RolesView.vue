@@ -5,8 +5,10 @@
       <h1 class="main-title">HBOS Retail Management – Role Based Permissions Setup</h1>
       <p class="main-subtitle">
         <span class="role-pill-admin">Business Owner (Full Control)</span>
-        <span class="divider">|</span>
-        <span class="role-pill-manager">Branch Manager (Operational Access)</span>
+        <template v-if="navigationStore.isMultiBranch">
+          <span class="divider">|</span>
+          <span class="role-pill-manager">Branch Manager (Operational Access)</span>
+        </template>
         <span class="divider">|</span>
         <span class="role-pill-cashier">Salesperson (POS &amp; Counter)</span>
       </p>
@@ -36,8 +38,8 @@
                 </div>
               </th>
 
-              <!-- BRANCH MANAGER Header -->
-              <th class="col-manager">
+              <!-- BRANCH MANAGER Header (MULTI-BRANCH ONLY) -->
+              <th v-if="navigationStore.isMultiBranch" class="col-manager">
                 <div class="header-content manager-header">
                   <div class="d-flex align-items-center justify-content-center gap-2 mb-1">
                     <i class="bi bi-person-badge-fill header-icon"></i>
@@ -81,8 +83,8 @@
                 </div>
               </td>
 
-              <!-- Manager Cell -->
-              <td class="perm-cell">
+              <!-- Manager Cell (MULTI-BRANCH ONLY) -->
+              <td v-if="navigationStore.isMultiBranch" class="perm-cell">
                 <div class="d-flex align-items-start gap-2">
                   <span :class="['status-icon', getStatusIconClass(row.manager.status)]">
                     <i :class="getStatusIconName(row.manager.status)"></i>
@@ -130,7 +132,7 @@
 
       <div class="row g-4">
         <!-- Business Owner Card -->
-        <div class="col-lg-4 col-md-12">
+        <div :class="navigationStore.isMultiBranch ? 'col-lg-4 col-md-12' : 'col-lg-6 col-md-12'">
           <div class="guide-card card-admin h-100">
             <div class="guide-card-header d-flex align-items-center gap-2 mb-3">
               <span class="guide-role-badge admin-badge">
@@ -139,7 +141,7 @@
               <h3 class="guide-card-title text-admin mb-0">BUSINESS OWNER – Full Governance</h3>
             </div>
             <ul class="guide-list">
-              <li>Complete authority over business settings, users, and branches</li>
+              <li>Complete authority over business settings, users, {{ navigationStore.isMultiBranch ? 'and branches' : 'and operations' }}</li>
               <li>Manage staff accounts, assign roles, and configure system rules</li>
               <li>View all financial accounts, full audit logs, and business reports</li>
               <li>Protected by Last Owner safety guarantees</li>
@@ -147,8 +149,8 @@
           </div>
         </div>
 
-        <!-- Branch Manager Card -->
-        <div class="col-lg-4 col-md-12">
+        <!-- Branch Manager Card (MULTI-BRANCH ONLY) -->
+        <div v-if="navigationStore.isMultiBranch" class="col-lg-4 col-md-12">
           <div class="guide-card card-manager h-100">
             <div class="guide-card-header d-flex align-items-center gap-2 mb-3">
               <span class="guide-role-badge manager-badge">
@@ -166,7 +168,7 @@
         </div>
 
         <!-- Salesperson Card -->
-        <div class="col-lg-4 col-md-12">
+        <div :class="navigationStore.isMultiBranch ? 'col-lg-4 col-md-12' : 'col-lg-6 col-md-12'">
           <div class="guide-card card-cashier h-100">
             <div class="guide-card-header d-flex align-items-center gap-2 mb-3">
               <span class="guide-role-badge cashier-badge">
@@ -176,7 +178,7 @@
             </div>
             <ul class="guide-list">
               <li>Perform counter sales and POS barcode scanning</li>
-              <li>View customer khata and check branch stock availability</li>
+              <li>View customer khata and check stock availability</li>
               <li>No access to business settings, audit center, or user management</li>
               <li>Focused strictly on counter transactions and customer receipts</li>
             </ul>
@@ -191,8 +193,8 @@
         <i class="bi bi-lock-fill"></i>
       </div>
       <div class="security-text">
-        HBOS role-based governance enforces business boundaries, branch-isolated operations, and immutable audit logs.
-        Business Owner governs policy, Branch Manager directs local operations, and Salesperson handles counter transactions.
+        HBOS role-based governance enforces business boundaries, {{ navigationStore.isMultiBranch ? 'branch-isolated operations, ' : '' }}and immutable audit logs.
+        {{ navigationStore.isMultiBranch ? 'Business Owner governs policy, Branch Manager directs local operations, and Salesperson handles counter transactions.' : 'Business Owner governs policy and operations, and Salesperson handles counter transactions.' }}
       </div>
     </div>
   </div>
@@ -200,6 +202,9 @@
 
 <script setup>
 import { ref } from 'vue';
+import { useNavigationStore } from '@/stores/navigation';
+
+const navigationStore = useNavigationStore();
 
 const permissionMatrix = ref([
   {

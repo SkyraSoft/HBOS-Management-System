@@ -24,7 +24,7 @@ class SyncController extends Controller
     }
 
     /**
-     * Ingest a batch of offline transactions atomically.
+     * Ingest a batch of offline transactions atomically (REQ-0030, SRT-GAP-025).
      * POST /api/v1/sync/bulk-transactions
      */
     public function bulkIngest(Request $request)
@@ -40,8 +40,8 @@ class SyncController extends Controller
             'sales' => 'nullable|array',
             'sales.*.idempotency_key' => 'nullable|string|max:255',
             'sales.*.items' => 'required_with:sales|array|min:1',
+            'payments' => 'nullable|array',
             'khata_payments' => 'nullable|array',
-            'stock_adjustments' => 'nullable|array',
             'expenses' => 'nullable|array',
         ]);
 
@@ -51,14 +51,21 @@ class SyncController extends Controller
         } catch (ValidationException $e) {
             return response()->json([
                 'status' => 'validation_error',
+                'error_type' => 'VALIDATION',
                 'message' => $e->getMessage(),
                 'errors' => $e->errors(),
             ], 422);
         } catch (Exception $e) {
+            $statusCode = $e->getCode() >= 400 && $e->getCode() <= 499 ? $e->getCode() : 422;
+            $errorType = isset($e->error_type) ? $e->error_type : 'SERVER_ERROR';
+            $failedKey = isset($e->failed_item_key) ? $e->failed_item_key : null;
+
             return response()->json([
                 'status' => 'error',
+                'error_type' => $errorType,
+                'failed_item_key' => $failedKey,
                 'message' => $e->getMessage(),
-            ], 400);
+            ], $statusCode);
         }
     }
 
@@ -85,12 +92,17 @@ class SyncController extends Controller
     public function status(Request $request)
     {
         $businessId = $this->getBusinessId($request);
+        $deviceId = $request->header('X-HBOS-Device-ID');
+
         return response()->json([
             'status' => 'online',
             'engine' => 'HBOS-Sync-Core-v1.0',
             'business_id' => $businessId,
             'server_timestamp' => now()->toIso8601String(),
-            'server_timezone' => config('app.timezone'),
+            'server_timezone' => config('app.timezone', 'UTC'),
+            'client_version_status' => 'compatible',
+            'supported_sync_protocol' => '1.0',
+            'device_id_received' => $deviceId ? substr($deviceId, 0, 36) : null,
         ], 200);
     }
 }

@@ -3,8 +3,45 @@
     <div class="pos-app">
         <!-- HEADER -->
         <header class="topbar">
-            <div class="d-flex align-items-center">
-                <h1 class="page-title">New Sale</h1>
+            <div class="d-flex align-items-center gap-3">
+                <h1 class="page-title mb-0">New Sale</h1>
+                
+                <!-- CASH REGISTER DAY-OPEN / DAY-CLOSE STATUS (REQ-0024, REQ-0025) -->
+                <div class="d-flex align-items-center gap-2 ms-2">
+                    <span v-if="store.isRegisterSessionLoading || isSessionChecking" class="badge bg-light text-muted border px-2 py-1.5 d-flex align-items-center gap-1.5" style="font-size: 11.5px;">
+                        <i class="fa-solid fa-spinner fa-spin"></i>
+                        <span>Checking Drawer...</span>
+                    </span>
+                    <span v-else-if="store.hasActiveRegisterSession" class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1.5 d-flex align-items-center gap-1.5" style="font-size: 11.5px;">
+                        <i class="fa-solid fa-cash-register"></i>
+                        <span>Register Open (Session #{{ store.activeRegisterSession?.id }})</span>
+                    </span>
+                    <span v-else class="badge bg-warning-subtle text-warning border border-warning-subtle px-2 py-1.5 d-flex align-items-center gap-1.5" style="font-size: 11.5px;">
+                        <i class="fa-solid fa-lock"></i>
+                        <span>Register Closed</span>
+                    </span>
+
+                    <button 
+                        v-if="!store.hasActiveRegisterSession && !store.isRegisterSessionLoading && !isSessionChecking" 
+                        type="button" 
+                        class="btn btn-sm btn-primary d-flex align-items-center gap-1 py-1 px-2.5"
+                        id="btn-day-open"
+                        @click="openDayOpenModal"
+                    >
+                        <i class="fa-solid fa-door-open"></i>
+                        <span>Day Open</span>
+                    </button>
+                    <button 
+                        v-else-if="store.hasActiveRegisterSession" 
+                        type="button" 
+                        class="btn btn-sm btn-outline-danger d-flex align-items-center gap-1 py-1 px-2.5"
+                        id="btn-day-close"
+                        @click="openDayCloseModal"
+                    >
+                        <i class="fa-solid fa-door-closed"></i>
+                        <span>Day Close</span>
+                    </button>
+                </div>
             </div>
 
             <div class="header-right">
@@ -14,10 +51,10 @@
                 </div>
                 <div class="header-divider"></div>
                 <div class="cashier">
-                    <div class="cashier-name">Ahmed Khan</div>
-                    <div class="cashier-role">Salesperson</div>
+                    <div class="cashier-name">{{ cashierName }}</div>
+                    <div class="cashier-role">{{ cashierRole }}</div>
                 </div>
-                <div class="avatar">AK</div>
+                <div class="avatar">{{ cashierInitials }}</div>
             </div>
         </header>
 
@@ -28,8 +65,8 @@
                 <!-- SEARCH -->
                 <div class="search-box">
                     <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                    <input type="text" class="search-input" v-model="searchQuery" @input="onSearchInput" placeholder="Search by product name or scan SKU...">
-                    <button type="button" class="scan-btn" title="Scan SKU">
+                    <input type="text" class="search-input" v-model="searchQuery" @input="onSearchInput" @keyup.enter="handleBarcodeScan(searchQuery)" placeholder="Search by product name or scan SKU...">
+                    <button type="button" class="scan-btn" title="Scan Barcode / SKU" @click="handleScanButtonClick">
                         <i class="fa-solid fa-barcode"></i>
                     </button>
                 </div>
@@ -49,7 +86,11 @@
 
                 <!-- PRODUCTS GRID -->
                 <div class="product-grid" id="productGrid">
-                    <div v-if="filteredProducts.length === 0" style="grid-column:1/-1; padding:50px 10px; text-align:center; color:#858b94;">
+                    <div v-if="isLoadingProducts" style="grid-column:1/-1; padding:50px 10px; text-align:center; color:#858b94;">
+                        <i class="fa-solid fa-spinner fa-spin" style="font-size:36px;margin-bottom:12px;color:var(--primary, #0d6efd);"></i>
+                        <div>Loading products...</div>
+                    </div>
+                    <div v-else-if="filteredProducts.length === 0" style="grid-column:1/-1; padding:50px 10px; text-align:center; color:#858b94;">
                         <i class="fa-solid fa-box-open" style="font-size:40px;margin-bottom:12px;"></i>
                         <div>No products found.</div>
                     </div>
@@ -94,6 +135,9 @@
                         <div class="product-price-section">
                             <span class="price-label">Price:</span>
                             <span class="product-price">Rs. {{ Number(getCardPrice(product)).toLocaleString("en-PK") }}</span>
+                            <span v-if="canViewMargin && product.cost && product.price" class="badge bg-success-subtle text-success ms-1" style="font-size: 10px;">
+                                {{ Math.round(((product.price - product.cost) / product.price) * 100) }}% margin
+                            </span>
                         </div>
 
                         <!-- QUANTITY & ADD TO CART -->
@@ -133,13 +177,128 @@
                             <span class="text-muted">Order No : </span>
                             <strong>{{ currentOrderNo }}</strong>
                         </div>
-                        <span class="badge order-status-badge">In Progress</span>
+                        <div class="d-flex align-items-center gap-1">
+                            <span v-if="store.syncStatus === 'offline' || !isNavigatorOnline" class="badge bg-secondary-subtle text-secondary border border-secondary-subtle" title="Offline POS Mode: Transactions saved locally on this device">
+                                <i class="fa-solid fa-cloud-slash me-1"></i> Offline POS
+                            </span>
+                            <span v-else-if="store.pendingOutboxCount > 0" class="badge bg-warning-subtle text-warning border border-warning-subtle" title="Transactions pending sync on this device">
+                                <i class="fa-solid fa-clock-rotate-left me-1"></i> {{ store.pendingOutboxCount }} Pending
+                            </span>
+                            <span class="badge order-status-badge">In Progress</span>
+                        </div>
                     </div>
 
-                    <!-- CUSTOMER SELECT (Walk-in Customer) -->
-                    <div class="order-customer-select-wrap" style="position: relative;">
-                        <i class="fa-solid fa-user search-customer-icon" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: #64748b; font-size: 13px;"></i>
-                        <input type="text" class="customer-select-modern w-100" v-model="selectedCustomer" style="padding-left: 32px;" placeholder="Customer Name">
+                    <!-- CUSTOMER SELECTION: Primary Dropdown (Walk-in vs Regular) + Conditional Search Dropdown -->
+                    <div class="customer-selection-container mb-2">
+                        <!-- Step 1: Initial Dropdown (Walk-in Customer vs Regular Customer) -->
+                        <div class="customer-type-select-wrap position-relative">
+                            <i class="fa-solid fa-user-tag text-secondary position-absolute" style="left: 12px; top: 50%; transform: translateY(-50%); z-index: 2; pointer-events: none; font-size: 13px;"></i>
+                            <select 
+                                class="form-select customer-select-modern w-100 shadow-sm" 
+                                v-model="customerTypeMode" 
+                                @change="onCustomerTypeChange"
+                                style="padding-left: 34px; height: 38px; font-weight: 600; cursor: pointer; border-radius: 10px;"
+                            >
+                                <option value="walk_in">🚶 Walk-in Customer</option>
+                                <option value="regular">⭐ Regular Customer</option>
+                            </select>
+                        </div>
+
+                        <!-- Step 2: Next Dropdown with Search Field on top (Appears when Regular Customer is chosen) -->
+                        <div v-if="customerTypeMode === 'regular'" class="customer-search-dropdown-wrap mt-2 position-relative" ref="customerSearchWrapperRef">
+                            <div class="input-group input-group-sm shadow-sm" style="border-radius: 8px; overflow: hidden;">
+                                <span class="input-group-text bg-white border-end-0 text-muted ps-2.5">
+                                    <i class="fa-solid fa-magnifying-glass" style="font-size: 12px;"></i>
+                                </span>
+                                <input 
+                                    type="text" 
+                                    class="form-control border-start-0 ps-1" 
+                                    v-model="customerSearchText" 
+                                    @input="onCustomerSearchInput" 
+                                    @focus="isCustomerDropdownOpen = true"
+                                    placeholder="Type name or phone (e.g. Shwaib or 0300...)"
+                                    autocomplete="off"
+                                    style="font-size: 13px; height: 36px;"
+                                />
+                                <button 
+                                    v-if="customerSearchText" 
+                                    class="btn btn-outline-secondary border-start-0 border-end-0 bg-white" 
+                                    type="button" 
+                                    @click="clearCustomerSelection"
+                                    title="Clear customer search"
+                                >
+                                    <i class="fa-solid fa-xmark text-muted"></i>
+                                </button>
+                                <button 
+                                    class="btn btn-outline-primary px-2 text-nowrap fw-semibold" 
+                                    type="button" 
+                                    @click="openQuickCustomerModal" 
+                                    title="Add New Regular Customer"
+                                    style="font-size: 12px;"
+                                >
+                                    <i class="fa-solid fa-user-plus me-1"></i>+ New
+                                </button>
+                            </div>
+
+                            <!-- Dropdown Menu: Exactly 6 at a time -->
+                            <div 
+                                v-if="isCustomerDropdownOpen" 
+                                class="customer-dropdown-menu shadow-lg rounded-3 border bg-white position-absolute w-100 mt-1" 
+                                style="z-index: 1050; left: 0; max-height: 250px; overflow-y: auto;"
+                            >
+                                <div v-if="customerFilteredList.length === 0" class="p-3 text-center text-muted small">
+                                    <i class="fa-solid fa-user-slash d-block mb-1 text-secondary opacity-50" style="font-size: 18px;"></i>
+                                    No regular customer matches "<span class="fw-semibold">{{ customerSearchText }}</span>".
+                                    <div class="mt-2">
+                                        <button class="btn btn-xs btn-primary rounded-2 px-2 py-1" @click="openQuickCustomerModal" type="button" style="font-size: 11px;">
+                                            <i class="fa-solid fa-plus me-1"></i> Add as New Regular Customer
+                                        </button>
+                                    </div>
+                                </div>
+                                <div 
+                                    v-for="c in customerFilteredList" 
+                                    :key="c.id" 
+                                    class="customer-dropdown-item px-3 py-2 border-bottom d-flex align-items-center justify-content-between cursor-pointer"
+                                    @mousedown.prevent="selectRegularCustomer(c)"
+                                    :class="{ 'bg-primary-subtle': selectedRegularCustomerObj?.id === c.id }"
+                                >
+                                    <div class="d-flex align-items-center gap-2 overflow-hidden">
+                                        <div class="rounded-circle bg-primary-subtle text-primary fw-bold d-flex align-items-center justify-content-center flex-shrink-0" style="width: 28px; height: 28px; font-size: 11px;">
+                                            {{ (c.name || 'C').substring(0, 2).toUpperCase() }}
+                                        </div>
+                                        <div class="text-truncate">
+                                            <div class="fw-semibold text-dark text-truncate" style="font-size: 13px;">
+                                                {{ c.name }} <span v-if="c.phone" class="text-secondary fw-normal ms-1 font-monospace" style="font-size: 12px;">{{ c.phone }}</span>
+                                            </div>
+                                            <div v-if="c.address" class="text-muted small text-truncate" style="font-size: 11px;">{{ c.address }}</div>
+                                        </div>
+                                    </div>
+                                    <div class="text-end flex-shrink-0 ms-2">
+                                        <span v-if="Number(c.current_balance || 0) > 0" class="badge bg-danger-subtle text-danger" style="font-size: 10px;">
+                                            Khata: Rs {{ Number(c.current_balance).toLocaleString('en-PK') }}
+                                        </span>
+                                        <span v-else class="badge bg-light text-secondary border" style="font-size: 10px;">
+                                            Clear
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Selected Regular Customer Confirmation Pill -->
+                            <div v-if="selectedRegularCustomerObj" class="mt-1.5 p-1.5 px-2 bg-success-subtle text-success border border-success-subtle rounded-2 d-flex align-items-center justify-content-between" style="font-size: 11.5px;">
+                                <span class="text-truncate">
+                                    <i class="fa-solid fa-circle-check me-1"></i>
+                                    <strong>{{ selectedRegularCustomerObj.name }}</strong>
+                                    <span v-if="selectedRegularCustomerObj.phone" class="text-muted ms-1">({{ selectedRegularCustomerObj.phone }})</span>
+                                </span>
+                                <span v-if="Number(selectedRegularCustomerObj.current_balance || 0) > 0" class="badge bg-danger text-white ms-1" style="font-size: 9.5px;">
+                                    Due: Rs {{ Number(selectedRegularCustomerObj.current_balance).toLocaleString('en-PK') }}
+                                </span>
+                            </div>
+                            <div v-else class="text-muted mt-1" style="font-size: 11px;">
+                                <i class="fa-solid fa-info-circle me-1 text-primary"></i> Type 1 or more characters to search existing customers.
+                            </div>
+                        </div>
                     </div>
 
                     <!-- TOTAL ITEMS HEADER -->
@@ -162,15 +321,30 @@
                             
                             <div class="cart-item-info">
                                 <h4 class="cart-item-title">{{ item.name }}</h4>
-                                <div class="cart-item-variant">{{ item.packType || 'Single Pack' }} | Qty: {{ item.quantity }}</div>
-                                <div class="cart-item-cost">Rs {{ (Number(item.price || 0) * item.quantity).toLocaleString("en-PK") }}</div>
+                                <div class="cart-item-variant">
+                                    {{ item.packType || 'Single Pack' }} | Qty: {{ item.quantity }} {{ item.allowFractional ? (item.saleUnit || item.unit || '') : '' }}
+                                    <button v-if="item.wholesalePrice" class="badge ms-1 border-0" :class="item.pricingMode === 'wholesale' ? 'bg-primary text-white' : 'bg-light text-secondary'" @click="toggleItemPricingMode(item)" type="button" style="cursor: pointer; font-size: 9px;">
+                                        {{ item.pricingMode === 'wholesale' ? 'Wholesale' : 'Retail' }}
+                                    </button>
+                                </div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="cart-item-cost">Rs {{ (Math.round(Number(item.price || 0) * item.quantity * 100) / 100).toLocaleString("en-PK") }}</div>
+                                    <button class="btn btn-xs p-0 text-muted" @click="promptPriceOverride(item)" title="Override selling price" type="button" style="font-size: 11px;">
+                                        <i class="fa-solid fa-pen-to-square text-primary"></i>
+                                        <span v-if="item.priceOverridden" class="badge bg-warning-subtle text-warning ms-1" style="font-size: 9px;">Overridden</span>
+                                    </button>
+                                    <span v-if="canViewMargin && item.cost && item.price" class="badge bg-success-subtle text-success ms-1" style="font-size: 9px;" title="Gross Margin %">
+                                        {{ Math.round(((item.price - item.cost) / item.price) * 100) }}% margin
+                                    </span>
+                                </div>
                             </div>
 
                             <div class="cart-item-actions">
                                 <div class="cart-inline-qty">
-                                    <button class="cart-qty-mini-btn" @click="handleUpdateQuantity(item.cartItemId || item.id, item.quantity - 1)" type="button">−</button>
-                                    <span class="cart-qty-mini-val">{{ item.quantity }}</span>
-                                    <button class="cart-qty-mini-btn" @click="handleUpdateQuantity(item.cartItemId || item.id, item.quantity + 1)" type="button">+</button>
+                                    <button class="cart-qty-mini-btn" @click="handleUpdateQuantity(item.cartItemId || item.id, item.allowFractional ? (Math.round((item.quantity - 0.5) * 1000) / 1000) : (item.quantity - 1))" type="button">−</button>
+                                    <input v-if="item.allowFractional" type="number" step="0.001" min="0.001" class="cart-qty-mini-val" :value="item.quantity" @change="handleUpdateQuantity(item.cartItemId || item.id, parseFloat($event.target.value))" style="width: 55px; text-align: center; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11px; padding: 1px;" />
+                                    <span v-else class="cart-qty-mini-val">{{ item.quantity }}</span>
+                                    <button class="cart-qty-mini-btn" @click="handleUpdateQuantity(item.cartItemId || item.id, item.allowFractional ? (Math.round((item.quantity + 0.5) * 1000) / 1000) : (item.quantity + 1))" type="button">+</button>
                                 </div>
                                 <button class="cart-item-delete-btn" @click="handleRemoveItem(item.cartItemId || item.id)" title="Remove item" type="button">
                                     <i class="fa-regular fa-trash-can"></i>
@@ -179,16 +353,43 @@
                         </div>
                     </div>
 
-                    <!-- PAYMENT METHOD PILLS -->
+                    <!-- PAYMENT METHOD PILLS (Cash, Online, Khata, Split) -->
                     <div class="payment-pills-row">
-                        <button :class="['payment-pill-btn', { active: paymentMethod === 'QR' }]" @click="paymentMethod = 'QR'" type="button">
-                            <i class="fa-solid fa-qrcode me-1.5"></i><span>QR</span>
-                        </button>
-                        <button :class="['payment-pill-btn', { active: paymentMethod === 'Cash' }]" @click="paymentMethod = 'Cash'" type="button">
+                        <button 
+                            :class="['payment-pill-btn', { active: paymentMethod === 'Cash' }]" 
+                            @click="selectPaymentMethod('Cash')" 
+                            type="button"
+                            title="Direct Cash Payment"
+                        >
                             <i class="fa-solid fa-money-bill-wave me-1.5"></i><span>Cash</span>
                         </button>
-                        <button :class="['payment-pill-btn', { active: paymentMethod === 'Wallet' || paymentMethod === 'Card' }]" @click="paymentMethod = 'Wallet'" type="button">
-                            <i class="fa-solid fa-wallet me-1.5"></i><span>Wallet</span>
+
+                        <button 
+                            :class="['payment-pill-btn', { active: paymentMethod === 'Online' }]" 
+                            @click="selectPaymentMethod('Online')" 
+                            type="button"
+                            title="Card, QR, Bank Transfer, Raast, or Mobile Wallet"
+                        >
+                            <i class="fa-solid fa-globe me-1.5"></i><span>Online</span>
+                        </button>
+
+                        <button 
+                            :class="['payment-pill-btn', { active: paymentMethod === 'Khata', disabled: isWalkInCustomer }]" 
+                            @click="selectPaymentMethod('Khata')" 
+                            :disabled="isWalkInCustomer"
+                            type="button"
+                            :title="isWalkInCustomer ? 'Khata (Pay Later) is only available for Regular Customers' : 'Add full bill to Customer Khata'"
+                        >
+                            <i class="fa-solid fa-book me-1.5"></i><span>Khata</span>
+                        </button>
+
+                        <button 
+                            :class="['payment-pill-btn', { active: paymentMethod === 'Split' }]" 
+                            @click="openSplitPaymentModal" 
+                            type="button"
+                            title="Split bill between Cash, Online, and Khata"
+                        >
+                            <i class="fa-solid fa-layer-group me-1.5"></i><span>Split</span>
                         </button>
                     </div>
 
@@ -241,12 +442,15 @@
                         <button class="order-cancel-btn" @click="startNewSale" type="button">
                             Cancel
                         </button>
-                        <button class="order-phone-btn" @click="promptCustomerPhone" type="button">
-                            Phone Number
+                        <button class="order-phone-btn" @click="openHeldCartsModal" type="button" title="View Held Carts">
+                            <i class="fa-solid fa-clock-rotate-left me-1"></i> Held ({{ store.heldCarts.length }})
                         </button>
-                        <button class="order-confirm-btn" :disabled="store.cart.length === 0 || isProcessing" @click="handleCompleteSale" type="button">
+                        <button class="order-phone-btn" @click="handleHoldCart" :disabled="store.cart.length === 0" type="button" title="Hold Active Cart">
+                            <i class="fa-solid fa-pause me-1"></i> Hold
+                        </button>
+                        <button class="order-confirm-btn" :disabled="store.cart.length === 0 || isProcessing" @click="handleConfirmOrderClick" type="button">
                             <span v-if="isProcessing" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                            {{ isProcessing ? 'Processing...' : 'Confirm Order' }}
+                            {{ isProcessing ? 'Processing...' : (paymentMethod === 'Split' ? 'Split Pay' : 'Confirm Order') }}
                         </button>
                     </div>
                 </div>
@@ -283,6 +487,13 @@
                             <strong id="successCustomer">{{ currentInvoice?.customer }}</strong>
                         </div>
                     </div>
+                    <div class="d-flex align-items-center gap-2 mb-2 no-print">
+                        <span class="text-white-50 small">Roll Width:</span>
+                        <div class="btn-group btn-group-sm">
+                            <button type="button" :class="['btn btn-sm', paperSize === '80mm' ? 'btn-primary' : 'btn-outline-light']" @click="setPaperSize('80mm')">80mm</button>
+                            <button type="button" :class="['btn btn-sm', paperSize === '58mm' ? 'btn-primary' : 'btn-outline-light']" @click="setPaperSize('58mm')">58mm</button>
+                        </div>
+                    </div>
                     <div class="action-buttons no-print">
                         <button class="action-btn" @click="printInvoice">
                             <i class="fa-solid fa-print"></i> Print Receipt
@@ -299,12 +510,15 @@
                 </div>
 
                 <div class="success-right">
-                    <div class="invoice" id="invoiceArea">
+                    <div :class="['invoice', paperSize === '58mm' ? 'thermal-58mm' : 'thermal-80mm']" id="invoiceArea">
                         <div class="invoice-header">
-                            <h2>HBOS MAIN BRANCH</h2>
+                            <h2>{{ storeDisplayName }}</h2>
                             <p>123 Market Road, City Center<br>Tel: (021) 12345678</p>
                         </div>
                         <div class="invoice-meta">
+                            <div v-if="currentInvoice?.is_offline_pending" class="text-center py-1 my-1 w-100" style="background: #fef3c7; border: 1px dashed #d97706; border-radius: 4px; font-size: 11px; font-weight: bold; color: #92400e;">
+                                *** OFFLINE RECEIPT — PENDING SERVER SYNC ***
+                            </div>
                             <div>
                                 <span>Invoice No:</span>
                                 <span id="invoiceNumber">{{ currentInvoice?.invoiceNumber }}</span>
@@ -358,15 +572,503 @@
                         </div>
                         <div class="invoice-line"></div>
                         <div class="thank-you">Thank you for shopping with us!</div>
+                        <div v-if="receiptReturnPolicy" class="receipt-return-policy-footer text-center mt-1 mb-2" style="font-size: 10px; color: #555; line-height: 1.3;">
+                            {{ receiptReturnPolicy }}
+                        </div>
                         <div class="barcode-svg-wrap" v-html="generateBarcodeSvg(currentInvoice?.invoiceNumber)"></div>
-                        <div class="invoice-number">{{ (currentInvoice?.invoiceNumber || '').replace(/[^0-9]/g,"") }}</div>
+                        <div class="invoice-number">{{ currentInvoice?.invoiceNumber }}</div>
                     </div>
                 </div>
             </div>
         </section>
+
+        <!-- MODAL 1: QUICK ADD CUSTOMER MODAL (SRT-GAP-009) -->
+        <div v-if="showQuickCustomerModal" class="pos-modal-backdrop" @click.self="closeQuickCustomerModal">
+            <div class="pos-modal-card">
+                <div class="pos-modal-header">
+                    <h5 class="m-0 fw-bold"><i class="fa-solid fa-user-plus text-primary me-2"></i>Quick Add Customer</h5>
+                    <button class="btn-close" @click="closeQuickCustomerModal" type="button"></button>
+                </div>
+                <div class="pos-modal-body">
+                    <!-- Duplicate Phone Warning -->
+                    <div v-if="matchingDuplicateCustomer" class="alert alert-warning d-flex align-items-center justify-content-between p-2 mb-3">
+                        <div class="small">
+                            <i class="fa-solid fa-triangle-exclamation me-1"></i>
+                            <strong>Customer Exists:</strong> {{ matchingDuplicateCustomer.name }} ({{ matchingDuplicateCustomer.phone }})
+                        </div>
+                        <button class="btn btn-sm btn-warning text-nowrap ms-2 py-0 px-2" @click="selectExistingCustomer(matchingDuplicateCustomer)" type="button">
+                            Select Customer
+                        </button>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Customer Name <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control form-control-sm" v-model="quickCustomer.name" placeholder="e.g. Muhammad Ali" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Primary Phone <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control form-control-sm" v-model="quickCustomer.phone" placeholder="03XXXXXXXXX or +923XXXXXXXXX" required />
+                        <div class="form-text small" style="font-size: 11px;">Pakistan format: 03001234567 or +923001234567</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Secondary / Emergency Phone <span class="text-muted">(Optional)</span></label>
+                        <input type="text" class="form-control form-control-sm" v-model="quickCustomer.secondary_phone" placeholder="Alternate contact number" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Address / Notes <span class="text-muted">(Optional)</span></label>
+                        <input type="text" class="form-control form-control-sm" v-model="quickCustomer.address" placeholder="Area or shop address" />
+                    </div>
+                    <div class="alert alert-info py-2 px-3 small mb-0">
+                        <i class="fa-solid fa-info-circle me-1"></i> Opening Balance and Credit Limit are omitted at checkout counter per store policy.
+                    </div>
+                </div>
+                <div class="pos-modal-footer">
+                    <button class="btn btn-sm btn-secondary" @click="closeQuickCustomerModal" type="button">Cancel</button>
+                    <button class="btn btn-sm btn-primary" :disabled="!isQuickCustomerValid || isSavingCustomer" @click="submitQuickCustomer" type="button">
+                        <span v-if="isSavingCustomer" class="spinner-border spinner-border-sm me-1"></span>
+                        Save & Select Customer
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL 2: HELD CARTS BUFFER MODAL (SRT-GAP-007) -->
+        <div v-if="showHeldCartsModal" class="pos-modal-backdrop" @click.self="closeHeldCartsModal">
+            <div class="pos-modal-card" style="max-width: 650px;">
+                <div class="pos-modal-header">
+                    <div>
+                        <h5 class="m-0 fw-bold"><i class="fa-solid fa-clock-rotate-left text-primary me-2"></i>Held Carts Buffer</h5>
+                        <div class="text-muted small" style="font-size: 12px;">{{ navigationStore.isMultiBranch ? 'Branch Shared Buffer — Active for current business & branch' : 'Shared Cart Buffer' }}</div>
+                    </div>
+                    <button class="btn-close" @click="closeHeldCartsModal" type="button"></button>
+                </div>
+                <div class="pos-modal-body p-0">
+                    <div v-if="store.heldCarts.length === 0" class="text-center py-5 text-muted">
+                        <i class="fa-solid fa-inbox fa-2x mb-2 d-block opacity-50"></i>
+                        {{ navigationStore.isMultiBranch ? 'No held carts in this branch buffer.' : 'No held carts found.' }}
+                    </div>
+                    <div v-else class="table-responsive">
+                        <table class="table table-hover align-middle mb-0" style="font-size: 13px;">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Hold ID / Time</th>
+                                    <th>Customer / Note</th>
+                                    <th>Operator</th>
+                                    <th class="text-end">Items & Total</th>
+                                    <th class="text-end">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="held in store.heldCarts" :key="held.held_id">
+                                    <td>
+                                        <div class="fw-semibold">{{ held.held_id }}</div>
+                                        <div class="text-muted small" style="font-size: 11px;">{{ formatInvoiceDate(held.held_at) }}</div>
+                                    </td>
+                                    <td>
+                                        <div class="fw-medium">{{ held.customer_name || 'Walk-in Customer' }}</div>
+                                        <div v-if="held.customer_note" class="text-muted small" style="font-size: 11px;">
+                                            <i class="fa-solid fa-note-sticky me-1"></i>{{ held.customer_note }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-light text-dark border">
+                                            <i class="fa-solid fa-user me-1"></i>{{ held.held_by_user_name || 'Cashier' }}
+                                        </span>
+                                    </td>
+                                    <td class="text-end">
+                                        <div class="fw-bold">Rs {{ (held.total || 0).toLocaleString('en-PK') }}</div>
+                                        <div class="text-muted small" style="font-size: 11px;">{{ held.items?.length || 0 }} items</div>
+                                    </td>
+                                    <td class="text-end">
+                                        <button class="btn btn-sm btn-primary py-1 px-2 me-1" @click="handleResumeCartClick(held.held_id)" type="button" title="Resume Cart">
+                                            <i class="fa-solid fa-play me-1"></i>Resume
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger py-1 px-2" @click="handleDiscardCart(held.held_id)" type="button" title="Discard">
+                                            <i class="fa-solid fa-trash-can"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="pos-modal-footer">
+                    <button class="btn btn-sm btn-secondary" @click="closeHeldCartsModal" type="button">Close</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL 2B: RESUME CART COLLISION MODAL -->
+        <div v-if="showResumeCollisionModal" class="pos-modal-backdrop" @click.self="showResumeCollisionModal = false">
+            <div class="pos-modal-card" style="max-width: 480px;">
+                <div class="pos-modal-header bg-warning-subtle text-warning-emphasis">
+                    <h5 class="m-0 fw-bold"><i class="fa-solid fa-triangle-exclamation me-2"></i>Active Cart Contains Items</h5>
+                    <button class="btn-close" @click="showResumeCollisionModal = false" type="button"></button>
+                </div>
+                <div class="pos-modal-body">
+                    <p class="mb-3">You currently have <strong>{{ cartItemCount }} item(s)</strong> in the active cart. What would you like to do before resuming the held cart?</p>
+                    <div class="d-flex flex-column gap-2">
+                        <button class="btn btn-primary d-flex align-items-center justify-content-between p-2.5 text-start" @click="resolveCollisionHoldFirst" type="button">
+                            <div>
+                                <div class="fw-semibold">Hold Active Cart & Resume</div>
+                                <div class="small opacity-75">Saves current active items to buffer first, then resumes held cart.</div>
+                            </div>
+                            <i class="fa-solid fa-arrow-right ms-2"></i>
+                        </button>
+                        <button class="btn btn-outline-danger d-flex align-items-center justify-content-between p-2.5 text-start" @click="resolveCollisionOverwrite" type="button">
+                            <div>
+                                <div class="fw-semibold">Replace Current Cart</div>
+                                <div class="small opacity-75">Discards active items and directly loads the selected held cart.</div>
+                            </div>
+                            <i class="fa-solid fa-trash-can ms-2"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="pos-modal-footer">
+                    <button class="btn btn-sm btn-secondary" @click="showResumeCollisionModal = false" type="button">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL 3: PRICE OVERRIDE AUTHORIZATION MODAL (SRT-GAP-008) -->
+        <div v-if="showPriceOverrideModal" class="pos-modal-backdrop" @click.self="closePriceOverrideModal">
+            <div class="pos-modal-card" style="max-width: 460px;">
+                <div class="pos-modal-header">
+                    <h5 class="m-0 fw-bold"><i class="fa-solid fa-tag text-primary me-2"></i>Line Item Price Override</h5>
+                    <button class="btn-close" @click="closePriceOverrideModal" type="button"></button>
+                </div>
+                <div class="pos-modal-body">
+                    <div class="p-2 mb-3 bg-light rounded border">
+                        <div class="fw-bold">{{ overrideTargetItem?.name }}</div>
+                        <div class="d-flex justify-content-between text-muted small mt-1">
+                            <span>Catalog Unit Price:</span>
+                            <span class="fw-semibold text-dark">Rs {{ (overrideTargetItem?.price || 0).toLocaleString('en-PK') }}</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">New Unit Selling Price (Rs) <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" v-model.number="overrideForm.new_price" min="0" step="1" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Override Reason</label>
+                        <input type="text" class="form-control form-control-sm" v-model="overrideForm.reason" placeholder="e.g. Bulk discount, Damaged box, Special deal" />
+                    </div>
+
+                    <!-- Cashier elevated approval required -->
+                    <div v-if="!isElevatedUser" class="p-3 mb-3 border rounded bg-warning-subtle text-dark">
+                        <div class="fw-bold text-warning-emphasis mb-1">
+                            <i class="fa-solid fa-shield-halved me-1"></i>Manager / Owner Approval Required
+                        </div>
+                        <div class="small text-muted mb-2">
+                            Cashier cannot self-authorize price overrides. Enter a Branch Manager or Business Owner credential.
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label small fw-semibold mb-1">Approver Email / Username</label>
+                            <input type="email" class="form-control form-control-sm" v-model="overrideForm.approver_email" placeholder="manager@store.com" autocomplete="off" />
+                        </div>
+                        <div>
+                            <label class="form-label small fw-semibold mb-1">Approver Password / PIN</label>
+                            <input type="password" class="form-control form-control-sm" v-model="overrideForm.approver_password" placeholder="••••••••" autocomplete="new-password" />
+                        </div>
+                    </div>
+                </div>
+                <div class="pos-modal-footer">
+                    <button class="btn btn-sm btn-secondary" @click="closePriceOverrideModal" type="button">Cancel</button>
+                    <button class="btn btn-sm btn-primary" :disabled="!isOverrideFormValid" @click="submitPriceOverride" type="button">
+                        Apply Price Override
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL 4: SPLIT MULTI-TENDER MODAL (SRT-GAP-006) -->
+        <div v-if="showSplitModal" class="pos-modal-backdrop" @click.self="closeSplitPaymentModal">
+            <div class="pos-modal-card" style="max-width: 600px;">
+                <div class="pos-modal-header bg-dark text-white">
+                    <div>
+                        <h5 class="m-0 fw-bold"><i class="fa-solid fa-layer-group text-primary me-2"></i>Split Multi-Tender Payment</h5>
+                        <div class="small opacity-75">Combine Cash, Digital, and Khata tenders</div>
+                    </div>
+                    <button class="btn-close btn-close-white" @click="closeSplitPaymentModal" type="button"></button>
+                </div>
+                <div class="pos-modal-body">
+                    <!-- Grand Total Banner -->
+                    <div class="d-flex justify-content-between align-items-center p-3 mb-3 rounded bg-primary text-white">
+                        <div>
+                            <div class="text-uppercase small opacity-75 fw-bold">Total Bill Amount</div>
+                            <h3 class="m-0 fw-bold">Rs {{ payableTotal.toLocaleString('en-PK') }}</h3>
+                        </div>
+                        <div class="text-end">
+                            <div class="text-uppercase small opacity-75 fw-bold">Customer</div>
+                            <div class="fw-semibold">{{ selectedCustomer || 'Walk-in Customer' }}</div>
+                        </div>
+                    </div>
+
+                    <!-- Tender Rows: Cash, Online, Khata -->
+                    <div class="d-flex flex-column gap-3">
+                        <!-- 1. Cash Tender -->
+                        <div class="p-3 border rounded bg-light">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <span class="fw-bold"><i class="fa-solid fa-money-bill-wave text-success me-1"></i> Cash Tender</span>
+                                <div class="d-flex align-items-center gap-2">
+                                    <button 
+                                        type="button" 
+                                        class="btn btn-xs btn-outline-success rounded-pill px-2 py-0.5" 
+                                        style="font-size: 11px;"
+                                        @click="splitTenders.cash_applied = payableTotal; splitTenders.cash_tendered = payableTotal; splitTenders.online = 0; splitTenders.khata = 0;"
+                                    >
+                                        Full Bill
+                                    </button>
+                                    <span v-if="cashChange > 0" class="badge bg-success-subtle text-success fs-6">Change: Rs {{ cashChange.toLocaleString('en-PK') }}</span>
+                                </div>
+                            </div>
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <label class="form-label small text-muted mb-1">Cash Applied to Bill</label>
+                                    <input type="number" class="form-control form-control-sm" v-model.number="splitTenders.cash_applied" min="0" step="1" />
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label small text-muted mb-1">Cash Handed by Customer</label>
+                                    <input type="number" class="form-control form-control-sm" v-model.number="splitTenders.cash_tendered" min="0" step="1" />
+                                </div>
+                            </div>
+                            <div v-if="splitTenders.cash_tendered < splitTenders.cash_applied && splitTenders.cash_tendered > 0" class="text-danger small mt-1">
+                                <i class="fa-solid fa-circle-exclamation me-1"></i> Handed cash is less than applied cash.
+                            </div>
+                        </div>
+
+                        <!-- 2. Online Payment (Card / QR / Bank / Mobile Wallet) -->
+                        <div class="p-3 border rounded bg-light">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <span class="fw-bold"><i class="fa-solid fa-globe text-primary me-1"></i> Online Paid (Card / QR / Bank)</span>
+                                <button 
+                                    type="button" 
+                                    class="btn btn-xs btn-outline-primary rounded-pill px-2 py-0.5" 
+                                    style="font-size: 11px;"
+                                    @click="fillRemainingOnline"
+                                >
+                                    Pay Remaining (Rs {{ Math.max(0, payableTotal - Number(splitTenders.cash_applied || 0) - Number(splitTenders.khata || 0)).toLocaleString('en-PK') }})
+                                </button>
+                            </div>
+                            <div>
+                                <label class="form-label small text-muted mb-1">Amount Paid Online</label>
+                                <input type="number" class="form-control form-control-sm" v-model.number="splitTenders.online" min="0" step="1" placeholder="Rs 0" />
+                            </div>
+                        </div>
+
+                        <!-- 3. Khata / Credit Tender -->
+                        <div class="p-3 border rounded" :class="isWalkInCustomer ? 'bg-light opacity-75' : 'bg-warning-subtle'">
+                            <div class="d-flex align-items-center justify-content-between mb-1">
+                                <span class="fw-bold text-warning-emphasis">
+                                    <i class="fa-solid fa-book text-warning-emphasis me-1"></i> Khata (Store Credit / Pay Later)
+                                </span>
+                                <span v-if="!isWalkInCustomer" class="d-flex align-items-center gap-2">
+                                    <button 
+                                        type="button" 
+                                        class="btn btn-xs btn-outline-warning text-dark rounded-pill px-2 py-0.5" 
+                                        style="font-size: 11px;"
+                                        @click="fillRemainingKhata"
+                                    >
+                                        Remaining to Khata
+                                    </button>
+                                    <span class="badge bg-warning text-dark">Unpaid Due</span>
+                                </span>
+                                <span v-else class="badge bg-secondary text-white">Disabled for Walk-in</span>
+                            </div>
+                            <input 
+                                type="number" 
+                                class="form-control form-control-sm" 
+                                v-model.number="splitTenders.khata" 
+                                min="0" 
+                                step="1" 
+                                :disabled="isWalkInCustomer"
+                                :placeholder="isWalkInCustomer ? 'Khata disabled for walk-in customer' : 'Rs 0'"
+                            />
+                            <div v-if="isWalkInCustomer" class="alert alert-secondary py-1 px-2 mt-2 mb-0 small">
+                                <i class="fa-solid fa-lock me-1"></i> Khata (Pay Later) requires selecting a registered Regular Customer.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Live Settlement Summary -->
+                    <div class="mt-3 p-3 bg-light rounded border">
+                        <div class="d-flex justify-content-between small text-muted mb-1">
+                            <span>Paid Online & Cash Applied:</span>
+                            <span class="fw-semibold text-dark">Rs {{ totalPaidTenders.toLocaleString('en-PK') }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between small text-muted mb-1">
+                            <span>Khata Credit (Receivable):</span>
+                            <span class="fw-semibold text-dark">Rs {{ (splitTenders.khata || 0).toLocaleString('en-PK') }}</span>
+                        </div>
+                        <hr class="my-2" />
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="fw-bold">Total Settled:</span>
+                            <span class="fw-bold fs-5" :class="isSplitBalanced ? 'text-success' : 'text-danger'">
+                                Rs {{ totalTenderSettled.toLocaleString('en-PK') }} / Rs {{ payableTotal.toLocaleString('en-PK') }}
+                            </span>
+                        </div>
+                        <div v-if="!isSplitBalanced" class="text-danger small mt-1 text-end">
+                            <span v-if="totalTenderSettled < payableTotal">Remaining to settle: Rs {{ (payableTotal - totalTenderSettled).toLocaleString('en-PK') }}</span>
+                            <span v-else>Over-settled by: Rs {{ (totalTenderSettled - payableTotal).toLocaleString('en-PK') }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="pos-modal-footer">
+                    <button class="btn btn-sm btn-secondary" @click="closeSplitPaymentModal" type="button">Cancel</button>
+                    <button class="btn btn-sm btn-primary px-3" :disabled="!canSubmitSplit || isProcessing" @click="submitSplitCheckout" type="button">
+                        <span v-if="isProcessing" class="spinner-border spinner-border-sm me-1"></span>
+                        Complete Split Sale
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- DAY OPEN MODAL (REQ-0024, SRT-GAP-017) -->
+        <div v-if="showDayOpenModal" class="pos-modal-backdrop" @click.self="closeDayOpenModal">
+            <div class="pos-modal-card" style="max-width: 450px;">
+                <div class="pos-modal-header bg-primary text-white">
+                    <h5 class="m-0 fs-6 fw-bold d-flex align-items-center gap-2">
+                        <i class="fa-solid fa-door-open"></i> Open Cash Register (Day Open)
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" @click="closeDayOpenModal"></button>
+                </div>
+                <div class="pos-modal-body">
+                    <p class="text-secondary small mb-3">
+                        Enter the physical cash float counted at the start of your register session. This must match the drawer ledger balance.
+                    </p>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small">Opening Float (PKR) <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text">Rs.</span>
+                            <input 
+                                type="number" 
+                                step="0.01" 
+                                min="0" 
+                                class="form-control" 
+                                id="input-day-open-float"
+                                v-model.number="dayOpenFloat"
+                                placeholder="0.00"
+                                required
+                            />
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label fw-semibold small">Shift / Register Notes (Optional)</label>
+                        <textarea 
+                            class="form-control" 
+                            rows="2" 
+                            v-model="dayOpenNotes" 
+                            placeholder="Optional notes regarding this shift or starting float..."
+                        ></textarea>
+                    </div>
+                </div>
+                <div class="pos-modal-footer">
+                    <button class="btn btn-sm btn-secondary" @click="closeDayOpenModal" type="button">Cancel</button>
+                    <button 
+                        class="btn btn-sm btn-primary px-3" 
+                        :disabled="dayCloseIsSubmitting" 
+                        @click="submitDayOpen" 
+                        type="button"
+                        id="btn-confirm-day-open"
+                    >
+                        <span v-if="dayCloseIsSubmitting" class="spinner-border spinner-border-sm me-1"></span>
+                        Confirm & Open Register
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- DAY CLOSE BALANCING WIZARD MODAL (REQ-0025, SRT-GAP-018) -->
+        <div v-if="showDayCloseModal" class="pos-modal-backdrop" @click.self="closeDayCloseModal">
+            <div class="pos-modal-card" style="max-width: 500px;">
+                <div class="pos-modal-header bg-dark text-white">
+                    <h5 class="m-0 fs-6 fw-bold d-flex align-items-center gap-2">
+                        <i class="fa-solid fa-door-closed"></i> Cash Register Day Close & Reconciliation
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" @click="closeDayCloseModal"></button>
+                </div>
+                <div class="pos-modal-body">
+                    <!-- Owner / Manager Informational Bar -->
+                    <div v-if="isOwnerOrManager && store.activeRegisterSession" class="alert alert-info py-2 px-3 small mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Starting Float:</span>
+                            <strong>Rs. {{ Number(store.activeRegisterSession.opening_float || 0).toLocaleString('en-PK', { minimumFractionDigits: 2 }) }}</strong>
+                        </div>
+                        <div v-if="store.activeRegisterSession.closing_cash_expected !== undefined" class="d-flex justify-content-between">
+                            <span>System Expected Cash:</span>
+                            <strong>Rs. {{ Number(store.activeRegisterSession.closing_cash_expected || 0).toLocaleString('en-PK', { minimumFractionDigits: 2 }) }}</strong>
+                        </div>
+                    </div>
+
+                    <!-- Blind Cashier Instructions -->
+                    <p class="text-secondary small mb-3">
+                        Count physical cash in the drawer and enter the total below. All pending sales on this device will be verified prior to closure.
+                    </p>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small">Counted Physical Cash (PKR) <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text">Rs.</span>
+                            <input 
+                                type="number" 
+                                step="0.01" 
+                                min="0" 
+                                class="form-control form-control-lg fw-bold" 
+                                id="input-day-close-counted"
+                                v-model.number="dayCloseCounted"
+                                placeholder="0.00"
+                                required
+                            />
+                        </div>
+                    </div>
+
+                    <!-- Variance Reason (Requested if discrepancy exists) -->
+                    <div v-if="dayCloseReasonRequired" class="alert alert-warning py-2 px-3 small mb-3">
+                        <i class="fa-solid fa-triangle-exclamation me-1"></i>
+                        A discrepancy was detected between physical count and system records. Please provide an explanation below:
+                    </div>
+
+                    <div v-if="dayCloseReasonRequired" class="mb-3">
+                        <label class="form-label fw-semibold small text-danger">Discrepancy Reason <span class="text-danger">*</span></label>
+                        <textarea 
+                            class="form-control border-danger" 
+                            rows="2" 
+                            id="input-day-close-reason"
+                            v-model="dayCloseVarianceReason" 
+                            placeholder="State reason for variance (e.g., miscount, unrecorded petty cash, coin rounding)..."
+                            required
+                        ></textarea>
+                    </div>
+
+                    <div class="mb-2">
+                        <label class="form-label fw-semibold small">Closing Notes (Optional)</label>
+                        <textarea 
+                            class="form-control" 
+                            rows="2" 
+                            v-model="dayCloseNotes" 
+                            placeholder="Optional shift handover or closing notes..."
+                        ></textarea>
+                    </div>
+                </div>
+                <div class="pos-modal-footer">
+                    <button class="btn btn-sm btn-secondary" @click="closeDayCloseModal" type="button">Cancel</button>
+                    <button 
+                        class="btn btn-sm btn-danger px-3" 
+                        :disabled="dayCloseIsSubmitting" 
+                        @click="submitDayClose" 
+                        type="button"
+                        id="btn-confirm-day-close"
+                    >
+                        <span v-if="dayCloseIsSubmitting" class="spinner-border spinner-border-sm me-1"></span>
+                        Reconcile & Close Register
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
-
 
 </template>
 
@@ -374,18 +1076,73 @@
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useRetailStore } from '@/stores/retail';
+import { useCustomersStore } from '@/stores/customers';
+import { useAuthStore } from '@/stores/auth';
+import { useNavigationStore } from '@/stores/navigation';
 import { useToast } from 'vue-toastification';
 import html2canvas from 'html2canvas';
+import api from '@/api';
 
 const route = useRoute();
 const router = useRouter();
 const store = useRetailStore();
+const customersStore = useCustomersStore();
+const authStore = useAuthStore();
+const navigationStore = useNavigationStore();
 const toast = useToast();
+
+const storeDisplayName = computed(() => {
+  const isDemo = localStorage.getItem('hbos_demo_mode') === 'true' || localStorage.getItem('hbos_demo_mode') === 'single' || localStorage.getItem('hbos_demo_mode') === 'multi';
+  const demoType = localStorage.getItem('hbos_demo_type') || localStorage.getItem('hbos_demo_mode');
+  if (isDemo) {
+    if (demoType === 'multi') {
+      return authStore.user?.branch_name ? `Al-Madina Supermarket (${authStore.user.branch_name})` : 'Al-Madina Supermarket';
+    }
+    return 'Al-Madina General Store';
+  }
+  const baseName = authStore.user?.business_name || authStore.user?.business?.name || 'HBOS Store';
+  if (navigationStore.isMultiBranch && authStore.user?.branch_name) {
+    return `${baseName} (${authStore.user.branch_name})`;
+  }
+  return baseName;
+});
+
+const cashierName = computed(() => authStore.user?.name || 'Cashier');
+const cashierRole = computed(() => authStore.user?.role || authStore.user?.roles?.[0]?.name || 'Salesperson');
+const cashierInitials = computed(() => {
+  const name = authStore.user?.name || '';
+  if (!name) return 'POS';
+  const parts = name.trim().split(/\s+/);
+  if (parts.length >= 2) {
+    return (parts[0][0] + parts[1][0]).toUpperCase();
+  }
+  return name.slice(0, 2).toUpperCase();
+});
 
 const searchQuery = ref(route.query.search || '');
 const selectedCategory = ref(route.query.category || 'All');
 
 const selectedProductId = ref(route.query.product || null);
+
+const canViewMargin = computed(() => {
+  const user = authStore.user;
+  if (!user) return false;
+  if (user.role === 'Business Owner' || user.roles?.some(r => r.name === 'Business Owner')) return true;
+  if (authStore.can?.('view product costs')) return true;
+  return false;
+});
+
+const toggleItemPricingMode = (item) => {
+  if (item.pricingMode === 'wholesale') {
+    item.pricingMode = 'retail';
+    item.price = Number(item.unitPrice) || Number(item.price);
+  } else {
+    item.pricingMode = 'wholesale';
+    if (item.wholesalePrice !== null && item.wholesalePrice !== undefined) {
+      item.price = Number(item.wholesalePrice);
+    }
+  }
+};
 
 // DIRECT INLINE ATTRIBUTES & VARIATIONS STATE
 const selectedAttributes = ref({});
@@ -690,12 +1447,101 @@ const openPackDropdownId = ref(null);
 
 const currentOrderNo = ref('A6-' + String(Math.floor(1000 + Math.random() * 9000)));
 const customerPhone = ref('');
+const customerTypeMode = ref('walk_in'); // 'walk_in' | 'regular'
+const customerSearchText = ref('');
+const isCustomerDropdownOpen = ref(false);
+const customerSearchWrapperRef = ref(null);
 const selectedCustomer = ref('Walk-in Customer');
+const selectedRegularCustomerObj = ref(null);
+
+const customerFilteredList = computed(() => {
+  const allCusts = customersStore.customers || [];
+  const q = (customerSearchText.value || '').trim().toLowerCase();
+  
+  if (!q) {
+    // Show top 6 regular customers when search is empty
+    return allCusts.slice(0, 6);
+  }
+
+  const qCleanPhone = q.replace(/[\s\-+]/g, '');
+  
+  // Filter by customer name or phone number
+  const matches = allCusts.filter(c => {
+    const nameStr = (c.name || '').toLowerCase();
+    const phoneStr = String(c.phone || '').replace(/[\s\-+]/g, '');
+    const altPhoneStr = String(c.secondary_phone || '').replace(/[\s\-+]/g, '');
+    return nameStr.includes(q) || phoneStr.includes(qCleanPhone) || altPhoneStr.includes(qCleanPhone);
+  });
+
+  // Sort matches by relevance (starts with query ranks first)
+  matches.sort((a, b) => {
+    const aName = (a.name || '').toLowerCase();
+    const bName = (b.name || '').toLowerCase();
+    const aPhone = String(a.phone || '').replace(/[\s\-+]/g, '');
+    const bPhone = String(b.phone || '').replace(/[\s\-+]/g, '');
+
+    const aPrefix = aName.startsWith(q) || aPhone.startsWith(qCleanPhone);
+    const bPrefix = bName.startsWith(q) || bPhone.startsWith(qCleanPhone);
+
+    if (aPrefix && !bPrefix) return -1;
+    if (!aPrefix && bPrefix) return 1;
+    return aName.localeCompare(bName);
+  });
+
+  // Return exactly 6 results at a time (as requested: "list of six at a time should be shown, no more, no less")
+  return matches.slice(0, 6);
+});
+
+const onCustomerSearchInput = () => {
+  isCustomerDropdownOpen.value = true;
+};
+
+const selectRegularCustomer = (cust) => {
+  selectedCustomer.value = cust.name;
+  selectedRegularCustomerObj.value = cust;
+  customerSearchText.value = `${cust.name} ${cust.phone || ''}`.trim();
+  isCustomerDropdownOpen.value = false;
+};
+
+const onCustomerTypeChange = () => {
+  if (customerTypeMode.value === 'walk_in') {
+    selectedCustomer.value = 'Walk-in Customer';
+    selectedRegularCustomerObj.value = null;
+    customerSearchText.value = '';
+    isCustomerDropdownOpen.value = false;
+    if (paymentMethod.value === 'Khata') {
+      paymentMethod.value = 'Cash';
+    }
+    splitTenders.value.khata = 0;
+  } else {
+    // Switching to regular
+    isCustomerDropdownOpen.value = true;
+    if (selectedRegularCustomerObj.value) {
+      selectedCustomer.value = selectedRegularCustomerObj.value.name;
+    } else {
+      selectedCustomer.value = '';
+    }
+  }
+};
+
+const clearCustomerSelection = () => {
+  customerSearchText.value = '';
+  selectedRegularCustomerObj.value = null;
+  selectedCustomer.value = '';
+  isCustomerDropdownOpen.value = true;
+  if (paymentMethod.value === 'Khata') {
+    paymentMethod.value = 'Cash';
+  }
+  splitTenders.value.khata = 0;
+};
 
 const resolveProductImage = (img, name) => {
   if (img && typeof img === 'string' && img.trim() !== '') {
     const trimmed = img.trim();
     if (trimmed.startsWith('http://') || trimmed.startsWith('https://') || trimmed.startsWith('data:') || trimmed.startsWith('blob:')) {
+      return trimmed;
+    }
+    if (trimmed.startsWith('/demo/')) {
       return trimmed;
     }
     if (trimmed.startsWith('/storage/')) {
@@ -705,11 +1551,11 @@ const resolveProductImage = (img, name) => {
       return `http://localhost:8000/${trimmed}`;
     }
     if (trimmed.startsWith('/')) {
-      return `http://localhost:8000${trimmed}`;
+      return trimmed;
     }
     return `http://localhost:8000/storage/${trimmed}`;
   }
-  return getFallbackImage(name);
+  return '/demo/products/prod_01.webp';
 };
 
 const getFallbackImage = (name) => {
@@ -796,6 +1642,22 @@ const handleClickOutside = (e) => {
   }
 };
 
+const isLoadingProducts = ref(true);
+const isSessionChecking = ref(true);
+
+const hydratePos = async () => {
+    isLoadingProducts.value = true;
+    isSessionChecking.value = true;
+    const branchId = authStore.user?.branch_id || undefined;
+    await Promise.allSettled([
+        store.fetchCategories(),
+        store.fetchProducts().finally(() => { isLoadingProducts.value = false; }),
+        customersStore.fetchCustomers(),
+        store.fetchActiveRegisterSession(branchId).finally(() => { isSessionChecking.value = false; })
+    ]);
+    store.loadHeldCarts();
+};
+
 onMounted(async () => {
     setInterval(() => {
         const now = new Date();
@@ -805,13 +1667,113 @@ onMounted(async () => {
 
     document.addEventListener('click', handleClickOutside);
 
-    await store.fetchCategories();
-    await store.fetchProducts();
+    await hydratePos();
 
     if (!route.query.tab) {
         router.replace({ path: '/POS', query: { ...route.query, tab: 'sales' } });
     }
 });
+
+watch(() => route.path, async (newPath) => {
+    if (newPath === '/POS' || newPath === '/pos') {
+        await hydratePos();
+    }
+});
+
+// Cash Register Session UI State
+const showDayOpenModal = ref(false);
+const dayOpenFloat = ref(0);
+const dayOpenNotes = ref('');
+const showDayCloseModal = ref(false);
+const dayCloseCounted = ref(0);
+const dayCloseVarianceReason = ref('');
+const dayCloseNotes = ref('');
+const dayCloseReasonRequired = ref(false);
+const dayCloseIsSubmitting = ref(false);
+
+const isOwnerOrManager = computed(() => {
+    const u = authStore.user;
+    if (!u) return false;
+    return u.role === 'Business Owner' || u.role === 'Branch Manager' || u.roles?.some(r => r.name === 'Business Owner' || r.name === 'Branch Manager');
+});
+
+const openDayOpenModal = () => {
+    dayOpenFloat.value = 0;
+    dayOpenNotes.value = '';
+    showDayOpenModal.value = true;
+};
+
+const closeDayOpenModal = () => {
+    showDayOpenModal.value = false;
+};
+
+const submitDayOpen = async () => {
+    if (dayOpenFloat.value === null || dayOpenFloat.value === undefined || dayOpenFloat.value < 0) {
+        toast.error("Please enter a valid non-negative opening float.");
+        return;
+    }
+    dayCloseIsSubmitting.value = true;
+    try {
+        await store.openRegisterSession({
+            branch_id: authStore.user?.branch_id || undefined,
+            opening_float: dayOpenFloat.value,
+            notes: dayOpenNotes.value,
+        });
+        toast.success("Cash register session opened successfully!");
+        closeDayOpenModal();
+    } catch (e) {
+        const msg = e.response?.data?.errors?.opening_float?.[0] || e.response?.data?.errors?.session?.[0] || e.response?.data?.message || e.message;
+        toast.error(msg);
+    } finally {
+        dayCloseIsSubmitting.value = false;
+    }
+};
+
+const openDayCloseModal = () => {
+    dayCloseCounted.value = 0;
+    dayCloseVarianceReason.value = '';
+    dayCloseNotes.value = '';
+    dayCloseReasonRequired.value = false;
+    showDayCloseModal.value = true;
+};
+
+const closeDayCloseModal = () => {
+    showDayCloseModal.value = false;
+};
+
+const submitDayClose = async () => {
+    if (dayCloseCounted.value === null || dayCloseCounted.value === undefined || dayCloseCounted.value < 0) {
+        toast.error("Please enter a valid non-negative counted cash amount.");
+        return;
+    }
+    if (dayCloseReasonRequired.value && !dayCloseVarianceReason.value.trim()) {
+        toast.error("Variance reason is required to close the cash drawer.");
+        return;
+    }
+    dayCloseIsSubmitting.value = true;
+    try {
+        await store.closeRegisterSession({
+            session_id: store.activeRegisterSession?.id,
+            closing_cash_counted: dayCloseCounted.value,
+            variance_reason: dayCloseVarianceReason.value.trim() || undefined,
+            notes: dayCloseNotes.value.trim() || undefined,
+            branch_id: authStore.user?.branch_id,
+        });
+        toast.success("Cash register session closed successfully!");
+        closeDayCloseModal();
+    } catch (e) {
+        if (e.response?.data?.errors?.reason_required || e.response?.data?.errors?.variance_reason) {
+            dayCloseReasonRequired.value = true;
+            const msg = e.response?.data?.errors?.variance_reason?.[0] || "Discrepancy detected. A variance reason is required.";
+            toast.warning(msg);
+        } else {
+            const msg = e.response?.data?.message || e.message;
+            toast.error(msg);
+        }
+    } finally {
+        dayCloseIsSubmitting.value = false;
+    }
+};
 
 onUnmounted(() => {
     document.removeEventListener('click', handleClickOutside);
@@ -968,6 +1930,66 @@ const onSearchInput = () => {
   }, 250);
 };
 
+const handleBarcodeScan = (scannedQuery) => {
+  const query = String(scannedQuery || '').trim();
+  if (!query) return;
+
+  const qLower = query.toLowerCase();
+
+  // 1. Check exact primary barcode match
+  let targetProduct = store.products.find(p => String(p.barcode || '').trim().toLowerCase() === qLower);
+  let multiplier = 1;
+  let packLabel = '';
+
+  // 2. Check exact SKU match
+  if (!targetProduct) {
+    targetProduct = store.products.find(p => String(p.sku || '').trim().toLowerCase() === qLower);
+  }
+
+  // 3. Check alternate barcodes (with canonical quantity multipliers)
+  if (!targetProduct) {
+    for (const p of store.products) {
+      if (Array.isArray(p.alternateBarcodes)) {
+        const matchedAlt = p.alternateBarcodes.find(b => {
+          const val = typeof b === 'object' && b !== null ? b.barcode : b;
+          return String(val || '').trim().toLowerCase() === qLower;
+        });
+        if (matchedAlt) {
+          targetProduct = p;
+          if (typeof matchedAlt === 'object' && matchedAlt !== null) {
+            multiplier = Number(matchedAlt.multiplier) || 1;
+            packLabel = matchedAlt.label || `Master Carton (${multiplier} units)`;
+          }
+          break;
+        }
+      }
+    }
+  }
+
+  if (targetProduct) {
+    const qtyToAdd = multiplier;
+    const result = store.addToCart(targetProduct, qtyToAdd, packLabel || 'Single Pack');
+    if (result && result.success) {
+      toast.success(multiplier > 1 
+        ? `Scanned: Added ${packLabel} (${multiplier} units of ${targetProduct.name}) to cart` 
+        : `Scanned: Added ${targetProduct.name} to cart`);
+      searchQuery.value = '';
+      const q = { ...route.query };
+      delete q.search;
+      router.replace({ path: '/POS', query: q });
+    } else {
+      toast.warning(result?.message || 'Could not add product to cart');
+    }
+  }
+};
+
+const handleScanButtonClick = () => {
+  const code = window.prompt('Scan or enter barcode / SKU:');
+  if (code) {
+    handleBarcodeScan(code);
+  }
+};
+
 const categories = computed(() => {
   const cats = ['All Products'];
   const seen = new Set(['all products', 'all']);
@@ -1006,6 +2028,11 @@ const filteredProducts = computed(() => {
   const search = (searchQuery.value || '').trim().toLowerCase();
 
   return store.products.filter(p => {
+    // Exclude inactive products from POS retail catalog
+    if (p.active === false || p.is_active === false) {
+      return false;
+    }
+
     // 1. Category Filtering
     let matchesCategory = false;
     if (selected === 'All' || selected === 'All Products' || selected === '') {
@@ -1038,13 +2065,17 @@ const filteredProducts = computed(() => {
       }
     }
 
-    // 2. Search Filtering
+    // 2. Search Filtering (Name, SKU, Primary Barcode, Alternate Barcodes)
     let matchesSearch = true;
     if (search) {
       const pName = (p.name || '').toLowerCase();
       const pSku = (p.sku || '').toLowerCase();
       const pBarcode = (p.barcode || '').toLowerCase();
-      matchesSearch = pName.includes(search) || pSku.includes(search) || pBarcode.includes(search);
+      const altMatch = Array.isArray(p.alternateBarcodes) && p.alternateBarcodes.some(b => {
+        const val = typeof b === 'object' && b !== null ? b.barcode : b;
+        return String(val || '').toLowerCase().includes(search);
+      });
+      matchesSearch = pName.includes(search) || pSku.includes(search) || pBarcode.includes(search) || altMatch;
     }
 
     return matchesCategory && matchesSearch;
@@ -1057,6 +2088,11 @@ const cartItemCount = computed(() => {
 
 
 const handleSelectProduct = (product) => {
+  if (product.active === false || product.is_active === false) {
+    toast.error('Product is inactive and cannot be sold.');
+    return;
+  }
+
   const variant = getMatchedVariant(product);
   
   // If variant exists and its stock is 0, block add to cart
@@ -1165,16 +2201,492 @@ const generateBarcodeSvg = (code) => {
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${x + 6} 42" width="100%" height="38" preserveAspectRatio="none">${bars}</svg>`;
 };
 
+const payableTotal = computed(() => {
+  return Math.max(0, store.cartSubtotal - store.cartDiscount + Math.round(store.cartSubtotal * 0.1));
+});
+
+const isWalkInCustomer = computed(() => {
+  if (customerTypeMode.value === 'walk_in') return true;
+  return !selectedCustomer.value || selectedCustomer.value === 'Walk-in Customer' || selectedCustomer.value.trim() === '';
+});
+
+const selectPaymentMethod = (method) => {
+  if (method === 'Khata' && isWalkInCustomer.value) {
+    toast.warning("Khata (Pay Later) is only available for Regular Customers. Please select or add a Regular Customer first.");
+    return;
+  }
+  paymentMethod.value = method;
+};
+
+const isElevatedUser = computed(() => {
+  const r = (authStore.user?.role || '').toLowerCase();
+  return r.includes('owner') || r.includes('admin') || r.includes('manager');
+});
+
+// Paper size (SRT-GAP-011: DEVICE_LOCAL scope)
+const paperSize = ref(localStorage.getItem('hbos_receipt_paper_size') || '80mm');
+const setPaperSize = (size) => {
+  paperSize.value = size;
+  localStorage.setItem('hbos_receipt_paper_size', size);
+};
+
+// Canonical Business Receipt Return Policy (SRT-GAP-011: BUSINESS_RECEIPT_SETTINGS)
+const receiptReturnPolicy = ref('');
+const loadReceiptSettings = async () => {
+  try {
+    const res = await api.get('/settings');
+    const data = res.data || {};
+    receiptReturnPolicy.value = data.receipt_settings?.return_policy || data.receipt_footer || '';
+  } catch (e) {
+    console.error('Failed to load canonical receipt settings:', e);
+  }
+};
+
+const isNavigatorOnline = ref(typeof navigator !== 'undefined' ? navigator.onLine : true);
+
+const handleDocumentClick = (e) => {
+  if (customerSearchWrapperRef.value && !customerSearchWrapperRef.value.contains(e.target)) {
+    isCustomerDropdownOpen.value = false;
+  }
+};
+
+onMounted(() => {
+  loadReceiptSettings();
+  if (typeof window !== 'undefined') {
+    window.addEventListener('online', () => { isNavigatorOnline.value = true; });
+    window.addEventListener('offline', () => { isNavigatorOnline.value = false; });
+    document.addEventListener('click', handleDocumentClick);
+  }
+});
+
+onUnmounted(() => {
+  if (typeof window !== 'undefined') {
+    document.removeEventListener('click', handleDocumentClick);
+  }
+});
+
+// -------------------------------------------------------------------------
+// SRT-GAP-009: QUICK ADD CUSTOMER
+// -------------------------------------------------------------------------
+const showQuickCustomerModal = ref(false);
+const isSavingCustomer = ref(false);
+const quickCustomer = ref({
+  name: '',
+  phone: '',
+  secondary_phone: '',
+  address: ''
+});
+
+// Full Pakistani Phone Normalization (03XXXXXXXXX / +923XXXXXXXXX canonical comparison)
+function normalizePakistaniPhone(phone) {
+  if (!phone) return '';
+  const digits = String(phone).trim().replace(/[^0-9]/g, '');
+  if (digits.startsWith('923') && digits.length === 12) {
+    return '03' + digits.slice(2);
+  }
+  if (digits.startsWith('03') && digits.length === 11) {
+    return digits;
+  }
+  if (digits.startsWith('3') && digits.length === 10) {
+    return '0' + digits;
+  }
+  return digits;
+}
+
+const matchingDuplicateCustomer = computed(() => {
+  const normInput = normalizePakistaniPhone(quickCustomer.value.phone);
+  if (!normInput || normInput.length < 10) return null;
+  return customersStore.customers?.find(c => {
+    const normExisting = normalizePakistaniPhone(c.phone);
+    return normExisting && normExisting === normInput;
+  }) || null;
+});
+
+const isQuickCustomerValid = computed(() => {
+  return (quickCustomer.value.name || '').trim().length >= 2 &&
+         (quickCustomer.value.phone || '').trim().length >= 7;
+});
+
+const openQuickCustomerModal = () => {
+  quickCustomer.value = {
+    name: '',
+    phone: '',
+    secondary_phone: '',
+    address: ''
+  };
+  showQuickCustomerModal.value = true;
+};
+
+const closeQuickCustomerModal = () => {
+  showQuickCustomerModal.value = false;
+};
+
+const selectExistingCustomer = (cust) => {
+  customerTypeMode.value = 'regular';
+  selectRegularCustomer(cust);
+  closeQuickCustomerModal();
+  toast.success(`Selected customer ${cust.name}`);
+};
+
+const submitQuickCustomer = async () => {
+  if (!isQuickCustomerValid.value) return;
+  isSavingCustomer.value = true;
+  try {
+    const payload = {
+      name: quickCustomer.value.name.trim(),
+      phone: quickCustomer.value.phone.trim(),
+      secondary_phone: quickCustomer.value.secondary_phone?.trim() || null,
+      address: quickCustomer.value.address?.trim() || null
+    };
+
+    const res = await customersStore.addCustomer(payload);
+    if (res.success) {
+      toast.success(`Customer "${payload.name}" added successfully!`);
+      customerTypeMode.value = 'regular';
+      selectedCustomer.value = payload.name;
+      const createdObj = res.customer || res.data || { id: res.id, ...payload };
+      selectedRegularCustomerObj.value = createdObj;
+      customerSearchText.value = `${payload.name} ${payload.phone || ''}`.trim();
+      isCustomerDropdownOpen.value = false;
+      closeQuickCustomerModal();
+    } else {
+      toast.error(res.message || 'Failed to add customer.');
+    }
+  } catch (err) {
+    console.error('Error creating customer:', err);
+    toast.error('Network error creating customer.');
+  } finally {
+    isSavingCustomer.value = false;
+  }
+};
+
+// -------------------------------------------------------------------------
+// SRT-GAP-007: CART HOLD & MULTI-CART BUFFER (LOCALSTORAGE)
+// -------------------------------------------------------------------------
+const showHeldCartsModal = ref(false);
+const showResumeCollisionModal = ref(false);
+const pendingResumeId = ref(null);
+
+const openHeldCartsModal = () => {
+  store.loadHeldCarts();
+  showHeldCartsModal.value = true;
+};
+
+const closeHeldCartsModal = () => {
+  showHeldCartsModal.value = false;
+};
+
+const handleHoldCart = () => {
+  if (store.cart.length === 0) {
+    toast.error('Cannot hold an empty cart.');
+    return;
+  }
+  const note = prompt('Optional hold note (e.g. Customer stepped out, Table 4):', '') || '';
+  const result = store.holdCart(note, null, selectedCustomer.value);
+  if (result.success) {
+    toast.success(`Cart held successfully (#${result.held_id})`);
+    customerTypeMode.value = 'walk_in';
+    selectedCustomer.value = 'Walk-in Customer';
+    selectedRegularCustomerObj.value = null;
+    customerSearchText.value = '';
+    isCustomerDropdownOpen.value = false;
+  } else {
+    toast.error(result.message);
+  }
+};
+
+const handleResumeCartClick = (heldId) => {
+  if (store.cart.length > 0) {
+    pendingResumeId.value = heldId;
+    showResumeCollisionModal.value = true;
+    return;
+  }
+  executeResumeCart(heldId);
+};
+
+const executeResumeCart = (heldId) => {
+  const result = store.resumeCart(heldId);
+  if (result.success) {
+    if (result.record?.customer_name && result.record.customer_name !== 'Walk-in Customer') {
+      customerTypeMode.value = 'regular';
+      selectedCustomer.value = result.record.customer_name;
+      const found = customersStore.customers?.find(c => c.name === result.record.customer_name);
+      if (found) {
+        selectedRegularCustomerObj.value = found;
+        customerSearchText.value = `${found.name} ${found.phone || ''}`.trim();
+      } else {
+        customerSearchText.value = result.record.customer_name;
+      }
+    } else {
+      customerTypeMode.value = 'walk_in';
+      selectedCustomer.value = 'Walk-in Customer';
+      selectedRegularCustomerObj.value = null;
+      customerSearchText.value = '';
+    }
+    toast.success('Held cart resumed successfully.');
+    closeHeldCartsModal();
+  } else {
+    toast.error(result.message);
+  }
+};
+
+const resolveCollisionHoldFirst = () => {
+  const note = 'Auto-held prior to resume';
+  store.holdCart(note, null, selectedCustomer.value);
+  showResumeCollisionModal.value = false;
+  if (pendingResumeId.value) {
+    executeResumeCart(pendingResumeId.value);
+    pendingResumeId.value = null;
+  }
+};
+
+const resolveCollisionOverwrite = () => {
+  store.cart = [];
+  store.cartDiscount = 0;
+  showResumeCollisionModal.value = false;
+  if (pendingResumeId.value) {
+    executeResumeCart(pendingResumeId.value);
+    pendingResumeId.value = null;
+  }
+};
+
+const handleDiscardCart = (heldId) => {
+  if (confirm('Are you sure you want to discard this held cart?')) {
+    store.discardCart(heldId);
+    toast.info('Held cart discarded.');
+  }
+};
+
+// -------------------------------------------------------------------------
+// SRT-GAP-008: PRICE OVERRIDE WORKFLOW
+// -------------------------------------------------------------------------
+const showPriceOverrideModal = ref(false);
+const overrideTargetItem = ref(null);
+const overrideForm = ref({
+  new_price: 0,
+  reason: '',
+  approver_email: '',
+  approver_password: ''
+});
+const pendingOverrideAuth = ref(null);
+
+const promptPriceOverride = (item) => {
+  overrideTargetItem.value = item;
+  overrideForm.value = {
+    new_price: item.price,
+    reason: '',
+    approver_email: '',
+    approver_password: ''
+  };
+  showPriceOverrideModal.value = true;
+};
+
+const closePriceOverrideModal = () => {
+  overrideForm.value.approver_password = '';
+  showPriceOverrideModal.value = false;
+};
+
+const isOverrideFormValid = computed(() => {
+  if (overrideForm.value.new_price < 0) return false;
+  if (!isElevatedUser.value) {
+    return !!(overrideForm.value.approver_email && overrideForm.value.approver_password);
+  }
+  return true;
+});
+
+const submitPriceOverride = () => {
+  if (!overrideTargetItem.value) return;
+  const itemId = overrideTargetItem.value.cartItemId || overrideTargetItem.value.id;
+  const newPrice = Number(overrideForm.value.new_price);
+  
+  if (!isElevatedUser.value) {
+    pendingOverrideAuth.value = {
+      approver_email: overrideForm.value.approver_email,
+      approver_password: overrideForm.value.approver_password,
+      reason: overrideForm.value.reason || 'Cashier counter override'
+    };
+  } else {
+    pendingOverrideAuth.value = null;
+  }
+
+  store.overrideItemPrice(itemId, newPrice);
+  overrideForm.value.approver_password = '';
+  showPriceOverrideModal.value = false;
+  toast.success(`Unit price updated to Rs ${newPrice.toLocaleString('en-PK')}`);
+};
+
+// -------------------------------------------------------------------------
+// SRT-GAP-006: SPLIT MULTI-TENDER MODAL & CHANGE CALCULATOR
+// -------------------------------------------------------------------------
+const showSplitModal = ref(false);
+const splitTenders = ref({
+  cash_applied: 0,
+  cash_tendered: 0,
+  online: 0,
+  khata: 0
+});
+
+const totalPaidTenders = computed(() => {
+  return Number(splitTenders.value.cash_applied || 0) + Number(splitTenders.value.online || 0);
+});
+
+const totalTenderSettled = computed(() => {
+  return totalPaidTenders.value + Number(splitTenders.value.khata || 0);
+});
+
+const isSplitBalanced = computed(() => {
+  return Math.abs(totalTenderSettled.value - payableTotal.value) < 1;
+});
+
+const cashChange = computed(() => {
+  return Math.max(0, Number(splitTenders.value.cash_tendered || 0) - Number(splitTenders.value.cash_applied || 0));
+});
+
+const canSubmitSplit = computed(() => {
+  if (!isSplitBalanced.value) return false;
+  if (Number(splitTenders.value.cash_applied || 0) < 0 ||
+      Number(splitTenders.value.online || 0) < 0 ||
+      Number(splitTenders.value.khata || 0) < 0) {
+    return false;
+  }
+  if (Number(splitTenders.value.khata || 0) > 0 && isWalkInCustomer.value) {
+    return false;
+  }
+  return true;
+});
+
+const openSplitPaymentModal = () => {
+  paymentMethod.value = 'Split';
+  splitTenders.value = {
+    cash_applied: payableTotal.value,
+    cash_tendered: payableTotal.value,
+    online: 0,
+    khata: 0
+  };
+  showSplitModal.value = true;
+};
+
+const closeSplitPaymentModal = () => {
+  showSplitModal.value = false;
+};
+
+const fillRemainingOnline = () => {
+  const remaining = Math.max(0, payableTotal.value - Number(splitTenders.value.cash_applied || 0) - Number(splitTenders.value.khata || 0));
+  splitTenders.value.online = remaining;
+};
+
+const fillRemainingKhata = () => {
+  if (isWalkInCustomer.value) return;
+  const remaining = Math.max(0, payableTotal.value - Number(splitTenders.value.cash_applied || 0) - Number(splitTenders.value.online || 0));
+  splitTenders.value.khata = remaining;
+};
+
+const submitSplitCheckout = async () => {
+  if (!canSubmitSplit.value) return;
+  isProcessing.value = true;
+
+  const payments = [];
+  if (Number(splitTenders.value.cash_applied || 0) > 0) {
+    payments.push({
+      payment_method: 'Cash',
+      amount: Number(splitTenders.value.cash_applied)
+    });
+  }
+  if (Number(splitTenders.value.online || 0) > 0) {
+    payments.push({
+      payment_method: 'Online',
+      amount: Number(splitTenders.value.online)
+    });
+  }
+  if (Number(splitTenders.value.khata || 0) > 0) {
+    payments.push({
+      payment_method: 'Khata',
+      amount: Number(splitTenders.value.khata)
+    });
+  }
+
+  const paidAmount = Number(splitTenders.value.cash_applied || 0) + Number(splitTenders.value.online || 0);
+  
+  let resolvedCustId = null;
+  if (!isWalkInCustomer.value) {
+    if (selectedRegularCustomerObj.value?.id) {
+      resolvedCustId = selectedRegularCustomerObj.value.id;
+    } else if (customersStore.customers) {
+      const found = customersStore.customers.find(c => c.name === selectedCustomer.value || String(c.id) === String(selectedCustomer.value));
+      if (found) resolvedCustId = found.id;
+    }
+  }
+
+  const options = {
+    payment_method: 'Split',
+    customerId: resolvedCustId,
+    customerName: selectedCustomer.value,
+    payments: payments,
+    paid_amount: paidAmount,
+    override_authorization: pendingOverrideAuth.value || undefined
+  };
+
+  const result = await store.completeSale('Split', resolvedCustId, selectedCustomer.value, options);
+  isProcessing.value = false;
+
+  pendingOverrideAuth.value = null;
+
+  if (result.success) {
+    closeSplitPaymentModal();
+    currentInvoice.value = result.invoice;
+    showInvoiceModal.value = true;
+    toast.success('Split tender sale completed successfully!');
+  } else {
+    toast.error(result.message || 'Split tender sale failed.');
+  }
+};
+
+const handleConfirmOrderClick = () => {
+  if (paymentMethod.value === 'Split') {
+    openSplitPaymentModal();
+  } else if (paymentMethod.value === 'Khata' && isWalkInCustomer.value) {
+    toast.warning("Khata (Pay Later) is only available for Regular Customers. Please select or add a Regular Customer.");
+  } else {
+    handleCompleteSale();
+  }
+};
+
 const handleCompleteSale = async () => {
   if (store.cart.length === 0) {
       toast.error("Please add at least one product to the cart.");
       return;
   }
+  if (paymentMethod.value === 'Khata' && isWalkInCustomer.value) {
+      toast.warning("Khata (Pay Later) is only available for Regular Customers. Please select or add a Regular Customer.");
+      return;
+  }
   isProcessing.value = true;
   
-  const result = await store.completeSale(paymentMethod.value, null, selectedCustomer.value);
+  let resolvedCustId = null;
+  if (!isWalkInCustomer.value) {
+    if (selectedRegularCustomerObj.value?.id) {
+      resolvedCustId = selectedRegularCustomerObj.value.id;
+    } else if (customersStore.customers) {
+      const found = customersStore.customers.find(c => c.name === selectedCustomer.value || String(c.id) === String(selectedCustomer.value));
+      if (found) resolvedCustId = found.id;
+    }
+  }
+
+  const isKhata = paymentMethod.value === 'Khata';
+  const options = {
+    payment_method: paymentMethod.value,
+    customerId: resolvedCustId,
+    customerName: selectedCustomer.value,
+    paid_amount: isKhata ? 0 : payableTotal.value,
+    payments: [{ payment_method: paymentMethod.value, amount: payableTotal.value }],
+    override_authorization: pendingOverrideAuth.value || undefined
+  };
+
+  const result = await store.completeSale(paymentMethod.value, resolvedCustId, selectedCustomer.value, options);
   isProcessing.value = false;
   
+  pendingOverrideAuth.value = null;
+
   if (result.success) {
     currentInvoice.value = result.invoice;
     showInvoiceModal.value = true;
@@ -1189,7 +2701,11 @@ const handleCloseInvoiceModal = () => {
     currentInvoice.value = null;
     store.cart = [];
     store.cartDiscount = 0;
+    customerTypeMode.value = 'walk_in';
     selectedCustomer.value = 'Walk-in Customer';
+    selectedRegularCustomerObj.value = null;
+    customerSearchText.value = '';
+    isCustomerDropdownOpen.value = false;
     paymentMethod.value = 'Cash';
     selectedProductId.value = null;
     openPackDropdownId.value = null;
@@ -1486,8 +3002,8 @@ const shareWhatsApp = async () => {
         try {
           await navigator.share({
             files: [file],
-            title: `HBOS Invoice - ${invNum}`,
-            text: `Invoice from HBOS Main Branch (${invNum})`
+            title: `${storeDisplayName.value} Invoice - ${invNum}`,
+            text: `Invoice from ${storeDisplayName.value} (${invNum})`
           });
           toast.success('Invoice image shared to WhatsApp!');
           isGeneratingImage.value = false;
@@ -1539,6 +3055,60 @@ const shareWhatsApp = async () => {
 </script>
 
 <style scoped>
+/* Phase-4 Modals and Thermal Print Styling */
+.pos-modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    padding: 16px;
+}
+.pos-modal-card {
+    background: #ffffff;
+    border-radius: 14px;
+    width: 100%;
+    max-width: 520px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    max-height: 90vh;
+}
+.pos-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid #e2e8f0;
+}
+.pos-modal-body {
+    padding: 20px;
+    overflow-y: auto;
+}
+.pos-modal-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 12px 20px;
+    border-top: 1px solid #e2e8f0;
+    background: #f8fafc;
+}
+.thermal-58mm {
+    width: 220px !important;
+    font-size: 10px !important;
+}
+.thermal-80mm {
+    width: 290px !important;
+}
+
 /* Inject Original Legacy CSS from Pos-Sale.html */
 :root { --primary: #2447c6; --primary-dark: #1939a8; --primary-light: #e9efff; --text: #171a24; --muted: #697386; --border: #d8deea; --background: #f6f8fc; --white: #ffffff; --success: #0b9f68; --danger: #d52d2d; --warning: #c77b00; --sidebar-width: 280px; }
 * { box-sizing: border-box; }
@@ -2253,27 +3823,29 @@ button, input, select { font-family: inherit; }
 /* Payment Pills */
 .payment-pills-row {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
   margin-bottom: 14px;
 }
 
 .payment-pill-btn {
-  height: 40px;
+  height: 38px;
+  padding: 0 4px;
   border: 1.5px solid #e2e8f0;
-  border-radius: 12px;
+  border-radius: 10px;
   background: #ffffff;
   color: #475569;
-  font-size: 12.5px;
+  font-size: 11.5px;
   font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all 0.15s ease;
+  white-space: nowrap;
 }
 
-.payment-pill-btn:hover {
+.payment-pill-btn:hover:not(:disabled) {
   border-color: #93c5fd;
   background: #f8fafc;
 }
@@ -2283,6 +3855,24 @@ button, input, select { font-family: inherit; }
   color: #ffffff;
   border-color: #2563eb;
   box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+}
+
+.payment-pill-btn.disabled,
+.payment-pill-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed !important;
+  background: #f1f5f9;
+  border-color: #e2e8f0;
+  color: #94a3b8;
+  box-shadow: none !important;
+}
+
+.customer-dropdown-item {
+  transition: background-color 0.12s ease;
+}
+
+.customer-dropdown-item:hover {
+  background-color: #f1f5f9;
 }
 
 /* Order Breakdown Card */

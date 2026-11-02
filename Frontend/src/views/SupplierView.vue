@@ -429,11 +429,11 @@ const selectedSupplier = computed(() => {
 });
 
 const totalPurchasesAmount = computed(() => {
-  return suppliers.value.reduce((sum, s) => sum + (Number(s.total_purchases) || 0), 0) || 625000;
+  return suppliers.value.reduce((sum, s) => sum + (Number(s.total_purchases) || 0), 0);
 });
 
 const totalPayablesAmount = computed(() => {
-  return suppliers.value.reduce((sum, s) => sum + (Number(s.balance) || 0), 0) || 185000;
+  return suppliers.value.reduce((sum, s) => sum + (Number(s.balance) || 0), 0);
 });
 
 const selectSupplier = (supplier) => {

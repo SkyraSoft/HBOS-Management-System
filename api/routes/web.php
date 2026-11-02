@@ -25,19 +25,21 @@ Route::get('/download.html', function () {
 
 // Download route handler for release binary installers
 Route::get('/downloads/{filename}', function ($filename) {
-    $filePath = public_path('downloads/' . $filename);
-    if (file_exists($filePath)) {
-        return response()->download($filePath);
+    $cleanFilename = basename($filename);
+    
+    // Redirect legacy dummy EXE to the authentic WiX MSI package
+    if ($cleanFilename === 'HBOS_Setup_v1.0.0_x64.exe') {
+        return redirect('/downloads/HBOS_POS_1.0.0_x64_en-US.msi', 301);
     }
     
-    // Create directory and return release installer binary
-    $downloadsDir = public_path('downloads');
-    if (!file_exists($downloadsDir)) {
-        mkdir($downloadsDir, 0755, true);
+    $filePath = public_path('downloads/' . $cleanFilename);
+    if (file_exists($filePath)) {
+        return response()->download($filePath, $cleanFilename);
     }
-
-    $dummyContent = "HBOS Enterprise Suite Release Package v1.0.0 - " . $filename . "\nBuilt by SkyraSoft Engineering.";
-    file_put_contents($filePath, $dummyContent);
-
-    return response()->download($filePath, $filename);
+    
+    return response()->json([
+        'error' => 'Not Found',
+        'message' => 'The requested release distribution package does not exist on this server.',
+        'file' => $cleanFilename
+    ], 404);
 });

@@ -1,0 +1,120 @@
+[
+  {
+    "role_id": "BUSINESS_SUPER_OWNER",
+    "display_name": "Business Super Owner",
+    "security_domain": "CUSTOMER_TENANT",
+    "scope": "ALL_BRANCHES_CONSOLIDATED",
+    "primary_landing": "/dashboard",
+    "allowed_actions": [
+      "View consolidated and branch-level analytics",
+      "Create and manage branches",
+      "Create, invite, and assign employees",
+      "Manage roles and permissions within tenant",
+      "Full access to sales, purchases, inventory, khata, financial accounts, expenses, reports, settings",
+      "Activate read-only 'View As' role preview mode",
+      "Create Owner Review Notes and Action Requests"
+    ],
+    "restricted_actions": [
+      "Access other customer tenants (Strict Isolation)",
+      "Perform platform-level system maintenance"
+    ]
+  },
+  {
+    "role_id": "BRANCH_MANAGER",
+    "display_name": "Branch Manager",
+    "security_domain": "CUSTOMER_TENANT",
+    "scope": "ASSIGNED_BRANCH_ONLY",
+    "primary_landing": "/dashboard",
+    "allowed_actions": [
+      "Branch-specific sales and POS oversight",
+      "Branch inventory management, adjustments, and inter-branch transfers",
+      "Create sales, process authorized returns",
+      "Receive purchases and manage local suppliers",
+      "Record branch operational expenses",
+      "Manage branch staff assignments",
+      "View branch reports and receipts"
+    ],
+    "restricted_actions": [
+      "View or modify operational data of unassigned branches",
+      "Access global business financial accounts or capital operations",
+      "Promote staff to Business Owner",
+      "Modify root business settings"
+    ]
+  },
+  {
+    "role_id": "SALESPERSON_CASHIER",
+    "display_name": "Salesperson / Cashier",
+    "security_domain": "CUSTOMER_TENANT",
+    "scope": "ASSIGNED_BRANCH_ONLY",
+    "primary_landing": "/POS",
+    "allowed_actions": [
+      "POS sales checkout and barcode scanning",
+      "Customer lookup and customer creation",
+      "View own sales transactions and shift totals",
+      "Cash register session operations",
+      "View product catalog and prices"
+    ],
+    "restricted_actions": [
+      "Cancel posted sales or void receipts",
+      "Process refunds without manager approval",
+      "Override prices without explicit permission",
+      "View business or branch financial reports",
+      "Access expenses, khata, suppliers, or user settings"
+    ]
+  },
+  {
+    "role_id": "ACCOUNTANT",
+    "display_name": "Accountant",
+    "security_domain": "CUSTOMER_TENANT",
+    "scope": "TENANT_WIDE_FINANCIALS",
+    "primary_landing": "/dashboard",
+    "allowed_actions": [
+      "Manage customer Khata receivables and record customer payments",
+      "Manage supplier payables and record supplier payments",
+      "Manage operational expenses and recurring expenses",
+      "Manage cash and bank financial accounts and execute account transfers",
+      "Reconciliation and financial reporting (P&L, balance sheets, cash flow)"
+    ],
+    "restricted_actions": [
+      "Direct POS checkout (unless assigned dual cashier role)",
+      "Physical inventory adjustments without verification",
+      "User governance and role assignment"
+    ]
+  },
+  {
+    "role_id": "INVENTORY_MANAGER",
+    "display_name": "Inventory Manager",
+    "security_domain": "CUSTOMER_TENANT",
+    "scope": "TENANT_OR_BRANCH_INVENTORY",
+    "primary_landing": "/inventory",
+    "allowed_actions": [
+      "Manage product catalog, categories, subcategories, brands, variations",
+      "Track branch stock levels and minimum reorder thresholds",
+      "Execute stock adjustments and stock transfers across branches",
+      "Receive purchase goods (GRN) and log supplier returns",
+      "Print barcode labels and generate inventory valuation reports"
+    ],
+    "restricted_actions": [
+      "Access customer khata or sensitive financial profit metrics",
+      "Manage cash accounts or record supplier disbursements",
+      "User governance and role assignment"
+    ]
+  },
+  {
+    "role_id": "PLATFORM_SUPER_ADMIN",
+    "display_name": "Platform Super Admin",
+    "security_domain": "SKYRASOFT_PLATFORM",
+    "scope": "PLATFORM_OPERATIONS_ONLY",
+    "primary_landing": "/admin",
+    "allowed_actions": [
+      "Platform release health and version compatibility monitoring",
+      "Tenant account provisioning diagnostics",
+      "Abuse handling and rate limit monitoring",
+      "Audited time-limited customer support access with explicit business consent"
+    ],
+    "restricted_actions": [
+      "Silent browsing of customer transactional or financial records",
+      "Direct mutation of tenant business ledgers"
+    ]
+  }
+]

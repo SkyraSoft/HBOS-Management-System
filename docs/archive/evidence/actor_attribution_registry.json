@@ -1,0 +1,50 @@
+[
+  {
+    "domain": "SALES_AND_POS",
+    "table": "sales / sale_returns",
+    "primary_actor_column": "created_by (users.id)",
+    "branch_column": "branch_id (branches.id)",
+    "historical_snapshot": "Snapshot user name and role name at sale time in activity_log properties",
+    "offline_replay_policy": "Retain original cashier user_id from offline transaction queue; do NOT replace with sync worker user_id."
+  },
+  {
+    "domain": "PURCHASING_AND_GRN",
+    "table": "purchases / supplier_returns",
+    "primary_actor_column": "created_by (users.id)",
+    "branch_column": "branch_id (branches.id)",
+    "historical_snapshot": "Snapshot receiver identity and supplier reference in activity_log",
+    "offline_replay_policy": "Tag user who physically confirmed and signed GRN receiving."
+  },
+  {
+    "domain": "INVENTORY_MOVEMENTS",
+    "table": "inventory_movements",
+    "primary_actor_column": "created_by (users.id)",
+    "branch_column": "branch_id (branches.id)",
+    "historical_snapshot": "Record adjustment reason, before_qty, after_qty, and authorized user",
+    "offline_replay_policy": "Replay movements preserving exact transaction timestamp and initiator."
+  },
+  {
+    "domain": "CUSTOMER_KHATA_PAYMENTS",
+    "table": "customer_payments / khata_transactions",
+    "primary_actor_column": "created_by (users.id)",
+    "branch_column": "branch_id (branches.id)",
+    "historical_snapshot": "Record collecting cashier/accountant, customer balance before and after",
+    "offline_replay_policy": "Strict idempotency key deduplication with original collecting actor."
+  },
+  {
+    "domain": "EXPENSES_AND_PAYROLL",
+    "table": "expenses",
+    "primary_actor_column": "created_by (users.id)",
+    "branch_column": "branch_id (branches.id)",
+    "historical_snapshot": "Record expense category, payee, financial account, and approving user",
+    "offline_replay_policy": "Validate financial account balance and assign original creator."
+  },
+  {
+    "domain": "USER_GOVERNANCE_AND_SECURITY",
+    "table": "users / model_has_roles / activity_log",
+    "primary_actor_column": "causer_id (users.id)",
+    "branch_column": "branch_id",
+    "historical_snapshot": "Old role vs new role, status changes, permission changes, password resets",
+    "offline_replay_policy": "Security and governance mutations require live server authorization."
+  }
+]

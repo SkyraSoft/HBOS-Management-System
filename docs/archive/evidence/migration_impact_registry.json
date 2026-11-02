@@ -1,0 +1,246 @@
+{
+    "MIG-001": {
+        "migration_id": "MIG-001",
+        "migration_name": "add_snapshot_columns_to_sale_items_table",
+        "target_gaps": [
+            "GAP-001"
+        ],
+        "gaps_addressed": [
+            "GAP-001"
+        ],
+        "table": "sale_items",
+        "operation": "ADD_COLUMNS",
+        "columns": [
+            "barcode (string, nullable)",
+            "sku (string, nullable)",
+            "product_name (string, nullable)",
+            "unit_cost (decimal 15,2, default 0)"
+        ],
+        "default_strategy": "NULLABLE_WITH_DEFAULT_ZERO_FOR_COST",
+        "backfill_strategy": "APPROXIMATE_NON_HISTORICAL_BACKFILL_FROM_PRODUCT_MASTER",
+        "locking_risk": "LOW",
+        "rollback_strategy": "DROP_COLUMNS",
+        "deployment_order": 1
+    },
+    "MIG-002": {
+        "migration_id": "MIG-002",
+        "migration_name": "add_wholesale_price_to_products_table",
+        "target_gaps": [
+            "GAP-002"
+        ],
+        "gaps_addressed": [
+            "GAP-002"
+        ],
+        "table": "products",
+        "operation": "ADD_COLUMN",
+        "columns": [
+            "wholesale_price (decimal 15,2, nullable)"
+        ],
+        "default_strategy": "NULLABLE_DEFAULTS_TO_NULL",
+        "backfill_strategy": "NOT_REQUIRED",
+        "locking_risk": "LOW",
+        "rollback_strategy": "DROP_COLUMN",
+        "deployment_order": 2
+    },
+    "MIG-003": {
+        "migration_id": "MIG-003",
+        "migration_name": "create_sale_payments_table",
+        "target_gaps": [
+            "GAP-003"
+        ],
+        "gaps_addressed": [
+            "GAP-003"
+        ],
+        "table": "sale_payments",
+        "operation": "CREATE_TABLE",
+        "columns": [
+            "id",
+            "business_id",
+            "sale_id",
+            "payment_method",
+            "amount",
+            "financial_account_id",
+            "reference_number",
+            "created_at",
+            "updated_at"
+        ],
+        "default_strategy": "NEW_TABLE",
+        "backfill_strategy": "BACKFILL_FROM_SALES_TABLE_PRIMARY_PAYMENT_TYPE",
+        "locking_risk": "LOW",
+        "rollback_strategy": "DROP_TABLE",
+        "deployment_order": 3
+    },
+    "MIG-004": {
+        "migration_id": "MIG-004",
+        "migration_name": "enforce_non_null_financial_account_on_expenses",
+        "target_gaps": [
+            "GAP-013"
+        ],
+        "gaps_addressed": [
+            "GAP-013"
+        ],
+        "table": "expenses",
+        "operation": "MODIFY_COLUMN_NULLABILITY",
+        "columns": [
+            "financial_account_id (unsignedBigInteger, NOT NULL)"
+        ],
+        "default_strategy": "LINK_TO_DEDICATED_UNALLOCATED_HISTORICAL_RECONCILIATION_ACCOUNT",
+        "backfill_strategy": "CREATE_UNALLOCATED_EXPENSE_RECONCILIATION_HOLDING_ACCOUNT",
+        "locking_risk": "LOW",
+        "rollback_strategy": "CHANGE_COLUMN_NULLABLE",
+        "deployment_order": 4
+    },
+    "MIG-005": {
+        "migration_id": "MIG-005",
+        "migration_name": "add_landed_cost_to_purchases_table",
+        "target_gaps": [
+            "GAP-005"
+        ],
+        "gaps_addressed": [
+            "GAP-005"
+        ],
+        "table": "purchases",
+        "operation": "ADD_COLUMNS",
+        "columns": [
+            "freight_amount (decimal 15,2, default 0)",
+            "landed_cost_allocated (boolean, default false)"
+        ],
+        "default_strategy": "DEFAULT_ZERO",
+        "backfill_strategy": "NOT_REQUIRED",
+        "locking_risk": "LOW",
+        "rollback_strategy": "DROP_COLUMNS",
+        "deployment_order": 5
+    },
+    "MIG-006": {
+        "migration_id": "MIG-006",
+        "migration_name": "add_transfer_status_to_inventory_movements",
+        "target_gaps": [
+            "GAP-007"
+        ],
+        "gaps_addressed": [
+            "GAP-007"
+        ],
+        "table": "inventory_movements",
+        "operation": "ADD_COLUMN",
+        "columns": [
+            "transfer_status (string, nullable)"
+        ],
+        "default_strategy": "NULLABLE_COMPLETED_DEFAULT",
+        "backfill_strategy": "NOT_REQUIRED",
+        "locking_risk": "LOW",
+        "rollback_strategy": "DROP_COLUMN",
+        "deployment_order": 6
+    },
+    "MIG-007": {
+        "migration_id": "MIG-007",
+        "migration_name": "add_restock_condition_to_sale_return_items",
+        "target_gaps": [
+            "GAP-010"
+        ],
+        "gaps_addressed": [
+            "GAP-010"
+        ],
+        "table": "sale_return_items",
+        "operation": "ADD_COLUMNS",
+        "columns": [
+            "is_restockable (boolean, default true)",
+            "return_reason (string, nullable)"
+        ],
+        "default_strategy": "DEFAULT_TRUE",
+        "backfill_strategy": "NOT_REQUIRED",
+        "locking_risk": "LOW",
+        "rollback_strategy": "DROP_COLUMNS",
+        "deployment_order": 7
+    },
+    "MIG-008": {
+        "migration_id": "MIG-008",
+        "migration_name": "create_supplier_returns_table",
+        "target_gaps": [
+            "GAP-011"
+        ],
+        "gaps_addressed": [
+            "GAP-011"
+        ],
+        "table": "supplier_returns",
+        "operation": "CREATE_TABLE",
+        "columns": [
+            "id",
+            "business_id",
+            "branch_id",
+            "supplier_id",
+            "return_number",
+            "total_amount",
+            "status",
+            "notes",
+            "created_at",
+            "updated_at"
+        ],
+        "default_strategy": "NEW_TABLE",
+        "backfill_strategy": "NOT_REQUIRED",
+        "locking_risk": "LOW",
+        "rollback_strategy": "DROP_TABLE",
+        "deployment_order": 8
+    },
+    "MIG-009": {
+        "migration_id": "MIG-009",
+        "migration_name": "add_payroll_columns_to_users_table",
+        "target_gaps": [
+            "GAP-029"
+        ],
+        "gaps_addressed": [
+            "GAP-029"
+        ],
+        "table": "users",
+        "operation": "ADD_COLUMNS",
+        "columns": [
+            "salary_amount (decimal 15,2, nullable)",
+            "payment_cycle (string, nullable)",
+            "next_payment_date (date, nullable)"
+        ],
+        "default_strategy": "NULLABLE_DEFAULTS_TO_NULL",
+        "backfill_strategy": "NOT_REQUIRED",
+        "locking_risk": "LOW",
+        "rollback_strategy": "DROP_COLUMNS",
+        "deployment_order": 9
+    },
+    "MIG-010": {
+        "migration_id": "MIG-010",
+        "migration_name": "add_secondary_phone_to_customers_table",
+        "target_gaps": [
+            "GAP-030"
+        ],
+        "gaps_addressed": [
+            "GAP-030"
+        ],
+        "table": "customers",
+        "operation": "ADD_COLUMN",
+        "columns": [
+            "secondary_phone (string, nullable)"
+        ],
+        "default_strategy": "NULLABLE_DEFAULTS_TO_NULL",
+        "backfill_strategy": "NOT_REQUIRED",
+        "locking_risk": "LOW",
+        "rollback_strategy": "DROP_COLUMN",
+        "deployment_order": 10
+    },
+    "MIG-011": {
+        "migration_id": "MIG-011",
+        "migration_name": "add_monthly_budget_to_expense_categories_table",
+        "target_gaps": [
+            "GAP-031"
+        ],
+        "gaps_addressed": [
+            "GAP-031"
+        ],
+        "table": "expense_categories",
+        "operation": "ADD_COLUMN",
+        "columns": [
+            "monthly_budget (decimal 15,2, nullable)"
+        ],
+        "default_strategy": "NULLABLE_DEFAULTS_TO_NULL",
+        "backfill_strategy": "NOT_REQUIRED",
+        "locking_risk": "LOW",
+        "rollback_strategy": "DROP_COLUMN",
+        "deployment_order": 11
+    }
+}
