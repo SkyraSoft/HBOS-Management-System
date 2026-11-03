@@ -1091,6 +1091,15 @@ const authStore = useAuthStore();
 const navigationStore = useNavigationStore();
 const toast = useToast();
 
+const receiptSettings = computed(() => {
+  try {
+    const raw = localStorage.getItem('hbos_receipt_settings');
+    return raw ? JSON.parse(raw) : null;
+  } catch (e) {
+    return null;
+  }
+});
+
 const storeDisplayName = computed(() => {
   const isDemo = localStorage.getItem('hbos_demo_mode') === 'true' || localStorage.getItem('hbos_demo_mode') === 'single' || localStorage.getItem('hbos_demo_mode') === 'multi';
   const demoType = localStorage.getItem('hbos_demo_type') || localStorage.getItem('hbos_demo_mode');

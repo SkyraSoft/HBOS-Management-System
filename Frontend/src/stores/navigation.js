@@ -174,27 +174,8 @@ export const useNavigationStore = defineStore('navigation', () => {
             { name: 'Brands', path: '/inventry?tab=brands' }
           ]
         },
-        { 
-          name: 'Suppliers', 
-          path: '/supplierpayable', 
-          icon: 'bi-truck',
-          children: [
-            { name: 'Supplier List', path: '/supplierpayable?tab=supplier-intelligence' },
-            { name: 'Supplier Profile', path: '/supplier' },
-            { name: 'Purchases', path: '/supplierpayable?tab=purchase-orders' },
-            { name: 'Supplier Performance', path: '/supplierpayable?tab=supplier-performance' }
-          ]
-        },
-        { 
-          name: 'Expenses', 
-          path: '/expenses', 
-          icon: 'bi-wallet2',
-          children: [
-            { name: 'Expense List', path: '/expenses?tab=overview' },
-            { name: 'Expense Categories', path: '/expenses?tab=categories' },
-            { name: 'Expense Reports', path: '/expenses?tab=reports' }
-          ]
-        },
+        { name: 'Suppliers', path: '/supplierpayable', icon: 'bi-truck' },
+      { name: 'Expenses', path: '/expenses', icon: 'bi-wallet2' },
         { name: 'Stock Transfers', path: '/transfers', icon: 'bi-arrow-left-right' },
         { name: 'Reports', path: '/reports?tab=reports', icon: 'bi-graph-up' }
       ];
@@ -211,16 +192,7 @@ export const useNavigationStore = defineStore('navigation', () => {
 
       // Expenses: requires full reports or accountant ledger permission
       if (hasUserPermission(user, 'view full reports') || role === 'Accountant') {
-        items.push({ 
-          name: 'Expenses', 
-          path: '/expenses', 
-          icon: 'bi-wallet2',
-          children: [
-            { name: 'Expense List', path: '/expenses?tab=overview' },
-            { name: 'Expense Categories', path: '/expenses?tab=categories' },
-            { name: 'Expense Reports', path: '/expenses?tab=reports' }
-          ]
-        });
+        items.push({ name: 'Expenses', path: '/expenses', icon: 'bi-wallet2' });
       }
 
       // Sales history: requires sales viewing permission
@@ -249,17 +221,7 @@ export const useNavigationStore = defineStore('navigation', () => {
 
       // Suppliers & Purchases: requires supplier or purchase viewing permission
       if (hasUserPermission(user, 'view suppliers') || hasUserPermission(user, 'view purchases')) {
-        items.push({ 
-          name: 'Suppliers', 
-          path: '/supplierpayable', 
-          icon: 'bi-truck',
-          children: [
-            { name: 'Supplier List', path: '/supplierpayable?tab=supplier-intelligence' },
-            { name: 'Supplier Profile', path: '/supplier' },
-            { name: 'Purchases', path: '/supplierpayable?tab=purchase-orders' },
-            { name: 'Supplier Performance', path: '/supplierpayable?tab=supplier-performance' }
-          ]
-        });
+        items.push({ name: 'Suppliers', path: '/supplierpayable', icon: 'bi-truck' });
       }
 
       if (items.length > 0) {
@@ -284,27 +246,8 @@ export const useNavigationStore = defineStore('navigation', () => {
         ]
       },
       { name: 'Customers & Khata', path: '/customer?tab=customers', icon: 'bi-people' },
-      { 
-        name: 'Suppliers', 
-        path: '/supplierpayable', 
-        icon: 'bi-truck',
-        children: [
-          { name: 'Supplier List', path: '/supplierpayable?tab=supplier-intelligence' },
-          { name: 'Supplier Profile', path: '/supplier' },
-          { name: 'Purchases', path: '/supplierpayable?tab=purchase-orders' },
-          { name: 'Supplier Performance', path: '/supplierpayable?tab=supplier-performance' }
-        ]
-      },
-      { 
-        name: 'Expenses', 
-        path: '/expenses', 
-        icon: 'bi-wallet2',
-        children: [
-          { name: 'Expense List', path: '/expenses?tab=overview' },
-          { name: 'Expense Categories', path: '/expenses?tab=categories' },
-          { name: 'Expense Reports', path: '/expenses?tab=reports' }
-        ]
-      },
+      { name: 'Suppliers', path: '/supplierpayable', icon: 'bi-truck' },
+      { name: 'Expenses', path: '/expenses', icon: 'bi-wallet2' },
     ];
 
     // Single-store progressive disclosure: Stock Transfers only shown when activeBranchCount >= 2
@@ -328,11 +271,13 @@ export const useNavigationStore = defineStore('navigation', () => {
           path: '/settings', 
           icon: 'bi-gear',
           children: [
+            { name: 'My Profile', path: '/settings?tab=profile' },
+            { name: 'Security & Password', path: '/settings?tab=account-security' },
             ...(isMultiBranch.value ? [{ name: 'Branches', path: '/settings?tab=branches' }] : []),
-            { name: 'Users', path: '/settings?tab=users' },
+            { name: 'User Management', path: '/settings?tab=users' },
             { name: 'Roles & Permissions', path: '/settings?tab=roles' },
             { name: 'Receipts & Invoices', path: '/settings?tab=receipts' },
-            { name: 'Security & Audit', path: '/settings?tab=security' },
+            { name: 'Audit & Governance', path: '/settings?tab=security' },
             { name: 'Offline Sync', path: '/settings?tab=sync' }
           ]
         },

@@ -180,7 +180,7 @@
                   <span class="text-muted small">{{ user.created_at ? new Date(user.created_at).toLocaleDateString() : 'N/A' }}</span>
                 </td>
                 <td style="text-align: right;">
-                  <div class="d-inline-flex align-items-center gap-1.5">
+                  <div class="d-inline-flex align-items-center gap-2">
                     <button 
                       class="btn btn-outline-secondary btn-sm px-3 rounded-2 fw-semibold action-edit-btn" 
                       @click="openEditUserModal(user)"
@@ -228,7 +228,7 @@
             <p class="text-muted small m-0">Immutable, tenant-scoped audit records for security, auth, and governance events.</p>
           </div>
           <button 
-            class="btn btn-outline-secondary btn-sm px-3 rounded-3 d-flex align-items-center gap-1.5"
+            class="btn btn-outline-secondary btn-sm px-3 rounded-3 d-flex align-items-center gap-2"
             @click="loadAuditLogs(auditPagination.current_page)"
             :disabled="isAuditLoading"
             type="button"
@@ -363,7 +363,7 @@
           <div class="text-muted small">
             Showing {{ ((auditPagination.current_page - 1) * auditPagination.per_page) + 1 }} to {{ Math.min(auditPagination.current_page * auditPagination.per_page, auditPagination.total) }} of {{ auditPagination.total }} logs
           </div>
-          <div class="d-flex gap-1.5">
+          <div class="d-flex gap-2">
             <button 
               class="btn btn-sm btn-outline-secondary rounded-2 px-3" 
               :disabled="auditPagination.current_page <= 1 || isAuditLoading"

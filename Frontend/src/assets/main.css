@@ -74,3 +74,120 @@ a {
     text-decoration: none;
     color: inherit;
 }
+
+
+/* =========================================================
+   UNIVERSAL BUTTON & ICON RESPONSIVE STANDARDS (GLOBAL)
+========================================================== */
+
+/* Universal Button Typography & Layout */
+.btn,
+button.btn,
+a.btn,
+.btn-custom,
+.btn-demo-action {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.5rem !important; /* Enforces clean 8px spacing between icon & text */
+  white-space: nowrap !important; /* Prevents text from breaking or wrapping under icons */
+  vertical-align: middle !important;
+  line-height: 1.25 !important;
+  text-decoration: none !important;
+  box-sizing: border-box !important;
+  transition: all 0.15s ease-in-out !important;
+}
+
+/* Icons inside buttons must never shrink, squash, or collide */
+.btn i,
+.btn svg,
+.btn [class*="bi-"],
+.btn [class*="fa-"],
+button i,
+button svg,
+button [class*="bi-"],
+button [class*="fa-"],
+.btn-custom i {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+  line-height: 1 !important;
+  font-size: 1.05em;
+  margin-right: 0 !important;
+  margin-left: 0 !important;
+}
+
+/* Strip out manual margin offsets if button already provides gap */
+.btn > i.me-1,
+.btn > i.me-2,
+.btn > i.ms-1,
+.btn > i.ms-2,
+.btn > span.me-1,
+.btn > span.me-2 {
+  margin-right: 0 !important;
+  margin-left: 0 !important;
+}
+
+/* Fix missing Bootstrap fractional gap utilities */
+.gap-0\.5, .gap-0-5 { gap: 0.125rem !important; }
+.gap-1\.5, .gap-1-5, [class*="gap-1.5"] { gap: 0.45rem !important; }
+.gap-2\.5, .gap-2-5, [class*="gap-2.5"] { gap: 0.75rem !important; }
+.gap-3\.5, .gap-3-5, [class*="gap-3.5"] { gap: 1.25rem !important; }
+
+/* Responsive Action Containers */
+.topbar,
+.page-header,
+.supplier-topbar,
+.d-flex.gap-2,
+.d-flex.gap-3,
+.header-actions {
+  flex-wrap: wrap;
+}
+
+/* Action clusters in table columns */
+.table td .d-inline-flex,
+.table td .btn-group,
+.table td .actions-wrap,
+.supplier-table td .d-inline-flex {
+  display: inline-flex !important;
+  align-items: center !important;
+  flex-wrap: nowrap !important;
+  gap: 6px !important;
+  white-space: nowrap !important;
+}
+
+/* Tablet & Mobile Breakpoints for Buttons & Controls */
+@media (max-width: 992px) {
+  .btn {
+    padding: 0.42rem 0.85rem !important;
+    font-size: 0.9rem !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .btn {
+    padding: 0.38rem 0.7rem !important;
+    font-size: 0.84rem !important;
+    gap: 0.4rem !important;
+  }
+
+  .btn-sm {
+    padding: 0.28rem 0.55rem !important;
+    font-size: 0.78rem !important;
+    gap: 0.3rem !important;
+  }
+
+  /* Full-width action buttons on small mobile when stacked */
+  .supplier-topbar > div:last-child {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .supplier-topbar > div:last-child > .btn {
+    flex: 1 1 calc(50% - 8px);
+    min-width: 130px;
+  }
+}

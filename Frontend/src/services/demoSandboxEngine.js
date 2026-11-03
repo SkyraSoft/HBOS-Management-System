@@ -349,6 +349,32 @@ export class DemoSandboxEngine {
     const state = this.getState();
     let list = [...(state.expenses || [])];
 
+    const todayStr = new Date().toISOString().split('T')[0];
+    const hasToday = list.some(e => (e.date || e.created_at || '').startsWith(todayStr));
+    if (!hasToday) {
+      list.unshift({
+        id: 'demo_exp_today_1',
+        branch_id: 1,
+        category: 'Shop Maintenance',
+        description: 'Store Cleaning Supplies & Sanitation',
+        amount: 1450,
+        date: todayStr,
+        payment_method: 'Cash',
+        method: 'Cash',
+        created_at: new Date().toISOString()
+      }, {
+        id: 'demo_exp_today_2',
+        branch_id: 1,
+        category: 'General Expense',
+        description: 'Customer & Staff Daily Tea / Refreshment Expense',
+        amount: 850,
+        date: todayStr,
+        payment_method: 'Cash',
+        method: 'Cash',
+        created_at: new Date().toISOString()
+      });
+    }
+
     if (params.branch_id && params.branch_id !== 'all') {
       const bId = Number(params.branch_id);
       list = list.filter(e => e.branch_id === bId);
@@ -1106,49 +1132,285 @@ export class DemoSandboxEngine {
   }
 
   getProfitabilityReport(params = {}) {
-    const dash = this.getDashboard(params);
-    const netSales = dash.sales.net_sales;
-    const grossProfit = dash.gross_profit.amount;
-    const netProfit = dash.net_profit.amount;
-    const expenses = dash.expenses.total;
-    const cogs = dash.cogs.net_cogs;
+    const grossGoodsSales = 3535000;
+    const discounts = 45000;
+    const economicReturns = 12500;
+    const netCommercialSales = grossGoodsSales - discounts - economicReturns; // 3,477,500
+    const grossCogs = 2680000;
+    const returnedCogs = 9500;
+    const netCogs = grossCogs - returnedCogs; // 2,670,500
+    const grossProfit = netCommercialSales - netCogs; // 807,000
+    const operatingExpenses = 328450;
+    const netProfit = grossProfit - operatingExpenses; // 478,550
+    const grossMargin = ((grossProfit / netCommercialSales) * 100).toFixed(1); // 23.2%
+    const netMargin = ((netProfit / netCommercialSales) * 100).toFixed(2); // 13.76%
 
     return {
-      net_sales: netSales,
-      cogs: cogs,
+      net_sales: netCommercialSales,
+      cogs: netCogs,
+      net_cogs: netCogs,
+      gross_goods_sales: grossGoodsSales,
+      discounts: discounts,
+      tax: 0.00,
+      commercial_invoice_sales: grossGoodsSales - discounts,
+      economic_returns: economicReturns,
+      gross_cogs: grossCogs,
+      returned_cogs: returnedCogs,
       gross_profit: grossProfit,
-      expenses: expenses,
+      expenses: operatingExpenses,
+      operating_expenses: operatingExpenses,
       net_profit: netProfit,
-      margin_percentage: netSales > 0 ? ((grossProfit / netSales) * 100).toFixed(2) : 0,
-      net_margin_percent: netSales > 0 ? ((netProfit / netSales) * 100).toFixed(2) : 0
+      margin_percentage: grossMargin,
+      gross_margin_percent: grossMargin,
+      net_margin_percent: netMargin,
+      accounting_basis: 'Accrual Basis (Enterprise Small-Retail Standard)'
     };
   }
 
   getSalesReport(params = {}) {
-    const sales = this.getSales(params);
-    const totalAmount = sales.reduce((sum, s) => sum + s.total_amount, 0);
+    const salesList = [
+      { id: 101, invoice_number: 'INV-2026-11-001', date: '2026-11-03', branch_name: 'Main Store (Bahadurabad)', customer_name: 'Walk-in Customer', paid_amount: 1450, due_amount: 0, total: 1450, status: 'completed' },
+      { id: 102, invoice_number: 'INV-2026-11-002', date: '2026-11-03', branch_name: 'Main Store (Bahadurabad)', customer_name: 'Haji Muhammad Rafiq', paid_amount: 15000, due_amount: 3500, total: 18500, status: 'partial_credit' },
+      { id: 103, invoice_number: 'INV-2026-11-003', date: '2026-11-03', branch_name: 'Main Store (Bahadurabad)', customer_name: 'Mrs. Dr. Shazia', paid_amount: 4800, due_amount: 0, total: 4800, status: 'completed' },
+      { id: 104, invoice_number: 'INV-2026-11-02', date: '2026-11-02', branch_name: 'Main Store (Bahadurabad)', customer_name: 'Tariq Mehmood Traders', paid_amount: 28000, due_amount: 0, total: 28000, status: 'completed' },
+      { id: 105, invoice_number: 'INV-2026-11-01', date: '2026-11-02', branch_name: 'Main Store (Bahadurabad)', customer_name: 'Bilal Ahmed (Karachi Club)', paid_amount: 6200, due_amount: 2000, total: 8200, status: 'partial_credit' },
+      { id: 106, invoice_number: 'INV-2026-10-98', date: '2026-10-31', branch_name: 'Main Store (Bahadurabad)', customer_name: 'Usman Ghani (Catering)', paid_amount: 35000, due_amount: 5000, total: 40000, status: 'partial_credit' },
+      { id: 107, invoice_number: 'INV-2026-10-97', date: '2026-10-30', branch_name: 'Main Store (Bahadurabad)', customer_name: 'Walk-in Customer', paid_amount: 3200, due_amount: 0, total: 3200, status: 'completed' },
+      { id: 108, invoice_number: 'INV-2026-10-96', date: '2026-10-29', branch_name: 'Main Store (Bahadurabad)', customer_name: 'Al-Rehman Bakers', paid_amount: 12000, due_amount: 0, total: 12000, status: 'completed' },
+      { id: 109, invoice_number: 'INV-2026-10-95', date: '2026-10-28', branch_name: 'Main Store (Bahadurabad)', customer_name: 'Walk-in Customer', paid_amount: 950, due_amount: 0, total: 950, status: 'completed' },
+      { id: 110, invoice_number: 'INV-2026-10-94', date: '2026-10-27', branch_name: 'Main Store (Bahadurabad)', customer_name: 'Haji Muhammad Rafiq', paid_amount: 22000, due_amount: 0, total: 22000, status: 'completed' }
+    ];
+
+    const grossSales = 3535000;
+    const returnAdj = 12500;
+    const netSales = 3477500;
+    const grossProfit = 807000;
+
     return {
-      total_sales: totalAmount,
-      transaction_count: sales.length,
-      sales: sales
+      summary: {
+        gross_sales: grossSales,
+        return_adjustment: returnAdj,
+        net_sales: netSales,
+        gross_profit: grossProfit,
+        cogs_status: 'complete'
+      },
+      total_sales: grossSales,
+      transaction_count: 1469,
+      sales: salesList
+    };
+  }
+
+  getInventoryReport(params = {}) {
+    const items = [
+      { id: 1, product_name: 'Tapal Danedar Tea 450g Pouch', sku: 'TEA-TAP-450', category: 'Hot Beverages', category_name: 'Hot Beverages', branch_name: 'Main Store', quantity_on_hand: 45, minimum_stock: 15, current_cost_price: 640, unit_cost: 640, stock_value: 28800, stock_status: 'In Stock' },
+      { id: 2, product_name: 'Olpers Full Cream Milk 1L Pack', sku: 'MLK-OLP-001', category: 'Dairy & Eggs', category_name: 'Dairy & Eggs', branch_name: 'Main Store', quantity_on_hand: 8, minimum_stock: 20, current_cost_price: 260, unit_cost: 260, stock_value: 2080, stock_status: 'Low Stock' },
+      { id: 3, product_name: 'Dalda Cooking Oil 5L Pouch', sku: 'OIL-DAL-005', category: 'Edible Oils & Ghee', category_name: 'Edible Oils & Ghee', branch_name: 'Main Store', quantity_on_hand: 32, minimum_stock: 10, current_cost_price: 2450, unit_cost: 2450, stock_value: 78400, stock_status: 'In Stock' },
+      { id: 4, product_name: 'Shan Special Biryani Masala 50g', sku: 'SP-SHN-050', category: 'Spices & Recipe Mixes', category_name: 'Spices & Recipe Mixes', branch_name: 'Main Store', quantity_on_hand: 120, minimum_stock: 30, current_cost_price: 110, unit_cost: 110, stock_value: 13200, stock_status: 'In Stock' },
+      { id: 5, product_name: 'Lux Beauty Bar Soap White 140g', sku: 'PER-LUX-140', category: 'Personal Care & Hygiene', category_name: 'Personal Care & Hygiene', branch_name: 'Main Store', quantity_on_hand: 0, minimum_stock: 15, current_cost_price: 140, unit_cost: 140, stock_value: 0, stock_status: 'Out of Stock' },
+      { id: 6, product_name: 'Sufi Special Banaspati Ghee 1kg', sku: 'GHE-SUF-001', category: 'Edible Oils & Ghee', category_name: 'Edible Oils & Ghee', branch_name: 'Main Store', quantity_on_hand: 4, minimum_stock: 12, current_cost_price: 520, unit_cost: 520, stock_value: 2080, stock_status: 'Low Stock' },
+      { id: 7, product_name: 'Guard Supreme Super Basmati Rice 5kg', sku: 'RCE-GRD-005', category: 'Staples & Grains', category_name: 'Staples & Grains', branch_name: 'Main Store', quantity_on_hand: 25, minimum_stock: 10, current_cost_price: 1650, unit_cost: 1650, stock_value: 41250, stock_status: 'In Stock' },
+      { id: 8, product_name: 'National Tomato Ketchup 800g Bottle', sku: 'COND-NAT-800', category: 'Sauces & Condiments', category_name: 'Sauces & Condiments', branch_name: 'Main Store', quantity_on_hand: 18, minimum_stock: 8, current_cost_price: 380, unit_cost: 380, stock_value: 6840, stock_status: 'In Stock' },
+      { id: 9, product_name: 'Ariel Complete Detergent Powder 1kg', sku: 'DET-ARL-001', category: 'Household & Cleaning', category_name: 'Household & Cleaning', branch_name: 'Main Store', quantity_on_hand: 35, minimum_stock: 12, current_cost_price: 610, unit_cost: 610, stock_value: 21350, stock_status: 'In Stock' },
+      { id: 10, product_name: 'Mitchells Mixed Fruit Jam 450g', sku: 'JAM-MIT-450', category: 'Breakfast & Spreads', category_name: 'Breakfast & Spreads', branch_name: 'Main Store', quantity_on_hand: 0, minimum_stock: 10, current_cost_price: 290, unit_cost: 290, stock_value: 0, stock_status: 'Out of Stock' }
+    ];
+
+    const totalUnits = 3742;
+    const totalVal = 1652775;
+    const lowStock = 2;
+    const outOfStock = 2;
+
+    return {
+      summary: {
+        units_on_hand: totalUnits,
+        current_stock_value_at_current_cost: totalVal,
+        low_stock_count: lowStock,
+        out_of_stock_count: outOfStock
+      },
+      inventories: items,
+      items: items
+    };
+  }
+
+  getCustomersReport(params = {}) {
+    const customerList = [
+      { id: 1, name: 'Haji Muhammad Rafiq', phone: '0300-9281726', sales_volume: 345000, total_purchased: 345000, transaction_count: 18, sales_count: 18, payments_collected: 295000, total_paid: 295000, outstanding_balance: 50000, outstanding: 50000, advance_credit: 0, credit: 0 },
+      { id: 2, name: 'Tariq Mehmood Traders', phone: '0321-4829104', sales_volume: 280000, total_purchased: 280000, transaction_count: 12, sales_count: 12, payments_collected: 240000, total_paid: 240000, outstanding_balance: 40000, outstanding: 40000, advance_credit: 0, credit: 0 },
+      { id: 3, name: 'Bilal Ahmed (Karachi Club)', phone: '0333-1928374', sales_volume: 95000, total_purchased: 95000, transaction_count: 8, sales_count: 8, payments_collected: 78000, total_paid: 78000, outstanding_balance: 17000, outstanding: 17000, advance_credit: 0, credit: 0 },
+      { id: 4, name: 'Usman Ghani (Catering Services)', phone: '0312-8877665', sales_volume: 68000, total_purchased: 68000, transaction_count: 5, sales_count: 5, payments_collected: 46600, total_paid: 46600, outstanding_balance: 21400, outstanding: 21400, advance_credit: 0, credit: 0 },
+      { id: 5, name: 'Mrs. Dr. Shazia (Bahadurabad)', phone: '0301-5544332', sales_volume: 42500, total_purchased: 42500, transaction_count: 14, sales_count: 14, payments_collected: 42500, total_paid: 42500, outstanding_balance: 0, outstanding: 0, advance_credit: 0, credit: 0 },
+      { id: 6, name: 'Al-Rehman Bakers (Wholesale)', phone: '0345-1122334', sales_volume: 12000, total_purchased: 12000, transaction_count: 2, sales_count: 2, payments_collected: 27000, total_paid: 27000, outstanding_balance: 0, outstanding: 0, advance_credit: 15000, credit: 15000 }
+    ];
+
+    const totalSalesVol = 842500;
+    const totalOutstanding = 128400;
+    const totalCredit = 15000;
+    const totalPayments = 729100;
+
+    return {
+      summary: {
+        total_customers: customerList.length,
+        total_sales_volume: totalSalesVol,
+        outstanding: totalOutstanding,
+        total_outstanding: totalOutstanding,
+        customer_credit: totalCredit,
+        total_payments: totalPayments
+      },
+      customers: customerList
+    };
+  }
+
+  getSuppliersReport(params = {}) {
+    const supplierList = [
+      { id: 1, name: 'Unilever Pakistan Consumer Goods', contact_person: 'Kamran Siddiqui', phone: '0321-9876543', purchase_volume: 920000, total_purchased: 920000, purchase_count: 14, purchases_count: 14, payments_made: 810000, total_paid: 810000, reconciled_payable: 110000, payable: 110000 },
+      { id: 2, name: 'Tapal Tea Distribution Network', contact_person: 'Muhammad Aslam', phone: '0300-8273645', purchase_volume: 680000, total_purchased: 680000, purchase_count: 11, purchases_count: 11, payments_made: 600000, total_paid: 600000, reconciled_payable: 80000, payable: 80000 },
+      { id: 3, name: 'Shan Foods Private Limited', contact_person: 'Farhan Sheikh', phone: '0333-2211445', purchase_volume: 410000, total_purchased: 410000, purchase_count: 8, purchases_count: 8, payments_made: 340000, total_paid: 340000, reconciled_payable: 70000, payable: 70000 },
+      { id: 4, name: 'Dalda Consumer Brands Karachi', contact_person: 'Imran Qureshi', phone: '0314-5566778', purchase_volume: 320000, total_purchased: 320000, purchase_count: 6, purchases_count: 6, payments_made: 260000, total_paid: 260000, reconciled_payable: 60000, payable: 60000 },
+      { id: 5, name: 'Prime Dairy & Beverages Ltd', contact_person: 'Naveed Butt', phone: '0345-9988776', purchase_volume: 120000, total_purchased: 120000, purchase_count: 4, purchases_count: 4, payments_made: 120000, total_paid: 120000, reconciled_payable: 0, payable: 0 }
+    ];
+
+    const totalPurchases = 2450000;
+    const totalPayments = 2130000;
+    const totalPayable = 320000;
+
+    return {
+      summary: {
+        total_suppliers: supplierList.length,
+        total_purchases: totalPurchases,
+        total_payments: totalPayments,
+        total_payable: totalPayable
+      },
+      suppliers: supplierList
     };
   }
 
   getExpensesReport(params = {}) {
-    const expenses = this.getExpenses(params);
-    const total = expenses.reduce((sum, e) => sum + e.amount, 0);
+    const mappedExpenses = [
+      { id: 531, date: '2026-11-03', category: 'Shop Rent', description: 'Monthly Commercial Shop Lease (November)', branch_name: 'Main Store', account_name: 'Meezan Bank Corporate', amount: 85000, status: 'posted' },
+      { id: 532, date: '2026-11-03', category: 'Staff Salaries', description: 'Cashiers & Floor Staff Monthly Compensation', branch_name: 'Main Store', account_name: 'Meezan Bank Corporate', amount: 140000, status: 'posted' },
+      { id: 533, date: '2026-11-03', category: 'Electricity / K-Electric', description: 'Commercial Meter Energy Bill (October consumption)', branch_name: 'Main Store', account_name: 'Main Cash Register', amount: 42500, status: 'posted' },
+      { id: 534, date: '2026-11-03', category: 'Shop Maintenance', description: 'LED Tube Replacements & AC Servicing', branch_name: 'Main Store', account_name: 'Main Cash Register', amount: 6500, status: 'posted' },
+      { id: 535, date: '2026-11-03', category: 'Packaging & Bags', description: 'Printed Biodegradable Shopping Bags (5,000 pcs)', branch_name: 'Main Store', account_name: 'Main Cash Register', amount: 14000, status: 'posted' },
+      { id: 536, date: '2026-11-03', category: 'Generator Fuel', description: 'Backup Generator Diesel Refill (50 Liters)', branch_name: 'Main Store', account_name: 'Main Cash Register', amount: 14500, status: 'posted' },
+      { id: 537, date: '2026-11-03', category: 'Internet / PTCL', description: 'Fibre Broadband & POS Network Line', branch_name: 'Main Store', account_name: 'EasyPaisa Merchant', amount: 4500, status: 'posted' },
+      { id: 538, date: '2026-11-03', category: 'Tea & Refreshment', description: 'Staff & Visitor Daily Tea / Refreshment Expense', branch_name: 'Main Store', account_name: 'Main Cash Register', amount: 3850, status: 'posted' },
+      { id: 539, date: '2026-11-02', category: 'Shop Maintenance', description: 'Door Lock Repair & Fire Extinguisher Inspection', branch_name: 'Main Store', account_name: 'Main Cash Register', amount: 5600, status: 'posted' },
+      { id: 540, date: '2026-10-31', category: 'Municipal Trade License', description: 'Town Municipal Committee Annual Renewal Fee', branch_name: 'Main Store', account_name: 'Meezan Bank Corporate', amount: 12000, status: 'posted' }
+    ];
+
+    const total = 328450;
+
     return {
       total_expenses: total,
-      expenses: expenses
+      summary: {
+        total_expenses: total,
+        transaction_count: mappedExpenses.length,
+        active_accounts: 3
+      },
+      expenses: mappedExpenses
+    };
+  }
+
+  getFinancialAccountsReport(params = {}) {
+    const accounts = [
+      {
+        id: 1,
+        name: 'Main Cash Register (Counter #1)',
+        type: 'Cash on Hand',
+        branch_name: 'Main Store (Bahadurabad)',
+        current_balance: 145000,
+        period_inflows: 285000,
+        period_outflows: 140000,
+        status: 'active'
+      },
+      {
+        id: 2,
+        name: 'Meezan Bank (Islamic Corporate Current)',
+        type: 'Commercial Bank',
+        branch_name: 'Main Store (Bahadurabad)',
+        current_balance: 850000,
+        period_inflows: 1250000,
+        period_outflows: 400000,
+        status: 'active'
+      },
+      {
+        id: 3,
+        name: 'EasyPaisa Merchant Digital Wallet',
+        type: 'Digital Merchant',
+        branch_name: 'Main Store (Bahadurabad)',
+        current_balance: 42500,
+        period_inflows: 85000,
+        period_outflows: 42500,
+        status: 'active'
+      },
+      {
+        id: 4,
+        name: 'JazzCash Business Gateway',
+        type: 'Digital Merchant',
+        branch_name: 'Main Store (Bahadurabad)',
+        current_balance: 38000,
+        period_inflows: 64000,
+        period_outflows: 26000,
+        status: 'active'
+      }
+    ];
+
+    const totalBal = 1075500;
+    const totalIn = 1684000;
+    const totalOut = 608500;
+
+    return {
+      summary: {
+        total_accounts: accounts.length,
+        total_balance: totalBal,
+        total_inflows: totalIn,
+        total_outflows: totalOut
+      },
+      accounts: accounts
+    };
+  }
+
+  getBranchReport(params = {}) {
+    const branches = [
+      {
+        branch_id: 1,
+        branch_name: 'Main Store (Bahadurabad)',
+        transaction_count: 1469,
+        net_sales: 3117830,
+        gross_profit: 722500,
+        posted_expenses: 327600,
+        cash_balance: 145000
+      },
+      {
+        branch_id: 2,
+        branch_name: 'Clifton Superstore (Block 5)',
+        transaction_count: 1920,
+        net_sales: 4680000,
+        gross_profit: 842400,
+        posted_expenses: 410000,
+        cash_balance: 220000
+      },
+      {
+        branch_id: 3,
+        branch_name: 'Gulshan Outlet (Block 13-D)',
+        transaction_count: 1180,
+        net_sales: 2450000,
+        gross_profit: 392000,
+        posted_expenses: 245000,
+        cash_balance: 95000
+      }
+    ];
+
+    return {
+      branches: branches
     };
   }
 
   getBranches() {
-    const state = this.getState();
-    return (state.branches || []).map(b => ({
-      ...b,
-      status: b.status || 'active'
-    }));
+    return [
+      { id: 1, name: 'Main Store (Bahadurabad)', code: 'MAIN-01', is_primary: true, status: 'active' },
+      { id: 2, name: 'Clifton Superstore (Block 5)', code: 'CLIF-02', is_primary: false, status: 'active' },
+      { id: 3, name: 'Gulshan Outlet (Block 13-D)', code: 'GUL-03', is_primary: false, status: 'active' }
+    ];
   }
 
   previewDecommission(branchId) {

@@ -32,6 +32,56 @@ const labelQuantity = ref(24)
 const labelGridDensity = ref(24)
 const generatedLabels = ref([])
 
+const handleLogoUpload = (event) => {
+  const file = event.target.files?.[0];
+  if (!file) return;
+
+  if (file.size > 2 * 1024 * 1024) {
+    showToast('Logo image must be smaller than 2MB.');
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    settings.value.receiptLogo = e.target.result;
+    settings.value.showLogo = true;
+    if (settings.value.headerDisplayMode === 'name_only') {
+      settings.value.headerDisplayMode = 'both';
+      settings.value.showStoreName = true;
+    }
+    showToast('Store logo uploaded successfully! Preview updated.');
+  };
+  reader.readAsDataURL(file);
+};
+
+const removeLogo = () => {
+  settings.value.receiptLogo = '';
+  if (settings.value.headerDisplayMode === 'logo_only') {
+    settings.value.headerDisplayMode = 'name_only';
+    settings.value.showStoreName = true;
+  }
+  showToast('Logo removed from receipt template.');
+};
+
+const loadSampleLogo = () => {
+  // Clean high-contrast monochrome SVG retail emblem
+  settings.value.receiptLogo = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 48" width="160" height="48"><rect width="160" height="48" rx="8" fill="%230f172a"/><path d="M16 14h6l4 14h10l3-10H24" fill="none" stroke="%2338bdf8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="27" cy="32" r="2.5" fill="%2338bdf8"/><circle cx="35" cy="32" r="2.5" fill="%2338bdf8"/><text x="48" y="26" fill="%23ffffff" font-family="Arial, sans-serif" font-weight="900" font-size="14" letter-spacing="1">HBOS</text><text x="48" y="36" fill="%2394a3b8" font-family="Arial, sans-serif" font-weight="600" font-size="8.5" letter-spacing="2">ENTERPRISE</text></svg>';
+  settings.value.showLogo = true;
+  settings.value.headerDisplayMode = 'both';
+  settings.value.showStoreName = true;
+  showToast('Sample retail logo loaded!');
+};
+
+const syncModeFromToggles = () => {
+  if (settings.value.showLogo && settings.value.showStoreName) {
+    settings.value.headerDisplayMode = 'both';
+  } else if (settings.value.showLogo && !settings.value.showStoreName) {
+    settings.value.headerDisplayMode = 'logo_only';
+  } else if (!settings.value.showLogo && settings.value.showStoreName) {
+    settings.value.headerDisplayMode = 'name_only';
+  }
+};
+
 const showToast = (msg) => {
   toastMsg.value = msg
   isToastOpen.value = true

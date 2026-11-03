@@ -4,6 +4,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { useNotificationStore } from '../stores/notifications'
 import { useNavigationStore } from '../stores/navigation'
 import { useAuthStore } from '../stores/auth'
+import { useSessionModeStore } from '../stores/sessionMode'
 import ViewAsBanner from '../components/ViewAsBanner.vue'
 import DemoModeBanner from '../components/DemoModeBanner.vue'
 import SyncStatusBadge from '../components/SyncStatusBadge.vue'
@@ -12,6 +13,7 @@ import { syncCoordinator } from '../services/syncCoordinator.js'
 const notificationStore = useNotificationStore()
 const navigationStore = useNavigationStore()
 const authStore = useAuthStore()
+const sessionStore = useSessionModeStore()
 
 const router = useRouter()
 const route = useRoute()
@@ -110,6 +112,48 @@ const handleGlobalSearchSelect = (item) => {
   showGlobalSearch.value = false;
 };
 
+const isUserDropdownOpen = ref(false);
+
+const isDemo = computed(() => {
+  const mode = localStorage.getItem('hbos_demo_mode');
+  return mode === 'single' || mode === 'multi';
+});
+
+const userName = computed(() => {
+  return authStore.user?.name || (isDemo.value ? 'Demo Administrator' : 'Administrator');
+});
+
+const userEmail = computed(() => {
+  return authStore.user?.email || (isDemo.value ? 'demo@hbos.pk' : 'admin@hbos.pk');
+});
+
+const userRole = computed(() => {
+  return authStore.user?.role || (isDemo.value ? 'Store Owner (Demo)' : 'Business Owner');
+});
+
+const userInitial = computed(() => {
+  const name = userName.value;
+  return name ? name.charAt(0).toUpperCase() : 'H';
+});
+
+const toggleUserDropdown = () => {
+  isUserDropdownOpen.value = !isUserDropdownOpen.value;
+};
+
+const handleLogout = async () => {
+  isUserDropdownOpen.value = false;
+  try {
+    if (localStorage.getItem('hbos_demo_mode')) {
+      sessionStore.exitDemo();
+    }
+    await authStore.logout();
+  } catch (error) {
+    console.error('Logout error:', error);
+  } finally {
+    router.push('/login');
+  }
+};
+
 const handleDocumentClick = (e) => {
   if (!e.target.closest('.store-selector-wrapper')) {
     isStoreDropdownOpen.value = false;
@@ -119,6 +163,9 @@ const handleDocumentClick = (e) => {
   }
   if (!e.target.closest('.search-box-wrapper')) {
     showGlobalSearch.value = false;
+  }
+  if (!e.target.closest('.user-menu-wrapper') && !e.target.closest('.user-avatar-mobile-btn')) {
+    isUserDropdownOpen.value = false;
   }
 };
 
@@ -410,7 +457,7 @@ function isChildActive(child, item) {
               id="globalSearch" 
               placeholder="Search HBOS..." 
               class="form-control border-0 bg-light rounded-pill" 
-              style="width: 320px; height: 42px; padding-left: 45px; font-size: 14.5px;"
+              style="max-width: 320px; width: 100%; min-width: 140px; height: 42px; padding-left: 45px; font-size: 14.5px;"
               v-model="globalSearchQuery"
               @focus="showGlobalSearch = true"
               autocomplete="off"
@@ -661,8 +708,76 @@ function isChildActive(child, item) {
             </div>
           </div>
 
-          <div class="user-avatar rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width: 38px; height: 38px; font-weight: 600;">
-            H
+          <!-- User Menu Dropdown -->
+          <div class="user-menu-wrapper position-relative">
+            <button 
+              type="button" 
+              class="user-avatar-btn d-flex align-items-center gap-2 border-0 bg-transparent p-0 rounded-circle"
+              @click.stop="toggleUserDropdown"
+              aria-haspopup="true"
+              :aria-expanded="isUserDropdownOpen"
+              title="User Account Menu"
+            >
+              <div class="user-avatar rounded-circle bg-primary text-white d-flex align-items-center justify-content-center shadow-sm" style="width: 38px; height: 38px; font-weight: 600; font-size: 15px;">
+                {{ userInitial }}
+              </div>
+            </button>
+
+            <!-- User Dropdown Menu -->
+            <transition name="user-dropdown-fade">
+              <div class="user-dropdown-menu shadow-lg" v-if="isUserDropdownOpen" @click.stop>
+                <!-- User Profile Header -->
+                <div class="user-dropdown-header">
+                  <div class="d-flex align-items-center gap-3">
+                    <div class="user-avatar-lg rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold fs-5">
+                      {{ userInitial }}
+                    </div>
+                    <div class="user-info-text overflow-hidden">
+                      <div class="user-name text-truncate" :title="userName">{{ userName }}</div>
+                      <div class="user-email text-muted text-truncate" :title="userEmail">{{ userEmail }}</div>
+                      <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-2 py-0.5 mt-1" style="font-size: 10.5px;">
+                        {{ userRole }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Menu Links -->
+                <div class="user-dropdown-body">
+                  <router-link to="/settings?tab=profile" class="user-dropdown-item" @click="isUserDropdownOpen = false">
+                    <div class="user-item-icon"><i class="bi bi-person-gear"></i></div>
+                    <div class="user-item-text">
+                      <span class="user-item-title">Profile &amp; Account</span>
+                      <span class="user-item-sub">Manage personal profile details</span>
+                    </div>
+                  </router-link>
+
+                  <router-link to="/settings?tab=account-security" class="user-dropdown-item" @click="isUserDropdownOpen = false">
+                    <div class="user-item-icon"><i class="bi bi-shield-check"></i></div>
+                    <div class="user-item-text">
+                      <span class="user-item-title">Security &amp; Password</span>
+                      <span class="user-item-sub">Change password &amp; sessions</span>
+                    </div>
+                  </router-link>
+
+                  <router-link to="/support" class="user-dropdown-item" @click="isUserDropdownOpen = false">
+                    <div class="user-item-icon"><i class="bi bi-question-circle"></i></div>
+                    <div class="user-item-text">
+                      <span class="user-item-title">Help &amp; Support</span>
+                      <span class="user-item-sub">Documentation &amp; support desk</span>
+                    </div>
+                  </router-link>
+                </div>
+
+                <!-- Footer / Logout -->
+                <div class="user-dropdown-footer">
+                  <button type="button" class="user-logout-btn w-100" @click="handleLogout">
+                    <i class="bi bi-box-arrow-right me-2 text-danger"></i>
+                    <span class="text-danger fw-semibold">Log Out</span>
+                  </button>
+                </div>
+              </div>
+            </transition>
           </div>
         </div>
       </header>
@@ -967,6 +1082,161 @@ function isChildActive(child, item) {
 
 .store-manage-link:hover {
   text-decoration: underline;
+}
+
+/* User Menu & Dropdown */
+.user-menu-wrapper {
+  position: relative;
+  user-select: none;
+}
+
+.user-avatar-btn {
+  cursor: pointer;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.user-avatar-btn:hover {
+  transform: scale(1.04);
+}
+
+.user-avatar {
+  transition: box-shadow 0.2s ease;
+}
+
+.user-avatar:hover {
+  box-shadow: 0 0 0 3px rgba(36, 71, 198, 0.25) !important;
+}
+
+.user-avatar-lg {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+}
+
+.user-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 280px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  z-index: 10000;
+  overflow: hidden;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+}
+
+.user-dropdown-header {
+  padding: 14px 16px;
+  background: #f8fafc;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.user-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1e293b;
+  line-height: 1.2;
+}
+
+.user-email {
+  font-size: 12px;
+  line-height: 1.3;
+  margin-top: 2px;
+}
+
+.user-dropdown-body {
+  padding: 6px;
+}
+
+.user-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 12px;
+  border-radius: 9px;
+  text-decoration: none;
+  transition: background-color 0.15s ease;
+}
+
+.user-dropdown-item:hover {
+  background-color: #f1f5f9;
+}
+
+.user-item-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  color: #475569;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.user-dropdown-item:hover .user-item-icon {
+  background: #ffffff;
+  color: #2447c6;
+  border-color: #cbd5e1;
+}
+
+.user-item-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.user-item-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #334155;
+  line-height: 1.2;
+}
+
+.user-item-sub {
+  font-size: 11px;
+  color: #94a3b8;
+  line-height: 1.2;
+  margin-top: 2px;
+}
+
+.user-dropdown-footer {
+  padding: 8px 10px;
+  background: #f8fafc;
+  border-top: 1px solid #f1f5f9;
+}
+
+.user-logout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #fee2e2;
+  background: #fff;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.15s ease;
+}
+
+.user-logout-btn:hover {
+  background: #fef2f2;
+  border-color: #fca5a5;
+}
+
+.user-dropdown-fade-enter-active,
+.user-dropdown-fade-leave-active {
+  transition: opacity 0.16s ease, transform 0.16s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.user-dropdown-fade-enter-from,
+.user-dropdown-fade-leave-to {
+  opacity: 0;
+  transform: translateY(-6px) scale(0.98);
 }
 
 </style>

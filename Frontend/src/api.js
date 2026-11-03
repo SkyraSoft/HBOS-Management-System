@@ -168,13 +168,41 @@ const demoAdapter = async (config) => {
   if (url.match(/\/suppliers\/(\d+)\/payments/)) {
     const match = url.match(/\/suppliers\/(\d+)\/payments/);
     const suppId = match[1];
-    const rec = demoSandboxEngine.recordSupplierPayment(suppId, payload.amount, payload.payment_method);
-    return makeResponse({ data: rec, message: 'Payment recorded' }, 201);
+    if (method === 'post') {
+      const rec = demoSandboxEngine.recordSupplierPayment(suppId, payload?.amount, payload?.payment_method);
+      return makeResponse({ data: rec, message: 'Payment recorded' }, 201);
+    }
+    const pays = (demoSandboxEngine.getSupplierPayments() || []).filter(p => String(p.supplier_id) === String(suppId));
+    return makeResponse(pays);
   }
 
   if (url.includes('/suppliers')) {
     const supps = demoSandboxEngine.getSuppliers();
     return makeResponse(supps);
+  }
+
+  // Profile Management (Demo Sandbox)
+  if (url.includes('/profile/password') && method === 'put') {
+    return makeResponse({ message: 'Password updated successfully in demo sandbox.' });
+  }
+
+  if (url.includes('/profile')) {
+    if (method === 'put') {
+      const storedUser = JSON.parse(localStorage.getItem('hbos_user') || '{}');
+      const updatedUser = { ...storedUser, ...payload };
+      localStorage.setItem('hbos_user', JSON.stringify(updatedUser));
+      return makeResponse({ data: updatedUser, message: 'Profile updated successfully in demo sandbox.' });
+    }
+    const user = JSON.parse(localStorage.getItem('hbos_user') || 'null') || {
+      id: 1,
+      name: 'Demo Administrator',
+      email: 'demo@hbos.pk',
+      phone: '+92 300 1234567',
+      role: 'Business Owner',
+      business_name: 'HBOS Retail Management',
+      created_at: '2024-01-01T00:00:00Z',
+    };
+    return makeResponse({ data: user });
   }
 
   if (url.includes('/cash-register-sessions/current') || url.includes('/cash-register-sessions/active')) {
@@ -245,14 +273,34 @@ const demoAdapter = async (config) => {
     return makeResponse({ data: report, ...report });
   }
 
+  if (url.includes('/reports/inventory')) {
+    const report = demoSandboxEngine.getInventoryReport(config.params || {});
+    return makeResponse({ data: report, ...report });
+  }
+
+  if (url.includes('/reports/customers')) {
+    const report = demoSandboxEngine.getCustomersReport(config.params || {});
+    return makeResponse({ data: report, ...report });
+  }
+
+  if (url.includes('/reports/suppliers')) {
+    const report = demoSandboxEngine.getSuppliersReport(config.params || {});
+    return makeResponse({ data: report, ...report });
+  }
+
   if (url.includes('/reports/expenses')) {
     const report = demoSandboxEngine.getExpensesReport(config.params || {});
     return makeResponse({ data: report, ...report });
   }
 
+  if (url.includes('/reports/financial-accounts')) {
+    const report = demoSandboxEngine.getFinancialAccountsReport(config.params || {});
+    return makeResponse({ data: report, ...report });
+  }
+
   if (url.includes('/reports/branches')) {
-    const dash = demoSandboxEngine.getDashboard(config.params || {});
-    return makeResponse({ data: dash.branch_comparison, branches: dash.branch_comparison });
+    const report = demoSandboxEngine.getBranchReport(config.params || {});
+    return makeResponse({ data: report, ...report });
   }
 
   if (url.match(/\/branches\/(\d+)\/decommission-preview/)) {

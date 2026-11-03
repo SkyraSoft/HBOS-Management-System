@@ -34,6 +34,16 @@
             <div v-else-if="activeTab === 'sync' || activeTab === 'offline-sync'" class="settings-view-card">
               <SyncView />
             </div>
+
+            <!-- 6. USER PROFILE & ACCOUNT -->
+            <div v-else-if="activeTab === 'profile'" class="settings-view-card">
+              <UserProfileView initial-section="profile" />
+            </div>
+
+            <!-- 7. ACCOUNT SECURITY & PASSWORD -->
+            <div v-else-if="activeTab === 'account-security' || activeTab === 'security-password'" class="settings-view-card">
+              <UserProfileView initial-section="security" />
+            </div>
           </div>
         </transition>
       </div>
@@ -51,6 +61,7 @@ import RolesView from './Settings/RolesView.vue';
 import ReceiptsView from './Settings/ReceiptsView.vue';
 import SecurityView from './Settings/SecurityView.vue';
 import SyncView from './Settings/SyncView.vue';
+import UserProfileView from './Settings/UserProfileView.vue';
 
 const route = useRoute();
 const navigationStore = useNavigationStore();

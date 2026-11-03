@@ -22,6 +22,9 @@ const router = createRouter({
       meta: { layout: 'MainLayout' }
     },
     { path: '/settings/branches', redirect: '/settings?tab=branches' },
+    { path: '/profile', redirect: '/settings?tab=profile' },
+    { path: '/settings/profile', redirect: '/settings?tab=profile' },
+    { path: '/settings/account-security', redirect: '/settings?tab=account-security' },
     { path: '/settings/users', redirect: '/settings?tab=users' },
     { path: '/settings/roles', redirect: '/settings?tab=roles' },
     { path: '/settings/receipts', redirect: '/settings?tab=receipts' },
@@ -199,18 +202,18 @@ const router = createRouter({
       component: () => import('../views/SupplierpayableView.vue'),
       meta: { layout: 'MainLayout' }
     },
-    {
+        {
       path: '/supplier',
-      alias: ['/suppliers', '/supplier-invoices', '/supplierinvoices'],
-      name: 'Supplier',
-      component: () => import('../views/SupplierView.vue'),
-      meta: { layout: 'MainLayout' }
+      alias: ['/supplier-invoices', '/supplierinvoices'],
+      redirect: { path: '/supplierpayable', query: { tab: 'supplier-profile' } }
+    },
+    {
+      path: '/suppliers',
+      redirect: { path: '/supplierpayable', query: { tab: 'supplier-profile' } }
     },
     {
       path: '/supplierpayment',
-      name: 'SupplierPayment',
-      component: () => import('../views/SupplierPaymentView.vue'),
-      meta: { layout: 'MainLayout' }
+      redirect: { path: '/supplierpayable', query: { tab: 'payments' } }
     },
     {
       path: '/support',
