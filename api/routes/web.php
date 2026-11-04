@@ -43,3 +43,14 @@ Route::get('/downloads/{filename}', function ($filename) {
         'file' => $cleanFilename
     ], 404);
 });
+
+// Web Application / Demo Single Page App
+Route::get('/app/{any?}', function () {
+    $appPath = public_path('app/index.html');
+    if (file_exists($appPath)) {
+        return response()->file($appPath, [
+            'Content-Type' => 'text/html; charset=UTF-8'
+        ]);
+    }
+    return response()->json(['error' => 'Web application assets not found.'], 404);
+})->where('any', '.*');
